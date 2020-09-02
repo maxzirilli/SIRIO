@@ -1,0 +1,30 @@
+<md-dialog aria-label="Aggiungi adozione">
+  <form ng-cloak name="PopupAdozioniForm">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>ADOZIONE</h2>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+      <div class="md-dialog-content">
+        <md-input-container class="containerSelect"><label style="width:100%;">CLASSE</label>
+          <md-select ng-model="AdozioneInEditing.CLASSE" class="mdb-select" type="text"  name="AdozioneClasse">
+          <md-optgroup label="-">
+            <md-option ng-repeat="classe in ListaClassiIstituto" ng-value="classe.Chiave">{{classe.Anno}}{{classe.Sezione}}</md-option>
+          </md-optgroup>
+          </md-select>
+        </md-input-container> 
+      </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ConfermaPopupAdozione(AdozioneInEditing)">
+       CONFERMA
+      </md-button>
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="AnnullaPopupAdozione()">
+       ANNULLA
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

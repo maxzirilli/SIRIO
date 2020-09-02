@@ -1,0 +1,105 @@
+<div ng-controller="deliveryModDetailPageController" ng-cloak md-theme="{{ActualTheme}}" style="height:75%">
+
+    <form name="SpedizioneEditForm" ng-submit="ConfermaSpedizione()" novalidate>
+
+    <h2 style="font-weight:bold;">SPEDIZIONE {{ListaIstitutiDoc.length == 0 ? "" : " A " +  SpedizioneInEditing.DOCENTE_NOME}}</h2>
+    <div layout="row" layout-align="end start">
+      <md-button class="md-raised md-accent" style="font-weight:bold;" type="submit">CONFERMA</md-button>
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="OnAnnullaSpedizione()">ANNULLA</md-button>
+    </div>
+    <md-tabs style="width:100%;" md-selected="selectedSpedizioneTitoli" md-border-bottom md-autoselect md-dynamic-height md-swipe-content>
+      <md-tab label="Generale">
+          <md-input-container style="width:33%;">
+            <label>DATA</label><input ng-model="SpedizioneInEditing.DATA" type="date">
+          </md-input-container>           
+          <div layout="column">
+            <md-input-container class="containerSelect" ng-if="ListaIstitutiDoc.length != 0"><label>ISTITUTO</label>
+              <md-select ng-model="IstitutoDoc" class="mdb-select" ng-change="IndirizzoByIstituto(IstitutoDoc)">
+                 <md-optgroup>
+                   <md-option ng-value="-1">INDIRIZZO DOCENTE: {{SpedizioneInEditing.DOCENTE_NOME}}</md-option>  
+                   <md-option ng-repeat="Istituto in ListaIstitutiDoc" ng-value="Istituto.CHIAVE">{{Istituto.ISTITUTO}}</md-option>
+                 </md-optgroup>
+              </md-select>
+            </md-input-container> 
+            <md-input-container>
+              <label>C/O:</label><input ng-model="SpedizioneInEditing.PRESSO" style="width:30%;" type="text" name="Presso" required>
+              <div ng-messages="TitoloEditForm.Codice.$error" multiple md-auto-hide="true">
+                <div ng-message="required">Inserire il codice ISBN del titolo</div>
+              </div>
+            </md-input-container>            
+            <br>
+            <div layout="row">
+              <div layout="row" ng-show="SpedizioneInEditing.STATO != 'C'">
+                <md-input-container>
+                  <label>INDIRIZZO</label><input ng-model="SpedizioneInEditing.INDIRIZZO" type="text" name="Indirizzo" required>
+                 <div ng-messages="TitoloEditForm.Indirizzo.$error" multiple md-auto-hide="true">
+                   <div ng-message="required">Inserire l'indirizzo per la spedizione</div>
+                 </div>
+                </md-input-container>
+                <md-input-container>
+                  <label>COMUNE</label><input ng-model="SpedizioneInEditing.COMUNE" type="text" name="Comune" required>
+                  <div ng-messages="TitoloEditForm.Comune.$error" multiple md-auto-hide="true">
+                    <div ng-message="required">Inserire il comune per la spedizione</div>
+                  </div>
+                </md-input-container> 
+                <md-input-container>
+                  <label>CAP</label><input ng-model="SpedizioneInEditing.CAP" type="text" name="Cap" required>
+                  <div ng-messages="TitoloEditForm.Indirizzo.$error" multiple md-auto-hide="true">
+                    <div ng-message="required">Inserire il cap per la spedizione</div>
+                  </div>
+                </md-input-container> 
+                <md-input-container class="containerSelect"><label>PROVINCIA</label>
+                  <md-select ng-model="SpedizioneInEditing.PROVINCIA" class="mdb-select" type="text" name="Provincia" required>
+                  <md-optgroup label="-">
+                    <md-option ng-repeat="provincia in ListaProvinceAll" ng-value="provincia.Chiave">{{provincia.Nome}}</md-option>
+                  </md-optgroup>
+                  </md-select>
+                  <div ng-messages="TitoloEditForm.Provincia.$error" multiple md-auto-hide="true">
+                    <div ng-message="required">Inserire la provincia per la spedizione</div>
+                  </div>
+                </md-input-container>
+              </div>
+            </div>       
+          </div>
+      </md-tab>
+      <md-tab label="Titoli">
+        <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="AggiungiTitoloSpedizione($event)">AGGIUNGI NUOVO TITOLO</md-button>
+        <md-button class="md-raised md-accent" style="font-weight:bold;">CARICA LISTA DA FILE XLS</md-button>
+        
+        <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
+          <tr>
+            <th></th>
+            <th></th>                        
+            <th>TITOLO</th>
+            <th>QUANTITA</th>
+            <th>STATO</th>
+            <th>DISPONIBILITA</th>
+            <th>DA SPEDIRE</th>
+          </tr>  
+          <tr ng-repeat="Titolo in ListaTitoliSpedizione | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Titolo.Chiave}}>
+            <td><img src="img/delete.png" style="width:20px;height:auto;" ng-click="EliminaTitolo(Titolo)"></td> 
+            <td><img src="img/edit.png" style="width:20px;height:auto;" ng-click="ModificaTitolo(Titolo)"></td>
+            <td class="off">{{Titolo.NOME_TITOLO | uppercase}}</td> 
+            <td class="off">{{Titolo.QUANTITA}}</td>
+            <td class="off" ng-if="Titolo.STATO == 'C'">CONSEGNATO</td>
+            <td class="off" ng-if="Titolo.STATO == 'S'">DA SPEDIRE</td>
+            <td class="off" ng-if="Titolo.STATO == 'P'">PRENOTATO</td>
+            <td class="off" ng-if="Titolo.QUANTITA_MGZN > 0 && (Titolo.QUANTITA <= Titolo.QUANTITA_MGZN) && Titolo.STATO == 'P'">DISPONIBILE</td> 
+            <td class="off" ng-if="(Titolo.QUANTITA > Titolo.QUANTITA_MGZN) && Titolo.STATO == 'P'">NON DISPONIBILE</td>
+            <td class="off" ng-if="Titolo.STATO != 'P'"></td>
+            <td ng-if="(Titolo.QUANTITA_MGZN > 0 && (Titolo.QUANTITA <= Titolo.QUANTITA_MGZN)) && Titolo.STATO == 'P'"><img src="img/toSend.png" style="width:20px;height:auto;" ng-click="PassaADaSpedire(Titolo)"></td>
+            <td ng-if="Titolo.QUANTITA_MGZN <= 0 && Titolo.STATO == 'P'" class="off"></td>
+            <td ng-if="Titolo.STATO != 'P'" class="off"></td>                       
+          </tr>    
+        </table>
+        <md-table-pagination md-limit="GridOptions.query.limit" 
+                             md-limit-options="GridOptions.limitOptions" 
+                             md-page="GridOptions.query.page" 
+                             md-total="{{ListaTitoliSpedizione.length}}" 
+                             md-page-select="GridOptions.pageSelect" 
+                             md-boundary-links="GridOptions.boundaryLinks" 
+                             md-on-paginate="logPagination"></md-table-pagination>        
+      </md-tab>
+    </md-tabs>
+  </div>
+</div>

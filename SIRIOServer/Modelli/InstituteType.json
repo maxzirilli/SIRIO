@@ -1,0 +1,27 @@
+{ 
+  "SelectSQL" : [
+                  { 
+                    "Name" : "InstituteTypeInfoList",
+                    "SQL"  : "SELECT * FROM tipologie_istituto ORDER BY tipologie_istituto.DESCRIZIONE" 
+                  }
+                ],
+                
+  "EditSQL"   : [   
+                  {
+                    "Name" : "InsertInstituteType",
+                    "SQL"  : "INSERT INTO tipologie_istituto (CHIAVE,DESCRIZIONE) VALUES (:NewKey1,#DESCRIZIONE)"
+                  }, 
+                  {
+                    "Name" : "UpdateInstituteType",
+                    "SQL"  : "UPDATE tipologie_istituto SET DESCRIZIONE=#DESCRIZIONE WHERE CHIAVE=:CHIAVE"
+                  },
+                  {
+                    "Name" : "DeleteInstituteInstituteType",
+                    "SQL"  : "UPDATE istituti SET TIPOLOGIA=NULL WHERE TIPOLOGIA=:CHIAVE"
+                  },
+                  {
+                    "Name" : "DeleteInstituteType",
+                    "SQL"  : "DELETE FROM tipologie_istituto WHERE CHIAVE=:CHIAVE"
+                  }
+                ]        
+}

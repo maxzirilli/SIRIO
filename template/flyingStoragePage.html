@@ -1,0 +1,69 @@
+<div ng-controller="flyingStoragePageController" ng-cloak md-theme="{{ActualTheme}}" style="height:75%">
+  <div ng-if="!EditingOn">
+    <div>
+      <h2 style="float:left;margin-right:50px;">MAGAZZINO VOLANTE</h2>
+      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoMovimento()">INSERISCI NUOVO MOVIMENTO</md-button> 
+    </div>
+    
+    <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
+      <tr>
+        <th></th>
+        <th></th> 
+        <th>DATA</th>  
+        <th>PROMOTORE</th>        
+      </tr>  
+      <tr ng-repeat="Movimento in ListaVolante | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Movimento.CHIAVE}}> 
+        <td><img src="img/delete.png" style="width:20px;height:auto;" ng-click="EliminaMovimento(Movimento)"></td> 
+        <td><img src="img/edit.png" style="width:20px;height:auto;" ng-click="ModificaMovimento(Movimento)"></td>        
+        <td class="off">{{ConvertiData(Movimento)}}</td>  
+        <td class="off">{{Movimento.NOME_PROMOTORE | uppercase}}</td>     
+      </tr>    
+    </table>
+    <md-table-pagination md-limit="GridOptions.query.limit" 
+                         md-limit-options="GridOptions.limitOptions" 
+                         md-page="GridOptions.query.page" 
+                         md-total="{{ListaVolante.length}}" 
+                         md-page-select="GridOptions.pageSelect" 
+                         md-boundary-links="GridOptions.boundaryLinks" 
+                         md-on-paginate="logPagination"></md-table-pagination>
+  </div>
+  <div ng-if="EditingOn">
+  <div layout="row">
+    <h2>MODIFICA CARICO MAGAZZINO VOLANTE</h2>
+    <div style="width:100%;" layout="row" layout-align="end start">
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ConfermaMovimento()">CONFERMA</md-button>
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="OnAnnullaMovimento()">ANNULLA</md-button>
+    </div>
+  </div>
+    <br>
+    <div>
+      <md-button class="md-raised md-accent" style="font-weight:bold;float:left;" ng-click="AggiungiTitoloCarico($event)">AGGIUNGI NUOVO CARICO</md-button>
+      <md-input-container>
+        <label>DATA CARICO</label><input ng-model="MovimentoInEditing.DATA" type="date" name="DataCarico">
+      </md-input-container>
+    </div>
+        
+        <table style="width:100%;text-align:center;" md-row-select="GridOptions2.rowSelection" multiple="{{GridOptions2.multiSelect}}">  
+          <tr>
+            <th></th>
+            <th></th> 
+            <th>TITOLO</th>
+            <th>QUANTITA</th>
+          </tr>  
+          <tr ng-repeat="Titolo in ListaCarico | limitTo : GridOptions2.query.limit : (GridOptions.query.page - 1) * GridOptions2.query.limit" id={{Titolo.CHIAVE}}>
+            <td><img src="img/delete.png" style="width:20px;height:auto;" ng-click="EliminaTitolo(Titolo)"></td> 
+            <td><img src="img/edit.png" style="width:20px;height:auto;" ng-click="ModificaTitolo(Titolo)"></td>        
+            <td class="off">{{Titolo.NOME_TITOLO | uppercase}}</td> 
+            <td class="off">{{Titolo.QUANTITA}}</td>           
+          </tr>    
+        </table>
+        <md-table-pagination md-limit="GridOptions2.query.limit" 
+                             md-limit-options="GridOptions2.limitOptions" 
+                             md-page="GridOptions2.query.page" 
+                             md-total="{{ListaCarico.length}}" 
+                             md-page-select="GridOptions2.pageSelect" 
+                             md-boundary-links="GridOptions2.boundaryLinks" 
+                             md-on-paginate="logPagination"></md-table-pagination>        
+  </div>
+    
+</div>

@@ -1,0 +1,8 @@
+<div ng-controller="printLabelPageController" ng-cloak md-theme="{{ActualTheme}}" style="height:75%">
+  <h2>STAMPA ETICHETTE</h2>
+  <div style="float:right;">
+    <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="AnnullaStampa()">ANNULLA STAMPA</md-button>
+    <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ConfermaStampa()">STAMPA ETICHETTE COMPLETATA</md-button>
+  </div>
+  <iframe style="background:orange;" id="repPdf" title="Etichette" height=100% width=100% ></iframe>
+</div>

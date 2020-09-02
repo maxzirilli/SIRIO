@@ -1,0 +1,82 @@
+<div ng-controller="userListPageController">
+  <div ng-if="!EditingOn">
+    <div>
+      <h2 style="float:left;">LISTA UTENTI</h2>
+      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoUtente()">CREA NUOVO UTENTE</md-button>
+    </div>
+    <div ng-if="ListaUtenti.length != 0">
+      <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
+        <tr>
+          <th></th>
+          <th></th> 
+          <th>NOME UTENTE</th>
+          <th>RAGIONE SOCIALE</th>        
+          <th>EMAIL</th>
+          <th>RUOLO</th>        
+        </tr>  
+        <tr ng-repeat="Utente in ListaUtenti | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Utente.Chiave}}>
+          <td><img src="img/delete.png" style="width:20px;height:auto;" ng-click="EliminaUtente(Utente)"></td> 
+          <td><img src="img/edit.png" style="width:20px;height:auto;" ng-click="ModificaUtente(Utente)"></td>        
+          <td class="off">{{Utente.Username}}</td> 
+          <td class="off">{{Utente.RagioneSociale}}</td> 
+          <td class="off">{{Utente.Email}}</td>
+          <td class="off">{{Utente.Ruolo == 1 ? 'AMMINISTRATORE' : 'PROMOTORE'}}</td>   
+        </tr>    
+      </table>
+      <md-table-pagination md-limit="GridOptions.query.limit" 
+                           md-limit-options="GridOptions.limitOptions" 
+                           md-page="GridOptions.query.page" 
+                           md-total="{{ListaUtenti.length}}" 
+                           md-page-select="GridOptions.pageSelect" 
+                           md-boundary-links="GridOptions.boundaryLinks" 
+                           md-on-paginate="logPagination"></md-table-pagination>
+    </div>
+    <p ng-if="ListaUtenti.length == 0" style="font-weight:bold;font-style:italic;text-align:center;">NESSUN UTENTE PRESENTE</p>
+  </div> 
+  
+  <div ng-if="EditingOn">
+    <form name="utenteEditForm" layout="column" style="width:100%" ng-submit="ConfermaUtente()">
+      <div layout="row">
+        <h2>UTENTE</h2>
+        <div layout="row" style="width:100%;" layout-align="end start">
+            <md-button class="md-raised md-accent" style="font-weight:bold;" type="submit">CONFERMA</md-button>
+            <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="OnAnnullaUtenteClicked()">ANNULLA</md-button>
+        </div>
+      </div>
+      
+        <div layout="column">
+        <md-input-container style="width:33%;">
+          <label>NOME UTENTE</label><input ng-model="UtenteInEditing.USERNAME" type="text" name="Username" required>
+          <div ng-messages="utenteEditForm.Username.$error" multiple md-auto-hide="true">
+            <div ng-message="required">Inserire un nome utente</div>
+          </div>
+        </md-input-container>
+        <div layout="row">
+          <md-input-container style="width:33%;">
+            <label>RAGIONE SOCIALE</label><input ng-model="UtenteInEditing.RAGIONE_SOCIALE" type="text" name="RagioneSociale" required>
+            <div ng-messages="utenteEditForm.RagioneSociale.$error" multiple md-auto-hide="true">
+              <div ng-message="required">Inserire la ragione sociale</div>
+            </div>
+          </md-input-container>
+          <md-input-container style="width:33%;">               
+            <label>EMAIL</label><input ng-model="UtenteInEditing.EMAIL" type="text" name="Email" required>
+            <div ng-messages="utenteEditForm.Email.$error" multiple md-auto-hide="true">
+             <div ng-message="required">Inserire una email</div>
+            </div>
+          </md-input-container>
+        </div>        
+        <md-input-container class="containerSelect" style="width:33%;">
+          <md-select ng-model="UtenteInEditing.ROLE" class="mdb-select" type="text" name="Ruolo" required aria-label="Ruolo">
+            <md-option ng-value="1">AMMINISTRATORE</md-option>
+            <md-option ng-value="0">PROMOTORE</md-option>
+          </md-select>
+          <div ng-messages="utenteEditForm.Ruolo.$error" multiple md-auto-hide="true">
+             <div ng-message="required">Selezionare un ruolo</div>
+          </div>
+        </md-input-container> 
+        </div> 
+        
+    </form>        
+  </div> 
+
+</div>

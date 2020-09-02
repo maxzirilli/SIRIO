@@ -1,0 +1,51 @@
+{
+   "SelectSQL"   : [
+                     {
+                       "Name" : "FlyingInfoList",
+                       "SQL"  : "SELECT *,(SELECT utenti.USERNAME from utenti WHERE CHIAVE = magazzino_volante.PROMOTORE) AS NOME_PROMOTORE FROM magazzino_volante ORDER BY DATA DESC"
+                     }
+                   ],
+  
+  "SQLDettaglio" : 
+                   [
+                     {
+                       "Name" : "FlyingDettaglio",
+                       "SQL"  : "SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE = dettaglio_magazzino_volante.TITOLO) AS NOME_TITOLO FROM dettaglio_magazzino_volante WHERE MOVIMENTO=:CHIAVE"
+                     }
+                   ],
+  "EditSQL"      :
+                   [
+                     {
+                       "Name" : "InsertMovement",
+                       "SQL"  : "INSERT INTO magazzino_volante (CHIAVE,DATA,PROMOTORE) VALUES (:NewKey1,#DATA,#KeyAccount)"
+                     },
+                     {
+                       "Name" : "InsertMovementBook",
+                       "SQL"  : "INSERT INTO dettaglio_magazzino_volante (CHIAVE,MOVIMENTO,TITOLO,QUANTITA) VALUES (:NewKey1,:CHIAVE,:TITOLO,#QUANTITA)"
+                     },
+                     {
+                       "Name" : "InsertMovementBookAfterInsert",
+                       "SQL"  : "INSERT INTO dettaglio_magazzino_volante (CHIAVE,MOVIMENTO,TITOLO,QUANTITA) VALUES (:NewKey2,:NewKey1,:TITOLO,#QUANTITA)"
+                     },
+                     {
+                       "Name" : "UpdateMovement",
+                       "SQL"  : "UPDATE magazzino_volante SET DATA=#DATA WHERE CHIAVE=:CHIAVE"
+                     },
+                     {
+                       "Name" : "UpdateMovementBook",
+                       "SQL"  : "UPDATE dettaglio_magazzino_volante SET TITOLO=:TITOLO,QUANTITA=#QUANTITA WHERE CHIAVE=CHIAVE"
+                     },
+                     {
+                       "Name" : "DeleteMovement",
+                       "SQL"  : "DELETE FROM magazzino_volante WHERE CHIAVE=:CHIAVE"
+                     },
+                     {
+                       "Name" : "DeleteMovementBook",
+                       "SQL"  : "DELETE FROM dettaglio_magazzino_volante WHERE CHIAVE=:CHIAVE"
+                     },
+                     {
+                       "Name" : "DeleteMovementBookAll",
+                       "SQL"  : "DELETE FROM dettaglio_magazzino_volante WHERE MOVIMENTO=:CHIAVE"
+                     }
+                   ]
+}

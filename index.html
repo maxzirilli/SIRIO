@@ -1,0 +1,81 @@
+<html>
+<head> 
+  <title>SIRIO</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <link rel="stylesheet" href="library/angular-material/angular-material.css">
+  <link rel="stylesheet" href="css/Sirio.css">
+  <link href="library/angular-material-data-table/dist/md-data-table.min.css" rel="stylesheet" type="text/css"/>
+  <link rel="shortcut icon" href="img/icons/login-icon.ico" /> 
+  <script src="ZLibrary/ZStringFunct.js"></script>
+  <script src="ZLibrary/ZStringConvFunct.js"></script>
+  <script src="ZLibrary/ZDateFunct.js"></script>
+  <script src="ZLibrary/ZArrayFunct.js"></script>
+  <script type="text/javascript" src="library/xlsx-style/xlsx.core.min.js"></script>
+  <script type="text/javascript" src="library/xlsx-style/Blob.js"></script>
+  <script type="text/javascript" src="library/xlsx-style/FileSaver.js"></script>
+  <script src="library/angular/angular.min.js"></script>
+  <script src="library/angular-material/angular-material.js"> </script>
+  <script src="library/angular/angular-animate.min.js"></script>
+  <script src="library/angular/angular-aria.min.js"></script>
+  <script src="library/angular/angular-messages.min.js"></script>
+  <script src="library/ui-routing/angular-ui-router.min.js"></script>
+  <script type="text/javascript" src="library/jsPDF-master/jspdf.debug.js"></script>
+  <script type="text/javascript" src="library/jsPDF-master/jspdf.plugin.addimage.js"></script>
+  <script type="text/javascript" src="library/angular-material-data-table/dist/md-data-table.min.js"></script>  
+  <script type="text/javascript" src="js/SIRIOCfg.js"></script>
+  <script type="text/javascript" src="js/SIRIODef.js"></script>
+  <script type="text/javascript" src="js/SIRIO.js"></script>
+  <script type="text/javascript" src="js/SIRIOSystemInformation.js"></script>
+  <script src="js/loginPage.js"></script>
+  <script src="js/startPage.js"></script>   
+  <script src="js/changePasswordPage.js"></script>
+  <script src="js/userListPage.js"></script>
+  <script src="js/instituteListPage.js"></script>
+  <script src="js/teacherListPage.js"></script>
+  <script src="js/orderEntryListPage.js"></script>
+  <script src="js/titleListPage.js"></script>  
+  <script src="js/configurationsListPage.js"></script>
+  <script src="js/csvInstituteController.js"></script>
+  <script src="js/csvBookController.js"></script>
+  <script src="js/csvTeacherController.js"></script>
+  <script src="js/deliveryListPageController.js"></script>
+  <script src="js/deliveryModDetailPageController.js"></script>
+  <script src="js/printLabelPage.js"></script>
+  <script src="js/storageLogPage.js"></script>
+  <script src="js/flyingStoragePage.js"></script>
+  <script src="js/csvCatalogController.js"></script>   
+</head>
+<body ng-app="SIRIOApp">
+  <md-toolbar layout-padding ng-controller="headerController" md-theme="{{ActualTheme}}" ng-class="{'off' : UploadRunning}">
+      <div class="md-toolbar-tools">
+        <img src="img/LogoSirio.png" style="padding-top:5px;width:80px;height:auto;">
+        <span flex></span>
+        <div layout="column">
+           <br/>
+          <span class="md-caption" style="color:white;font-weight:bold;text-align:right;padding-right:7px;">Versione {{appVersion}}</span>
+        </div>
+      </div>
+      <div ng-if="LoginEffettuato" layout="row">
+        <div flex="20" >
+           &nbsp
+        </div>
+        <div flex="80" style="text-align:right;">
+           <md-button class="md-fab md-mini md-primary" aria-label="Home" ng-click="GoHome()" ng-if="VisButtonHome">
+             <md-icon md-svg-src="img/icons/Home.svg" style="color: greenyellow;"></md-icon>
+             <!--<img src="img/HomeIco.png" style="width:30px;">-->
+           </md-button>
+           <md-button class="md-fab md-mini md-primary" aria-label="Cambia password" ng-click="ChangePassword()" ng-if="VisButtonChangePassword">
+             <md-icon md-svg-src="img/icons/CambiaPassword.svg" style="color: greenyellow;"></md-icon>
+             <!--<img src="img/ChangePasswordIco.png" style="width:30px;">-->
+           </md-button>
+           <md-button class="md-fab md-mini md-primary" aria-label="Esci" ng-click="Logout()">
+             <md-icon md-svg-src="img/icons/Logout.svg" style="color: greenyellow;"></md-icon>
+             <!--<img src="img/LogoutIco.png" style="width:30px;">-->
+           </md-button>
+        </div>
+      </div>
+  </md-toolbar>
+  <md-content layout-padding ui-view>
+  </md-content>
+</body>
+</html>

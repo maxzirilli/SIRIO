@@ -1,0 +1,23 @@
+{ 
+  "SelectSQL" : [
+                  { 
+                    "Name" : "ProvinceInfoList",
+                    "SQL"  : "SELECT * FROM province ORDER BY province.NOME" 
+                  }
+                ],
+                
+  "EditSQL"   : [   
+                  {
+                    "Name" : "InsertProvince",
+                    "SQL"  : "INSERT INTO province (CHIAVE,NOME) VALUES (:NewKey1,#NOME)"
+                  }, 
+                  {
+                    "Name" : "UpdateProvince",
+                    "SQL"  : "UPDATE province SET NOME=#NOME WHERE CHIAVE=:CHIAVE"
+                  },
+                  {
+                    "Name" : "DeleteProvince",
+                    "SQL"  : "DELETE FROM province WHERE CHIAVE=:CHIAVE"
+                  }
+                ]        
+}

@@ -1,0 +1,28 @@
+{ 
+  "SelectSQL"       : [
+                        {  
+                          "Name" : "ProvinceList",
+                          "SQL"  : "SELECT * FROM province"          
+                        },
+                        {
+                          "Name" : "ProvinceListAll",
+                          "SQL"  : "SELECT * FROM province_all"
+                        },
+                        {
+                          "Name" : "InstituteTypeList",
+                          "SQL"  : "SELECT * FROM tipologie_istituto"
+                        },
+                        {
+                          "Name" : "InstituteCodeAll",
+                          "SQL"  : "SELECT istituti.CODICE FROM istituti"
+                        }
+                      ],
+  
+  "SelectTitoliSQL" : [
+                        {
+                          "Name" : "BookList",
+                          "SQL"  : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL FROM titoli"
+                        }
+                      ]
+                      
+}

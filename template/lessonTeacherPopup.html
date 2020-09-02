@@ -1,0 +1,45 @@
+<md-dialog aria-label="Aggiungi orario">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Aggiungi orario</h2>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+      <div class="md-dialog-content" layout="column">
+        <md-input-container class="containerSelect" style="width:200px">  <label>MATERIA</label>
+          <md-select ng-model="OrarioInEditing.MATERIA" class="mdb-select" type="text" name="OrarioMateria">
+          <md-optgroup label="-">           
+            <md-option ng-repeat="materia in ListaMaterieDoc" ng-value="materia.Chiave">{{materia.MateriaNome}}</md-option>
+          </md-optgroup>
+          </md-select>
+        </md-input-container>
+        <md-input-container class="containerSelect" style="width:200px"><label>CLASSE</label>
+          <md-select ng-model="OrarioInEditing.CLASSE" class="mdb-select" type="text" name="OrarioClasse">
+          <md-optgroup label="-">
+            <md-option ng-repeat="classe in ListaClassiIstituto" ng-value="classe.Chiave">{{classe.Anno}}{{classe.Sezione}}</md-option>
+          </md-optgroup>
+          </md-select>
+        </md-input-container> 
+        <md-input-container class="containerSelect" style="width:200px"><label>GIORNO</label>
+          <md-select ng-model="OrarioInEditing.GIORNO" class="mdb-select" type="text" name="OrarioGiorno">
+          <md-optgroup label="-">
+            <md-option ng-repeat="giorno in GiorniSettimana" ng-value="$index+1">{{giorno}}</md-option>
+          </md-optgroup>
+          </md-select>
+        </md-input-container>
+        <md-input-container class="containerSelect" style="width:200px"><label>ORARIO</label>         
+          <input ng-model="OrarioInEditing.ORARIO" type="text" name="OrarioOrario">                           
+        </md-input-container> 
+      </div>
+    </md-dialog-content>
+ 
+    <md-dialog-actions layout="row">
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ConfermaPopupOrario(OrarioInEditing)">
+       CONFERMA
+      </md-button>
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="AnnullaPopupOrario()">
+       ANNULLA
+      </md-button>
+    </md-dialog-actions>
+</md-dialog>

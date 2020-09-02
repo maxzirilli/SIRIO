@@ -1,0 +1,61 @@
+<div ng-controller="deliveryListPageController" ng-cloak md-theme="{{ActualTheme}}" style="height:75%">
+  <h2>LISTA SPEDIZIONI</h2>
+  <div>
+    <md-input-container style="float:left;margin-left:20px;">
+      <label>DAL</label><input ng-model="DataRicercaDal" type="date" name="DataRicercaDal" ng-change="RefreshListaSpedizioniAll()">
+    </md-input-container>
+    <md-input-container style="float:left;margin-left:20px;">  
+      <label>AL</label><input ng-model="DataRicercaAl" type="date" name="DataRicercaAl" ng-change="RefreshListaSpedizioniAll()">
+    </md-input-container>
+    <md-input-container><label style="width:100%;margin-left:20px;float:left;">PROVINCIA</label>
+      <md-select ng-model="ProvinciaFiltro" placeholder="Provincia di spedizione" class="mdb-select" style="width:100%;margin-left:20px;float:left;" type="text" name="ProvinciaFiltro">
+        <md-optgroup>
+          <md-option ng-value="-1">QUALSIASI</md-option>  
+          <md-option ng-repeat="provincia in ListaProvinceAll" ng-value="provincia.Chiave">{{provincia.Nome}}</md-option>
+        </md-optgroup>
+      </md-select>
+    </md-input-container>
+    <md-input-container ng-if="Admin"><label style="width:100%;margin-left:20px;float:left;">PROMOTORE</label>
+      <md-select ng-model="PromotoreFiltro" placeholder="Promotore" class="mdb-select" style="width:100%;margin-left:20px;float:left;" type="text" name="PromotoreFiltro">
+        <md-optgroup>
+          <md-option ng-value="-1">QUALSIASI</md-option>  
+          <md-option ng-repeat="promotore in ListaPromotori" ng-value="promotore.Chiave">{{promotore.Nome}}</md-option>
+        </md-optgroup>
+      </md-select>
+    </md-input-container>
+
+    <input type="checkbox" ng-model="DaSpedireFiltro" style="margin-left:60px;">DA SPEDIRE
+    <input type="checkbox" ng-model="PrenotataFiltro" style="margin-left:20px;">PRENOTATA
+    <input type="checkbox" ng-model="ConsegnataFiltro" style="margin-left:20px;">CONSEGNATA
+    
+    <md-button class="md-raised md-accent" style="font-weight:bold;float:right;" ng-click="NuovaSpedizioneCasaEditrice()">NUOVA SPEDIZIONE CASA EDITRICE</md-button>
+  </div> 
+  <div ng-if="ListaSpedizioni.length != 0">
+    <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
+    <tr>
+      <th></th>
+      <th></th>
+      <th>DA SPEDIRE</th>
+      <th>DATA</th>
+      <th>PRESSO</th>
+      <th>STATO</th>
+    </tr>
+    <tr ng-repeat="Spedizione in ListaSpedizioni | SpedizioneByFiltro : ProvinciaFiltro : PrenotataFiltro : DaSpedireFiltro : ConsegnataFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Spedizione.Chiave}}>
+      <td><img src="img/delete.png" style="width:20px;height:auto;" ng-click="EliminaSpedizione(Spedizione)"></td> 
+      <td><img src="img/edit.png" style="width:20px;height:auto;" ng-click="ModificaSpedizione(Spedizione.Chiave,Spedizione.Docente)"></td>
+      <td><img src="img/toSend.png" style="width:20px;height:auto;" ng-click="PassaADaSpedireDisponibili(Spedizione.Chiave)" ng-if="Spedizione.NrPrenotate > 0"></td>
+      <td>{{ConvertiData(Spedizione)}}</td>
+      <td>{{Spedizione.Presso}}</td>
+      <td ng-bind-html="GetDescrStatoSpedizione(Spedizione)"></td>
+    </tr>
+    </table>
+    <md-table-pagination md-limit="GridOptions.query.limit" 
+                       md-limit-options="GridOptions.limitOptions" 
+                       md-page="GridOptions.query.page" 
+                       md-total="{{ListaSpedizioni.length}}" 
+                       md-page-select="GridOptions.pageSelect" 
+                       md-boundary-links="GridOptions.boundaryLinks" 
+                       md-on-paginate="logPagination"></md-table-pagination>
+  </div>
+  <p ng-if="ListaSpedizioni.length == 0" style="font-weight:bold;font-style:italic;text-align:center;">NESSUNA SPEDIZIONE PRESENTE</p>
+</div>

@@ -1,0 +1,35 @@
+{ 
+  "SelectSQL" : [
+                  { 
+                    "Name" : "SubjectInfoList",
+                    "SQL"  : "SELECT * FROM materie_insegnamento ORDER BY materie_insegnamento.DESCRIZIONE" 
+                  }
+                ],
+                
+  "EditSQL"   : [   
+                  {
+                    "Name" : "InsertSubject",
+                    "SQL"  : "INSERT INTO materie_insegnamento (CHIAVE,DESCRIZIONE) VALUES (:NewKey1,#DESCRIZIONE)"
+                  }, 
+                  {
+                    "Name" : "UpdateSubject",
+                    "SQL"  : "UPDATE materie_insegnamento SET DESCRIZIONE=#DESCRIZIONE WHERE CHIAVE=:CHIAVE"
+                  },
+                  {
+                    "Name" : "DeleteTeacherSubject1",
+                    "SQL"  : "UPDATE docenti SET MATERIA_1=NULL WHERE MATERIA_1=:CHIAVE"
+                  },
+                  {
+                    "Name" : "DeleteTeacherSubject2",
+                    "SQL"  : "UPDATE docenti SET MATERIA_2= NULL WHERE MATERIA_2=:CHIAVE"
+                  },
+                  {
+                    "Name" : "DeleteTeacherSubject3",
+                    "SQL"  : "UPDATE docenti SET MATERIA_3= NULL WHERE MATERIA_3=:CHIAVE"
+                  },
+                  {
+                    "Name" : "DeleteSubject",
+                    "SQL"  : "DELETE FROM materie_insegnamento WHERE CHIAVE=:CHIAVE"
+                  }
+                ]        
+}

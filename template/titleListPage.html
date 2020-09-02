@@ -1,0 +1,178 @@
+<div ng-controller="titleListPageController">
+  <div ng-if="!EditingOn">
+    <div>
+      <h2>LISTA TITOLI</h2>
+      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoTitolo()">INSERISCI NUOVO TITOLO</md-button>      
+    </div>  
+    <div layout="row">        
+      <md-input-container class="containerSelect" style="width:20%;float:left;margin-right:10px;"><label>Filtra per materia...</label>
+        <md-select ng-model="MateriaFiltro" placeholder="MATERIA" class="mdb-select" type="text" name="MateriaFiltro" aria-label="Materia">
+        <md-optgroup>
+          <md-option ng-value="-1">QUALSIASI</md-option>  
+          <md-option ng-repeat="materia in ListaMaterie" ng-value="materia.Chiave">{{materia.Materia}}</md-option>
+        </md-optgroup>
+        </md-select>
+      </md-input-container>
+      <md-input-container class="containerSelect" style="width:40%;float:left;"><label>Filtra per nome...</label>
+        <input ng-model="NomeFiltro" type="search">
+      </md-input-container>
+      <md-input-container class="containerSelect" style="width:20%;float:left;"><label>Filtra per ISBN...</label>
+        <input ng-model="CodiceFiltro" type="search">
+      </md-input-container>
+    </div>
+    <div ng-if="ListaTitoli.length != 0">
+      <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
+        <tr>
+          <th></th>
+          <th></th> 
+          <th>TITOLO</th>  
+          <th>MATERIA</th>
+          <th>AUTORE</th>  
+          <th style="width:10%;">POS.MAGAZZINO</th>
+          <th style="width:10%;">Q.MAGAZZINO</th>
+          <th style="width:10%;">Q.MAGAZZINO VOLANTE</th>        
+        </tr>  
+        <tr ng-repeat="Titolo in ListaTitoli | TitoloByFiltro : MateriaFiltro : NomeFiltro : CodiceFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Titolo.Chiave}}> 
+          <td><img src="img/delete.png" style="width:20px;height:auto;" ng-click="EliminaTitolo(Titolo)"></td> 
+          <td><img src="img/edit.png" style="width:20px;height:auto;" ng-click="ModificaTitolo(Titolo)"></td>        
+          <td class="off">{{Titolo.Titolo | uppercase}}</td>  
+          <td class="off">{{Titolo.NomeMateria | uppercase}}</td>
+          <td class="off">{{Titolo.Autori | uppercase}} </td> 
+          <td class="off">{{Titolo.Pos_Magazzino | uppercase}}</td> 
+          <td class="off">{{Titolo.Q_Magazzino}}</td>
+          <td class="off">{{Titolo.Q_MagazzinoVolante}}</td>        
+        </tr>    
+      </table>
+      <md-table-pagination md-limit="GridOptions.query.limit" 
+                           md-limit-options="GridOptions.limitOptions" 
+                           md-page="GridOptions.query.page" 
+                           md-total="{{ListaTitoli.length}}" 
+                           md-page-select="GridOptions.pageSelect" 
+                           md-boundary-links="GridOptions.boundaryLinks" 
+                           md-on-paginate="logPagination"></md-table-pagination>
+    </div>
+    <p ng-if="ListaTitoli.length == 0" style="font-weight:bold;font-style:italic;text-align:center;">NESSUN TITOLO PRESENTE</p>
+  </div>
+  
+  <div ng-if="EditingOn">
+  <form name="titoloEditForm" layout="column" style="width:100%" ng-submit="ConfermaTitolo()" novalidate>
+       <div layout="row">
+         <h2>TITOLO</h2>
+         <div layout="row" style="width:100%;" layout-align="end start">
+           <md-button class="md-raised md-accent" style="font-weight:bold;" type="submit">CONFERMA</md-button>
+           <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="OnAnnullaTitoloClicked()">ANNULLA</md-button>
+         </div>
+       </div>
+       
+       <md-tabs style="width:100%;" md-selected="selectedTitoliClassi" md-border-bottom md-autoselect md-dynamic-height md-swipe-content>
+           <md-tab label="Generale">
+           <br>
+           <br>
+           <div layout="column">
+             <div layout="row">
+               <md-input-container style="width:20%;">
+                 <label>CODICE ISBN</label><input ng-model="TitoloInEditing.Codice" type="text" name="Codice" required>
+                 <div ng-messages="TitoloEditForm.Codice.$error" multiple md-auto-hide="true">
+                   <div ng-message="required">Inserire il codice ISBN del titolo</div>
+                 </div>
+               </md-input-container>        
+               <md-input-container class="containerSelect" style="width:20%;">             
+                 <label>MATERIA</label>
+                 <md-select ng-model="TitoloInEditing.Materia" class="mdb-select" type="text" name="Materia" aria-label="Materia" required>
+                 <md-optgroup>
+                   <md-option ng-value="-1">-</md-option>  
+                   <md-option ng-repeat="materia in ListaMaterie" ng-value="materia.Chiave">{{materia.Materia}}</md-option>         
+                 </md-optgroup>
+                 </md-select>
+                 <div ng-messages="TitoloEditForm.Materia.$error" multiple md-auto-hide="true">
+                   <div ng-message="required">Inserire la materia del titolo</div>
+                 </div>
+               </md-input-container> 
+             </div>
+             
+             <div layout="row"> 
+               <md-input-container flex=90>
+                 <label>TITOLO</label><input ng-model="TitoloInEditing.Titolo" type="text" name="Titolo" required>
+                 <div ng-messages="TitoloEditForm.Nome.$error" multiple md-auto-hide="true">
+                   <div ng-message="required">Inserire il nome del titolo</div>
+                 </div>
+               </md-input-container> 
+               <md-input-container flex=10>
+                   <!--<label>VOLUME</label><input ng-model="TitoloInEditing.Volume" type="number" value="0" max="99" name="Volume">-->
+                   <md-select ng-model="TitoloInEditing.Volume" class="mdb-select">
+                   <md-optgroup>
+                     <md-option ng-repeat="Volume in SelectVolumiTitolo" ng-value="$index">{{Volume}}</md-option>         
+                   </md-optgroup>                   
+               </md-input-container>
+             </div>
+             
+             <md-input-container flex=100>
+               <label>SOTTOTITOLO</label><input ng-model="TitoloInEditing.Sottotitolo" type="text" name="Sottotitolo">
+             </md-input-container>            
+             <md-input-container flex=100>
+                 <label>AUTORI</label><input ng-model="TitoloInEditing.Autori" type="text" name="Autori">
+             </md-input-container>             
+             
+             <div layout="row">
+               <md-input-container flex=50>
+                   <label>EDITORE</label><input ng-model="TitoloInEditing.Editore" type="text" name="Editore">
+               </md-input-container>
+               <md-input-container>
+                   <label>PREZZO</label><input ng-model="TitoloInEditing.Prezzo" type="text" name="Prezzo">
+               </md-input-container>
+             </div>
+             
+             <div layout="row"> 
+               <md-input-container flex=20>
+                   <label>QT. MAGAZZINO</label><input ng-model="TitoloInEditing.Q_Mgzn" type="number" min=0 name="Q_Mgzn">
+               </md-input-container>
+               <md-input-container flex=20>
+                   <label>POS. MAGAZZINO</label><input ng-model="TitoloInEditing.Pos_Magazzino" type="text" name="Pos_Magazzino">
+               </md-input-container>             
+               <md-input-container flex=20>
+                   <label>QT. VOLANTE</label><input ng-model="TitoloInEditing.Q_Mgzn_Vol" type="number" min=0 name="Q_Mgzn_Vol">
+               </md-input-container>
+             </div>
+           </div>             
+                         
+           <md-tab label="Adozioni">                    
+             <md-button class="md-accent md-raised" style="font-weight:bold;" ng-click="AggiungiIstituto($event)">
+               Aggiungi istituto di adozione
+             </md-button>
+             <md-button class="md-accent md-raised" style="font-weight:bold;" ng-click="DissociaIstituto(IstitutoVisualizzato)">
+               Dissocia l'istituto di adozione
+             </md-button>
+             <md-input-container class="containerSelect" style="width:33%;"><label>ISTITUTO</label>
+               <md-select ng-model="IstitutoVisualizzato" class="mdb-select" type="text"  name="IstitutoVisualizzato">
+                 <md-option ng-repeat="istitutoVis in TitoloInEditing.ListaIstitutiTit" ng-value="istitutoVis.CHIAVE" >{{istitutoVis.ISTITUTO}}</md-option>
+               </md-optgroup>
+               </md-select>
+             </md-input-container>
+             
+             <md-button class="md-raised md-accent" style="text-width:bold;" ng-click="NuovaAdozione($event,IstitutoVisualizzato,TitoloInEditing.Titolo)">INSERISCI NUOVA ADOZIONE</md-button>                                      
+             <table style="width:100%;text-align:center;" md-row-select="GridOptions2.rowSelection" multiple="{{GridOptions2.multiSelect}}">  
+               <tr>
+                 <th></th>
+                 <th></th> 
+                 <th>CLASSE</th>
+               </tr>  
+               <tr ng-repeat="Adozione in GetAdozioniSelected(IstitutoVisualizzato) | limitTo : GridOptions2.query.limit : (GridOptions2.query.page - 1) * GridOptions2.query.limit" id={{Adozione.CHIAVE}}> 
+                 <td><img src="img/delete.png" style="width:20px;height:auto;" ng-click="EliminaAdozione(Adozione)"></td> 
+                 <td><img src="img/edit.png" style="width:20px;height:auto;" ng-click="ModificaAdozione(Adozione)"></td>        
+                 <td class="off">{{Adozione.ANNO}}{{Adozione.SEZIONE}}</td>                         
+               </tr>    
+             </table>
+             <md-table-pagination md-limit="GridOptions2.query.limit" 
+                                  md-limit-options="GridOptions2.limitOptions" 
+                                  md-page="GridOptions2.query.page" 
+                                  md-total="{{GetAdozioniSelected(IstitutoVisualizzato).length}}" 
+                                  md-page-select="GridOptions2.pageSelect" 
+                                  md-boundary-links="GridOptions2.boundaryLinks" 
+                                  md-on-paginate="logPagination"></md-table-pagination>
+             
+           </md-tab>    
+       </md-tabs>
+     
+  </form>        
+  </div> 
+</div>

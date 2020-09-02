@@ -1,0 +1,23 @@
+{ 
+ "SelectSQL" : [
+                 { 
+                   "Name" : "UserInfoList",
+                   "SQL"  : "SELECT * FROM utenti WHERE ELIMINATO <> 1 ORDER BY utenti.USERNAME" 
+                 }
+               ],
+ 
+ "EditSQL"  : [   
+                {
+                  "Name" : "InsertUser",
+                  "SQL"  : "INSERT INTO utenti (CHIAVE,USERNAME,RAGIONE_SOCIALE,EMAIL,ROLE,PASSWORD) VALUES (:NewKey1,#USERNAME,#RAGIONE_SOCIALE,#EMAIL,:ROLE,'')"
+                }, 
+                {
+                  "Name" : "UpdateUser",
+                  "SQL"  : "UPDATE utenti SET USERNAME=#USERNAME,RAGIONE_SOCIALE=#RAGIONE_SOCIALE,EMAIL=#EMAIL,ROLE=:ROLE WHERE CHIAVE=:CHIAVE"
+                },
+                {
+                  "Name" : "DeleteUser",
+                  "SQL"  : "UPDATE utenti SET ELIMINATO=1 WHERE CHIAVE=:CHIAVE"
+                }
+              ]        
+}

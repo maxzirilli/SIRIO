@@ -1,0 +1,23 @@
+{ 
+  "SelectSQL" : [
+                  { 
+                    "Name" : "InstituteExclTypeInfoList",
+                    "SQL"  : "SELECT * FROM tipologie_escluse_istituto ORDER BY tipologie_escluse_istituto.DESCRIZIONE" 
+                  }
+                ],
+                
+  "EditSQL"   : [   
+                  {
+                    "Name" : "InsertInstituteExclType",
+                    "SQL"  : "INSERT INTO tipologie_escluse_istituto (CHIAVE,DESCRIZIONE) VALUES (:NewKey1,#DESCRIZIONE)"
+                  }, 
+                  {
+                    "Name" : "UpdateInstituteExclType",
+                    "SQL"  : "UPDATE tipologie_escluse_istituto SET DESCRIZIONE=#DESCRIZIONE WHERE CHIAVE=:CHIAVE"
+                  },
+                  {
+                    "Name" : "DeleteInstituteExclType",
+                    "SQL"  : "DELETE FROM tipologie_escluse_istituto WHERE CHIAVE=:CHIAVE"
+                  }
+                ]        
+}

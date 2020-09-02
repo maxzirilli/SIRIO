@@ -1,0 +1,81 @@
+md-toolbar,.md-button.md-primary,md-icon
+{
+  background-color : #85683a!important;
+}
+
+h3 
+{
+  color : #85683a!important;
+}
+
+.page-container 
+{
+  padding : 32px; 
+}
+
+.page 
+{
+  margin     : 0 auto;
+  padding    : 24px;
+  max-width  : 80%;
+  box-shadow : 0 1px 2px 1px rgba(0, 0, 0, 0.25); 
+}
+  
+.menu
+{
+  color     : white;
+  font-size : 30px;
+  padding   : 18px;
+}
+
+th
+{
+  background-color : orange;
+  font-weight      : bold;  
+}
+
+table,th,td 
+{  
+  border          : 1px solid white;  
+  border-collapse : collapse;  
+  padding         : 5px;  
+}   
+
+table tr:nth-child(odd) 
+{  
+  background-color : fae9cf;  
+}  
+
+table tr:nth-child(even) 
+{  
+  background-color : #ffffff;  
+}  
+
+.off 
+{ 
+  pointer-events: none;
+}
+
+.md-dialog-content 
+{
+  max-width : 50%;
+}
+
+.MainButton
+{
+  color     : white;
+  font-size : 22px;
+  padding   : 10px;
+}
+
+.MainIcon
+{
+  width        : 20px;
+  height       : auto;
+  margin-right : 10px
+}
+
+.invert 
+{ 
+  filter : invert(100%); 
+}

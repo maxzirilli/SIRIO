@@ -1,0 +1,14 @@
+{  
+  "SelectSQL"       : [
+                        {
+                          "Name" : "GetCompanyData",
+                          "SQL"  : "SELECT * FROM configurazione_ditta"
+                        }
+                      ],  
+  "EditSQL"         : [
+                        {
+                          "Name" : "UpdateCompanyData",
+                          "SQL"  : "UPDATE configurazione_ditta SET INDIRIZZO=#INDIRIZZO,TELEFONO=#TELEFONO,EMAIL=#EMAIL,SITO_WEB=#SITO_WEB"
+                        }  
+                      ]
+}

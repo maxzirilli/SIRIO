@@ -1,0 +1,144 @@
+<div ng-controller="configurationsListPageController">
+  
+  <div style="text-align:center;">
+  <h2>CONFIGURAZIONI</h2>
+  <md-input-container class="containerSelect" style="width:20%;">
+     <md-select ng-model="ConfigurazioneSelezionata" placeholder="Configurazione" style="font-size:20px;" class="mdb-select" type="text" name="Configurazione" aria-label="Configurazione">
+     <md-optgroup>
+       <md-option ng-repeat="configurazione in ListaConfigurazioni" ng-value="$index">{{configurazione}}</md-option>
+     </md-optgroup>
+     </md-select>
+   </md-input-container>
+  </div>
+  
+  <div ng-if="ConfigurazioneSelezionata==0">
+      <div>
+        <h2 style="float:left;">LISTA MATERIE</h2>
+        <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaMateria()">INSERISCI NUOVA MATERIA</md-button>
+      </div>
+      <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
+        <tr>
+          <th></th>
+          <th></th> 
+          <th style="font-weight:bold;">MATERIA</th>
+        </tr>  
+        <tr ng-repeat="materia in ListaMaterie | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{materia.Chiave}}>
+          <td><img src="img/delete.png" style="width:20px;height:auto;" ng-click="EliminaMateria(materia)"></td> 
+          <td><img src="img/edit.png" style="width:20px;height:auto;" ng-click="ModificaMateria(materia)"></td>        
+          <td class="off">{{materia.Descrizione | uppercase}}</td>
+        </tr>    
+      </table>
+      <md-table-pagination md-limit="GridOptions.query.limit" 
+                           md-limit-options="GridOptions.limitOptions" 
+                           md-page="GridOptions.query.page" 
+                           md-total="{{ListaMaterie.length}}" 
+                           md-page-select="GridOptions.pageSelect" 
+                           md-boundary-links="GridOptions.boundaryLinks" 
+                           md-on-paginate="logPagination"></md-table-pagination>
+    </div>
+    
+    <div ng-if="ConfigurazioneSelezionata==1">
+      <div>
+        <h2 style="float:left;">LISTA TIPOLOGIE ISTITUTO</h2>
+        <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaTipologia()">INSERISCI NUOVA TIPOLOGIA</md-button>
+      </div>
+      <table style="width:100%;text-align:center;" md-row-select="GridOptions_2.rowSelection" multiple="{{GridOptions_2.multiSelect}}">  
+        <tr>
+          <th></th>
+          <th></th> 
+          <th style="font-weight:bold;">TIPOLOGIA</th>
+        </tr>  
+        <tr ng-repeat="tipologia in ListaTipologie | limitTo : GridOptions_2.query.limit : (GridOptions_2.query.page - 1) * GridOptions_2.query.limit" id={{tipologia.Chiave}}>
+          <td><img src="img/delete.png" style="width:20px;height:auto;" ng-click="EliminaTipologia(tipologia)"></td> 
+          <td><img src="img/edit.png" style="width:20px;height:auto;" ng-click="ModificaTipologia(tipologia)"></td>        
+          <td class="off">{{tipologia.Descrizione | uppercase}}</td>
+        </tr>    
+      </table>
+      <md-table-pagination md-limit="GridOptions_2.query.limit" 
+                           md-limit-options="GridOptions_2.limitOptions" 
+                           md-page="GridOptions_2.query.page" 
+                           md-total="{{ListaTipologie.length}}" 
+                           md-page-select="GridOptions_2.pageSelect" 
+                           md-boundary-links="GridOptions_2.boundaryLinks" 
+                           md-on-paginate="logPagination"></md-table-pagination>
+    </div>
+    
+    <div ng-if="ConfigurazioneSelezionata==2">
+      <div>
+        <h2 style="float:left;">LISTA TIPOLOGIE ESCLUSE ISTITUTO</h2>
+        <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaTipologiaEsclusa()">INSERISCI NUOVA TIPOLOGIA ESCLUSA</md-button>
+      </div>
+      <table style="width:100%;text-align:center;" md-row-select="GridOptions_3.rowSelection" multiple="{{GridOptions_3.multiSelect}}">  
+        <tr>
+          <th></th>
+          <th></th> 
+          <th style="font-weight:bold;">TIPOLOGIA</th>
+        </tr>  
+        <tr ng-repeat="tipologiaEsclusa in ListaTipologieEscluse | limitTo : GridOptions_3.query.limit : (GridOptions_3.query.page - 1) * GridOptions_3.query.limit" id={{tipologiaEsclusa.Chiave}}>
+          <td><img src="img/delete.png" style="width:20px;height:auto;" ng-click="EliminaTipologiaEsclusa(tipologiaEsclusa)"></td> 
+          <td><img src="img/edit.png" style="width:20px;height:auto;" ng-click="ModificaTipologiaEsclusa(tipologiaEsclusa)"></td>        
+          <td class="off">{{tipologiaEsclusa.Descrizione | uppercase}}</td>
+        </tr>    
+      </table>
+      <md-table-pagination md-limit="GridOptions_3.query.limit" 
+                           md-limit-options="GridOptions_3.limitOptions" 
+                           md-page="GridOptions_3.query.page" 
+                           md-total="{{ListaTipologieEscluse.length}}" 
+                           md-page-select="GridOptions_3.pageSelect" 
+                           md-boundary-links="GridOptions_3.boundaryLinks" 
+                           md-on-paginate="logPagination"></md-table-pagination>
+    </div>
+    
+    <div ng-if="ConfigurazioneSelezionata==3">
+      <div>
+        <h2 style="float:left;">LISTA PROVINCE GESTITE</h2>
+        <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaProvincia()">INSERISCI NUOVA PROVINCIA</md-button>
+      </div>
+      <table style="width:100%;text-align:center;" md-row-select="GridOptions_4.rowSelection" multiple="{{GridOptions_4.multiSelect}}">  
+        <tr>
+          <th></th>
+          <th></th> 
+          <th style="font-weight:bold;">NOME</th>
+        </tr>  
+        <tr ng-repeat="provincia in ListaProvince | limitTo : GridOptions_4.query.limit : (GridOptions_4.query.page - 1) * GridOptions_4.query.limit" id={{provincia.Chiave}}>
+          <td><img src="img/delete.png" style="width:20px;height:auto;" ng-click="EliminaProvincia(provincia)"></td> 
+          <td><img src="img/edit.png" style="width:20px;height:auto;" ng-click="ModificaProvincia(provincia)"></td>        
+          <td class="off">{{provincia.Nome}}</td>
+        </tr>    
+      </table>
+      <md-table-pagination md-limit="GridOptions_4.query.limit" 
+                           md-limit-options="GridOptions_4.limitOptions" 
+                           md-page="GridOptions_4.query.page" 
+                           md-total="{{ListaProvince.length}}" 
+                           md-page-select="GridOptions_4.pageSelect" 
+                           md-boundary-links="GridOptions_4.boundaryLinks" 
+                           md-on-paginate="logPagination"></md-table-pagination>
+    </div>
+    
+    <div ng-if="ConfigurazioneSelezionata==4">
+      <form name="DittaEditForm" layout="column" style="width:100%" ng-submit="ConfermaDati()">
+        <div>    
+          <h2 style="float:left;">DATI DITTA</h2>
+          <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" type="submit">CONFERMA</md-button>
+          <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="AnnullaDati()">ANNULLA</md-button>
+        </div>
+        <br>
+        <div layout="row">
+          <md-input-container style="width:25%;">
+            <label>INDIRIZZO</label><input ng-model="DatiDitta.INDIRIZZO" type="text" name="Indirizzo">
+          </md-input-container>
+          <md-input-container style="width:25%;">
+            <label>TELEFONO</label><input ng-model="DatiDitta.TELEFONO" type="text" name="Telefono">
+          </md-input-container>
+          <md-input-container style="width:25%;">
+            <label>EMAIL</label><input ng-model="DatiDitta.EMAIL" type="text" name="Email">
+          </md-input-container>  
+          <md-input-container style="width:25%;">
+            <label>SITO WEB</label><input ng-model="DatiDitta.SITO_WEB" type="text" name="SitoWeb">
+          </md-input-container>
+        </div>
+      </form>
+    </div>
+
+
+</div>

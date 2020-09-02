@@ -1,0 +1,50 @@
+<md-dialog>
+  <form ng-cloak name="PopupSpedizioneTitoloForm">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>TITOLO</h2>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+      <div class="md-dialog-content">
+      <md-input-container class="containerSelect" style="width:500px">
+          <label>TITOLO</label>
+          <md-autocomplete
+                      md-input-name="TitoloSpedizione"
+                      md-autofocus="true"
+                      md-no-cache="true"
+                      md-select-item="TitoloPopup"
+                      md-selected-item-change = "selectedItemChangeTitolo(item)"
+                      md-search-text="searchTextTit"
+                      md-items="item in queryTitolo(searchTextTit)"
+                      md-item-text="item.Nome"
+                      md-require-match="true"
+                      md-clear-button="true">
+          <md-item-template>
+            <span md-highlight-text="searchText">{{item.Codice}} - {{item.Nome}}</span>
+          </md-item-template>
+        </md-input-container> 
+        
+        <md-input-container class="containerSelect"><label>QUANTITA</label>         
+          <input ng-model="Titolo.QUANTITA" type="number" min=1 name="Quantita">                           
+        </md-input-container> 
+        <br>
+        <md-radio-group ng-model="Titolo.STATO">
+          <md-radio-button value="P">PRENOTATO</md-radio-button>
+          <md-radio-button value="S" ng-if="Titolo.QUANTITA <= Titolo.QUANTITA_MGZN">DA SPEDIRE</md-radio-button>
+          <md-radio-button value="C">CONSEGNATO</md-radio-button>
+        </md-radio-group>  
+      </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ConfermaPopupTitolo($event)">
+       CONFERMA
+      </md-button>
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="AnnullaPopupTitolo()">
+       ANNULLA
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

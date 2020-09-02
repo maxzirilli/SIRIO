@@ -1,0 +1,9 @@
+{
+  "SelectSQL" : [
+                  { 
+                     "Name" : "UserInformation",
+                     "SQL"  : "SELECT ROLE FROM utenti WHERE CHIAVE = :KeyAccount" 
+                  }
+                ]
+                
+}

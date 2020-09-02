@@ -1,0 +1,44 @@
+<md-dialog>
+  <form ng-cloak name="PopupCaricoTitoloForm">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Carica titolo</h2>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+      <div class="md-dialog-content" layout="column">
+        <md-input-container class="containerSelect" style="margin-right:10px;width:600px;" >
+          <md-autocomplete 
+                      md-input-name="TitoloCarico"
+                      md-autofocus="true"
+                      md-no-cache="true"
+                      md-select-item="TitoloPopup"
+                      md-selected-item-change = "selectedItemChangeTitolo(item)"
+                      md-search-text="searchTextTit"
+                      md-items="item in queryTitolo(searchTextTit)"
+                      md-item-text="item.Nome"
+                      md-require-match="true"
+                      md-clear-button="true">
+          <md-item-template>
+            <span md-highlight-text="searchText">{{item.Codice}} - {{item.Nome}}</span>
+          </md-item-template>
+        </md-input-container> 
+        
+        <md-input-container class="containerSelect" ng-if="MaxQuantita >= 1"><label>QUANTITA</label>         
+          <input ng-model="Titolo.QUANTITA" type="number" min=1 max="{{MaxQuantita}}" name="Quantita">
+          <!--<p ng-if="Titolo.QUANTITA = MaxQuantita" style="color:red;">MASSIMO SELEZIONABILE RAGGIUNTO"</p>-->          
+        </md-input-container>  
+      </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ConfermaPopupTitolo($event)">
+       CONFERMA
+      </md-button>
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="AnnullaPopupTitolo()">
+       ANNULLA
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

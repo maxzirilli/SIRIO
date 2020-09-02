@@ -1,0 +1,35 @@
+<md-dialog aria-label="Aggiungi istituto di appartenenza">
+  <form ng-cloak name="PopupForm">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Aggiungi istituto di appartenenza</h2>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+      <div class="md-dialog-content">
+        <h2>Seleziona istituto</h2>
+        <md-input-container class="containerSelect"><label>Filtra per nome...</label>
+          <input ng-model="NomeFiltro" type="search">
+        </md-input-container>
+        <md-input-container class="containerSelect"><label>ISTITUTO</label>
+          <md-select ng-model="IstitutoDaAssociare" class="mdb-select" type="text" name="istitutoDaAssociare">
+            <md-option ng-repeat="istituto in ListaIstitutiPopup | IstitutoByNomeFiltro: NomeFiltro" ng-value="{{istituto.Chiave}}">{{istituto.Istituto}}</md-option>
+          </md-select>
+          <div ng-messages="PopupForm.istitutoDaAssociare.$error" multiple md-auto-hide="true">
+            <div ng-message="required">Inserire il nome dell'istituto</div>
+          </div>
+        </md-input-container>          
+      </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ConfermaPopup(IstitutoDaAssociare)">
+       CONFERMA
+      </md-button>
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="AnnullaPopup()">
+       ANNULLA
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

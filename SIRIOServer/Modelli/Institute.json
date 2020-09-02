@@ -1,0 +1,61 @@
+{ 
+  "SelectSQL"    : [
+                     { 
+                       "Name" : "InstituteInfoList",
+                       "SQL"  : "SELECT istituti.CHIAVE, istituti.CODICE, istituti.NOME, istituti.PROVINCIA, province.NOME AS NOME_PROVINCIA, utenti.USERNAME AS PROMOTORE FROM province,istituti LEFT OUTER JOIN utenti ON (utenti.CHIAVE = istituti.PROMOTORE) WHERE province.CHIAVE = istituti.PROVINCIA ORDER BY istituti.NOME"
+                     }                       
+                   ],
+
+  "SQLDettaglio" : [
+                     { 
+                       "Name" : "InstituteDettaglio",
+                       "SQL"  : "SELECT * FROM istituti WHERE CHIAVE=:CHIAVE"
+                     },
+                     {
+                       "Name" : "ClassiInstitute",
+                       "SQL"  : "SELECT * FROM classi WHERE ISTITUTO=:CHIAVE ORDER BY classi.SEZIONE"
+                     }
+                   ],
+  
+  "GetAdozioniClasse" : [
+                          {
+                            "Name" : "GetAdoptionClass",
+                            "SQL"  : "SELECT COUNT(*) AS COUNT_ADOZIONI FROM adozioni_titolo WHERE CLASSE IN (SELECT CHIAVE FROM CLASSI WHERE ISTITUTO = :Istituto AND ANNO = :Anno AND SEZIONE = #Sezione)"
+                          }
+                        ],
+
+  "EditSQL"      : [   
+                     {
+                       "Name" : "InsertInstitute",
+                       "SQL"  : "INSERT INTO istituti (CHIAVE,CODICE,NOME,TIPOLOGIA,INDIRIZZO,COMUNE,PROVINCIA,CAP,EMAIL,PEC,SITO_WEB,SEDE,REFERENTE_1,TELEFONO_1,REFERENTE_2,TELEFONO_2,REFERENTE_3,TELEFONO_3,PROMOTORE) VALUES(:NewKey1,#CODICE,#NOME,:TIPOLOGIA,#INDIRIZZO,#COMUNE,:PROVINCIA,#CAP,#EMAIL,#PEC,#SITO_WEB,:SEDE,#REFERENTE_1,#TELEFONO_1,#REFERENTE_2,#TELEFONO_2,#REFERENTE_3,#TELEFONO_3,:PROMOTORE)"
+                     },
+                     {
+                       "Name" : "InsertClass",
+                       "SQL"  : "INSERT INTO classi (CHIAVE,ANNO,SEZIONE,ISTITUTO) VALUES (:NewKey1,#ANNO,#SEZIONE,:ISTITUTO)"
+                     }, 
+                     {
+                       "Name" : "InsertClassAfterInsert",
+                       "SQL"  : "INSERT INTO classi (CHIAVE,ANNO,SEZIONE,ISTITUTO) VALUES (:NewKey2,#ANNO,#SEZIONE,:NewKey1)"
+                     },                     
+                     {
+                       "Name" : "UpdateInstitute",
+                       "SQL"  : "UPDATE istituti SET CODICE=#CODICE,NOME=#NOME,TIPOLOGIA=:TIPOLOGIA,PROVINCIA=:PROVINCIA,COMUNE=#COMUNE,INDIRIZZO=#INDIRIZZO,CAP=#CAP,EMAIL=#EMAIL,PEC=#PEC,SITO_WEB=#SITO_WEB,SEDE=:SEDE,TELEFONO_1=#TELEFONO_1,REFERENTE_1=#REFERENTE_1,TELEFONO_2=#TELEFONO_2,REFERENTE_2=#REFERENTE_2,TELEFONO_3=#TELEFONO_3,REFERENTE_3=#REFERENTE_3,PROMOTORE=:PROMOTORE WHERE CHIAVE=:CHIAVE"
+                     },
+                     {
+                       "Name" : "DeleteInstitute",
+                       "SQL"  : "DELETE FROM istituti WHERE CHIAVE=:CHIAVE"
+                     },
+                     {
+                       "Name" : "DeleteClass",
+                       "SQL"  : "DELETE FROM classi WHERE ISTITUTO=:ISTITUTO AND SEZIONE = #SEZIONE AND ANNO = :ANNO"
+                     },
+                     {
+                       "Name" : "DeleteAdoption",
+                       "SQL"  : "DELETE FROM adozioni_titolo WHERE CLASSE IN (SELECT CHIAVE FROM classi WHERE ISTITUTO=:ISTITUTO AND SEZIONE=#SEZIONE AND ANNO=:ANNO)"
+                     },
+                     {
+                       "Name" : "UpdateDatabaseInstitute",
+                       "SQL"  : "CALL AGGIORNA_ISTITUTO(#CodiceIstituto,#NomeIstituto,#IndirizzoIstituto,:ProvinciaIstituto,#ComuneIstituto,#CapIstituto,#EmailIstituto,#PecIstituto,#SitoWebIstituto,:SedeIstituto,#TipologiaIstituto)"
+                     }
+                   ]        
+}

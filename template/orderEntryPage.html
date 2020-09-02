@@ -1,0 +1,86 @@
+<div ng-controller="orderEntryPageController">
+  <div ng-if="!EditingOn">
+    <div>
+      <h2 style="float:left;">LISTA ORDINI IN INGRESSO</h2>
+      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoOrdine()">INSERISCI NUOVO ORDINE</md-button>
+    </div>
+    <div ng-if="ListaOrdini.length != 0">
+      <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
+        <tr>
+          <th></th>
+          <th></th> 
+          <th>DATA</th>
+          <th>TITOLO</th>
+          <th>QUANTITA'</th>
+        </tr>      
+        <tr ng-repeat="ordine in ListaOrdini | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{ordine.Chiave}}>
+          <td><img src="img/delete.png" style="width:20px;height:auto;" ng-click="EliminaOrdine(ordine)"></td> 
+          <td><img src="img/edit.png" style="width:20px;height:auto;" ng-click="ModificaOrdine(ordine)"></td>        
+          <td class="off">{{ConvertiData(ordine)}}</td>
+          <td class="off">{{ordine.Nome_Titolo}}</td>
+          <td class="off">{{ordine.Quantita}}</td>
+        </tr>    
+      </table>
+      <md-table-pagination md-limit="GridOptions.query.limit" 
+                           md-limit-options="GridOptions.limitOptions" 
+                           md-page="GridOptions.query.page" 
+                           md-total="{{ListaOrdini.length}}" 
+                           md-page-select="GridOptions.pageSelect" 
+                           md-boundary-links="GridOptions.boundaryLinks" 
+                           md-on-paginate="logPagination"></md-table-pagination>
+      </div>
+    <p ng-if="ListaOrdini.length == 0" style="font-weight:bold;font-style:italic;text-align:center;">NESSUN ORDINE PRESENTE</p>
+  </div>
+  
+  <div ng-if="EditingOn">
+  <form name="ordineIngressoEditForm" layout="column" style="width:100%" ng-submit="ConfermaOrdine()">
+    <div layout="row">
+      <h2>ORDINE DI INGRESSO</h2>
+      <div layout="row" style="width:100%;" layout-align="end start">
+        <md-button class="md-raised md-accent" style="font-weight:bold;" type="submit">CONFERMA</md-button>
+        <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="OnAnnullaOrdineClicked()">ANNULLA</md-button>
+      </div>
+    </div>
+       
+    <br>
+    <br>
+    <div layout="column">
+      <md-input-container style="width:33%;">
+        <label>DATA</label><input ng-model="OrdineInEditing.Data" type="date" name="Data" required>
+        <div ng-messages="ordineIngressoEditForm.Data.$error" multiple md-auto-hide="true">
+          <div ng-message="required">Inserire la data dell'ordine</div>
+        </div>
+      </md-input-container> 
+      <div layout="row">      
+        <md-input-container flex=10>
+          <label>QUANTITA'</label><input ng-model="OrdineInEditing.Quantita" type="number" min=1 name="Quantita" required>
+          <div ng-messages="ordineIngressoEditForm.Nome.$error" multiple md-auto-hide="true">
+            <div ng-message="required">Inserire la quantità del titolo da ordinare</div>
+          </div>
+        </md-input-container> 
+        <md-input-container flex=90>
+          <label>TITOLO</label>        
+          <md-autocomplete required
+                      md-input-name="Titolo"
+                      md-autofocus="true"
+                      md-no-cache="true"
+                      md-selected-item="TitoloVisualizzato"
+                      md-selected-item-change = "selectedItemChangeTitolo(item)"
+                      md-search-text="searchTextTit"
+                      md-items="item in queryTitolo(searchTextTit)"
+                      md-item-text="item.Nome"
+                      md-require-match="true"
+                      md-clear-button="true">
+          <md-item-template>
+            <span md-highlight-text="searchText">{{item.Codice}} - {{item.Nome}}</span>
+          </md-item-template>
+          <div ng-messages="ordineIngressoEditForm.Titolo.$error" multiple md-auto-hide="true">
+            <div ng-message="required">Inserire il titolo da ordinare</div>
+          </div>
+        </md-input-container>
+      </div>
+    </div>         
+  </form>        
+  </div> 
+</div>
+    

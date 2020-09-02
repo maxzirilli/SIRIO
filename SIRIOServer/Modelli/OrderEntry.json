@@ -1,0 +1,23 @@
+{ 
+  "SelectSQL"    : [
+                     { 
+                       "Name" : "OrderEntryInfoList",
+                       "SQL"  : "SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE titoli.CHIAVE = ordini_ingresso.TITOLO) AS NOME_TITOLO FROM ordini_ingresso ORDER BY DATA"
+                     }                  
+                   ],
+  
+  "EditSQL"      : [
+                     {
+                       "Name" : "InsertOrderEntry", 
+                       "SQL"  : "INSERT INTO ordini_ingresso (CHIAVE,DATA,TITOLO,QUANTITA) VALUES (:NewKey1,#DATA,:TITOLO,:QUANTITA)"                      
+                     },
+                     {
+                       "Name" : "UpdateOrderEntry",
+                       "SQL"  : "UPDATE ordini_ingresso SET DATA=#DATA,TITOLO=:TITOLO,QUANTITA=:QUANTITA WHERE CHIAVE=:CHIAVE"
+                     },
+                     {
+                       "Name" : "DeleteOrderEntry",
+                       "SQL"  : "DELETE FROM ordini_ingresso WHERE CHIAVE=:CHIAVE"
+                     }
+                   ]
+}
