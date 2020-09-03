@@ -194,7 +194,7 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
   
   $scope.RefreshListaIstituti = function()
   {
-    SystemInformation.GetSQL('Institute', {Pippo : 'CODICE'}, function(Results)  
+    SystemInformation.GetSQL('Institute', {}, function(Results)  
     {
       IstitutiInfoLista = SystemInformation.FindResults(Results,'InstituteInfoList');
       if(IstitutiInfoLista != undefined)
