@@ -3,6 +3,7 @@
     <div>
       <h2>DOCENTI</h2>
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoDocente()">INSERISCI NUOVO DOCENTE</md-button>
+      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaSpedizioneMultipla(NomeFiltro)">SPEDIZIONE MULTIPLA</md-button>
     </div>
     
     <div layout="row" style="padding-bottom:0px;">
@@ -87,14 +88,16 @@
           <th></th>
           <th></th>
           <th></th>
-          <th></th>        
+          <th></th>
+          <th></th>          
           <th>RAGIONE SOCIALE</th>
         </tr>  
         <tr ng-repeat="Docente in ListaDocenti | DocenteByFiltro : NomeFiltro : MateriaFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Docente.Chiave}}>
-          <td><img src="img/delete.png" style="width:20px;height:auto;" title="Elimina docente" ng-click="EliminaDocente(Docente)"></td> 
-          <td><img src="img/edit.png" style="width:20px;height:auto;" ng-click="ModificaDocente(Docente)"></td>
-          <td><img src="img/delivery.png" style="width:20px;height:auto;" ng-click="NuovaSpedizione(Docente.Chiave)"></td>
-          <td><img src="img/deliveryList.png" style="width:20px;height:auto;" ng-click="ListaSpedizioni(Docente)"></td>                        
+          <td><img src="img/delete.png" style="width:20px;height:auto;" title="ELIMINA DOCENTE" ng-click="EliminaDocente(Docente)"></td> 
+          <td><img src="img/edit.png" style="width:20px;height:auto;" title="MODIFICA DOCENTE" ng-click="ModificaDocente(Docente)"></td>
+          <td><img src="img/delivery.png" style="width:20px;height:auto;" title="NUOVA SPEDIZIONE" ng-click="NuovaSpedizione(Docente.Chiave)"></td>
+          <td><img src="img/deliveryList.png" style="width:20px;height:auto;" title="LISTA SPEDIZIONI" ng-click="ListaSpedizioni(Docente)"></td>
+          <td><img src="img/email.png" style="width:20px;height:auto;" title="INVIA MAIL" ng-click="InvioMail(Docente)"></td>      
           <td class="off">{{Docente.RagioneSociale}}</td>
         </tr>    
       </table>
@@ -235,8 +238,8 @@
                          <th>ORA</th>
                        </tr>  
                        <tr ng-repeat="Orario in GetOrariSelected(IstitutoVisualizzato) | limitTo : GridOptions2.query.limit : (GridOptions2.query.page - 1) * GridOptions2.query.limit" id={{Orario.CHIAVE}}> <!-- | OrarioByIstituto : IstitutoVisualizzato -->
-                         <td><img src="img/delete.png" style="width:20px;height:auto;" ng-click="EliminaOrario(Orario)"></td> 
-                         <td><img src="img/edit.png" style="width:20px;height:auto;" ng-click="ModificaOrario(Orario)"></td>        
+                         <td><img src="img/delete.png" style="width:20px;height:auto;" title="ELIMINA ORARIO" ng-click="EliminaOrario(Orario)"></td> 
+                         <td><img src="img/edit.png" style="width:20px;height:auto;" title="MODIFICA ORARIO"ng-click="ModificaOrario(Orario)"></td>        
                          <td class="off">{{Orario.MateriaNome == -1 ? '-' : Orario.MateriaNome | uppercase}}</td> 
                          <td class="off">{{Orario.ClasseNome == -1 ? '-' : Orario.ClasseNome | uppercase}}</td>  
                          <td class="off">{{Orario.GiornoNome == -1 ? '-' : Orario.GiornoNome | uppercase}}</td>  

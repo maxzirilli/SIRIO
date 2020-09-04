@@ -28,8 +28,8 @@
           <th>PROMOTORE ASSEGNATO</th>      
         </tr>  
         <tr ng-repeat="Istituto in ListaIstituti | IstitutoByFiltro : ProvinciaFiltro : NomeFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Istituto.Chiave}}>
-          <td><img src="img/delete.png" style="width:20px;height:auto;" ng-click="EliminaIstituto(Istituto)"></td> 
-          <td><img src="img/edit.png" style="width:20px;height:auto;" ng-click="ModificaIstituto(Istituto)"></td>        
+          <td><img src="img/delete.png" style="width:20px;height:auto;" title="ELIMINA ISTITUTO" ng-click="EliminaIstituto(Istituto)"></td> 
+          <td><img src="img/edit.png" style="width:20px;height:auto;" title="MODIFICA ISTITUTO" ng-click="ModificaIstituto(Istituto)"></td>        
           <td class="off">{{Istituto.Codice}}</td>  
           <td class="off">{{Istituto.Nome}}</td>
           <td class="off">{{Istituto.ProvinciaNome}}</td>

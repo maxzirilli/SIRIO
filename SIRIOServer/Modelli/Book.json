@@ -48,7 +48,7 @@
                      },                     
                      {
                        "Name" : "UpdateBook",
-                       "SQL"  : "UPDATE titoli SET CODICE_ISBN=#CODICE_ISBN,TITOLO=#TITOLO,SOTTOTITOLO=#SOTTOTITOLO,MATERIA=:MATERIA,AUTORI=#AUTORI,EDITORE=#EDITORE,VOLUME=#VOLUME,POS_MAGAZZINO=#POS_MAGAZZINO,PREZZO=#PREZZO,QUANTITA_MGZN=#QUANTITA_MGZN,QUANTITA_MGZN_VOL=#QUANTITA_MGZN_VOL WHERE CHIAVE=:CHIAVE"
+                       "SQL"  : "CALL UPDATE_TITOLI_LOG_MAGAZZINI(:ChiaveTitolo,#Codice,#Titolo,#Sottotitolo,:Materia,#Autori,#Editore,:Volume,#Prezzo,#PosMgzn,:QuantitaMgzn,:QuantitaMgznVol)"
                      },
                      {
                        "Name" : "UpdateAdoption",
@@ -87,8 +87,12 @@
                        "SQL"  : "DELETE FROM adozioni_titolo"
                      },
                      {
-                       "Name" : "UpdateDatabaseBookCatalog",
-                       "SQL"  : "CALL AGGIORNA_TITOLI_FROM_CATALOGHI(#CodiceTitolo,#TitoloTitolo,#SottotitoloTitolo,#DescrizioneMateria,#AutoriTitolo,#EditoreTitolo,#PrezzoTitolo,#VolumeTitolo)"
+                       "Name" : "UpdateDatabaseBookCatalogMondadori",
+                       "SQL"  : "CALL AGGIORNA_TITOLI_FROM_CATALOGHI_MONDADORI(#CodiceTitolo,#TitoloTitolo,#SottotitoloTitolo,#DescrizioneMateria,#AutoriTitolo,#EditoreTitolo,#PrezzoTitolo,:VolumeTitolo)"
+                     },
+                     {
+                       "Name" : "UpdateDatabaseBookCatalogDeAgostini",
+                       "SQL"  : "CALL AGGIORNA_TITOLI_FROM_CATALOGHI_DEAGOSTINI(#CodiceTitolo,#TitoloTitolo,#EditoreTitolo,:VolumeTitolo,#PrezzoTitolo)"
                      }
                    ]
 }

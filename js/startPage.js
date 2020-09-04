@@ -69,9 +69,14 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce)
     $state.go("flyingStoragePage");
   }
   
-  $scope.ApriXlsCataloghiUpload = function ()
+  $scope.ApriCsvCataloghiMondadoriUpload = function ()
   {
-    $state.go("csvCatalogPage");
+    $state.go("csvCatalogMondadoriPage");
+  }
+  
+  $scope.ApriCsvCataloghiDeAgostiniUpload = function ()
+  {
+    $state.go("csvCatalogDeAgostiniPage");
   }
   
   $scope.IsAdministrator = function ()
@@ -132,8 +137,9 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce)
                                        "Quantita"        : SpedizioneDettaglio[i].QUANTITA
                                      });
             }
-            var $ObjQuery = { Operazioni : [] }; 
-            var TitoliNonDisponibili = [];            
+            var $ObjQuery            = { Operazioni : [] }; 
+            var TitoliNonDisponibili = [];
+            var TitoliDaSpedire      = [];            
             for(let j = 0;j < ListaTitoliSped.length;j ++)
             {
               if(parseInt(ListaTitoliSped[j].Quantita) <= parseInt(ListaTitoliSped[j].QuantitaMgzn))

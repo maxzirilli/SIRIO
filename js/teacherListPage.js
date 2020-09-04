@@ -1,4 +1,4 @@
-SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','$sce', function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce)
+SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','$sce','$filter', function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
 {
   $scope.ListaDocenti         = [];
   $scope.EditingOn            = false;
@@ -15,6 +15,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   $scope.AProvinciaFiltro     = -1;
   $scope.IstitutoFiltrato     = -1;
   $scope.MateriaFiltro        = -1;
+  SystemInformation.DataBetweenController  = [];
   
   ScopeHeaderController.CheckButtons();
 
@@ -201,15 +202,48 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
           DocentiInfoLista[i] = { 
                                   Chiave         : DocentiInfoLista[i].CHIAVE,
                                   RagioneSociale : DocentiInfoLista[i].RAGIONE_SOCIALE,
-                                  Materia1       : DocentiInfoLista[i].MATERIA_1 == null ? -1 : DocentiInfoLista[i].MATERIA_1,
-                                  Materia2       : DocentiInfoLista[i].MATERIA_2 == null ? -1 : DocentiInfoLista[i].MATERIA_2,
-                                  Materia3       : DocentiInfoLista[i].MATERIA_3 == null ? -1 : DocentiInfoLista[i].MATERIA_3
+                                  Materia1       : DocentiInfoLista[i].MATERIA_1      == null ? -1 : DocentiInfoLista[i].MATERIA_1,
+                                  Materia2       : DocentiInfoLista[i].MATERIA_2      == null ? -1 : DocentiInfoLista[i].MATERIA_2,
+                                  Materia3       : DocentiInfoLista[i].MATERIA_3      == null ? -1 : DocentiInfoLista[i].MATERIA_3,
+                                  Titolo         : DocentiInfoLista[i].TITOLO         == null ? '' : DocentiInfoLista[i].TITOLO,
+                                  Indirizzo      : DocentiInfoLista[i].INDIRIZZO      == null ? '' : DocentiInfoLista[i].INDIRIZZO,
+                                  Comune         : DocentiInfoLista[i].COMUNE         == null ? '' : DocentiInfoLista[i].COMUNE,
+                                  Cap            : DocentiInfoLista[i].CAP            == null ? '' : DocentiInfoLista[i].CAP,
+                                  Provincia      : DocentiInfoLista[i].PROVINCIA      == null ? 0  : DocentiInfoLista[i].PROVINCIA,
+                                  ProvinciaNome  : DocentiInfoLista[i].PROVINCIA_NOME == null ? '' : DocentiInfoLista[i].PROVINCIA_NOME
                                 };
         }
         $scope.ListaDocenti = DocentiInfoLista;
       }
       else SystemInformation.ApplyOnError('Modello docente non conforme','');   
     });
+  }
+  
+  $scope.InvioMail = function (Docente)
+  {
+  }
+  
+  $scope.NuovaSpedizioneMultipla = function (Nome)
+  {
+    var ListaFiltrata = $filter('DocenteByFiltro')($scope.ListaDocenti,Nome,$scope.MateriaFiltro);
+    SystemInformation.DataBetweenController  = { ListaDocSped : []};
+    for(let i = 0; i < ListaFiltrata.length; i ++)
+    {
+        var Docente = {
+                        "ChiaveDocente"        : ListaFiltrata[i].Chiave,
+                        "NomeDocente"          : ListaFiltrata[i].RagioneSociale,
+                        "TitoloDocente"        : ListaFiltrata[i].Titolo,
+                        "IndirizzoDocente"     : ListaFiltrata[i].Indirizzo,
+                        "ComuneDocente"        : ListaFiltrata[i].Comune,
+                        "CapDocente"           : ListaFiltrata[i].Cap,
+                        "ProvinciaDocente"     : ListaFiltrata[i].Provincia,
+                        "ProvinciaDocenteNome" : ListaFiltrata[i].ProvinciaNome                                              
+                      }
+        SystemInformation.DataBetweenController.ListaDocSped.push(Docente);
+    }
+    SystemInformation.DataBetweenController.SpedizioneMultipla = true;
+    SystemInformation.DataBetweenController.Provenienza        = 'TeacherPage'; 
+    $state.go("deliveryModDetailPage");
   }
   
   $scope.GetOrariSelected = function(Istituto)
@@ -1066,34 +1100,13 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
     { 
       $scope.ListaSpedizioniDoc = [];
       $mdDialog.cancel();
-    };
-    
+    };   
     $scope.RefreshListaSpedizioni();    
   }
   
   $scope.RefreshListaDocenti(); 
 
 }]);
-
-SIRIOApp.filter('IstitutoByNomeFiltro',function()
-{
-  return function(ListaIstituti,NomeFiltro)
-         {                    
-           if(NomeFiltro == '') return(ListaIstituti)
-           else
-           {
-             var ListaFiltrata = [];
-             
-             NomeFiltro = NomeFiltro.toUpperCase();
-             ListaIstituti.forEach(function(Istituto) 
-             {
-             if(Istituto.Istituto.toUpperCase().indexOf(NomeFiltro) >= 0) 
-                ListaFiltrata.push(Istituto);
-             });
-             return(ListaFiltrata);
-           }
-         }
-});
 
 SIRIOApp.filter('DocenteByFiltro',function()
 {

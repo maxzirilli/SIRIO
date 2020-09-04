@@ -41,9 +41,9 @@
       <th>STATO</th>
     </tr>
     <tr ng-repeat="Spedizione in ListaSpedizioni | SpedizioneByFiltro : ProvinciaFiltro : PrenotataFiltro : DaSpedireFiltro : ConsegnataFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Spedizione.Chiave}}>
-      <td><img src="img/delete.png" style="width:20px;height:auto;" ng-click="EliminaSpedizione(Spedizione)"></td> 
-      <td><img src="img/edit.png" style="width:20px;height:auto;" ng-click="ModificaSpedizione(Spedizione.Chiave,Spedizione.Docente)"></td>
-      <td><img src="img/toSend.png" style="width:20px;height:auto;" ng-click="PassaADaSpedireDisponibili(Spedizione.Chiave)" ng-if="Spedizione.NrPrenotate > 0"></td>
+      <td><img src="img/delete.png" style="width:20px;height:auto;" title="ELIMINA SPEDIZIONE" ng-click="EliminaSpedizione(Spedizione)"></td> 
+      <td><img src="img/edit.png" style="width:20px;height:auto;" title="MODIFICA SPEDIZIONE" ng-click="ModificaSpedizione(Spedizione.Chiave,Spedizione.Docente)"></td>
+      <td><img src="img/toSend.png" style="width:20px;height:auto;" title="SPEDIRE TITOLI DISPONIBILI" ng-click="PassaADaSpedireDisponibili(Spedizione.Chiave)" ng-if="Spedizione.NrPrenotate > 0"></td>
       <td>{{ConvertiData(Spedizione)}}</td>
       <td>{{Spedizione.Presso}}</td>
       <td ng-bind-html="GetDescrStatoSpedizione(Spedizione)"></td>

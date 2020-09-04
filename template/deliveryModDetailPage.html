@@ -2,13 +2,52 @@
 
     <form name="SpedizioneEditForm" ng-submit="ConfermaSpedizione()" novalidate>
 
-    <h2 style="font-weight:bold;">SPEDIZIONE {{ListaIstitutiDoc.length == 0 ? "" : " A " +  SpedizioneInEditing.DOCENTE_NOME}}</h2>
+    <h2 style="font-weight:bold;" ng-if="!SpedizioneMultipla">SPEDIZIONE {{SpedizioneInEditing.DOCENTE_NOME == undefined ? "" : " PER " +  SpedizioneInEditing.DOCENTE_NOME}}</h2>
+    <h2 style="font-weight:bold;" ng-if="SpedizioneMultipla">SPEDIZIONE MULTIPLA</h2>
     <div layout="row" layout-align="end start">
       <md-button class="md-raised md-accent" style="font-weight:bold;" type="submit">CONFERMA</md-button>
       <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="OnAnnullaSpedizione()">ANNULLA</md-button>
     </div>
     <md-tabs style="width:100%;" md-selected="selectedSpedizioneTitoli" md-border-bottom md-autoselect md-dynamic-height md-swipe-content>
-      <md-tab label="Generale">
+      <md-tab label="Dati spedizione" ng-if="SpedizioneMultipla">
+          <md-input-container style="width:33%;">
+            <label>DATA</label><input ng-model="SpedizioneInEditing.DATA" type="date">
+          </md-input-container>
+          <div layout="column">
+            <p style="font-weight:bold;">SPEDIZIONE PER I SEGUENTI DOCENTI :</p>
+            <table style="width:100%;text-align:center;" md-row-select="GridOptions2.rowSelection" multiple="{{GridOptions2.multiSelect}}">  
+               <tr>                      
+                 <th>DOCENTE</th>
+                 <th>INDIRIZZO</th>
+                 <th>COMUNE</th>
+                 <th>CAP</th>
+                 <th>PROVINCIA</th>
+               </tr>  
+               <tr ng-repeat="Docente in ListaDocentiSpedizione | limitTo : GridOptions2.query.limit : (GridOptions2.query.page - 1) * GridOptions2.query.limit">
+                 <td>{{Docente.NomeDocente}}</td>
+                 <td>{{Docente.IndirizzoDocente}}</td> 
+                 <td>{{Docente.ComuneDocente}}</td>
+                 <td>{{Docente.CapDocente}}</td>
+                 <td>{{Docente.ProvinciaDocenteNome}}</td>                        
+               </tr>    
+             </table>
+             <md-table-pagination md-limit="GridOptions2.query.limit" 
+                                  md-limit-options="GridOptions2.limitOptions" 
+                                  md-page="GridOptions2.query.page" 
+                                  md-total="{{ListaDocentiSpedizione.length}}" 
+                                  md-page-select="GridOptions2.pageSelect" 
+                                  md-boundary-links="GridOptions2.boundaryLinks" 
+                                  md-on-paginate="logPagination"></md-table-pagination>        
+          </div>
+          <div layout="column" ng-if="ListaDocentiEsclusi.length != 0">
+            <p>Impossibile spedire ai seguenti docenti - Dati indirizzo di spedizione mancanti</p>
+            <ul>
+              <li ng-repeat="DocenteEscluso in ListaDocentiEsclusi">{{DocenteEscluso.NomeDocente}}</li>
+            </ul>            
+          </div>          
+      </md-tab>
+      
+      <md-tab label="Dati spedizione" ng-if="!SpedizioneMultipla">
           <md-input-container style="width:33%;">
             <label>DATA</label><input ng-model="SpedizioneInEditing.DATA" type="date">
           </md-input-container>           
@@ -77,8 +116,8 @@
             <th>DA SPEDIRE</th>
           </tr>  
           <tr ng-repeat="Titolo in ListaTitoliSpedizione | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Titolo.Chiave}}>
-            <td><img src="img/delete.png" style="width:20px;height:auto;" ng-click="EliminaTitolo(Titolo)"></td> 
-            <td><img src="img/edit.png" style="width:20px;height:auto;" ng-click="ModificaTitolo(Titolo)"></td>
+            <td><img src="img/delete.png" style="width:20px;height:auto;" title="ELIMINA TITOLO" ng-click="EliminaTitolo(Titolo)"></td> 
+            <td><img src="img/edit.png" style="width:20px;height:auto;" title="MODIFICA TITOLO" ng-click="ModificaTitolo(Titolo)"></td>
             <td class="off">{{Titolo.NOME_TITOLO | uppercase}}</td> 
             <td class="off">{{Titolo.QUANTITA}}</td>
             <td class="off" ng-if="Titolo.STATO == 'C'">CONSEGNATO</td>

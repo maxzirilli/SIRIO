@@ -33,8 +33,8 @@
           <th style="width:10%;">Q.MAGAZZINO VOLANTE</th>        
         </tr>  
         <tr ng-repeat="Titolo in ListaTitoli | TitoloByFiltro : MateriaFiltro : NomeFiltro : CodiceFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Titolo.Chiave}}> 
-          <td><img src="img/delete.png" style="width:20px;height:auto;" ng-click="EliminaTitolo(Titolo)"></td> 
-          <td><img src="img/edit.png" style="width:20px;height:auto;" ng-click="ModificaTitolo(Titolo)"></td>        
+          <td><img src="img/delete.png" style="width:20px;height:auto;" title="ELIMINA TITOLO" ng-click="EliminaTitolo(Titolo)"></td> 
+          <td><img src="img/edit.png" style="width:20px;height:auto;" title="MODIFICA TITOLO" ng-click="ModificaTitolo(Titolo)"></td>        
           <td class="off">{{Titolo.Titolo | uppercase}}</td>  
           <td class="off">{{Titolo.NomeMateria | uppercase}}</td>
           <td class="off">{{Titolo.Autori | uppercase}} </td> 
@@ -157,8 +157,8 @@
                  <th>CLASSE</th>
                </tr>  
                <tr ng-repeat="Adozione in GetAdozioniSelected(IstitutoVisualizzato) | limitTo : GridOptions2.query.limit : (GridOptions2.query.page - 1) * GridOptions2.query.limit" id={{Adozione.CHIAVE}}> 
-                 <td><img src="img/delete.png" style="width:20px;height:auto;" ng-click="EliminaAdozione(Adozione)"></td> 
-                 <td><img src="img/edit.png" style="width:20px;height:auto;" ng-click="ModificaAdozione(Adozione)"></td>        
+                 <td><img src="img/delete.png" style="width:20px;height:auto;" title="ELIMINA ADOZIONE" ng-click="EliminaAdozione(Adozione)"></td> 
+                 <td><img src="img/edit.png" style="width:20px;height:auto;" title="MODIFICA ADOZIONE" ng-click="ModificaAdozione(Adozione)"></td>        
                  <td class="off">{{Adozione.ANNO}}{{Adozione.SEZIONE}}</td>                         
                </tr>    
              </table>

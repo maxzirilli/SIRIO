@@ -224,6 +224,21 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
     }
     else
     {
+      ParamTitolo = {}
+      ParamTitolo = {
+                      ChiaveTitolo      : $scope.TitoloInEditing.Chiave,
+                      Codice            : $scope.TitoloInEditing.Codice.xSQL(),
+                      Titolo            : $scope.TitoloInEditing.Titolo.xSQL() == '' ? null : $scope.TitoloInEditing.Titolo.xSQL(),
+                      Sottotitolo       : $scope.TitoloInEditing.Sottotitolo.xSQL() == '' ? null : $scope.TitoloInEditing.Sottotitolo.xSQL(),
+                      Materia           : $scope.TitoloInEditing.Materia.xSQL() == -1 ? null : $scope.TitoloInEditing.Materia.xSQL(),
+                      Autori            : $scope.TitoloInEditing.Autori.xSQL() == '' ? null : $scope.TitoloInEditing.Autori.xSQL(),
+                      Editore           : $scope.TitoloInEditing.Editore.xSQL() == '' ? null : $scope.TitoloInEditing.Editore.xSQL(),
+                      Volume            : $scope.TitoloInEditing.Volume,
+                      Prezzo            : $scope.TitoloInEditing.Prezzo == '' ? null : $scope.TitoloInEditing.Prezzo,
+                      PosMgzn           : $scope.TitoloInEditing.Pos_Magazzino.xSQL() == '' ? null : $scope.TitoloInEditing.Pos_Magazzino.xSQL(),
+                      QuantitaMgzn      : $scope.TitoloInEditing.Q_Mgzn,
+                      QuantitaMgznVol   : $scope.TitoloInEditing.Q_Mgzn_Vol 
+                    }                               
       $ObjQuery.Operazioni.push({
                                   Query     : 'UpdateBook',
                                   Parametri : ParamTitolo
@@ -713,31 +728,7 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
 SIRIOApp.filter('TitoloByFiltro',function()
 {  
   return function(ListaTitoli,MateriaFiltro,NomeFiltro,CodiceFiltro)
-         { 
-           /*if(MateriaFiltro == -1 && NomeFiltro == '' && CodiceFiltro == '') return(ListaTitoli);
-           var ListaFiltrata = [];
-           NomeFiltro = NomeFiltro.toUpperCase();
-           
-           if (MateriaFiltro != -1)
-           {            
-             ListaTitoli.forEach(function(Titolo)
-             { 
-               if(Titolo.Materia == MateriaFiltro && Titolo.Titolo.toUpperCase().indexOf(NomeFiltro) >= 0) 
-                  ListaFiltrata.push(Titolo)                       
-             })
-           }
-           else
-           {             
-             ListaTitoli.forEach(function(Titolo) 
-             {
-               if(Titolo.Titolo.toUpperCase().indexOf(NomeFiltro) >= 0) 
-                  ListaFiltrata.push(Titolo);
-             });           
-           }
-            
-           return(ListaFiltrata);
-         }*/
-         
+         {          
            if(MateriaFiltro == -1 && NomeFiltro == '' && CodiceFiltro == '') return(ListaTitoli);
            var ListaFiltrata = [];
            NomeFiltro = NomeFiltro.toUpperCase();

@@ -132,10 +132,16 @@ SIRIOApp.config(['$stateProvider','$urlRouterProvider',function ($stateProvider,
         url: '/flyingStoragePage'
     });
     
-    $stateProvider.state('csvCatalogPage', 
+    $stateProvider.state('csvCatalogMondadoriPage', 
     {
-        templateUrl: "template/csvCatalogPage.html",
-        url: '/csvCatalogPage'
+        templateUrl: "template/csvCatalogMondadoriPage.html",
+        url: '/csvCatalogMondadoriPage'
+    })
+    
+    $stateProvider.state('csvCatalogDeAgostiniPage', 
+    {
+        templateUrl: "template/csvCatalogDeAgostiniPage.html",
+        url: '/csvCatalogDeAgostiniPage'
     })
 
     $urlRouterProvider.otherwise('loginPage');

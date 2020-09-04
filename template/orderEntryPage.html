@@ -14,8 +14,8 @@
           <th>QUANTITA'</th>
         </tr>      
         <tr ng-repeat="ordine in ListaOrdini | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{ordine.Chiave}}>
-          <td><img src="img/delete.png" style="width:20px;height:auto;" ng-click="EliminaOrdine(ordine)"></td> 
-          <td><img src="img/edit.png" style="width:20px;height:auto;" ng-click="ModificaOrdine(ordine)"></td>        
+          <td><img src="img/delete.png" style="width:20px;height:auto;" title="ELIMINA ORDINE" ng-click="EliminaOrdine(ordine)"></td> 
+          <td><img src="img/edit.png" style="width:20px;height:auto;" title="MODIFICA ORDINE" ng-click="ModificaOrdine(ordine)"></td>        
           <td class="off">{{ConvertiData(ordine)}}</td>
           <td class="off">{{ordine.Nome_Titolo}}</td>
           <td class="off">{{ordine.Quantita}}</td>

@@ -1,20 +1,21 @@
 <div ng-controller="loginController" layout="column" layout-align="center center" md-theme="{{ActualTheme}}">
- <form name="LoginForm" layout="column" ng-submit="Invia()">
-  <h2>Login</h2> 
-  <label class="LabelError" ng-if="HTTPError != ''" ng-bind="HTTPError"></label>
-  <label class="LabelError" ng-if="SubHTTPError != '' && HTTPError != ''" ng-bind="SubHTTPError"></label>
-  <md-input-container>
-    <label>Account</label><input ng-model="Account" name="Account" type="text" required>
-    <div ng-messages="LoginForm.Account.$error" multiple md-auto-hide="true">
-       <div ng-message="required">Inserire nome utente</div>
-    </div>
-  </md-input-container>
-  <md-input-container>
-    <label>Password</label><input ng-model="Password" type="password" name="Password" required>
-    <div ng-messages="LoginForm.Password.$error" multiple md-auto-hide="true">
-       <div ng-message="required">Inserire la password</div>
-    </div>
-  </md-input-container>
+  <form name="LoginForm" layout="column" ng-submit="Invia()" style="text-align:center;background-image:url(img/loginPaper.Png);height:200px;width:auto;">    
+    <h1 style="font-weight:bold;font-style:italic;color:orange;">SIRIO</h1>
+    <h2>LOGIN</h2> 
+    <label class="LabelError" ng-if="HTTPError != ''" ng-bind="HTTPError"></label>
+    <label class="LabelError" ng-if="SubHTTPError != '' && HTTPError != ''" ng-bind="SubHTTPError"></label>
+    <md-input-container>
+      <label>Account</label><input ng-model="Account" name="Account" type="text" required>
+      <div ng-messages="LoginForm.Account.$error" multiple md-auto-hide="true">
+         <div ng-message="required">Inserire nome utente</div>
+      </div>
+    </md-input-container>
+    <md-input-container>
+      <label>Password</label><input ng-model="Password" type="password" name="Password" required>
+      <div ng-messages="LoginForm.Password.$error" multiple md-auto-hide="true">
+         <div ng-message="required">Inserire la password</div>
+      </div>
+    </md-input-container>
     <md-button class="md-raised md-accent" style="font-weight:bold;" type="submit">Login</md-button>
- </form>  
+  </form>  
 </div>
