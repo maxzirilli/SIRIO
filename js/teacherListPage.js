@@ -210,7 +210,8 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                                   Comune         : DocentiInfoLista[i].COMUNE         == null ? '' : DocentiInfoLista[i].COMUNE,
                                   Cap            : DocentiInfoLista[i].CAP            == null ? '' : DocentiInfoLista[i].CAP,
                                   Provincia      : DocentiInfoLista[i].PROVINCIA      == null ? 0  : DocentiInfoLista[i].PROVINCIA,
-                                  ProvinciaNome  : DocentiInfoLista[i].PROVINCIA_NOME == null ? '' : DocentiInfoLista[i].PROVINCIA_NOME
+                                  ProvinciaNome  : DocentiInfoLista[i].PROVINCIA_NOME == null ? '' : DocentiInfoLista[i].PROVINCIA_NOME,
+                                  Email          : DocentiInfoLista[i].EMAIL          == undefined || DocentiInfoLista[i].EMAIL == '' ? 'Non disponibile' : DocentiInfoLista[i].EMAIL
                                 };
         }
         $scope.ListaDocenti = DocentiInfoLista;
@@ -221,6 +222,8 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   
   $scope.InvioMail = function (Docente)
   {
+    SystemInformation.DataBetweenController.DocMail = Docente.Email;
+    $state.go('mailPage');
   }
   
   $scope.NuovaSpedizioneMultipla = function (Nome)
@@ -1068,13 +1071,13 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
     
     $scope.EliminaSpedizione = function (Spedizione)
     {
-      if(confirm('Eliminare la spedizione della data ' + Spedizione.DATA_CREAZIONE + ' presso ' + Spedizione.PRESSO + ' ?'))
+      if(confirm('Eliminare la spedizione della data ' + Spedizione.DATA + ' presso ' + Spedizione.PRESSO + ' ?'))
       {
         var $ObjQuery       = { Operazioni : [] };
         var ParamSpedizione = { CHIAVE : Spedizione.CHIAVE };
          
         $ObjQuery.Operazioni.push({
-                                    Query     : 'DeleteDeliveryDettaglio',
+                                    Query     : 'DeleteDeliveryBookAll',
                                     Parametri : ParamSpedizione
                                   })
         

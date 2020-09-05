@@ -98,7 +98,7 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
                                   Titolo             : TitoliInfoLista[i].TITOLO,
                                   Materia            : TitoliInfoLista[i].MATERIA,
                                   NomeMateria        : TitoliInfoLista[i].NOME_MATERIA,
-                                  Pos_Magazzino      : TitoliInfoLista[i].POS_MAGAZZINO,
+                                  Pos_Magazzino      : TitoliInfoLista[i].POS_MAGAZZINO == null ? 'N.D.' : TitoliInfoLista[i].POS_MAGAZZINO,
                                   Autori             : TitoliInfoLista[i].AUTORI,
                                   Q_Magazzino        : TitoliInfoLista[i].QUANTITA_MGZN == undefined ? 0 : TitoliInfoLista[i].QUANTITA_MGZN,
                                   Q_MagazzinoVolante : TitoliInfoLista[i].QUANTITA_MGZN_VOL == undefined ? 0 : TitoliInfoLista[i].QUANTITA_MGZN_VOL
@@ -758,5 +758,33 @@ SIRIOApp.filter('TitoloByFiltro',function()
            });
            
            return(ListaFiltrata);
+         }           
+});
+
+SIRIOApp.filter('IstitutoByNomeFiltro',function()
+{  
+  return function(ListaistitutiPopup,NomeFiltro)
+         {  
+                    
+           if(NomeFiltro == '') return(ListaistitutiPopup);
+           var ListaFiltrataI = [];
+           NomeFiltro = NomeFiltro.toUpperCase();
+           var IstitutoOK = function(istituto)
+           {  
+              var Result = true;
+              
+              if(NomeFiltro != '')
+                if(istituto.Istituto.toUpperCase().indexOf(NomeFiltro) < 0)
+                   Result = false;
+              return(Result);
+           }
+          
+           ListaistitutiPopup.forEach(function(istituto)
+           { 
+             if(IstitutoOK(istituto)) 
+                ListaFiltrataI.push(istituto)                       
+           });
+           
+           return(ListaFiltrataI);
          }           
 });

@@ -50,11 +50,11 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
         {
           while (i < CsvSplitted.length - 1)
           {
-            RecordDocente[19] = RecordDocente[19].trim();
-            RecordDocente[5]  = RecordDocente[5].trim();
             let RecordDocente = CsvSplitted[i++].split(";");
             let Provincia     = ListaProvince.find(function(AProvincia){return(AProvincia.NOME == RecordDocente[19]);});
-            let ProvinciaDoc  = ListaProvinceAll.find(function(AProvinciaDoc){return(AProvinciaDoc.NOME == RecordDocente[5]);});            
+            let ProvinciaDoc  = ListaProvinceAll.find(function(AProvinciaDoc){return(AProvinciaDoc.NOME == RecordDocente[5]);});
+            RecordDocente[19] = RecordDocente[19].trim();
+            RecordDocente[5]  = RecordDocente[5].trim();            
            
             if (LybroKey != RecordDocente[0] && ProvinciaDoc != undefined)
             {

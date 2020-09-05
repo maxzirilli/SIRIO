@@ -22,8 +22,11 @@ SIRIOApp.config(['$mdThemingProvider', function($mdThemingProvider)
 }]);
   
 
-SIRIOApp.config(['$stateProvider','$urlRouterProvider',function ($stateProvider, $urlRouterProvider)
+SIRIOApp.config(['$stateProvider','$urlRouterProvider','$mdAriaProvider',function ($stateProvider, $urlRouterProvider,  $mdAriaProvider)
 {
+
+    $mdAriaProvider.disableWarnings();
+
     $stateProvider.state('emptyPage', 
     {
         template: "<div></div>",
@@ -143,6 +146,18 @@ SIRIOApp.config(['$stateProvider','$urlRouterProvider',function ($stateProvider,
         templateUrl: "template/csvCatalogDeAgostiniPage.html",
         url: '/csvCatalogDeAgostiniPage'
     })
+    
+    $stateProvider.state('versionPage', 
+    {
+        templateUrl: "template/versionPage.html",
+        url: '/versionPage'
+    })
+    
+    $stateProvider.state('mailPage', 
+    {
+        templateUrl: "template/mailPage.html",
+        url: '/mailPage'
+    })
 
     $urlRouterProvider.otherwise('loginPage');
 }]);
@@ -157,10 +172,16 @@ SIRIOApp.controller("headerController",['$scope','$rootScope','SystemInformation
    $scope.VisButtonHome = false;
    $scope.VisButtonChangePassword = false;
    
+   $scope.CheckVersions = function()
+   {
+     $state.go("versionPage");
+   }
+   
    $scope.CheckButtons = function()
    {
       $scope.VisButtonChangePassword = $state.current.name != 'changePasswordPage';
       $scope.VisButtonHome           = $state.current.name != 'startPage';
+      $scope.VisButtonInfo           = $state.current.name != 'versionPage';
    }
    
    $scope.ChangeStatoLogin = function(_LoginEffettuato)

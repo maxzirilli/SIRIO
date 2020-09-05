@@ -2,7 +2,7 @@
   <form ng-cloak name="PopupCaricoTitoloForm">
     <md-toolbar>
       <div class="md-toolbar-tools">
-        <h2>Carica titolo</h2>
+        <h2>TITOLO</h2>
       </div>
     </md-toolbar>
 
@@ -25,9 +25,8 @@
           </md-item-template>
         </md-input-container> 
         
-        <md-input-container class="containerSelect" ng-if="MaxQuantita >= 1"><label>QUANTITA</label>         
-          <input ng-model="Titolo.QUANTITA" type="number" min=1 max="{{MaxQuantita}}" name="Quantita">
-          <!--<p ng-if="Titolo.QUANTITA = MaxQuantita" style="color:red;">MASSIMO SELEZIONABILE RAGGIUNTO"</p>-->          
+        <md-input-container class="containerSelect"><label>QUANTITA</label>         
+          <input ng-model="Titolo.QUANTITA" type="number" min=1 name="Quantita">
         </md-input-container>  
       </div>
     </md-dialog-content>

@@ -54,11 +54,20 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                                }
          SystemInformation.GetSQL('StorageLog',ParamRicercaLog, function(Results)
          { 
+           $scope.TitoloFiltrato = undefined;
            var ListaMovimenti = SystemInformation.FindResults(Results,'GetLogInfoMgznBook');
            if(ListaMovimenti != undefined)
            {
              if (ListaMovimenti.length == 0)
-                 alert('Nessun movimento del titolo nella data selezionata')
+                 //alert('Nessun movimento del titolo nella data selezionata')
+             {
+                 var doc = new jsPDF();
+                 doc.setFontSize(10); 
+                 doc.setFontType('bold');
+                 doc.setTextColor(255,0,0);
+                 doc.text(60,20,'NESSUN MOVIMENTO NELLA DATA SELEZIONATA');
+                 document.getElementById('logPdf').src = doc.output('datauristring')
+             }
              else
              {
                  var Data           = new Date();
@@ -122,7 +131,15 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
            if(ListaMovimenti != undefined)
            {
              if (ListaMovimenti.length == 0)
-                 alert('Nessun movimento del titolo nella data selezionata')
+                 //alert('Nessun movimento del titolo nella data selezionata')
+             {
+                 var doc = new jsPDF();
+                 doc.setFontSize(10); 
+                 doc.setFontType('bold');
+                 doc.setTextColor(255,0,0);
+                 doc.text(60,20,'NESSUN MOVIMENTO NELLA DATA SELEZIONATA');
+                 document.getElementById('logPdf').src = doc.output('datauristring')
+             }
              else
              {
                  var Data           = new Date();
@@ -189,7 +206,14 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
            if(ListaMovimenti != undefined)
            {
              if (ListaMovimenti.length == 0)
-                 alert('Nessun movimento del titolo nella data selezionata')
+             {
+                 var doc = new jsPDF();
+                 doc.setFontSize(10); 
+                 doc.setFontType('bold');
+                 doc.setTextColor(255,0,0);
+                 doc.text(60,20,'NESSUN MOVIMENTO NELLA DATA SELEZIONATA');
+                 document.getElementById('logPdf').src = doc.output('datauristring')
+             }
              else
              {                
                  var Data           = new Date();
@@ -253,7 +277,14 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
            if(ListaMovimenti != undefined)
            {
              if (ListaMovimenti.length == 0)
-                 alert('Nessun movimento del titolo nella data selezionata')
+             {
+                 var doc = new jsPDF();
+                 doc.setFontSize(10); 
+                 doc.setFontType('bold');
+                 doc.setTextColor(255,0,0);
+                 doc.text(60,20,'NESSUN MOVIMENTO NELLA DATA SELEZIONATA');
+                 document.getElementById('logPdf').src = doc.output('datauristring')
+             }
              else
              {           
                  var Data           = new Date();

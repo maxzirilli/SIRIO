@@ -19,6 +19,7 @@
                   md-input-name="TitoloLog"
                   md-autofocus="true"
                   md-no-cache="true"
+                  md-selected-item="TitoloFiltrato"
                   md-selected-item-change = "selectedItemChangeTitolo(item)"
                   md-search-text="searchTextTit"
                   md-items="item in queryTitolo(searchTextTit)"
@@ -29,8 +30,8 @@
         <span md-highlight-text="searchText">{{item.Codice}} - {{item.Nome}}</span>
       </md-item-template>
     </md-input-container>
-    <md-button>  
-      <img src="img/research.png" style="width:30px;height:auto;" ng-click="RicercaLog()">
+    <md-button style="width:50px;height:auto;" ng-click="RicercaLog()" title="RICERCA LOG">  
+      <img src="img/research.png" style="width:50px;height:auto;" >
     </md-button>
   </div>      
   <iframe style="background:white;" id="logPdf" title="LogMagazzino" height=100% width=100% ></iframe>

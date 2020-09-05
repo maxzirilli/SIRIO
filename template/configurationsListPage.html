@@ -3,7 +3,7 @@
   <div style="text-align:center;">
   <h2>CONFIGURAZIONI</h2>
   <md-input-container class="containerSelect" style="width:20%;">
-     <md-select ng-model="ConfigurazioneSelezionata" placeholder="Configurazione" style="font-size:20px;" class="mdb-select" type="text" name="Configurazione" aria-label="Configurazione">
+     <md-select ng-model="ConfigurazioneSelezionata" placeholder="Configurazione" style="font-size:20px;" class="mdb-select" type="text" name="Configurazione">
      <md-optgroup>
        <md-option ng-repeat="configurazione in ListaConfigurazioni" ng-value="$index">{{configurazione}}</md-option>
      </md-optgroup>
@@ -13,7 +13,7 @@
   
   <div ng-if="ConfigurazioneSelezionata==0">
       <div>
-        <h2 style="float:left;">LISTA MATERIE</h2>
+        <h2 style="float:left;">MATERIE</h2>
         <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaMateria()">INSERISCI NUOVA MATERIA</md-button>
       </div>
       <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
@@ -39,7 +39,7 @@
     
     <div ng-if="ConfigurazioneSelezionata==1">
       <div>
-        <h2 style="float:left;">LISTA TIPOLOGIE ISTITUTO</h2>
+        <h2 style="float:left;">TIPOLOGIE ISTITUTI</h2>
         <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaTipologia()">INSERISCI NUOVA TIPOLOGIA</md-button>
       </div>
       <table style="width:100%;text-align:center;" md-row-select="GridOptions_2.rowSelection" multiple="{{GridOptions_2.multiSelect}}">  
@@ -65,7 +65,7 @@
     
     <div ng-if="ConfigurazioneSelezionata==2">
       <div>
-        <h2 style="float:left;">LISTA TIPOLOGIE ESCLUSE ISTITUTO</h2>
+        <h2 style="float:left;">TIPOLOGIE ESCLUSE ISTITUTI</h2>
         <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaTipologiaEsclusa()">INSERISCI NUOVA TIPOLOGIA ESCLUSA</md-button>
       </div>
       <table style="width:100%;text-align:center;" md-row-select="GridOptions_3.rowSelection" multiple="{{GridOptions_3.multiSelect}}">  
@@ -91,7 +91,7 @@
     
     <div ng-if="ConfigurazioneSelezionata==3">
       <div>
-        <h2 style="float:left;">LISTA PROVINCE GESTITE</h2>
+        <h2 style="float:left;">PROVINCE GESTITE</h2>
         <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaProvincia()">INSERISCI NUOVA PROVINCIA</md-button>
       </div>
       <table style="width:100%;text-align:center;" md-row-select="GridOptions_4.rowSelection" multiple="{{GridOptions_4.multiSelect}}">  

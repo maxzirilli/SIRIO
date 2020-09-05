@@ -234,30 +234,36 @@ SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformat
   }
   
   $scope.ConfermaMateria = function (param)
-  {  
-    var $ObjQuery     = { Operazioni : [] };     
-    var NuovaMateria = (param.CHIAVE == -1);
-    if(NuovaMateria)     
-    {           
-      $ObjQuery.Operazioni.push({
-                                  Query     : 'InsertSubject',
-                                  Parametri : param
-                                }); 
-    }
+  { 
+    MateriaExist = $scope.ListaMaterie.find(function(AMateria){return (AMateria.Descrizione == param.DESCRIZIONE);});
+    if(MateriaExist)
+       alert('Materia già esistente!')
     else
     {
-      $ObjQuery.Operazioni.push({
-                                  Query     : 'UpdateSubject',
-                                  Parametri : param
-                                });
-    };
- 
-    SystemInformation.PostSQL('Subject',$ObjQuery,function(Answer)
-    {
-      if(param.CHIAVE == -1)
-         param.CHIAVE = Answer.NewKey1;
-      $scope.RefreshListaMaterie();
-    });  
+       var $ObjQuery     = { Operazioni : [] };     
+       var NuovaMateria = (param.CHIAVE == -1);
+       if(NuovaMateria)     
+       {           
+         $ObjQuery.Operazioni.push({
+                                     Query     : 'InsertSubject',
+                                     Parametri : param
+                                   }); 
+       }
+       else
+       {
+         $ObjQuery.Operazioni.push({
+                                     Query     : 'UpdateSubject',
+                                     Parametri : param
+                                   });
+       };
+    
+       SystemInformation.PostSQL('Subject',$ObjQuery,function(Answer)
+       {
+         if(param.CHIAVE == -1)
+            param.CHIAVE = Answer.NewKey1;
+         $scope.RefreshListaMaterie();
+       });
+    }    
   }
   
   $scope.EliminaMateria = function(Materia)
@@ -325,30 +331,36 @@ SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformat
   }
   
   $scope.ConfermaTipologia = function (param)
-  {  
-    var $ObjQuery      = { Operazioni : [] };     
-    var NuovaTipologia = (param.CHIAVE == -1);
-    if(NuovaTipologia)     
-    {           
-      $ObjQuery.Operazioni.push({
-                                  Query     : 'InsertInstituteType',
-                                  Parametri : param
-                                }); 
-    }
+  { 
+    TipologiaExist = $scope.ListaTipologie.find(function(ATipologia){return (ATipologia.Descrizione == param.DESCRIZIONE);});
+    if(TipologiaExist)
+       alert('Tipologia già esistente!')
     else
-    {
-      $ObjQuery.Operazioni.push({
-                                  Query     : 'UpdateInstituteType',
-                                  Parametri : param
-                                });
-    };
- 
-    SystemInformation.PostSQL('InstituteType',$ObjQuery,function(Answer)
-    {
-      if(param.CHIAVE == -1)
-         param.CHIAVE = Answer.NewKey1;
-      $scope.RefreshListaTipologie();
-    });  
+    {     
+       var $ObjQuery      = { Operazioni : [] };     
+       var NuovaTipologia = (param.CHIAVE == -1);
+       if(NuovaTipologia)     
+       {           
+         $ObjQuery.Operazioni.push({
+                                     Query     : 'InsertInstituteType',
+                                     Parametri : param
+                                   }); 
+       }
+       else
+       {
+         $ObjQuery.Operazioni.push({
+                                     Query     : 'UpdateInstituteType',
+                                     Parametri : param
+                                   });
+       };
+    
+       SystemInformation.PostSQL('InstituteType',$ObjQuery,function(Answer)
+       {
+         if(param.CHIAVE == -1)
+            param.CHIAVE = Answer.NewKey1;
+         $scope.RefreshListaTipologie();
+       }); 
+    }    
   }
   
   $scope.EliminaTipologia = function(Tipologia)
@@ -406,30 +418,36 @@ SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformat
   }
   
   $scope.ConfermaTipologiaEsclusa = function (param)
-  {  
-    var $ObjQuery             = { Operazioni : [] };     
-    var NuovaTipologiaEsclusa = (param.CHIAVE == -1);
-    if(NuovaTipologiaEsclusa)     
-    {           
-      $ObjQuery.Operazioni.push({
-                                  Query     : 'InsertInstituteExclType',
-                                  Parametri : param
-                                }); 
-    }
+  { 
+    TipologiaExclExist = $scope.ListaTipologieEscluse.find(function(ATipologiaExcl){return (ATipologiaExcl.Descrizione == param.DESCRIZIONE);});
+    if(TipologiaExclExist)
+       alert('Tipologia esclusa già esistente!')
     else
-    {
-      $ObjQuery.Operazioni.push({
-                                  Query     : 'UpdateInstituteExclType',
-                                  Parametri : param
-                                });
-    };
- 
-    SystemInformation.PostSQL('InstituteExclType',$ObjQuery,function(Answer)
-    {
-      if(param.CHIAVE == -1)
-         param.CHIAVE = Answer.NewKey1;
-      $scope.RefreshListaTipologieEscluse();
-    });  
+    {   
+       var $ObjQuery             = { Operazioni : [] };     
+       var NuovaTipologiaEsclusa = (param.CHIAVE == -1);
+       if(NuovaTipologiaEsclusa)     
+       {           
+         $ObjQuery.Operazioni.push({
+                                     Query     : 'InsertInstituteExclType',
+                                     Parametri : param
+                                   }); 
+       }
+       else
+       {
+         $ObjQuery.Operazioni.push({
+                                     Query     : 'UpdateInstituteExclType',
+                                     Parametri : param
+                                   });
+       };
+    
+       SystemInformation.PostSQL('InstituteExclType',$ObjQuery,function(Answer)
+       {
+         if(param.CHIAVE == -1)
+            param.CHIAVE = Answer.NewKey1;
+         $scope.RefreshListaTipologieEscluse();
+       });
+    }    
   }
   
   $scope.EliminaTipologiaEsclusa = function(TipologiaEsclusa)
@@ -482,30 +500,36 @@ SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformat
   }
   
   $scope.ConfermaProvincia = function (param)
-  {  
-    var $ObjQuery       = { Operazioni : [] };     
-    var NuovaProvincia  = (param.CHIAVE == -1);
-    if(NuovaProvincia)     
-    {           
-      $ObjQuery.Operazioni.push({
-                                  Query     : 'InsertProvince',
-                                  Parametri : param
-                                }); 
-    }
+  { 
+    ProvinciaExist = $scope.ListaProvince.find(function(AProvincia){return (AProvincia.Nome == param.NOME);});
+    if(ProvinciaExist)
+       alert('Provincia gestita già esistente!')
     else
-    {
-      $ObjQuery.Operazioni.push({
-                                  Query     : 'UpdateProvince',
-                                  Parametri : param
-                                });
-    };
- 
-    SystemInformation.PostSQL('Province',$ObjQuery,function(Answer)
-    {
-      if(param.CHIAVE == -1)
-         param.CHIAVE = Answer.NewKey1;
-      $scope.RefreshListaProvince();
-    });  
+    {   
+       var $ObjQuery       = { Operazioni : [] };     
+       var NuovaProvincia  = (param.CHIAVE == -1);
+       if(NuovaProvincia)     
+       {           
+         $ObjQuery.Operazioni.push({
+                                     Query     : 'InsertProvince',
+                                     Parametri : param
+                                   }); 
+       }
+       else
+       {
+         $ObjQuery.Operazioni.push({
+                                     Query     : 'UpdateProvince',
+                                     Parametri : param
+                                   });
+       };
+    
+       SystemInformation.PostSQL('Province',$ObjQuery,function(Answer)
+       {
+         if(param.CHIAVE == -1)
+            param.CHIAVE = Answer.NewKey1;
+         $scope.RefreshListaProvince();
+       });
+    }    
   }
   
   $scope.EliminaProvincia = function(Provincia)

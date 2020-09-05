@@ -302,7 +302,9 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
         $scope.IstitutoInEditing.Referente_3        = IstitutoDettaglio[0].REFERENTE_3 == undefined ? '' : IstitutoDettaglio[0].REFERENTE_3;
         $scope.IstitutoInEditing.NumeroTelefono_3   = IstitutoDettaglio[0].TELEFONO_3  == undefined ? '' : IstitutoDettaglio[0].TELEFONO_3;
         $scope.IstitutoInEditing.PromotoreAssegnato = IstitutoDettaglio[0].PROMOTORE   == undefined ? -1 : IstitutoDettaglio[0].PROMOTORE;
-        
+        $scope.IstitutoInEditing.Preside            = IstitutoDettaglio[0].PRESIDE     == undefined ? '' : IstitutoDettaglio[0].PRESIDE;
+        $scope.IstitutoInEditing.Vicepreside        = IstitutoDettaglio[0].VICEPRESIDE == undefined ? '' : IstitutoDettaglio[0].VICEPRESIDE;
+        $scope.IstitutoInEditing.DirAmmnstr         = IstitutoDettaglio[0].DIR_AMMNSTR == undefined ? '' : IstitutoDettaglio[0].DIR_AMMNSTR;
         // Carica dati classi
         ResetClassi();
         if(IstitutoDettaglioClassi.length > 0)
@@ -356,7 +358,10 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                                  NumeroTelefono_2   : '',
                                  Referente_3        : '',
                                  NumeroTelefono_3   : '',
-                                 PromotoreAssegnato : -1                         
+                                 PromotoreAssegnato : -1,
+                                 Preside            : '',
+                                 Vicepreside        : '',
+                                 DirAmmnstr         : ''                                 
                                };
     $scope.SezioneMax        = 10;   
     $scope.ArrayClassiFinale = [];
@@ -392,7 +397,10 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                            REFERENTE_3 : $scope.IstitutoInEditing.Referente_3.xSQL(),
                            TELEFONO_3  : $scope.IstitutoInEditing.NumeroTelefono_3.xSQL(),
                            PROMOTORE   : $scope.IstitutoInEditing.PromotoreAssegnato == -1 ? null : $scope.IstitutoInEditing.PromotoreAssegnato,
-                         };
+                           PRESIDE     : $scope.IstitutoInEditing.Preside.xSQL(),
+                           VICEPRESIDE : $scope.IstitutoInEditing.Vicepreside.xSQL(),
+                           DIR_AMMNSTR : $scope.IstitutoInEditing.DirAmmnstr.xSQL()                         
+                        };
                                                                   
      var NuovoIstituto = ($scope.IstitutoInEditing.Chiave == -1);
      if(NuovoIstituto)     
@@ -494,24 +502,6 @@ SIRIOApp.filter('IstitutoByFiltro',function()
            if(ProvinciaFiltro == -1 && NomeFiltro == '') return(ListaIstituti);
            var ListaFiltrata = [];
            NomeFiltro = NomeFiltro.toUpperCase();
-           
-          /* var IstitutoOk = function(Istituto)
-           {
-              var Result = true;
-              if(ProvinciaFiltro != -1)
-                 if(Oggetto.Provincia != ProvinciaFiltro)
-                    Result = false;
-              if(NomeFiltro != '')
-                if(Istituto.Nome.toUpperCase().indexOf(NomeFiltro) < 0)
-                  Result = false;
-              return(Result);
-           }
-           
-            ListaIstituti.forEach(function(Istituto)
-             { 
-               if(IstitutoOk(Istituto)) 
-                  ListaFiltrata.push(Istituto)                       
-             });*/
            
            if (ProvinciaFiltro != -1)
            {            

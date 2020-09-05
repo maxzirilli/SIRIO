@@ -1,8 +1,8 @@
 <div ng-controller="orderEntryPageController">
   <div ng-if="!EditingOn">
     <div>
-      <h2 style="float:left;">LISTA ORDINI IN INGRESSO</h2>
-      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoOrdine()">INSERISCI NUOVO ORDINE</md-button>
+      <h2>ORDINI IN INGRESSO</h2>
+      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoOrdine()">INSERISCI NUOVO ORDINE</md-button>      
     </div>
     <div ng-if="ListaOrdini.length != 0">
       <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
@@ -28,14 +28,16 @@
                            md-page-select="GridOptions.pageSelect" 
                            md-boundary-links="GridOptions.boundaryLinks" 
                            md-on-paginate="logPagination"></md-table-pagination>
-      </div>
-    <p ng-if="ListaOrdini.length == 0" style="font-weight:bold;font-style:italic;text-align:center;">NESSUN ORDINE PRESENTE</p>
+    </div>
+    <div>
+      <p ng-if="ListaOrdini.length == 0" style="font-weight:bold;font-style:italic;text-align:center;margin-top:100px;">NESSUN ORDINE PRESENTE</p>
+    </div>
   </div>
   
   <div ng-if="EditingOn">
   <form name="ordineIngressoEditForm" layout="column" style="width:100%" ng-submit="ConfermaOrdine()">
     <div layout="row">
-      <h2>ORDINE DI INGRESSO</h2>
+      <h2>ORDINE IN INGRESSO</h2>
       <div layout="row" style="width:100%;" layout-align="end start">
         <md-button class="md-raised md-accent" style="font-weight:bold;" type="submit">CONFERMA</md-button>
         <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="OnAnnullaOrdineClicked()">ANNULLA</md-button>

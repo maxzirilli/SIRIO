@@ -1,8 +1,8 @@
 <div ng-controller="userListPageController">
   <div ng-if="!EditingOn">
     <div>
-      <h2 style="float:left;">LISTA UTENTI</h2>
-      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoUtente()">CREA NUOVO UTENTE</md-button>
+      <h2>UTENTI</h2>
+      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoUtente()">NUOVO UTENTE</md-button>
     </div>
     <div ng-if="ListaUtenti.length != 0">
       <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
@@ -31,7 +31,7 @@
                            md-boundary-links="GridOptions.boundaryLinks" 
                            md-on-paginate="logPagination"></md-table-pagination>
     </div>
-    <p ng-if="ListaUtenti.length == 0" style="font-weight:bold;font-style:italic;text-align:center;">NESSUN UTENTE PRESENTE</p>
+    <p ng-if="ListaUtenti.length == 0" style="font-weight:bold;font-style:italic;text-align:center;margin-top:100px;">NESSUN UTENTE PRESENTE</p>
   </div> 
   
   <div ng-if="EditingOn">
@@ -66,7 +66,7 @@
           </md-input-container>
         </div>        
         <md-input-container class="containerSelect" style="width:33%;">
-          <md-select ng-model="UtenteInEditing.ROLE" class="mdb-select" type="text" name="Ruolo" required aria-label="Ruolo">
+          <md-select ng-model="UtenteInEditing.ROLE" class="mdb-select" type="text" name="Ruolo" required >
             <md-option ng-value="1">AMMINISTRATORE</md-option>
             <md-option ng-value="0">PROMOTORE</md-option>
           </md-select>

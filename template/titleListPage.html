@@ -1,12 +1,12 @@
 <div ng-controller="titleListPageController">
   <div ng-if="!EditingOn">
     <div>
-      <h2>LISTA TITOLI</h2>
+      <h2>TITOLI</h2>
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoTitolo()">INSERISCI NUOVO TITOLO</md-button>      
     </div>  
     <div layout="row">        
       <md-input-container class="containerSelect" style="width:20%;float:left;margin-right:10px;"><label>Filtra per materia...</label>
-        <md-select ng-model="MateriaFiltro" placeholder="MATERIA" class="mdb-select" type="text" name="MateriaFiltro" aria-label="Materia">
+        <md-select ng-model="MateriaFiltro" placeholder="MATERIA" class="mdb-select" type="text" name="MateriaFiltro">
         <md-optgroup>
           <md-option ng-value="-1">QUALSIASI</md-option>  
           <md-option ng-repeat="materia in ListaMaterie" ng-value="materia.Chiave">{{materia.Materia}}</md-option>
@@ -38,7 +38,7 @@
           <td class="off">{{Titolo.Titolo | uppercase}}</td>  
           <td class="off">{{Titolo.NomeMateria | uppercase}}</td>
           <td class="off">{{Titolo.Autori | uppercase}} </td> 
-          <td class="off">{{Titolo.Pos_Magazzino | uppercase}}</td> 
+          <td class="off">{{Titolo.Pos_Magazzino | uppercase }}</td> 
           <td class="off">{{Titolo.Q_Magazzino}}</td>
           <td class="off">{{Titolo.Q_MagazzinoVolante}}</td>        
         </tr>    
@@ -78,7 +78,7 @@
                </md-input-container>        
                <md-input-container class="containerSelect" style="width:20%;">             
                  <label>MATERIA</label>
-                 <md-select ng-model="TitoloInEditing.Materia" class="mdb-select" type="text" name="Materia" aria-label="Materia" required>
+                 <md-select ng-model="TitoloInEditing.Materia" class="mdb-select" type="text" name="Materia"  required>
                  <md-optgroup>
                    <md-option ng-value="-1">-</md-option>  
                    <md-option ng-repeat="materia in ListaMaterie" ng-value="materia.Chiave">{{materia.Materia}}</md-option>         
@@ -149,7 +149,7 @@
                </md-select>
              </md-input-container>
              
-             <md-button class="md-raised md-accent" style="text-width:bold;" ng-click="NuovaAdozione($event,IstitutoVisualizzato,TitoloInEditing.Titolo)">INSERISCI NUOVA ADOZIONE</md-button>                                      
+             <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="NuovaAdozione($event,IstitutoVisualizzato,TitoloInEditing.Titolo)">INSERISCI NUOVA ADOZIONE</md-button>                                      
              <table style="width:100%;text-align:center;" md-row-select="GridOptions2.rowSelection" multiple="{{GridOptions2.multiSelect}}">  
                <tr>
                  <th></th>

@@ -4,6 +4,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
   $scope.SpedizioneMultipla        = false;
   $scope.ListaIstitutiDoc          = [];
   $scope.ListaTitoliEliminati      = [];
+  $scope.NuovaSpedizioneCasaEd     = false;
   
   ScopeHeaderController.CheckButtons();
   
@@ -328,6 +329,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
        //NUOVA SPEDIZIONE CASA EDITRICE
        if($scope.ChiaveDocente == -1 && $scope.ChiaveSpedizione == -1 && !($scope.SpedizioneMultipla))
        {
+         $scope.NuovaSpedizioneCasaEd = true;
          $scope.SpedizioneInEditing = {};
          
          $scope.SpedizioneInEditing.CHIAVE          = -1;

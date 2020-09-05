@@ -1,5 +1,5 @@
 <div ng-controller="deliveryListPageController" ng-cloak md-theme="{{ActualTheme}}" style="height:75%">
-  <h2>LISTA SPEDIZIONI</h2>
+  <h2>SPEDIZIONI</h2>
   <div>
     <md-input-container style="float:left;margin-left:20px;">
       <label>DAL</label><input ng-model="DataRicercaDal" type="date" name="DataRicercaDal" ng-change="RefreshListaSpedizioniAll()">
@@ -29,7 +29,8 @@
     <input type="checkbox" ng-model="ConsegnataFiltro" style="margin-left:20px;">CONSEGNATA
     
     <md-button class="md-raised md-accent" style="font-weight:bold;float:right;" ng-click="NuovaSpedizioneCasaEditrice()">NUOVA SPEDIZIONE CASA EDITRICE</md-button>
-  </div> 
+  </div>
+  <p ng-if="ListaSpedizioni.length == 0" style="font-weight:bold;font-style:italic;float:center;">NESSUNA SPEDIZIONE PRESENTE</p>  
   <div ng-if="ListaSpedizioni.length != 0">
     <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
     <tr>
@@ -57,5 +58,4 @@
                        md-boundary-links="GridOptions.boundaryLinks" 
                        md-on-paginate="logPagination"></md-table-pagination>
   </div>
-  <p ng-if="ListaSpedizioni.length == 0" style="font-weight:bold;font-style:italic;text-align:center;">NESSUNA SPEDIZIONE PRESENTE</p>
 </div>

@@ -163,9 +163,9 @@ SIRIOApp.controller("flyingStoragePageController",['$scope','SystemInformation',
     
     $scope.selectedItemChangeTitolo = function(itemTit)
     {
-      $scope.Titolo.TITOLO      = itemTit.Chiave;
-      $scope.Titolo.NOME_TITOLO = itemTit.Nome;
-      $scope.MaxQuantita        = itemTit.Quantita_Mgzn.toString();
+      $scope.Titolo.TITOLO       = itemTit.Chiave;
+      $scope.Titolo.NOME_TITOLO  = itemTit.Nome;
+      $scope.Titolo.QuantitaMgzn = itemTit.Quantita_Mgzn;
     }
 
     $scope.hide = function() 
@@ -185,6 +185,11 @@ SIRIOApp.controller("flyingStoragePageController",['$scope','SystemInformation',
       {
         alert ('Dati titolo mancanti!');
         return
+      }
+      else if($scope.Titolo.QUANTITA > $scope.Titolo.QuantitaMgzn)
+      {
+              alert('Quantita selezionata maggiore della quantità presente in magazzino!');
+              return
       }
       else
       {                         
@@ -237,9 +242,9 @@ SIRIOApp.controller("flyingStoragePageController",['$scope','SystemInformation',
     
     $scope.selectedItemChangeTitolo = function(itemTit)
     {
-      $scope.Titolo.TITOLO      = itemTit.Chiave;
-      $scope.Titolo.NOME_TITOLO = itemTit.Nome;
-      $scope.MaxQuantita        = itemTit.Quantita_Mgzn.toString();
+      $scope.Titolo.TITOLO       = itemTit.Chiave;
+      $scope.Titolo.NOME_TITOLO  = itemTit.Nome;
+      $scope.Titolo.QuantitaMgzn = itemTit.Quantita_Mgzn;
     }
 
     $scope.hide = function() 
@@ -258,18 +263,23 @@ SIRIOApp.controller("flyingStoragePageController",['$scope','SystemInformation',
       TitoloCorrispondente = $scope.ListaCarico.findIndex(function(ATitolo){return (ATitolo.CHIAVE == Titolo.CHIAVE);});
       if($scope.Titolo.TITOLO == -1 || $scope.Titolo.QUANTITA == 0)
       {
-        alert ('Dati titolo mancanti!');
-        return
+         alert ('Dati titolo mancanti!');
+         return
+      }
+      else if($scope.Titolo.QUANTITA > $scope.Titolo.QuantitaMgzn)
+      {
+              alert('Quantita selezionata maggiore della quantità presente in magazzino!');
+              return
       }
       else
       {        
-        $scope.ListaCarico[TitoloCorrispondente].TITOLO      = $scope.Titolo.TITOLO;
-        $scope.ListaCarico[TitoloCorrispondente].NOME_TITOLO = $scope.Titolo.NOME_TITOLO;
-        $scope.ListaCarico[TitoloCorrispondente].QUANTITA    = $scope.Titolo.QUANTITA;
-        if($scope.ListaCarico[TitoloCorrispondente].Nuovo)
-           $scope.ListaCarico[TitoloCorrispondente].Modificato = false
-        else
-           $scope.ListaCarico[TitoloCorrispondente].Modificato = true;
+         $scope.ListaCarico[TitoloCorrispondente].TITOLO      = $scope.Titolo.TITOLO;
+         $scope.ListaCarico[TitoloCorrispondente].NOME_TITOLO = $scope.Titolo.NOME_TITOLO;
+         $scope.ListaCarico[TitoloCorrispondente].QUANTITA    = $scope.Titolo.QUANTITA;
+         if($scope.ListaCarico[TitoloCorrispondente].Nuovo)
+            $scope.ListaCarico[TitoloCorrispondente].Modificato = false
+         else
+            $scope.ListaCarico[TitoloCorrispondente].Modificato = true;
       }
       $scope.TitoloPopup = undefined;      
       $mdDialog.hide();     

@@ -1,8 +1,8 @@
-<md-dialog aria-label="Aggiungi istituto di appartenenza">
+<md-dialog>
   <form ng-cloak name="PopupForm">
     <md-toolbar>
       <div class="md-toolbar-tools">
-        <h2>Aggiungi istituto di appartenenza</h2>
+        <h2>ISTITUTO</h2>
       </div>
     </md-toolbar>
 
@@ -16,9 +16,6 @@
           <md-select ng-model="IstitutoDaAssociare" class="mdb-select" type="text" name="istitutoDaAssociare">
             <md-option ng-repeat="istituto in ListaIstitutiPopup | IstitutoByNomeFiltro: NomeFiltro" ng-value="{{istituto.Chiave}}">{{istituto.Istituto}}</md-option>
           </md-select>
-          <div ng-messages="PopupForm.istitutoDaAssociare.$error" multiple md-auto-hide="true">
-            <div ng-message="required">Inserire il nome dell'istituto</div>
-          </div>
         </md-input-container>          
       </div>
     </md-dialog-content>

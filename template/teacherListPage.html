@@ -89,7 +89,7 @@
           <th></th>
           <th></th>
           <th></th>
-          <th></th>          
+          <th></th>
           <th>RAGIONE SOCIALE</th>
         </tr>  
         <tr ng-repeat="Docente in ListaDocenti | DocenteByFiltro : NomeFiltro : MateriaFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Docente.Chiave}}>
@@ -97,7 +97,8 @@
           <td><img src="img/edit.png" style="width:20px;height:auto;" title="MODIFICA DOCENTE" ng-click="ModificaDocente(Docente)"></td>
           <td><img src="img/delivery.png" style="width:20px;height:auto;" title="NUOVA SPEDIZIONE" ng-click="NuovaSpedizione(Docente.Chiave)"></td>
           <td><img src="img/deliveryList.png" style="width:20px;height:auto;" title="LISTA SPEDIZIONI" ng-click="ListaSpedizioni(Docente)"></td>
-          <td><img src="img/email.png" style="width:20px;height:auto;" title="INVIA MAIL" ng-click="InvioMail(Docente)"></td>      
+          <td ng-if="Docente.Email != 'Non disponibile'"><img src="img/email.png" style="width:20px;height:auto;" title="INVIA MAIL"  ng-click="InvioMail(Docente)"></td>
+          <td class="off" ng-if="Docente.Email == 'Non disponibile'"><img src="img/email.png" style="width:20px;height:auto;filter:grayscale(100%);" title="MAIL NON DISPONIBILE"></td>       
           <td class="off">{{Docente.RagioneSociale}}</td>
         </tr>    
       </table>

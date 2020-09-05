@@ -2,7 +2,7 @@
   <form ng-cloak name="PopupForm">
     <md-toolbar>
       <div class="md-toolbar-tools">
-        <h2>LISTA SPEDIZIONI DOCENTE</h2>
+        <h2>SPEDIZIONI DOCENTE</h2>
       </div>
     </md-toolbar>
 
@@ -21,14 +21,14 @@
           <td class="off">{{Spedizione.DATA}}</td>
           <td class="off" ng-bind-html="GetDescrStatoSpedizione(Spedizione)"></td>
         </tr>    
-      </table>
-      <md-table-pagination md-limit="GridOptions3.query.limit" 
-                           md-limit-options="GridOptions3.limitOptions" 
-                           md-page="GridOptions3.query.page" 
-                           md-total="{{ListaSpedizioniDoc.length}}" 
-                           md-page-select="GridOptions3.pageSelect" 
-                           md-boundary-links="GridOptions3.boundaryLinks" 
-                           md-on-paginate="logPagination"></md-table-pagination>      
+        </table>
+        <md-table-pagination md-limit="GridOptions3.query.limit" 
+                             md-limit-options="GridOptions3.limitOptions" 
+                             md-page="GridOptions3.query.page" 
+                             md-total="{{ListaSpedizioniDoc.length}}" 
+                             md-page-select="GridOptions3.pageSelect" 
+                             md-boundary-links="GridOptions3.boundaryLinks" 
+                             md-on-paginate="logPagination"></md-table-pagination>      
       </div>
     </md-dialog-content>
 
