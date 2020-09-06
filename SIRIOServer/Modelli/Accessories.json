@@ -2,15 +2,15 @@
   "SelectSQL"       : [
                         {  
                           "Name" : "ProvinceList",
-                          "SQL"  : "SELECT * FROM province"          
+                          "SQL"  : "SELECT * FROM province ORDER BY NOME ASC"          
                         },
                         {
                           "Name" : "ProvinceListAll",
-                          "SQL"  : "SELECT * FROM province_all"
+                          "SQL"  : "SELECT * FROM province_all ORDER BY NOME ASC"
                         },
                         {
                           "Name" : "InstituteTypeList",
-                          "SQL"  : "SELECT * FROM tipologie_istituto"
+                          "SQL"  : "SELECT * FROM tipologie_istituto ORDER BY DESCRIZIONE ASC"
                         },
                         {
                           "Name" : "InstituteCodeAll",
@@ -21,7 +21,7 @@
   "SelectTitoliSQL" : [
                         {
                           "Name" : "BookList",
-                          "SQL"  : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL FROM titoli"
+                          "SQL"  : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL FROM titoli ORDER BY TITOLO ASC"
                         }
                       ]
                       

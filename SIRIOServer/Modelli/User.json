@@ -3,6 +3,10 @@
                  { 
                    "Name" : "UserInfoList",
                    "SQL"  : "SELECT * FROM utenti WHERE ELIMINATO <> 1 ORDER BY utenti.USERNAME" 
+                 },
+                 {
+                   "Name" : "MyUserKey",
+                   "SQL"  : "SELECT CHIAVE FROM utenti WHERE CHIAVE = #KeyAccount"
                  }
                ],
  

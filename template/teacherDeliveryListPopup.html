@@ -16,8 +16,8 @@
           <th>STATO</th>
         </tr>  
         <tr ng-repeat="Spedizione in ListaSpedizioniDoc | limitTo : GridOptions.query.limit : (GridOptions3.query.page - 1) * GridOptions3.query.limit" id={{Spedizione.Chiave}}>
-          <td><img src="img/delete.png" style="width:20px;height:auto;" title="ELIMINA SPEDIZIONE" ng-click="EliminaSpedizione(Spedizione)"></td> 
-          <td><img src="img/edit.png" style="width:20px;height:auto;" title="MODIFICA SPEDIZIONE" ng-click="ModificaSpedizione(Spedizione.CHIAVE)"></td>                       
+          <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA SPEDIZIONE" ng-click="EliminaSpedizione(Spedizione)"></td> 
+          <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA SPEDIZIONE" ng-click="ModificaSpedizione(Spedizione.CHIAVE)"></td>                       
           <td class="off">{{Spedizione.DATA}}</td>
           <td class="off" ng-bind-html="GetDescrStatoSpedizione(Spedizione)"></td>
         </tr>    

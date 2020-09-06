@@ -26,7 +26,7 @@
         </md-input-container> 
         
         <md-input-container class="containerSelect"><label>QUANTITA</label>         
-          <input ng-model="Titolo.QUANTITA" type="number" min=1 name="Quantita">
+          <input ng-model="Titolo.QUANTITA" type="number" min=0 max={{Titolo.QuantitaMgzn}} name="Quantita">
         </md-input-container>  
       </div>
     </md-dialog-content>

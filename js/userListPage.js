@@ -5,6 +5,7 @@ SIRIOApp.controller("userListPageController",['$scope','SystemInformation','$sta
   $scope.EditingOn       = false;
   $scope.UtenteInEditing = {};
   $scope.NuovoUtente     = false;
+  $scope.MyKey           = [];
   
   ScopeHeaderController.CheckButtons();
   
@@ -29,7 +30,8 @@ SIRIOApp.controller("userListPageController",['$scope','SystemInformation','$sta
     SystemInformation.GetSQL('User', {}, function(Results)  
     {
       UtentiInfoList = SystemInformation.FindResults(Results,'UserInfoList');
-      if(UtentiInfoList != undefined)
+      $scope.MyKey   = SystemInformation.FindResults(Results,'MyUserKey');
+      if(UtentiInfoList != undefined && $scope.MyKey != undefined)
       { 
         for(let i = 0;i < UtentiInfoList.length;i ++)
        
@@ -115,20 +117,28 @@ SIRIOApp.controller("userListPageController",['$scope','SystemInformation','$sta
   
   $scope.EliminaUtente = function(Utente)
   {
-    if(confirm('Eliminare l\'utente: ' + Utente.Username + ' ?'))
+    if (Utente.Chiave == $scope.MyKey[0].CHIAVE)
     {
-      var $ObjQuery = { Operazioni : [] };
-      var ParamUtente = { CHIAVE : Utente.Chiave };
-       
-      $ObjQuery.Operazioni.push({
-                                  Query     : 'DeleteUser',
-                                  Parametri : ParamUtente
-                                });
-                                
-      SystemInformation.PostSQL('User',$ObjQuery,function(Answer)
-      {
-        $scope.RefreshListaUtenti();
-      });  
+        alert('IMPOSSIBILE ELIMINARE IL PROPRIO ACCOUNT DA QUESTA POSIZIONE');
+        return
+    }
+    else
+    {
+        if(confirm('Eliminare l\'utente: ' + Utente.Username + ' ?'))
+        {
+          var $ObjQuery = { Operazioni : [] };
+          var ParamUtente = { CHIAVE : Utente.Chiave };
+           
+          $ObjQuery.Operazioni.push({
+                                      Query     : 'DeleteUser',
+                                      Parametri : ParamUtente
+                                    });
+                                    
+          SystemInformation.PostSQL('User',$ObjQuery,function(Answer)
+          {
+            $scope.RefreshListaUtenti();
+          });  
+        }
     }
   }
   

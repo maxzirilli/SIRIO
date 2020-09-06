@@ -14,7 +14,7 @@
   <div ng-if="ConfigurazioneSelezionata==0">
       <div>
         <h2 style="float:left;">MATERIE</h2>
-        <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaMateria()">INSERISCI NUOVA MATERIA</md-button>
+        <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaMateria()">NUOVA MATERIA</md-button>
       </div>
       <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
         <tr>
@@ -23,8 +23,8 @@
           <th style="font-weight:bold;">MATERIA</th>
         </tr>  
         <tr ng-repeat="materia in ListaMaterie | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{materia.Chiave}}>
-          <td><img src="img/delete.png" style="width:20px;height:auto;" title="ELIMINA MATERIA" ng-click="EliminaMateria(materia)"></td> 
-          <td><img src="img/edit.png" style="width:20px;height:auto;" title="MODIFICA MATERIA" ng-click="ModificaMateria(materia)"></td>        
+          <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA MATERIA" ng-click="EliminaMateria(materia)"></td> 
+          <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA MATERIA" ng-click="ModificaMateria(materia)"></td>        
           <td class="off">{{materia.Descrizione | uppercase}}</td>
         </tr>    
       </table>
@@ -40,7 +40,7 @@
     <div ng-if="ConfigurazioneSelezionata==1">
       <div>
         <h2 style="float:left;">TIPOLOGIE ISTITUTI</h2>
-        <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaTipologia()">INSERISCI NUOVA TIPOLOGIA</md-button>
+        <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaTipologia()">NUOVA TIPOLOGIA</md-button>
       </div>
       <table style="width:100%;text-align:center;" md-row-select="GridOptions_2.rowSelection" multiple="{{GridOptions_2.multiSelect}}">  
         <tr>
@@ -49,8 +49,8 @@
           <th style="font-weight:bold;">TIPOLOGIA</th>
         </tr>  
         <tr ng-repeat="tipologia in ListaTipologie | limitTo : GridOptions_2.query.limit : (GridOptions_2.query.page - 1) * GridOptions_2.query.limit" id={{tipologia.Chiave}}>
-          <td><img src="img/delete.png" style="width:20px;height:auto;" title="ELIMINA TIPOLOGIA" ng-click="EliminaTipologia(tipologia)"></td> 
-          <td><img src="img/edit.png" style="width:20px;height:auto;" title="MODIFICA TIPOLOGIA" ng-click="ModificaTipologia(tipologia)"></td>        
+          <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA TIPOLOGIA" ng-click="EliminaTipologia(tipologia)"></td> 
+          <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA TIPOLOGIA" ng-click="ModificaTipologia(tipologia)"></td>        
           <td class="off">{{tipologia.Descrizione | uppercase}}</td>
         </tr>    
       </table>
@@ -66,7 +66,7 @@
     <div ng-if="ConfigurazioneSelezionata==2">
       <div>
         <h2 style="float:left;">TIPOLOGIE ESCLUSE ISTITUTI</h2>
-        <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaTipologiaEsclusa()">INSERISCI NUOVA TIPOLOGIA ESCLUSA</md-button>
+        <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaTipologiaEsclusa()">NUOVA TIPOLOGIA ESCLUSA</md-button>
       </div>
       <table style="width:100%;text-align:center;" md-row-select="GridOptions_3.rowSelection" multiple="{{GridOptions_3.multiSelect}}">  
         <tr>
@@ -75,8 +75,8 @@
           <th style="font-weight:bold;">TIPOLOGIA</th>
         </tr>  
         <tr ng-repeat="tipologiaEsclusa in ListaTipologieEscluse | limitTo : GridOptions_3.query.limit : (GridOptions_3.query.page - 1) * GridOptions_3.query.limit" id={{tipologiaEsclusa.Chiave}}>
-          <td><img src="img/delete.png" style="width:20px;height:auto;" title="ELIMINA TIPOLOGIA ESCLUSA" ng-click="EliminaTipologiaEsclusa(tipologiaEsclusa)"></td> 
-          <td><img src="img/edit.png" style="width:20px;height:auto;" title="MODIFICA TIPOLOGIA ESCLUSA" ng-click="ModificaTipologiaEsclusa(tipologiaEsclusa)"></td>        
+          <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA TIPOLOGIA ESCLUSA" ng-click="EliminaTipologiaEsclusa(tipologiaEsclusa)"></td> 
+          <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA TIPOLOGIA ESCLUSA" ng-click="ModificaTipologiaEsclusa(tipologiaEsclusa)"></td>        
           <td class="off">{{tipologiaEsclusa.Descrizione | uppercase}}</td>
         </tr>    
       </table>
@@ -92,7 +92,7 @@
     <div ng-if="ConfigurazioneSelezionata==3">
       <div>
         <h2 style="float:left;">PROVINCE GESTITE</h2>
-        <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaProvincia()">INSERISCI NUOVA PROVINCIA</md-button>
+        <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaProvincia()">NUOVA PROVINCIA GESTITA</md-button>
       </div>
       <table style="width:100%;text-align:center;" md-row-select="GridOptions_4.rowSelection" multiple="{{GridOptions_4.multiSelect}}">  
         <tr>
@@ -101,8 +101,8 @@
           <th style="font-weight:bold;">NOME</th>
         </tr>  
         <tr ng-repeat="provincia in ListaProvince | limitTo : GridOptions_4.query.limit : (GridOptions_4.query.page - 1) * GridOptions_4.query.limit" id={{provincia.Chiave}}>
-          <td><img src="img/delete.png" style="width:20px;height:auto;" title="ELIMINA PROVINCIA GESTITA" ng-click="EliminaProvincia(provincia)"></td> 
-          <td><img src="img/edit.png" style="width:20px;height:auto;" title="MODIFICA PROVINCIA GESTITA" ng-click="ModificaProvincia(provincia)"></td>        
+          <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA PROVINCIA GESTITA" ng-click="EliminaProvincia(provincia)"></td> 
+          <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA PROVINCIA GESTITA" ng-click="ModificaProvincia(provincia)"></td>        
           <td class="off">{{provincia.Nome}}</td>
         </tr>    
       </table>
@@ -118,7 +118,7 @@
     <div ng-if="ConfigurazioneSelezionata==4">
       <form name="DittaEditForm" layout="column" style="width:100%" ng-submit="ConfermaDati()">
         <div>    
-          <h2 style="float:left;">DATI DITTA</h2>
+          <h2 style="float:left;">DATI PAGINA43</h2>
           <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" type="submit">CONFERMA</md-button>
           <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="AnnullaDati()">ANNULLA</md-button>
         </div>

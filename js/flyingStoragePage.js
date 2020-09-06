@@ -222,13 +222,14 @@ SIRIOApp.controller("flyingStoragePageController",['$scope','SystemInformation',
     $scope.Titolo = {};
 
     $scope.Titolo = {
-                       "CHIAVE"      : Titolo.CHIAVE,
-                       "TITOLO"      : Titolo.TITOLO,
-                       "NOME_TITOLO" : Titolo.NOME_TITOLO,
-                       "QUANTITA"    : parseInt(Titolo.QUANTITA),
-                       "Nuovo"       : false,
-                       "Modificato"  : true,
-                       "Eliminato"   : false                                   
+                       "CHIAVE"       : Titolo.CHIAVE,
+                       "TITOLO"       : Titolo.TITOLO,
+                       "NOME_TITOLO"  : Titolo.NOME_TITOLO,
+                       "QUANTITA"     : parseInt(Titolo.QUANTITA),
+                       "QuantitaMgzn" : Titolo.QUANTITA_MGZN_MAX,
+                       "Nuovo"        : false,
+                       "Modificato"   : true,
+                       "Eliminato"    : false                                   
                     } 
                               
     $scope.queryTitolo = function(searchTextTit)

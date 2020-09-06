@@ -1,6 +1,6 @@
 SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformation','$state','$rootScope', function($scope,SystemInformation,$state,$rootScope)
 { 
-  $scope.ListaConfigurazioni        = ['Materie','Tipologie','Tipologie Escluse','Province','Dati Ditta'];
+  $scope.ListaConfigurazioni        = ['Materie','Tipologie','Tipologie Escluse','Province','Dati Pagina43'];
   $scope.ConfigurazioneSelezionata  = 0;
   
   $scope.ListaMaterie               = [];

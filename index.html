@@ -49,7 +49,7 @@
   <script src="js/mailPageController.js"></script>    
 </head>
 <body ng-app="SIRIOApp">
-  <md-toolbar layout-padding ng-controller="headerController" md-theme="{{ActualTheme}}" ng-class="{'off' : UploadRunning}">
+  <md-toolbar layout-padding ng-controller="headerController" md-theme="{{ActualTheme}}">
       <div class="md-toolbar-tools">
         <img src="img/LogoSirio.png" style="padding-top:5px;width:70px;height:auto;">
         <span flex></span>
@@ -63,17 +63,17 @@
            &nbsp
         </div>
         <div flex="80" style="text-align:right;">
-           <md-button class="md-fab md-mini md-primary" aria-label="Home" ng-click="GoHome()" ng-if="VisButtonHome">
-             <md-icon md-svg-src="img/icons/home.svg" style="color: greenyellow;"></md-icon>
+           <md-button class="md-fab md-mini md-primary" title="HOME" ng-click="GoHome()" ng-if="VisButtonHome">
+             <md-icon md-svg-src="img/icons/home.svg" style="color: greenyellow;fill:white;"></md-icon>
            </md-button>
-           <md-button class="md-fab md-mini md-primary" aria-label="Cambia password" ng-click="ChangePassword()" ng-if="VisButtonChangePassword">
-             <md-icon md-svg-src="img/icons/CambiaPassword.svg" style="color: greenyellow;"></md-icon>
+           <md-button class="md-fab md-mini md-primary" title="CAMBIO PASSWORD" ng-click="ChangePassword()" ng-if="VisButtonChangePassword">
+             <md-icon md-svg-src="img/icons/CambiaPassword.svg" style="color: greenyellow;fill:white;"></md-icon>
            </md-button>
-           <md-button class="md-fab md-mini md-primary" aria-label="Esci" ng-click="Logout()">
-             <md-icon md-svg-src="img/icons/Logout.svg" style="color: greenyellow;"></md-icon>
+           <md-button class="md-fab md-mini md-primary" title="LOGOUT" ng-click="Logout()">
+             <md-icon md-svg-src="img/icons/Logout.svg" style="color: greenyellow;fill:white;"></md-icon>
            </md-button>
-           <md-button class="md-fab md-mini md-primary" aria-label="Info" ng-click="CheckVersions()" ng-if="VisButtonInfo">
-             <md-icon md-svg-src="img/icons/VersionInfo.svg" style="color: greenyellow;"></md-icon>
+           <md-button class="md-fab md-mini md-primary" title="INFO" ng-click="CheckVersions()" ng-if="VisButtonInfo">
+             <md-icon md-svg-src="img/icons/VersionInfo.svg" style="color: greenyellow;fill:white;"></md-icon>
            </md-button>
         </div>
       </div>

@@ -55,9 +55,9 @@
                 <th>STATO</th>
               </tr>
               <tr ng-repeat="Spedizione in UltimeVentiSpedizioni" id="Spedizione.Chiave">
-                <td><img src="img/delete.png" style="width:20px;height:auto;" title="ELIMINA SPEDIZIONE" ng-click="EliminaSpedizione(Spedizione)"></td> 
-                <td><img src="img/edit.png" style="width:20px;height:auto;" title="MODIFICA SPEDIZIONE" ng-click="ModificaSpedizione(Spedizione.Chiave,Spedizione.Docente)"></td>        
-                <td><img src="img/toSend.png" style="width:20px;height:auto;" title="SPEDIRE TITOLI DISPONIBILI" ng-click="PassaADaSpedireDisponibili(Spedizione.Chiave)" ng-if="Spedizione.NrPrenotate > 0"></td>
+                <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA SPEDIZIONE" ng-click="EliminaSpedizione(Spedizione)"></td> 
+                <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA SPEDIZIONE" ng-click="ModificaSpedizione(Spedizione.Chiave,Spedizione.Docente)"></td>        
+                <td><img src="img/toSend.png" style="width:30px;height:auto;" title="SPEDIRE TITOLI DISPONIBILI" ng-click="PassaADaSpedireDisponibili(Spedizione.Chiave)" ng-if="Spedizione.NrPrenotate > 0"></td>
                 <td class="off">{{Spedizione.Data}}</td>  
                 <td class="off">{{Spedizione.Presso}}</td>
                 <td class="off" ng-bind-html="GetDescrStatoSpedizione(Spedizione)"></td>

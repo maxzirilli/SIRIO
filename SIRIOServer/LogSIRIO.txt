@@ -1,1 +1,7 @@
 
+[06-Sep-2020 15:42:37 Europe/Berlin] SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE = dettaglio_magazzino_volante.TITOLO) AS NOME_TITOLO,(SELECT titoli.QUANTITA_MGZN FROM titoli WHERE CHIAVE = dettaglio_magazzino_volante.TITOLO) AS QUANTITA_MGZN_MAX, FROM dettaglio_magazzino_volante WHERE MOVIMENTO=406753
+[06-Sep-2020 15:42:41 Europe/Berlin] SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE = dettaglio_magazzino_volante.TITOLO) AS NOME_TITOLO,(SELECT titoli.QUANTITA_MGZN FROM titoli WHERE CHIAVE = dettaglio_magazzino_volante.TITOLO) AS QUANTITA_MGZN_MAX, FROM dettaglio_magazzino_volante WHERE MOVIMENTO=406753
+[06-Sep-2020 15:55:19 Europe/Berlin] SELECT * FROM tipologie_istituto ORDER BY NOME ASC
+[06-Sep-2020 15:55:19 Europe/Berlin] SELECT * FROM tipologie_istituto ORDER BY NOME ASC
+[06-Sep-2020 15:55:22 Europe/Berlin] SELECT * FROM tipologie_istituto ORDER BY NOME ASC
+[06-Sep-2020 15:55:23 Europe/Berlin] SELECT * FROM tipologie_istituto ORDER BY NOME ASC

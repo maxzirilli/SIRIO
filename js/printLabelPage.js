@@ -36,7 +36,13 @@ SIRIOApp.controller("printLabelPageController",['$scope','SystemInformation','$s
       var ChiaveSpedizione = -1;
       if(ListaDaSpedireTmp.length == 0)
       {
+         var Data       = new Date();
+         var DataAnno   = Data.getFullYear();
+         var DataMese   = Data.getMonth(); 
+         var DataGiorno = Data.getDate();
+         var DataSpedizione = DataGiorno.toString() + '/' + DataMese.toString() +  '/' + DataAnno.toString();
          var doc = new jsPDF();
+         doc.setProperties({title: 'STAMPA ETICHETTE ' + DataSpedizione});
          doc.setFontSize(10); 
          doc.setFontType('bold');
          doc.setTextColor(255,0,0);
@@ -97,6 +103,7 @@ SIRIOApp.controller("printLabelPageController",['$scope','SystemInformation','$s
          var DataSpedizione = DataGiorno.toString() + '/' + DataMese.toString() +  '/' + DataAnno.toString();
        
          var doc = new jsPDF();
+         doc.setProperties({title: 'STAMPA ETICHETTE ' + DataSpedizione});
          doc.setFontSize(10); 
          doc.setFontType('bold');
          doc.text(10,20,'REPORT SPEDIZIONI - IN DATA ' + DataSpedizione);

@@ -62,6 +62,7 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                  //alert('Nessun movimento del titolo nella data selezionata')
              {
                  var doc = new jsPDF();
+                 doc.setProperties({title: 'STAMPA LOG'});
                  doc.setFontSize(10); 
                  doc.setFontType('bold');
                  doc.setTextColor(255,0,0);
@@ -77,6 +78,7 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                  var DataReport     = DataGiorno.toString() + '/' + DataMese.toString() +  '/' + DataAnno.toString();
                
                  var doc = new jsPDF();
+                 doc.setProperties({title: 'STAMPA LOG'});
                  doc.setFontSize(10); 
                  doc.setFontType('bold');
                  doc.text(10,20,'REPORT MOVIMENTI MAGAZZINO PRINCIPALE ' + DataReport + ' DEL TITOLO:');
@@ -134,6 +136,7 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                  //alert('Nessun movimento del titolo nella data selezionata')
              {
                  var doc = new jsPDF();
+                 doc.setProperties({title: 'STAMPA LOG'});
                  doc.setFontSize(10); 
                  doc.setFontType('bold');
                  doc.setTextColor(255,0,0);
@@ -149,6 +152,7 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                  var DataReport     = DataGiorno.toString() + '/' + DataMese.toString() +  '/' + DataAnno.toString();
                
                  var doc = new jsPDF();
+                 doc.setProperties({title: 'STAMPA LOG'});
                  doc.setFontSize(10); 
                  doc.setFontType('bold');
                  doc.text(10,20,'REPORT MOVIMENTI GLOBALI MAGAZZINO PRINCIPALE ' + DataReport);
@@ -208,6 +212,7 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
              if (ListaMovimenti.length == 0)
              {
                  var doc = new jsPDF();
+                 doc.setProperties({title: 'STAMPA LOG'});
                  doc.setFontSize(10); 
                  doc.setFontType('bold');
                  doc.setTextColor(255,0,0);
@@ -223,6 +228,7 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                  var DataReport     = DataGiorno.toString() + '/' + DataMese.toString() +  '/' + DataAnno.toString();
                
                  var doc = new jsPDF();
+                 doc.setProperties({title: 'STAMPA LOG'});
                  doc.setFontSize(10); 
                  doc.setFontType('bold');
                  doc.text(10,20,'REPORT MOVIMENTI MAGAZZINO VOLANTE ' + DataReport + ' DEL TITOLO:');
@@ -279,6 +285,7 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
              if (ListaMovimenti.length == 0)
              {
                  var doc = new jsPDF();
+                 doc.setProperties({title: 'STAMPA LOG'});
                  doc.setFontSize(10); 
                  doc.setFontType('bold');
                  doc.setTextColor(255,0,0);
@@ -294,6 +301,7 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                  var DataReport     = DataGiorno.toString() + '/' + DataMese.toString() +  '/' + DataAnno.toString();
                
                  var doc = new jsPDF();
+                 doc.setProperties({title: 'STAMPA LOG'});
                  doc.setFontSize(10); 
                  doc.setFontType('bold');
                  doc.text(10,20,'REPORT MOVIMENTI GLOBALI MAGAZZINO VOLANTE ' + DataReport);

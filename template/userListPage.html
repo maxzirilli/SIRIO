@@ -15,8 +15,8 @@
           <th>RUOLO</th>        
         </tr>  
         <tr ng-repeat="Utente in ListaUtenti | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Utente.Chiave}}>
-          <td><img src="img/delete.png" style="width:20px;height:auto;" title="ELIMINA UTENTE" ng-click="EliminaUtente(Utente)"></td> 
-          <td><img src="img/edit.png" style="width:20px;height:auto;" title="MODIFICA UTENTE" ng-click="ModificaUtente(Utente)"></td>        
+          <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA UTENTE" ng-click="EliminaUtente(Utente)"></td> 
+          <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA UTENTE" ng-click="ModificaUtente(Utente)"></td>        
           <td class="off">{{Utente.Username}}</td> 
           <td class="off">{{Utente.RagioneSociale}}</td> 
           <td class="off">{{Utente.Email}}</td>

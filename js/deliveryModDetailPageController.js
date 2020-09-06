@@ -213,7 +213,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
           {
             if (Titolo.STATO == 'P' && (Titolo.QUANTITA <= Titolo.QUANTITA_MGZN))
             {
-                alert('q' + Titolo.QUANTITA + 'qm' + Titolo.QUANTITA_MGZN);
                 if(Titolo.Nuovo == true)
                    Titolo.STATO = 'S';
                 else 

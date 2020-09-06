@@ -2,7 +2,7 @@
   <div ng-if="!EditingOn">
     <div>
       <h2 style="margin-right:50px;">ISTITUTI</h2>
-      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoIstituto()">INSERISCI NUOVO ISTITUTO</md-button>      
+      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoIstituto()">NUOVO ISTITUTO</md-button>      
       <div layout="row">
         <md-input-container class="containerSelect" style="width:20%;margin-right:10px;"><label>Filtra per provincia...</label>
           <md-select ng-model="ProvinciaFiltro" placeholder="PROVINCIA" class="mdb-select" type="text" name="ProvinciaFiltro">
@@ -15,6 +15,7 @@
         <md-input-container class="containerSelect" style="width:20%;"><label>Filtra per nome...</label>
           <input ng-model="NomeFiltro" type="search">
         </md-input-container>
+        <!--<md-button ng-click="ResetFiltri()"><img src="img/delete.png" style="width:40px;height:auto;"></md-button>-->
       </div>
     </div>
     <div ng-if="ListaIstituti.length != 0">
@@ -28,12 +29,12 @@
           <th>PROMOTORE ASSEGNATO</th>      
         </tr>  
         <tr ng-repeat="Istituto in ListaIstituti | IstitutoByFiltro : ProvinciaFiltro : NomeFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Istituto.Chiave}}>
-          <td><img src="img/delete.png" style="width:20px;height:auto;" title="ELIMINA ISTITUTO" ng-click="EliminaIstituto(Istituto)"></td> 
-          <td><img src="img/edit.png" style="width:20px;height:auto;" title="MODIFICA ISTITUTO" ng-click="ModificaIstituto(Istituto)"></td>        
+          <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA ISTITUTO" ng-click="EliminaIstituto(Istituto)"></td> 
+          <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA ISTITUTO" ng-click="ModificaIstituto(Istituto)"></td>        
           <td class="off">{{Istituto.Codice}}</td>  
           <td class="off">{{Istituto.Nome}}</td>
           <td class="off">{{Istituto.ProvinciaNome}}</td>
-          <td class="off">{{Istituto.Promotore || 'NESSUN PROMOTORE ASSEGNATO'}}</td>        
+          <td class="off">{{(Istituto.Promotore || 'NESSUN PROMOTORE ASSEGNATO') | uppercase}}</td>        
         </tr>    
       </table>
       <md-table-pagination md-limit="GridOptions.query.limit" 
