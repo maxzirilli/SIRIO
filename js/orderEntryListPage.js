@@ -2,11 +2,128 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
 {
 
   $scope.EditingOn        = false;
+  $scope.StampaOn         = false;
   $scope.OrdineInEditing  = {};
   $scope.ListaOrdini      = [];  
-  $scope.ListaTitoli      = []; 
+  $scope.ListaTitoli      = [];
+  $scope.Data = {};
+  $scope.Data.DataRicercaAl    = new Date();
+  let TmpDate             = new Date($scope.Data.DataRicercaAl);
+  TmpDate.setDate(TmpDate.getDate() - 7);
+  $scope.Data.DataRicercaDal   = new Date(TmpDate);  
   
   ScopeHeaderController.CheckButtons();
+  
+  function Base64DecodeUnicode(str) 
+  {
+    percentEncodedStr = atob(str).split('').map(function(c) {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''); 
+    return decodeURIComponent(percentEncodedStr);
+  } 
+    
+  $scope.CVSLoaded = function(fileInfo)
+  { 
+    var file = fileInfo.files[0];
+    if(file) 
+    {
+      var reader = new FileReader();
+      reader.onloadend = function(evt)
+      {
+        var Csv            = reader.result.split(",");         
+        var CsvSplitted    = (Base64DecodeUnicode(Csv[1])).split("\n");
+        var $ObjQuery      = { Operazioni : [] };
+        var ListaTitoli    = [];        
+        //$scope.FileLength  = CsvSplitted.length - 1;
+        $scope.Contatore   = 0;
+        var i = 1;
+        
+        var CreaOrdine = function()
+        {
+          while (i < CsvSplitted.length - 1)          
+          {
+            let RecordOrdine  = CsvSplitted[i++].split(";");
+            RecordOrdine[0]   = RecordOrdine[0].trim();
+            RecordOrdine[1]   = RecordOrdine[1].trim();            
+            let TitoloCorrisp = ListaTitoli.find(function(ATitolo) { return(ATitolo.CODICE_ISBN == RecordOrdine[0]);});
+            if (TitoloCorrisp == undefined)
+            {
+              alert('Impossibile eseguire il carico,il titolo con CODICE ISBN >> ' + RecordOrdine[0] + ' << non è presente nel database!');
+              return
+            }
+            else            
+            { 
+              $ObjQuery.Operazioni.push({ 
+                                          Query     : 'InsertOrderEntry',
+                                          Parametri : { 
+                                                        CHIAVE    : -1,
+                                                        DATA      : new Date(),                                        
+                                                        TITOLO    : TitoloCorrisp.CHIAVE,
+                                                        QUANTITA  : RecordOrdine[1]                                                                                                                
+                                                      },
+                                          ResetKeys :[1]
+                                        }); 
+            }                                              
+            $scope.Contatore++;            
+            if($ObjQuery.Operazioni.length == 10)
+            {
+              SystemInformation.PostSQL('OrderEntry',$ObjQuery,CreaOrdine,false,true);  
+              $ObjQuery.Operazioni = [];
+              return;
+            }
+          }
+          if($ObjQuery.Operazioni.length != 0 && $ObjQuery.Operazioni.length < 10)
+             SystemInformation.PostSQL('OrderEntry',$ObjQuery,function() 
+             { 
+               $scope.Contatore = 0;
+               alert ('UPLOAD ESEGUITO!');                                                               
+             },false,true)                                                                 
+        } 
+        SystemInformation.GetSQL('Accessories',{}, function(Results)
+        { 
+          ListaTitoli = SystemInformation.FindResults(Results,'BookList');
+          if(ListaTitoli != undefined) 
+          {
+             CreaOrdine();
+             StampaOn = true;
+             
+             var Data           = new Date();
+             var DataAnno       = Data.getFullYear();
+             var DataMese       = Data.getMonth()+1; 
+             var DataGiorno     = Data.getDate();
+             var DataSpedizione = DataGiorno.toString() + '/' + DataMese.toString() +  '/' + DataAnno.toString();
+             
+             var doc = new jsPDF();
+             doc.setProperties({title: 'CARICO MAGAZZINO ' + DataSpedizione});
+             doc.setFontSize(10); 
+             doc.setFontType('bold');
+             doc.text(10,20,'CARICO - IN DATA ' + DataSpedizione);
+             
+             var CoordY = 30;
+             doc.setFontSize(7);
+             doc.text(10,CoordY,'QNT');
+             doc.text(25,CoordY,'ISBN');
+             doc.text(45,CoordY,'TITOLO');
+             doc.text(180,CoordY,'UBICAZIONE');
+             doc.setFontType('normal');
+             CoordY += 5;             
+             
+             //GENERARE LISTA DEL CARICO
+             
+             
+             $scope.RefreshListaOrdini();
+          }                
+          else SystemInformation.ApplyOnError('Modello carico non conforme','');          
+        },'SelectTitoliSQL');                  
+      }
+    }          
+    reader.readAsDataURL(file);          
+  }
+  
+  $scope.NuovoOrdineCsv = function()
+  { 
+    document.getElementById('fileLoadCVSDocument').click();    
+  }
   
   $scope.ConvertiData = function (Dati)
   {
@@ -15,7 +132,12 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
   
   $scope.RefreshListaOrdini = function()
   {
-    SystemInformation.GetSQL('OrderEntry', {}, function(Results)  
+    if($scope.Data.DataRicercaDal == undefined || $scope.Data.DataRicercaAl == undefined)
+       return;
+    let TmpDate = new Date($scope.Data.DataRicercaAl);
+    TmpDate.setDate($scope.Data.DataRicercaAl.getDate() + 1);
+    
+    SystemInformation.GetSQL('OrderEntry', { Dal : ZHTMLInputFromDate($scope.Data.DataRicercaDal), Al : ZHTMLInputFromDate(TmpDate)}, function(Results)  
     {
       OrdiniInfoLista = SystemInformation.FindResults(Results,'OrderEntryInfoList');
       if(OrdiniInfoLista != undefined)

@@ -1,8 +1,17 @@
 <div ng-controller="orderEntryPageController">
-  <div ng-if="!EditingOn">
+  <div ng-if="!EditingOn && !StampaOn">
     <div>
-      <h2>ORDINI IN INGRESSO</h2>
-      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoOrdine()">NUOVO ORDINE</md-button>      
+      <h2>CARICO IN MAGAZZINO</h2>
+      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoOrdine()">NUOVO CARICO</md-button>
+      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoOrdineCsv()">CARICO DA CSV</md-button>
+      <input id="fileLoadCVSDocument" accept=".csv" name="file" type="file" class="ng-hide" onchange="angular.element(this).scope().CVSLoaded(this)">      
+      
+      <md-input-container style="float:left;margin-left:20px;">
+        <label>DAL</label><input ng-model="Data.DataRicercaDal" type="date" name="DataRicercaDal" ng-change="RefreshListaOrdini()">
+      </md-input-container>
+      <md-input-container style="float:left;margin-left:20px;">  
+        <label>AL</label><input ng-model="Data.DataRicercaAl" type="date" name="DataRicercaAl" ng-change="RefreshListaOrdini()">
+      </md-input-container>      
     </div>
     <div ng-if="ListaOrdini.length != 0">
       <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
@@ -30,59 +39,63 @@
                            md-on-paginate="logPagination"></md-table-pagination>
     </div>
     <div>
-      <p ng-if="ListaOrdini.length == 0" style="font-weight:bold;font-style:italic;text-align:center;margin-top:100px;">NESSUN ORDINE PRESENTE</p>
+      <p ng-if="ListaOrdini.length == 0" style="font-weight:bold;font-style:italic;text-align:center;margin-top:100px;">NESSUN CARICO PRESENTE</p>
     </div>
   </div>
   
-  <div ng-if="EditingOn">
-  <form name="ordineIngressoEditForm" layout="column" style="width:100%" ng-submit="ConfermaOrdine()">
-    <div layout="row">
-      <h2>ORDINE IN INGRESSO</h2>
-      <div layout="row" style="width:100%;" layout-align="end start">
-        <md-button class="md-raised md-accent" style="font-weight:bold;" type="submit">CONFERMA</md-button>
-        <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="OnAnnullaOrdineClicked()">ANNULLA</md-button>
-      </div>
-    </div>
-       
-    <br>
-    <br>
-    <div layout="column">
-      <md-input-container style="width:33%;">
-        <label>DATA</label><input ng-model="OrdineInEditing.Data" type="date" name="Data" required>
-        <div ng-messages="ordineIngressoEditForm.Data.$error" multiple md-auto-hide="true">
-          <div ng-message="required">Inserire la data dell'ordine</div>
+  <div ng-if="EditingOn && !StampaOn">
+    <form name="ordineIngressoEditForm" layout="column" style="width:100%" ng-submit="ConfermaOrdine()">
+      <div layout="row">
+        <h2>CARICO</h2>
+        <div layout="row" style="width:100%;" layout-align="end start">
+          <md-button class="md-raised md-accent" style="font-weight:bold;" type="submit">CONFERMA</md-button>
+          <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="OnAnnullaOrdineClicked()">ANNULLA</md-button>
         </div>
-      </md-input-container> 
-      <div layout="row">      
-        <md-input-container flex=10>
-          <label>QUANTITA'</label><input ng-model="OrdineInEditing.Quantita" type="number" min=1 name="Quantita" required>
-          <div ng-messages="ordineIngressoEditForm.Nome.$error" multiple md-auto-hide="true">
-            <div ng-message="required">Inserire la quantità del titolo da ordinare</div>
+      </div>
+         
+      <br>
+      <br>
+      <div layout="column">
+        <md-input-container style="width:33%;">
+          <label>DATA</label><input ng-model="OrdineInEditing.Data" type="date" name="Data" required>
+          <div ng-messages="ordineIngressoEditForm.Data.$error" multiple md-auto-hide="true">
+            <div ng-message="required">Inserire la data del carico</div>
           </div>
         </md-input-container> 
-        <md-input-container flex=90>
-          <label>TITOLO</label>        
-          <md-autocomplete required
-                      md-input-name="Titolo"
-                      md-autofocus="true"
-                      md-no-cache="true"
-                      md-selected-item="TitoloVisualizzato"
-                      md-selected-item-change = "selectedItemChangeTitolo(item)"
-                      md-search-text="searchTextTit"
-                      md-items="item in queryTitolo(searchTextTit)"
-                      md-item-text="item.Nome"
-                      md-require-match="true"
-                      md-clear-button="true">
-          <md-item-template>
-            <span md-highlight-text="searchText">{{item.Codice}} - {{item.Nome}}</span>
-          </md-item-template>
-          <div ng-messages="ordineIngressoEditForm.Titolo.$error" multiple md-auto-hide="true">
-            <div ng-message="required">Inserire il titolo da ordinare</div>
-          </div>
-        </md-input-container>
-      </div>
-    </div>         
-  </form>        
-  </div> 
+        <div layout="row">      
+          <md-input-container flex=10>
+            <label>QUANTITA'</label><input ng-model="OrdineInEditing.Quantita" type="number" min=1 name="Quantita" required>
+            <div ng-messages="ordineIngressoEditForm.Nome.$error" multiple md-auto-hide="true">
+              <div ng-message="required">Inserire la quantità del titolo da caricare</div>
+            </div>
+          </md-input-container> 
+          <md-input-container flex=90>
+            <label>TITOLO</label>        
+            <md-autocomplete required
+                        md-input-name="Titolo"
+                        md-autofocus="true"
+                        md-no-cache="true"
+                        md-selected-item="TitoloVisualizzato"
+                        md-selected-item-change = "selectedItemChangeTitolo(item)"
+                        md-search-text="searchTextTit"
+                        md-items="item in queryTitolo(searchTextTit)"
+                        md-item-text="item.Nome"
+                        md-require-match="true"
+                        md-clear-button="true">
+            <md-item-template>
+              <span md-highlight-text="searchText">{{item.Codice}} - {{item.Nome}}</span>
+            </md-item-template>
+            <div ng-messages="ordineIngressoEditForm.Titolo.$error" multiple md-auto-hide="true">
+              <div ng-message="required">Inserire il titolo da caricare</div>
+            </div>
+          </md-input-container>
+        </div>
+      </div>         
+    </form>        
+  </div>
+
+  <div ng-if="!EditingOn && StampaOn">
+    <iframe style="background:white;" id="caricoPdf" title="Carico" height=100% width=100% ></iframe>
+  </div>  
 </div>
     

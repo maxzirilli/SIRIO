@@ -21,7 +21,7 @@
   "SelectTitoliSQL" : [
                         {
                           "Name" : "BookList",
-                          "SQL"  : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL FROM titoli ORDER BY TITOLO ASC"
+                          "SQL"  : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL,titoli.POS_MAGAZZINO FROM titoli ORDER BY TITOLO ASC"
                         }
                       ]
                       

@@ -17,7 +17,10 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
   this.GiorniSettimana       = ['Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato','Domenica']; 
   this.DataBetweenController = {};
   this.BordoEtichetta        = true;
-  this.VDocDelivery          = 'VERSIONE DOCUMENTO 1.0 DEL 26/08/2020';
+  this.VDocDelivery          = 'VERSIONE DOCUMENTO 1.0 DEL 8/9/2020';
+  this.VDocAdoption          = 'VERSIONE DOCUMENTO 1.0 DEL 8/9/2020';
+  this.VDocLogStorage        = 'VERSIONE DOCUMENTO 1.0 DEL 8/9/2020';
+  this.VDocInventory         = 'VERSIONE DOCUMENTO 1.0 DEL 8/9/2020';
   
   this.ApplyOnError = function(Error,SubError,OnError)
   {

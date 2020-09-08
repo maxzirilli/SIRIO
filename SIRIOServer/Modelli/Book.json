@@ -1,98 +1,105 @@
 { 
-  "SelectSQL"    : [
-                     { 
-                       "Name" : "BookInfoList",
-                       "SQL"  : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,titoli.MATERIA,titoli.POS_MAGAZZINO,titoli.AUTORI,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL, (SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE materie_insegnamento.CHIAVE = titoli.MATERIA) AS NOME_MATERIA FROM titoli ORDER BY titoli.TITOLO" 
-                     },
-                     {
-                       "Name" : "BookListFilter",
-                       "SQL"  : "SELECT titoli.CHIAVE,titoli.TITOLO,titoli.CODICE_ISBN FROM titoli"
-                     }
-                   ],
+  "SelectSQL"           : [
+                            { 
+                              "Name" : "BookInfoList",
+                              "SQL"  : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,titoli.MATERIA,titoli.POS_MAGAZZINO,titoli.AUTORI,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL, (SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE materie_insegnamento.CHIAVE = titoli.MATERIA) AS NOME_MATERIA FROM titoli {W~FiltroI~(titoli.CHIAVE IN (SELECT istituti_x_titoli.TITOLO FROM istituti_x_titoli WHERE ISTITUTO = :FiltroI))} ORDER BY titoli.TITOLO" 
+                            },
+                            {
+                              "Name" : "BookListFilter",
+                              "SQL"  : "SELECT titoli.CHIAVE,titoli.TITOLO,titoli.CODICE_ISBN FROM titoli"
+                            }
+                          ],  
+  
+  "SelectInstituteList" : [
+                            {
+                              "Name" : "InstituteForBook",
+                              "SQL"  : "SELECT istituti.CHIAVE,istituti.NOME FROM istituti WHERE CHIAVE IN (SELECT ISTITUTO FROM istituti_x_titoli WHERE TITOLO=:FiltroT) ORDER BY NOME DESC"                              
+                            }
+                          ],
 
-  "SQLDettaglio" : [
-                     {
-                       "Name" : "BookDettaglio",
-                       "SQL"  : "SELECT * FROM titoli WHERE CHIAVE=:CHIAVE"
-                     },
-                     {
-                       "Name" : "BookInstitute",
-                       "SQL"  : "SELECT istituti.CHIAVE,istituti.NOME AS ISTITUTO FROM istituti_x_titoli,istituti WHERE TITOLO=:CHIAVE AND istituti.CHIAVE = istituti_x_titoli.ISTITUTO" 
-                     },
-                     {
-                       "Name" : "BookAdoption",
-                       "SQL"  : "SELECT *,(SELECT classi.ANNO FROM classi WHERE classi.CHIAVE = adozioni_titolo.CLASSE) AS ANNO,(SELECT classi.SEZIONE FROM classi WHERE classi.CHIAVE = adozioni_titolo.CLASSE) AS SEZIONE FROM adozioni_titolo WHERE adozioni_titolo.TITOLO=:CHIAVE"
-                     }                     
-                   ],
-
-  "EditSQL"      : [
-                     {
-                       "Name" : "InsertBook",
-                       "SQL"  : "INSERT INTO titoli (CHIAVE,CODICE_ISBN,TITOLO,SOTTOTITOLO,MATERIA,AUTORI,EDITORE,VOLUME,POS_MAGAZZINO,PREZZO,QUANTITA_MGZN,QUANTITA_MGZN_VOL) VALUES (:NewKey1,#CODICE_ISBN,#TITOLO,#SOTTOTITOLO,:MATERIA,#AUTORI,#EDITORE,#VOLUME,#POS_MAGAZZINO,#PREZZO,#QUANTITA_MGZN,#QUANTITA_MGZN_VOL)"
-                     },
-                     {
-                       "Name" : "InsertInstituteBook",
-                       "SQL"  : "INSERT INTO istituti_x_titoli (ISTITUTO,TITOLO) VALUES (:ISTITUTO,:TITOLO)"
-                     },
-                     {
-                       "Name" : "InsertInstituteBookAfterInsert",
-                       "SQL"  : "INSERT INTO istituti_x_titoli (ISTITUTO,TITOLO) VALUES (:ISTITUTO,:NewKey1)"
-                     },
-                     {
-                       "Name" : "InsertAdoption",
-                       "SQL"  : "INSERT INTO adozioni_titolo (CHIAVE,TITOLO,CLASSE,ISTITUTO) VALUES (:NewKey1,:TITOLO,:CLASSE,:ISTITUTO)"
-                     },
-                     {
-                       "Name" : "InsertAdoptionAfterInsert",
-                       "SQL"  : "INSERT INTO adozioni_titolo (CHIAVE,TITOLO,CLASSE,ISTITUTO) VALUES (:NewKey2,:NewKey1,:CLASSE,:ISTITUTO)"
-                     },                     
-                     {
-                       "Name" : "UpdateBook",
-                       "SQL"  : "CALL UPDATE_TITOLI_LOG_MAGAZZINI(:ChiaveTitolo,#Codice,#Titolo,#Sottotitolo,:Materia,#Autori,#Editore,:Volume,#Prezzo,#PosMgzn,:QuantitaMgzn,:QuantitaMgznVol)"
-                     },
-                     {
-                       "Name" : "UpdateAdoption",
-                       "SQL"  : "UPDATE adozioni_titolo SET CLASSE=:CLASSE WHERE CHIAVE=:CHIAVE"
-                     },
-                     {
-                       "Name" : "DeleteInstituteBook",
-                       "SQL"  : "DELETE FROM istituti_x_titoli WHERE TITOLO=:TITOLO AND ISTITUTO=:ISTITUTO"
-                     },
-                     {
-                       "Name" : "DeleteAdoptionAll",
-                       "SQL"  : "DELETE FROM adozioni_titolo WHERE TITOLO=:CHIAVE"
-                     },
-                     {                     
-                       "Name" : "DeleteInstituteBookAll",
-                       "SQL"  : "DELETE FROM istituti_x_titoli WHERE TITOLO=:CHIAVE"
-                     },
-                     {
-                       "Name" : "DeleteAdoption",
-                       "SQL"  : "DELETE FROM adozioni_titolo WHERE CHIAVE=:CHIAVE"
-                     },
-                     {
-                       "Name" : "DeleteAdoptionAfterDeleteInstitute",
-                       "SQL"  : "DELETE FROM adozioni_titolo WHERE TITOLO=:TITOLO AND ISTITUTO=:ISTITUTO"
-                     },
-                     {
-                       "Name" : "DeleteBook",
-                       "SQL"  : "DELETE FROM titoli WHERE CHIAVE=:CHIAVE"
-                     },
-                     {
-                       "Name" : "UpdateDatabaseBook",
-                       "SQL"  : "CALL AGGIORNA_TITOLI_ADOZIONI(#CodiceTitolo,#TitoloTitolo,#SottotitoloTitolo,#AutoriTitolo,#EditoreTitolo,:VolumeTitolo,#DescrizioneMateria,#IstitutoTitolo,#AnnoTitolo,#SezioneTitolo,#PrezzoTitolo)"
-                     },
-                     {
-                       "Name" : "DeleteAllAdoptionTab",
-                       "SQL"  : "DELETE FROM adozioni_titolo"
-                     },
-                     {
-                       "Name" : "UpdateDatabaseBookCatalogMondadori",
-                       "SQL"  : "CALL AGGIORNA_TITOLI_FROM_CATALOGHI_MONDADORI(#CodiceTitolo,#TitoloTitolo,#SottotitoloTitolo,#DescrizioneMateria,#AutoriTitolo,#EditoreTitolo,#PrezzoTitolo,:VolumeTitolo)"
-                     },
-                     {
-                       "Name" : "UpdateDatabaseBookCatalogDeAgostini",
-                       "SQL"  : "CALL AGGIORNA_TITOLI_FROM_CATALOGHI_DEAGOSTINI(#CodiceTitolo,#TitoloTitolo,#EditoreTitolo,:VolumeTitolo,#PrezzoTitolo)"
-                     }
-                   ]
-}
+  "SQLDettaglio"        : [
+                            {
+                              "Name" : "BookDettaglio",
+                              "SQL"  : "SELECT * FROM titoli WHERE CHIAVE=:CHIAVE"
+                            },
+                            {
+                              "Name" : "BookInstitute",
+                              "SQL"  : "SELECT istituti.CHIAVE,istituti.NOME AS ISTITUTO FROM istituti_x_titoli,istituti WHERE TITOLO=:CHIAVE AND istituti.CHIAVE = istituti_x_titoli.ISTITUTO" 
+                            },
+                            {
+                              "Name" : "BookAdoption",
+                              "SQL"  : "SELECT *,(SELECT classi.ANNO FROM classi WHERE classi.CHIAVE = adozioni_titolo.CLASSE) AS ANNO,(SELECT classi.SEZIONE FROM classi WHERE classi.CHIAVE = adozioni_titolo.CLASSE) AS SEZIONE,(SELECT ISTITUTO FROM classi WHERE CHIAVE = adozioni_titolo.CLASSE) AS ISTITUTO FROM adozioni_titolo WHERE adozioni_titolo.TITOLO=:CHIAVE"
+                            }                     
+                          ],
+       
+  "EditSQL"             : [
+                            {
+                              "Name" : "InsertBook",
+                              "SQL"  : "INSERT INTO titoli (CHIAVE,CODICE_ISBN,TITOLO,SOTTOTITOLO,MATERIA,AUTORI,EDITORE,VOLUME,POS_MAGAZZINO,PREZZO,QUANTITA_MGZN,QUANTITA_MGZN_VOL) VALUES (:NewKey1,#CODICE_ISBN,#TITOLO,#SOTTOTITOLO,:MATERIA,#AUTORI,#EDITORE,#VOLUME,#POS_MAGAZZINO,#PREZZO,#QUANTITA_MGZN,#QUANTITA_MGZN_VOL)"
+                            },
+                            {
+                              "Name" : "InsertInstituteBook",
+                              "SQL"  : "INSERT INTO istituti_x_titoli (ISTITUTO,TITOLO) VALUES (:ISTITUTO,:TITOLO)"
+                            },
+                            {
+                              "Name" : "InsertInstituteBookAfterInsert",
+                              "SQL"  : "INSERT INTO istituti_x_titoli (ISTITUTO,TITOLO) VALUES (:ISTITUTO,:NewKey1)"
+                            },
+                            {
+                              "Name" : "InsertAdoption",
+                              "SQL"  : "INSERT INTO adozioni_titolo (CHIAVE,TITOLO,CLASSE) VALUES (:NewKey1,:TITOLO,:CLASSE)"
+                            },
+                            {
+                              "Name" : "InsertAdoptionAfterInsert",
+                              "SQL"  : "INSERT INTO adozioni_titolo (CHIAVE,TITOLO,CLASSE) VALUES (:NewKey2,:NewKey1,:CLASSE)"
+                            },                     
+                            {
+                              "Name" : "UpdateBook",
+                              "SQL"  : "CALL UPDATE_TITOLI_LOG_MAGAZZINI(:ChiaveTitolo,#Codice,#Titolo,#Sottotitolo,:Materia,#Autori,#Editore,:Volume,#Prezzo,#PosMgzn,:QuantitaMgzn,:QuantitaMgznVol)"
+                            },
+                            {
+                              "Name" : "UpdateAdoption",
+                              "SQL"  : "UPDATE adozioni_titolo SET CLASSE=:CLASSE WHERE CHIAVE=:CHIAVE"
+                            },
+                            {
+                              "Name" : "DeleteInstituteBook",
+                              "SQL"  : "DELETE FROM istituti_x_titoli WHERE TITOLO=:TITOLO AND ISTITUTO=:ISTITUTO"
+                            },
+                            {
+                              "Name" : "DeleteAdoptionAll",
+                              "SQL"  : "DELETE FROM adozioni_titolo WHERE TITOLO=:CHIAVE"
+                            },
+                            {                     
+                              "Name" : "DeleteInstituteBookAll",
+                              "SQL"  : "DELETE FROM istituti_x_titoli WHERE TITOLO=:CHIAVE"
+                            },
+                            {
+                              "Name" : "DeleteAdoption",
+                              "SQL"  : "DELETE FROM adozioni_titolo WHERE CHIAVE=:CHIAVE"
+                            },
+                            {
+                              "Name" : "DeleteAdoptionAfterDeleteInstitute",
+                              "SQL"  : "DELETE FROM adozioni_titolo WHERE TITOLO=:TITOLO AND CLASSE IN (SELECT CHIAVE FROM classi WHERE ISTITUTO=:ISTITUTO)"
+                            },
+                            {
+                              "Name" : "DeleteBook",
+                              "SQL"  : "DELETE FROM titoli WHERE CHIAVE=:CHIAVE"
+                            },
+                            {
+                              "Name" : "UpdateDatabaseBook",
+                              "SQL"  : "CALL AGGIORNA_TITOLI_ADOZIONI(#CodiceTitolo,#TitoloTitolo,#SottotitoloTitolo,#AutoriTitolo,#EditoreTitolo,:VolumeTitolo,#DescrizioneMateria,#IstitutoTitolo,#AnnoTitolo,#SezioneTitolo,#PrezzoTitolo)"
+                            },
+                            {
+                              "Name" : "DeleteAllAdoptionTab",
+                              "SQL"  : "DELETE FROM adozioni_titolo"
+                            },
+                            {
+                              "Name" : "UpdateDatabaseBookCatalogMondadori",
+                              "SQL"  : "CALL AGGIORNA_TITOLI_FROM_CATALOGHI_MONDADORI(#CodiceTitolo,#TitoloTitolo,#SottotitoloTitolo,#DescrizioneMateria,#AutoriTitolo,#EditoreTitolo,#PrezzoTitolo,:VolumeTitolo)"
+                            },
+                            {
+                              "Name" : "UpdateDatabaseBookCatalogDeAgostini",
+                              "SQL"  : "CALL AGGIORNA_TITOLI_FROM_CATALOGHI_DEAGOSTINI(#CodiceTitolo,#TitoloTitolo,#EditoreTitolo,:VolumeTitolo,#PrezzoTitolo)"
+                            }
+                          ]
+}       

@@ -38,7 +38,7 @@ SIRIOApp.controller("printLabelPageController",['$scope','SystemInformation','$s
       {
          var Data       = new Date();
          var DataAnno   = Data.getFullYear();
-         var DataMese   = Data.getMonth(); 
+         var DataMese   = Data.getMonth()+1; 
          var DataGiorno = Data.getDate();
          var DataSpedizione = DataGiorno.toString() + '/' + DataMese.toString() +  '/' + DataAnno.toString();
          var doc = new jsPDF();
@@ -98,7 +98,7 @@ SIRIOApp.controller("printLabelPageController",['$scope','SystemInformation','$s
          
          var Data       = new Date();
          var DataAnno   = Data.getFullYear();
-         var DataMese   = Data.getMonth(); 
+         var DataMese   = Data.getMonth()+1; 
          var DataGiorno = Data.getDate();
          var DataSpedizione = DataGiorno.toString() + '/' + DataMese.toString() +  '/' + DataAnno.toString();
        
@@ -107,7 +107,7 @@ SIRIOApp.controller("printLabelPageController",['$scope','SystemInformation','$s
          doc.setFontSize(10); 
          doc.setFontType('bold');
          doc.text(10,20,'REPORT SPEDIZIONI - IN DATA ' + DataSpedizione);
-         doc.setFontSize(8);
+         doc.setFontSize(7);
          var CoordY = 30;
          //doc.text(10,280,'BORDO INFERIORE');
          
@@ -122,17 +122,19 @@ SIRIOApp.controller("printLabelPageController",['$scope','SystemInformation','$s
            doc.setFontSize(8);
            doc.text(10,CoordY,'Spedizione presso ' + ListaSpedizioni[i].PRESSO + ', ' + ListaSpedizioni[i].INDIRIZZO + ', ' + ListaSpedizioni[i].COMUNE + ', ' + ListaSpedizioni[i].CAP + ', ' + ListaSpedizioni[i].NOME_PROVINCIA + ' : ');
            doc.text(10,CoordY+5,'PROMOTORE: ' + ListaSpedizioni[i].NOME_PROMOTORE);
-           doc.text(10,CoordY+10,'QUANTITA');
-           doc.text(30,CoordY+10 ,'NOME');
+           doc.text(10,CoordY+10,'QNT');
+           doc.text(20,CoordY+10 ,'ISBN');
+           doc.text(45,CoordY+10 ,'TITOLO');
            doc.text(160,CoordY+10,'POS.MAGAZZINO');
            for (let j = 0;j < ListaSpedizioni[i].ListaTitoli.length;j ++)
            { 
                doc.setFontType('italic');
                CoordY += 5;
-               var Q  = doc.getTextWidth('QUANTITA');
+               var Q  = doc.getTextWidth('QNT');
                var Qt = doc.getTextWidth(ListaSpedizioni[i].ListaTitoli[j].QUANTITA);
                doc.text(10 + Q + 1 - Qt,CoordY+10,ListaSpedizioni[i].ListaTitoli[j].QUANTITA);
-               doc.text(30,CoordY+10,ListaSpedizioni[i].ListaTitoli[j].NOME_TITOLO);
+               doc.text(20,CoordY+10,ListaSpedizioni[i].ListaTitoli[j].CODICE_ISBN);
+               doc.text(45,CoordY+10,ListaSpedizioni[i].ListaTitoli[j].NOME_TITOLO);
                doc.text(160,CoordY+10,ListaSpedizioni[i].ListaTitoli[j].POS_MGZN);            
            }
            doc.setFontSize(6);
@@ -210,7 +212,7 @@ SIRIOApp.controller("printLabelPageController",['$scope','SystemInformation','$s
               doc.text(170,CoordY + 80,'POS.MAGAZZINO');
               
               doc.setFontType('normal');
-              doc.setFontSize(7);
+              doc.setFontSize(6);
               
               for (let j = 0;j < ListaSpedizioni[i].ListaTitoli.length;j ++)
               {    

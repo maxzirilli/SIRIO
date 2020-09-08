@@ -1,13 +1,14 @@
 SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog', function($scope,SystemInformation,$state,$rootScope,$mdDialog)
 {
   $scope.EditingOn            = false;
+  $scope.StampaOn             = false;
   $scope.TitoloInEditing      = {};
   $scope.MateriaFiltro        = -1;
   $scope.NomeFiltro           = '';
   $scope.CodiceFiltro         = '';
   $scope.ListaTitoli          = [];
   $scope.IstitutoDaAssociare  = -1;
-  //$scope.CodiceFiltro         = '';
+  $scope.IstitutoFiltrato     = -1;
   $scope.SelectVolumiTitolo   = ['UNICO'];
   
   
@@ -79,13 +80,36 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
                                     Istituto : IstitutiInfoLista[i].NOME
                                   }
        $scope.ListaIstitutiPopup = IstitutiInfoLista;
+       $scope.ListaIstituti = IstitutiInfoLista;
     }
     else SystemInformation.ApplyOnError('Modello istituti non conforme','');   
   });
   
+  $scope.queryIstituto = function(searchTextIstituto)
+  {
+     searchTextIstituto = searchTextIstituto.toUpperCase();
+     return($scope.ListaIstituti.grep(function(Elemento) 
+     { 
+       return(Elemento.Istituto.toUpperCase().indexOf(searchTextIstituto) != -1);
+     }));
+  }
+  
+  $scope.selectedItemChangeIstituto = function(itemIstituto)
+  {
+    if(itemIstituto != undefined)
+       $scope.IstitutoFiltrato = itemIstituto.Chiave;
+    else $scope.IstitutoFiltrato = -1;
+    $scope.RefreshListaTitoli();
+  } 
+  
   $scope.RefreshListaTitoli = function()
   {
-    SystemInformation.GetSQL('Book', {}, function(Results)  
+    var ObjParametri = {};
+
+    if($scope.IstitutoFiltrato != -1)
+       ObjParametri.FiltroI = $scope.IstitutoFiltrato;
+
+    SystemInformation.GetSQL('Book', ObjParametri, function(Results)  
     {
       TitoliInfoLista = SystemInformation.FindResults(Results,'BookInfoList');
       if(TitoliInfoLista != undefined)
@@ -108,6 +132,95 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
       }
       else SystemInformation.ApplyOnError('Modello titoli non conforme','');   
     });
+  }
+  
+  $scope.StampaAdozioni = function (Titolo)
+  {
+    $scope.StampaOn  = true;
+    $scope.EditingOn = false;
+    SystemInformation.GetSQL('Book', {CHIAVE : Titolo.Chiave}, function(Results)
+    {
+      var TitoloInStampa = {};
+      Istituti           = SystemInformation.FindResults(Results,'BookInstitute');
+      Adozioni           = SystemInformation.FindResults(Results,'BookAdoption');
+      if(Istituti != undefined && Adozioni != undefined)
+      {
+         TitoloInStampa.ListaIstitutiTit = Istituti;
+         TitoloInStampa.ListaIstitutiTit.forEach(function(Istituto){Istituto.Adozioni = []});
+         
+         for (let i = 0; i < TitoloInStampa.ListaIstitutiTit.length;i ++)
+              for (let j = 0; j < Adozioni.length;j ++)
+                   if (Adozioni[j].ISTITUTO == TitoloInStampa.ListaIstitutiTit[i].CHIAVE)
+                       TitoloInStampa.ListaIstitutiTit[i].Adozioni.push(Adozioni[j]);
+         if(TitoloInStampa.ListaIstitutiTit.length != 0)
+         {
+            var Data       = new Date();
+            var DataAnno   = Data.getFullYear();
+            var DataMese   = Data.getMonth()+1; 
+            var DataGiorno = Data.getDate();
+            var DataSpedizione = DataGiorno.toString() + '/' + DataMese.toString() +  '/' + DataAnno.toString();
+          
+            var doc = new jsPDF();
+            doc.setProperties({title: 'ADOZIONI TITOLO ' + DataSpedizione});
+            doc.setFontSize(10); 
+            doc.setFontType('bold');
+            doc.text(10,20,'ADOZIONI DEL TITOLO:');
+            doc.text(10,25,Titolo.Titolo + ' (ISBN: ' + Titolo.Codice + ' )');
+            doc.setFontSize(8);
+            var CoordY = 35;
+            
+            for(let k = 0;k < TitoloInStampa.ListaIstitutiTit.length;k ++)
+            {   
+                if (CoordY >= 280) 
+                {
+                  doc.addPage();
+                  CoordY = 20;
+                }
+                doc.setFontSize(8);
+                doc.setFontType('bold');
+                doc.text(10,CoordY+5,'ISTITUTO: ' + TitoloInStampa.ListaIstitutiTit[k].ISTITUTO);
+                CoordY += 5;
+                doc.setFontSize(7);
+                doc.setFontType('italic'); 
+
+                var StringaClassi = [];
+                if(TitoloInStampa.ListaIstitutiTit[k].Adozioni.length == 0)
+                {
+                   StringaClassi.push('TITOLO ADOTTATO DA NESSUNA CLASSE');
+                   doc.text(10,CoordY+5,StringaClassi.toString());
+                }
+                else
+                {
+                   //COSA FARE PER TORNARE A CAPO SE TROPPO LUNGA STRINGA CLASSI?
+                   for(let l = 0;l < TitoloInStampa.ListaIstitutiTit[k].Adozioni.length;l ++)
+                   {                                                 
+                       StringaClassi.push(TitoloInStampa.ListaIstitutiTit[k].Adozioni[l].ANNO + TitoloInStampa.ListaIstitutiTit[k].Adozioni[l].SEZIONE);
+                   }
+                   doc.text(10,CoordY+5,'CLASSI: ' + StringaClassi.toString());
+                }
+                CoordY += 10;
+                doc.setFontSize(6);
+                doc.text(10,290,SystemInformation.VDocAdoption)               
+            }           
+            document.getElementById('adoptionPdf').src = doc.output('datauristring')
+         }
+         else
+         {
+            var Data       = new Date();
+            var DataAnno   = Data.getFullYear();
+            var DataMese   = Data.getMonth()+1; 
+            var DataGiorno = Data.getDate();
+            var DataSpedizione = DataGiorno.toString() + '/' + DataMese.toString() +  '/' + DataAnno.toString();
+            var doc = new jsPDF();
+            doc.setProperties({title: 'ADOZIONI TITOLO ' + DataSpedizione});
+            doc.setFontSize(10); 
+            doc.setFontType('bold');
+            doc.setTextColor(255,0,0);
+            doc.text(80,20,'TITOLO NON ADOTTATO IN NESSUN ISTITUTO');
+            document.getElementById('adoptionPdf').src = doc.output('datauristring')
+         }
+      }
+    },'SQLDettaglio')
   }
   
   $scope.GetAdozioniSelected = function(Istituto)

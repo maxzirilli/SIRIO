@@ -159,6 +159,13 @@ SIRIOApp.config(['$stateProvider','$urlRouterProvider','$mdAriaProvider',functio
         url: '/mailPage'
     })
 
+    $stateProvider.state('storageInventoryPage', 
+    {
+        templateUrl: "template/storageInventoryPage.html",
+        url: '/storageInventoryPage'
+    })    
+    
+
     $urlRouterProvider.otherwise('loginPage');
 }]);
 

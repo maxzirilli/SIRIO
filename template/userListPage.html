@@ -10,7 +10,7 @@
           <th></th>
           <th></th> 
           <th>NOME UTENTE</th>
-          <th>RAGIONE SOCIALE</th>        
+          <th>NOME COGNOME</th>        
           <th>EMAIL</th>
           <th>RUOLO</th>        
         </tr>  
@@ -53,7 +53,7 @@
         </md-input-container>
         <div layout="row">
           <md-input-container style="width:33%;">
-            <label>RAGIONE SOCIALE</label><input ng-model="UtenteInEditing.RAGIONE_SOCIALE" type="text" name="RagioneSociale" required>
+            <label>NOME COGNOME</label><input ng-model="UtenteInEditing.RAGIONE_SOCIALE" type="text" name="RagioneSociale" required>
             <div ng-messages="utenteEditForm.RagioneSociale.$error" multiple md-auto-hide="true">
               <div ng-message="required">Inserire la ragione sociale</div>
             </div>

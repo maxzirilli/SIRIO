@@ -2,7 +2,7 @@
   "SelectSQL"    : [
                      { 
                        "Name" : "TeacherInfoList",
-                       "SQL"  : "SELECT docenti.CHIAVE,docenti.RAGIONE_SOCIALE,docenti.EMAIL,docenti.TITOLO,docenti.INDIRIZZO,docenti.COMUNE,docenti.CAP,docenti.PROVINCIA,(SELECT province_all.NOME FROM province_all WHERE CHIAVE = docenti.PROVINCIA) AS PROVINCIA_NOME,docenti.MATERIA_1,docenti.MATERIA_2,docenti.MATERIA_3 FROM docenti {W~FiltroI~(docenti.CHIAVE IN (SELECT istituti_x_docenti.DOCENTE FROM istituti_x_docenti WHERE ISTITUTO = :FiltroI))~FiltroP~(docenti.CHIAVE IN (SELECT istituti_x_docenti.DOCENTE FROM istituti_x_docenti WHERE ISTITUTO IN (SELECT istituti.CHIAVE FROM istituti WHERE PROVINCIA = :FiltroP)))~FiltroT~((MATERIA_1 IN (SELECT MATERIA FROM titoli WHERE CHIAVE = :FiltroT)) OR (MATERIA_2 IN (SELECT MATERIA FROM titoli WHERE CHIAVE = :FiltroT)) OR (MATERIA_3 IN (SELECT MATERIA FROM titoli WHERE CHIAVE = :FiltroT))) AND (docenti.CHIAVE IN (SELECT DOCENTE FROM insegnamenti_docente WHERE CLASSE IN (SELECT CLASSE FROM adozioni_titolo WHERE TITOLO = :FiltroT)))} ORDER BY docenti.RAGIONE_SOCIALE" 
+                       "SQL"  : "SELECT docenti.CHIAVE,docenti.RAGIONE_SOCIALE,docenti.EMAIL,docenti.TITOLO,docenti.INDIRIZZO,docenti.COMUNE,docenti.CAP,docenti.PROVINCIA,(SELECT province_all.NOME FROM province_all WHERE CHIAVE = docenti.PROVINCIA) AS PROVINCIA_NOME,docenti.MATERIA_1,docenti.MATERIA_2,docenti.MATERIA_3 FROM docenti {W~FiltroI~(docenti.CHIAVE IN (SELECT istituti_x_docenti.DOCENTE FROM istituti_x_docenti WHERE ISTITUTO = :FiltroI))~FiltroP~(docenti.CHIAVE IN (SELECT istituti_x_docenti.DOCENTE FROM istituti_x_docenti WHERE ISTITUTO IN (SELECT istituti.CHIAVE FROM istituti WHERE PROVINCIA = :FiltroP)))~FiltroT~(docenti.CHIAVE IN (SELECT DOCENTE FROM istituti_x_docenti WHERE ISTITUTO IN (SELECT ISTITUTO FROM classi WHERE CHIAVE IN (SELECT CLASSE FROM adozioni_titolo WHERE TITOLO=:FiltroT))))} ORDER BY docenti.RAGIONE_SOCIALE" 
                      }
                    ],
                    
@@ -13,11 +13,11 @@
                      },
                      {
                        "Name" : "TeacherInstitute",
-                       "SQL"  : "SELECT istituti.CHIAVE,istituti.INDIRIZZO,istituti.CAP,istituti.COMUNE,istituti.PROVINCIA,(SELECT province.NOME FROM province WHERE province.CHIAVE = istituti.PROVINCIA) AS PROVINCIA_NOME,istituti.CAP,istituti.NOME AS ISTITUTO FROM istituti_x_docenti,istituti WHERE DOCENTE=:CHIAVE AND istituti.CHIAVE = istituti_x_docenti.ISTITUTO" 
+                       "SQL"  : "SELECT istituti.CHIAVE,istituti.INDIRIZZO,istituti.CAP,istituti.COMUNE,istituti.PROVINCIA,(SELECT province.NOME FROM province WHERE province.CHIAVE = istituti.PROVINCIA) AS PROVINCIA_NOME,(SELECT province_all.CHIAVE FROM province_all WHERE NOME=(SELECT province.NOME FROM province WHERE CHIAVE = istituti.PROVINCIA)) AS PROVINCIA_LISTA_ALL,istituti.CAP,istituti.NOME AS ISTITUTO FROM istituti_x_docenti,istituti WHERE DOCENTE=:CHIAVE AND istituti.CHIAVE = istituti_x_docenti.ISTITUTO" 
                      },
                      {
                        "Name" : "TeacherLesson",
-                       "SQL"  : "SELECT *,(SELECT classi.SEZIONE FROM classi WHERE classi.CHIAVE = insegnamenti_docente.CLASSE) AS SEZIONE,(SELECT classi.ANNO FROM classi WHERE classi.CHIAVE = insegnamenti_docente.CLASSE) AS ANNO FROM insegnamenti_docente WHERE DOCENTE=:CHIAVE"
+                       "SQL"  : "SELECT *,(SELECT ISTITUTO FROM classi WHERE CHIAVE = insegnamenti_docente.CLASSE) AS ISTITUTO,(SELECT classi.SEZIONE FROM classi WHERE classi.CHIAVE = insegnamenti_docente.CLASSE) AS SEZIONE,(SELECT classi.ANNO FROM classi WHERE classi.CHIAVE = insegnamenti_docente.CLASSE) AS ANNO FROM insegnamenti_docente WHERE DOCENTE=:CHIAVE"
                      }                    
                    ],
   
@@ -44,11 +44,19 @@
                      },
                      {
                        "Name" : "InsertLesson",
-                       "SQL"  : "INSERT INTO insegnamenti_docente (CHIAVE,MATERIA,CLASSE,GIORNO,ORARIO,DOCENTE,ISTITUTO) VALUES (:NewKey1,:MATERIA,:CLASSE,:GIORNO,#ORARIO,:DOCENTE,:ISTITUTO)"
+                       "SQL"  : "INSERT INTO insegnamenti_docente (CHIAVE,MATERIA,CLASSE,GIORNO,ORARIO,DOCENTE) VALUES (:NewKey1,:MATERIA,:CLASSE,:GIORNO,#ORARIO,:DOCENTE)"
                      },
                      {
                        "Name" : "InsertLessonAfterInsert",
-                       "SQL"  : "INSERT INTO insegnamenti_docente (CHIAVE,MATERIA,CLASSE,GIORNO,ORARIO,DOCENTE,ISTITUTO) VALUES (:NewKey2,:MATERIA,:CLASSE,:GIORNO,#ORARIO,:NewKey1,:ISTITUTO)"
+                       "SQL"  : "INSERT INTO insegnamenti_docente (CHIAVE,MATERIA,CLASSE,GIORNO,ORARIO,DOCENTE) VALUES (:NewKey2,:MATERIA,:CLASSE,:GIORNO,#ORARIO,:NewKey1)"
+                     },
+                     {
+                       "Name" : "InsertTeacherAvailability",
+                       "SQL"  : "INSERT INTO docenti_disponibilita (CHIAVE,DOCENTE,GIORNO,DA,A) VALUES (:Newkey1,:DOCENTE,:GIORNO,#DA,#A)"
+                     },
+                     {
+                       "Name" : "InsertTeacherAvailabilityAfterInsert",
+                       "SQL"  : "INSERT INTO docenti_disponibilita (CHIAVE,DOCENTE,GIORNO,DA,A) VALUES (:NewKey3,:NewKey1,:GIORNO,#DA,#A))"
                      },                     
                      {
                        "Name" : "UpdateTeacher",
@@ -57,6 +65,10 @@
                      {
                        "Name" : "UpdateLesson",
                        "SQL"  : "UPDATE insegnamenti_docente SET MATERIA=:MATERIA,CLASSE=:CLASSE,GIORNO=:GIORNO,ORARIO=#ORARIO WHERE CHIAVE=:CHIAVE"
+                     },
+                     {
+                       "Name" : "UpdateTeacherAvailability",
+                       "SQL"  : "UPDATE docenti_disponibilita SET GIORNO=:GIORNO,DA=#DA,A=#A WHERE CHIAVE=:CHIAVE"
                      },
                      {
                        "Name" : "DeleteTeacherDeliveryBookAll",
@@ -71,6 +83,14 @@
                        "SQL"  : "DELETE FROM insegnamenti_docente WHERE CHIAVE=:CHIAVE"
                      },
                      {
+                       "Name" : "DeleteTeacherAvailability",
+                       "SQL"  : "DELETE FROM docenti_disponibilita WHERE CHIAVE=:CHIAVE"
+                     },
+                     {
+                       "Name" : "DeleteTeacherAvailabilityAll",
+                       "SQL"  : "DELETE FROM docenti_disponibilita WHERE DOCENTE=:DOCENTE"
+                     },
+                     {
                        "Name" : "DeleteLesson",
                        "SQL"  : "DELETE FROM insegnamenti_docente WHERE CHIAVE=:CHIAVE"
                      },
@@ -80,7 +100,7 @@
                      },
                      {
                        "Name" : "DeleteLessonAfterDeleteInstitute",
-                       "SQL"  : "DELETE FROM insegnamenti_docente WHERE ISTITUTO=:ISTITUTO AND DOCENTE=:CHIAVE"
+                       "SQL"  : "DELETE FROM insegnamenti_docente WHERE CLASSE IN (SELECT CHIAVE FROM classi WHERE ISTITUTO=:ISTITUTO) AND DOCENTE=:CHIAVE"
                      },
                      {
                        "Name" : "DeleteInstituteTeacher",

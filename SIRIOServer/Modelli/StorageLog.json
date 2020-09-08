@@ -2,25 +2,25 @@
   "SelectLogMgznSQL"           : [
                                    {
                                      "Name" : "GetLogInfoMgzn",
-                                     "SQL"  : "SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE = movimenti_magazzino.TITOLO) AS NOME_TITOLO FROM movimenti_magazzino WHERE DATA >= #DAL AND DATA <= #AL ORDER BY DATA ASC"
+                                     "SQL"  : "SELECT *,(SELECT titoli.CODICE_ISBN FROM titoli WHERE CHIAVE = movimenti_magazzino.TITOLO) AS CODICE,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE = movimenti_magazzino.TITOLO) AS NOME_TITOLO FROM movimenti_magazzino WHERE DATA >= #DAL AND DATA <= #AL ORDER BY DATA DESC"
                                    }
                                  ],
   "SelectLogMgznVolSQL"        : [
                                    {
                                      "Name" : "GetLogInfoMgznVol",
-                                     "SQL"  : "SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE = movimenti_magazzino_volante.TITOLO) AS NOME_TITOLO FROM movimenti_magazzino_volante WHERE DATA >= #DAL AND DATA <= #AL ORDER BY DATA ASC"
+                                     "SQL"  : "SELECT *,(SELECT titoli.CODICE_ISBN FROM titoli WHERE CHIAVE = movimenti_magazzino_volante.TITOLO) AS CODICE,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE = movimenti_magazzino_volante.TITOLO) AS NOME_TITOLO FROM movimenti_magazzino_volante WHERE DATA >= #DAL AND DATA <= #AL ORDER BY DATA DESC"
                                    }
                                  ],
   "SelectLogMgznBookSQL"       : [
                                    {
                                      "Name" : "GetLogInfoMgznBook",
-                                     "SQL"  : "SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE = movimenti_magazzino.TITOLO) AS NOME_TITOLO FROM movimenti_magazzino WHERE DATA >= #DAL AND DATA <= #AL AND TITOLO=:TITOLO ORDER BY DATA ASC"
+                                     "SQL"  : "SELECT *,(SELECT titoli.CODICE_ISBN FROM titoli WHERE CHIAVE = movimenti_magazzino.TITOLO) AS CODICE,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE = movimenti_magazzino.TITOLO) AS NOME_TITOLO FROM movimenti_magazzino WHERE DATA >= #DAL AND DATA <= #AL AND TITOLO=:TITOLO ORDER BY DATA DESC"
                                    }
                                  ],
   "SelectLogMgznVolBookSQL"    : [
                                    {
                                      "Name" : "GetLogInfoMgznVolBook",
-                                     "SQL"  : "SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE = movimenti_magazzino_volante.TITOLO) AS NOME_TITOLO FROM movimenti_magazzino_volante WHERE DATA >= #DAL AND DATA <= #AL AND TITOLO=:TITOLO ORDER BY DATA ASC"
+                                     "SQL"  : "SELECT *,(SELECT titoli.CODICE_ISBN FROM titoli WHERE CHIAVE = movimenti_magazzino_volante.TITOLO) AS CODICE,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE = movimenti_magazzino_volante.TITOLO) AS NOME_TITOLO FROM movimenti_magazzino_volante WHERE DATA >= #DAL AND DATA <= #AL AND TITOLO=:TITOLO ORDER BY DATA DESC"
                                    }
                                  ]                      
 }

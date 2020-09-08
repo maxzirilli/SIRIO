@@ -14,12 +14,15 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
      $scope.SpedizioneMultipla     = true;
      $scope.ListaDocentiSpedizione = SystemInformation.DataBetweenController.ListaDocSped;
      $scope.ListaDocentiEsclusi    = [];
-     for(let i = 0;i < $scope.ListaDocentiSpedizione.length;i ++)
-         if ($scope.ListaDocentiSpedizione[i].IndirizzoDocente == '' || $scope.ListaDocentiSpedizione[i].ComuneDocente == '' || $scope.ListaDocentiSpedizione[i].CapDocente == ''|| $scope.ListaDocentiSpedizione[i].ProvinciaDocente == -1 || $scope.ListaDocentiSpedizione[i].ProvinciaDocenteNome == '')
+     for(let i = 0;i < $scope.ListaDocentiSpedizione.length;)
+     {
+         if ($scope.ListaDocentiSpedizione[i].IndirizzoDocente === "" || $scope.ListaDocentiSpedizione[i].ComuneDocente === "" || $scope.ListaDocentiSpedizione[i].CapDocente === "" || $scope.ListaDocentiSpedizione[i].ProvinciaDocente == -1 || $scope.ListaDocentiSpedizione[i].ProvinciaDocenteNome === "")
          {    
              $scope.ListaDocentiEsclusi.push($scope.ListaDocentiSpedizione[i]);
              $scope.ListaDocentiSpedizione.splice(i,1)
-         }               
+         }
+         else i++;         
+     }
   }     
     
   $scope.ChiaveSpedizione                                  = SystemInformation.DataBetweenController.ChiaveSpedizione;

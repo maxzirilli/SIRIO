@@ -205,13 +205,13 @@
              <table table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">
                <thead>
                  <tr>
-                  <td style="width:10%;font-weight:bold;">SEZIONE</td>
-                  <td ng-repeat="annoHead in Anno" style="width:10%;font-weight:bold;">{{annoHead}}</td>
+                  <th style="width:10%;font-weight:bold;">SEZIONE</th>
+                  <th ng-repeat="annoHead in Anno" style="width:10%;font-weight:bold;">{{annoHead}}</th>
                  <tr>
                </thead>
                <tbody>
                  <tr ng-repeat="lettera in ListaSezioniFinale">
-                   <td>{{lettera}}</td>
+                   <th>{{lettera}}</th>
                    <td ng-repeat="annoData in Anno"><input type="checkbox" ng-model="ClasseCliccata[lettera + annoData]" ng-change="ModificaListaClassi(lettera,annoData)"/></td>
                  </tr>
                </tbody>

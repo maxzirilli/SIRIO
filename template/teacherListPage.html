@@ -7,12 +7,12 @@
     </div>
     
     <div layout="row" style="padding-bottom:0px;">
-      <md-input-container class="containerSelect" style="width:20%;;height:20px;"><label>Ragione sociale</label>
+      <md-input-container class="containerSelect" style="width:20%;;height:20px;"><label>Cognome Nome</label>
         <input ng-model="NomeFiltro" type="search">
       </md-input-container>
        
       <md-input-container class="containerSelect" style="width:33%;"><label>PROVINCIA</label>
-        <md-select ng-model="AProvinciaFiltro" class="mdb-select">
+        <md-select ng-model="AProvinciaFiltro" ng-change="RefreshListaDocenti()" class="mdb-select">
            <md-optgroup label="-">
              <md-option ng-value="-1">QUALSIASI</md-option>  
              <md-option ng-repeat="provincia in ListaProvinceF" ng-value="provincia.Chiave">{{provincia.Nome}}</md-option>
@@ -83,6 +83,9 @@
        </md-input-container>
     </div>    
     <div ng-if="ListaDocenti.length != 0">
+      <label style="font-weight:bold;" ng-if="ListaIstitutiTitolo.length != 0">TITOLO IN ADOZIONE PRESSO I SEGUENTI ISTITUTI:</label>
+      <br>
+      <p ng-if="ListaIstitutiTitolo.length != 0">{{ListaIstitutiTitolo}}</p>
       <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
         <tr>
           <th></th>
@@ -90,7 +93,7 @@
           <th></th>
           <th></th>
           <th></th>
-          <th>RAGIONE SOCIALE</th>
+          <th>COGNOME NOME</th>
         </tr>  
         <tr ng-repeat="Docente in ListaDocenti | DocenteByFiltro : NomeFiltro : MateriaFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Docente.Chiave}}>
           <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA DOCENTE" ng-click="EliminaDocente(Docente)"></td> 
@@ -129,7 +132,7 @@
                          <label>TITOLO</label><input ng-model="DocenteInEditing.Titolo" type="text" name="Titolo">
                        </md-input-container>        
                        <md-input-container style="width:20%;">
-                         <label>RAGIONE SOCIALE</label><input ng-model="DocenteInEditing.RagioneSociale" type="text" name="RagioneSociale" required> 
+                         <label>COGNOME NOME</label><input ng-model="DocenteInEditing.RagioneSociale" type="text" name="RagioneSociale" required> 
                          <div ng-messages="docenteEditForm.RagioneSociale.$error" multiple md-auto-hide="true">
                            <div ng-message="required">Inserire la ragione sociale del docente</div>
                          </div>
@@ -214,47 +217,133 @@
                      </md-input-container> 
                    </md-tab>
                    
-                   <md-tab label="Orari" ng-if="DocenteInEditing.Materia_1 != -1 || DocenteInEditing.Materia_2 != -1 || DocenteInEditing.Materia_3 != -1">                    
-                     <md-button class="md-accent md-raised" style="font-weight:bold;" ng-click="AggiungiIstituto($event)">
-                       Aggiungi istituto di appartenenza
-                     </md-button>
-                     <md-button class="md-accent md-raised" style="font-weight:bold;" ng-click="DissociaIstituto(IstitutoVisualizzato)">
-                       Dissocia l'istituto di appartenenza
-                     </md-button>
-                     <md-input-container class="containerSelect" style="width:33%;"><label>ISTITUTO</label>
-                       <md-select ng-model="IstitutoVisualizzato" class="mdb-select" type="text"  name="IstitutoVisualizzato">
-                         <md-option ng-repeat="istitutoVis in DocenteInEditing.ListaIstitutiDoc" ng-value="istitutoVis.CHIAVE" >{{istitutoVis.ISTITUTO}}</md-option> <!--ng-click="ModificaTabInsegnamenti(istitutoVis.Chiave)"-->
-                       </md-optgroup>
-                       </md-select>
-                     </md-input-container>
-                     
-                     <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="NuovoOrario($event,IstitutoVisualizzato,DocenteInEditing.Chiave)">INSERISCI NUOVO ORARIO</md-button>                                      
-                     <table style="width:100%;text-align:center;" md-row-select="GridOptions2.rowSelection" multiple="{{GridOptions2.multiSelect}}">  
-                       <tr>
-                         <th></th>
-                         <th></th> 
-                         <th>MATERIA</th>
-                         <th>CLASSE</th>
-                         <th>GIORNO</th>
-                         <th>ORA</th>
-                       </tr>  
-                       <tr ng-repeat="Orario in GetOrariSelected(IstitutoVisualizzato) | limitTo : GridOptions2.query.limit : (GridOptions2.query.page - 1) * GridOptions2.query.limit" id={{Orario.CHIAVE}}> <!-- | OrarioByIstituto : IstitutoVisualizzato -->
-                         <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA ORARIO" ng-click="EliminaOrario(Orario)"></td> 
-                         <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA ORARIO"ng-click="ModificaOrario(Orario)"></td>        
-                         <td class="off">{{Orario.MateriaNome == -1 ? '-' : Orario.MateriaNome | uppercase}}</td> 
-                         <td class="off">{{Orario.ClasseNome == -1 ? '-' : Orario.ClasseNome | uppercase}}</td>  
-                         <td class="off">{{Orario.GiornoNome == -1 ? '-' : Orario.GiornoNome | uppercase}}</td>  
-                         <td class="off">{{Orario.ORARIO == '' ? '-' : Orario.ORARIO | uppercase}}</td>                           
-                       </tr>    
-                     </table>
-                     <md-table-pagination md-limit="GridOptions2.query.limit" 
-                                          md-limit-options="GridOptions2.limitOptions" 
-                                          md-page="GridOptions2.query.page" 
-                                          md-total="{{ListaOrari.length}}" 
-                                          md-page-select="GridOptions2.pageSelect" 
-                                          md-boundary-links="GridOptions2.boundaryLinks" 
-                                          md-on-paginate="logPagination"></md-table-pagination>
-                     
+                   <md-tab label="Orari E Disponibilità" ng-if="DocenteInEditing.Materia_1 != -1 || DocenteInEditing.Materia_2 != -1 || DocenteInEditing.Materia_3 != -1">                    
+                     <md-tabs style="width:100%;" md-selected="selectedClassiAndDisponibilita" md-border-bottom md-autoselect md-dynamic-height md-swipe-content>
+                       <md-tab label="Orari">
+                         <md-button class="md-accent md-raised" style="font-weight:bold;" ng-click="AggiungiIstituto($event)">
+                           Aggiungi istituto di appartenenza
+                         </md-button>
+                         <md-button class="md-accent md-raised" style="font-weight:bold;" ng-click="DissociaIstituto(IstitutoVisualizzato)">
+                           Dissocia istituto
+                         </md-button>
+                         <md-input-container class="containerSelect" style="width:33%;"><label>ISTITUTO</label>
+                           <md-select ng-model="IstitutoVisualizzato" class="mdb-select" type="text"  name="IstitutoVisualizzato">
+                             <md-option ng-repeat="istitutoVis in DocenteInEditing.ListaIstitutiDoc" ng-value="istitutoVis.CHIAVE" >{{istitutoVis.ISTITUTO}}</md-option> <!--ng-click="ModificaTabInsegnamenti(istitutoVis.Chiave)"-->
+                           </md-optgroup>
+                           </md-select>
+                         </md-input-container>
+                         <md-button class="md-accent md-raised" style="font-weight:bold;" ng-click="SetAsIndirizzoDocente(IstitutoVisualizzato)">
+                           IMPOSTA COME INDIRIZZO DOCENTE
+                         </md-button>
+                         
+                         <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="NuovoOrario($event,IstitutoVisualizzato,DocenteInEditing.Chiave)">INSERISCI NUOVO ORARIO</md-button>                                      
+                         <table style="width:100%;text-align:center;" md-row-select="GridOptions2.rowSelection" multiple="{{GridOptions2.multiSelect}}">  
+                           <tr>
+                             <th></th>
+                             <th></th> 
+                             <th>MATERIA</th>
+                             <th>CLASSE</th>
+                             <th>GIORNO</th>
+                             <th>ORA</th>
+                           </tr>  
+                           <tr ng-repeat="Orario in GetOrariSelected(IstitutoVisualizzato) | limitTo : GridOptions2.query.limit : (GridOptions2.query.page - 1) * GridOptions2.query.limit" id={{Orario.CHIAVE}}> <!-- | OrarioByIstituto : IstitutoVisualizzato -->
+                             <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA ORARIO" ng-click="EliminaOrario(Orario)"></td> 
+                             <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA ORARIO"ng-click="ModificaOrario(Orario)"></td>        
+                             <td class="off">{{Orario.MateriaNome == -1 ? '-' : Orario.MateriaNome | uppercase}}</td> 
+                             <td class="off">{{Orario.ClasseNome == -1 ? '-' : Orario.ClasseNome | uppercase}}</td>  
+                             <td class="off">{{Orario.GiornoNome == -1 ? '-' : Orario.GiornoNome | uppercase}}</td>  
+                             <td class="off">{{Orario.ORARIO == '' ? '-' : Orario.ORARIO | uppercase}}</td>                           
+                           </tr>    
+                         </table>
+                         <md-table-pagination md-limit="GridOptions2.query.limit" 
+                                              md-limit-options="GridOptions2.limitOptions" 
+                                              md-page="GridOptions2.query.page" 
+                                              md-total="{{ListaOrari.length}}" 
+                                              md-page-select="GridOptions2.pageSelect" 
+                                              md-boundary-links="GridOptions2.boundaryLinks" 
+                                              md-on-paginate="logPagination"></md-table-pagination>
+                       </md-tab>
+                       <md-tab label="Disponibilità">
+                         <table style="width:100%;text-align:center;" md-row-select="GridOptions3.rowSelection" multiple="{{GridOptions3.multiSelect}}">  
+                           <thead>
+                             <tr style="font-weight:bold;">
+                              <th>GIORNO</th>
+                              <th>DA</th>
+                              <th>A</th>
+                              <th>DA</th>
+                              <th>A</th>
+                              <th>DA</th>
+                              <th>A</th>
+                             <tr>
+                           </thead>
+                           <tbody>
+                             <tr>
+                               <th style="font-weight:bold;">LUNEDI</th>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Lunedi.PrimaDal"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Lunedi.PrimaAl"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Lunedi.SecondaDal"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Lunedi.SecondaDal"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Lunedi.TerzaDal"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Lunedi.TerzaDal"></td>                               
+                             </tr>
+                             <tr>
+                               <th style="font-weight:bold;">MARTEDI</th>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Martedi.PrimaDal"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Martedi.PrimaAl"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Martedi.SecondaDal"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Martedi.SecondaDal"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Martedi.TerzaDal"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Martedi.TerzaDal"></td>                               
+                             </tr>
+                             <tr>
+                               <th style="font-weight:bold;">MERCOLEDI</th>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Mercoledi.PrimaDal"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Mercoledi.PrimaAl"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Mercoledi.SecondaDal"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Mercoledi.SecondaDal"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Mercoledi.TerzaDal"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Mercoledi.TerzaDal"></td>                               
+                             </tr>
+                             <tr>
+                               <th style="font-weight:bold;">GIOVEDI</th>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Giovedi.PrimaDal"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Giovedi.PrimaAl"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Giovedi.SecondaDal"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Giovedi.SecondaDal"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Giovedi.TerzaDal"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Giovedi.TerzaDal"></td>                               
+                             </tr>
+                             <tr>
+                               <th style="font-weight:bold;">VENERDI</th>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Venerdi.PrimaDal"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Venerdi.PrimaAl"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Venerdi.SecondaDal"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Venerdi.SecondaDal"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Venerdi.TerzaDal"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Venerdi.TerzaDal"></td>                               
+                             </tr>
+                             <tr>
+                               <th style="font-weight:bold;">SABATO</th>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Sabato.PrimaDal"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Sabato.PrimaAl"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Sabato.SecondaDal"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Sabato.SecondaDal"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Sabato.TerzaDal"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Sabato.TerzaDal"></td>                               
+                             </tr>
+                             <tr>
+                               <th style="font-weight:bold;">DOMENICA</th>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Domenica.PrimaDal"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Domenica.PrimaAl"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Domenica.SecondaDal"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Domenica.SecondaDal"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Domenica.TerzaDal"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing.Domenica.TerzaDal"></td>                               
+                             </tr>
+                           </tbody>
+                         </table>
+                       </md-tab>
+                     </md-tabs>
                    </md-tab>    
                </md-tabs>
       </form>               
