@@ -13,7 +13,62 @@
           <md-input-container style="width:33%;">
             <label>DATA</label><input ng-model="SpedizioneInEditing.DATA" type="date">
           </md-input-container>
-          <div layout="column">
+          <br>
+          
+          <input type="checkbox" ng-model="SpedizioneAIstituto" style="float:left;">SPEDISCI AL SEGUENTE INDIRIZZO
+          
+          <div ng-if="SpedizioneAIstituto">
+            <md-input-container class="containerSelect" style="width:50%;margin-right:10px;">
+               <label>Istituto</label>
+               <md-autocomplete
+                           md-input-name="Istituto"
+                           md-autofocus="true"
+                           md-no-cache="true"
+                           md-selected-item="IstitutoSelezionato"
+                           md-selected-item-change = "selectedItemChangeIstituto(item)"
+                           md-search-text="searchTextIstituto"
+                           md-items="item in queryIstituto(searchTextIstituto)"
+                           md-item-text="item.Istituto"
+                           md-require-match="true"
+                           md-clear-button="true">
+               <md-item-template>
+                 <span md-highlight-text="searchText">{{item.Istituto}}</span>
+               </md-item-template>
+               <md-not-found>
+                 Nessuna corrispondenza
+               </md-not-found>
+            </md-input-container>
+            <br>
+            <div layout="row">
+              <md-input-container>
+                <label>INDIRIZZO</label><input ng-model="SpedizioneInEditing.INDIRIZZO" type="text" name="Indirizzo" required>
+               <div ng-messages="TitoloEditForm.Indirizzo.$error" multiple md-auto-hide="true">
+                 <div ng-message="required">Inserire l'indirizzo per la spedizione</div>
+               </div>
+              </md-input-container>
+              <md-input-container>
+                <label>COMUNE</label><input ng-model="SpedizioneInEditing.COMUNE" type="text" name="Comune" required>
+                <div ng-messages="TitoloEditForm.Comune.$error" multiple md-auto-hide="true">
+                  <div ng-message="required">Inserire il comune per la spedizione</div>
+                </div>
+              </md-input-container> 
+              <md-input-container>
+                <label>CAP</label><input ng-model="SpedizioneInEditing.CAP" type="text" name="Cap" required>
+                <div ng-messages="TitoloEditForm.Indirizzo.$error" multiple md-auto-hide="true">
+                  <div ng-message="required">Inserire il cap per la spedizione</div>
+                </div>
+              </md-input-container> 
+              <md-input-container class="containerSelect"><label>PROVINCIA</label>
+                <md-select ng-model="SpedizioneInEditing.PROVINCIA" class="mdb-select" type="text" name="Provincia" required>
+                <md-optgroup label="-">
+                  <md-option ng-repeat="provincia in ListaProvinceAll" ng-value="provincia.Chiave">{{provincia.Nome}}</md-option>
+                </md-optgroup>
+                </md-select>
+              </md-input-container>
+            </div>
+          </div>
+                          
+          <div layout="column" ng-if="!SpedizioneAIstituto">
             <p style="font-weight:bold;">SPEDIZIONE PER I SEGUENTI DOCENTI :</p>
             <table style="width:100%;text-align:center;" md-row-select="GridOptions2.rowSelection" multiple="{{GridOptions2.multiSelect}}">  
                <tr>                      
@@ -39,12 +94,20 @@
                                   md-boundary-links="GridOptions2.boundaryLinks" 
                                   md-on-paginate="logPagination"></md-table-pagination>        
           </div>
-          <div layout="column" ng-if="ListaDocentiEsclusi.length != 0">
-            <p>Impossibile spedire ai seguenti docenti - Dati indirizzo di spedizione mancanti</p>
+          <div layout="column" ng-if="ListaDocentiEsclusi.length != 0 && !SpedizioneAIstituto">
+            <p style="font-weight:bold;">IMPOSSIBILE SPEDIRE AI SEGUENTI DOCENTI - DATI INDIRIZZO DI SPEDIZIONE MANCANTI</p>
             <ul>
               <li ng-repeat="DocenteEscluso in ListaDocentiEsclusi">{{DocenteEscluso.NomeDocente}}</li>
             </ul>            
-          </div>          
+          </div>
+          <div layout="column" ng-if="SpedizioneAIstituto">
+            <p style="font-weight:bold;">SPEDIZIONE PER I SEGUENTI DOCENTI ALL'INDIRIZZO SELEZIONATO:</p>
+            <ul>
+              <li ng-repeat="Docente in ListaDocentiSpedizione">{{Docente.NomeDocente}}</li>              
+              <li ng-repeat="DocenteEscluso in ListaDocentiEsclusi">{{DocenteEscluso.NomeDocente}}</li>            
+            </ul>
+
+          </div>           
       </md-tab>
       
       <md-tab label="Dati spedizione" ng-if="!SpedizioneMultipla">

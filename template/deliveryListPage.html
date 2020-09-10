@@ -15,8 +15,8 @@
         </md-optgroup>
       </md-select>
     </md-input-container>
-    <md-input-container ng-if="Admin"><label style="width:100%;margin-left:20px;float:left;">PROMOTORE</label>
-      <md-select ng-model="PromotoreFiltro" placeholder="Promotore" class="mdb-select" style="width:100%;margin-left:20px;float:left;" type="text" name="PromotoreFiltro">
+    <md-input-container ng-if="IsAdministrator"><label style="width:100%;margin-left:20px;float:left;">PROMOTORE</label>
+      <md-select ng-model="$parent.PromotoreFiltro" placeholder="Promotore" class="mdb-select" style="width:100%;margin-left:20px;float:left;" type="text" name="PromotoreFiltro">
         <md-optgroup>
           <md-option ng-value="-1">QUALSIASI</md-option>  
           <md-option ng-repeat="promotore in ListaPromotori" ng-value="promotore.Chiave">{{promotore.Nome}}</md-option>
@@ -29,6 +29,7 @@
     <input type="checkbox" ng-model="ConsegnataFiltro" style="margin-left:20px;">CONSEGNATA
     
     <md-button class="md-raised md-accent" style="font-weight:bold;float:right;" ng-click="NuovaSpedizioneCasaEditrice()">NUOVA SPEDIZIONE CASA EDITRICE</md-button>
+    <md-button class="md-raised md-accent" style="font-weight:bold;float:right;" ng-click="CreaXlsSpedizioni()">CREA XLS SPEDIZIONI</md-button>
   </div>
   <p ng-if="ListaSpedizioni.length == 0" style="font-weight:bold;font-style:italic;float:center;">NESSUNA SPEDIZIONE PRESENTE</p>  
   <div ng-if="ListaSpedizioni.length != 0">
@@ -41,7 +42,7 @@
       <th>PRESSO</th>
       <th>STATO</th>
     </tr>
-    <tr ng-repeat="Spedizione in ListaSpedizioni | SpedizioneByFiltro : ProvinciaFiltro : PrenotataFiltro : DaSpedireFiltro : ConsegnataFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Spedizione.Chiave}}>
+    <tr ng-repeat="Spedizione in ListaSpedizioni | SpedizioneByFiltro : ProvinciaFiltro : PrenotataFiltro : DaSpedireFiltro : ConsegnataFiltro : $parent.PromotoreFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Spedizione.Chiave}}>
       <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA SPEDIZIONE" ng-click="EliminaSpedizione(Spedizione)"></td> 
       <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA SPEDIZIONE" ng-click="ModificaSpedizione(Spedizione.Chiave,Spedizione.Docente)"></td>
       <td><img src="img/toSend.png" style="width:30px;height:auto;" title="SPEDIRE TITOLI DISPONIBILI" ng-click="PassaADaSpedireDisponibili(Spedizione.Chiave)" ng-if="Spedizione.NrPrenotate > 0"></td>

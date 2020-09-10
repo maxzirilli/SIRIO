@@ -1,5 +1,5 @@
-SIRIOApp.controller("deliveryListPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','$sce',
-function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce)
+SIRIOApp.controller("deliveryListPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','$sce','$filter',
+function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
 {
   $scope.DaSpedireFiltro  = true;
   $scope.PrenotataFiltro  = true;
@@ -59,7 +59,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce)
       for(let i = 0; i < ListaPromotoriTmp.length; i++)
           ListaPromotoriTmp[i] = {
                                    Chiave : ListaPromotoriTmp[i].CHIAVE,
-                                   Nome   : ListaPromotoriTmp[i].USERNAME
+                                   Nome   : ListaPromotoriTmp[i].RAGIONE_SOCIALE
                                  }
       $scope.ListaPromotori = ListaPromotoriTmp;
     }
@@ -90,6 +90,11 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce)
      
      return($sce.trustAsHtml(Result.substr(0,Result.length - 5)));
   }
+  
+  $scope.IsAdministrator = function ()
+  {
+    return SystemInformation.UserInformation.Ruolo == RUOLO_AMMINISTRATORE;
+  } 
   
   $scope.RefreshListaSpedizioniAll = function ()
   { 
@@ -142,13 +147,57 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce)
                                         Stato        : ListaSpedizioniTmp[i].STATO,
                                         NrConsegnate : ListaSpedizioniTmp[i].NR_CONSEGNATE,
                                         NrDaSpedire  : ListaSpedizioniTmp[i].NR_DA_SPEDIRE,
-                                        NrPrenotate  : ListaSpedizioniTmp[i].NR_PRENOTATE
+                                        NrPrenotate  : ListaSpedizioniTmp[i].NR_PRENOTATE,
+                                        Promotore    : ListaSpedizioniTmp[i].PROMOTORE
                                       }
           $scope.ListaSpedizioni = ListaSpedizioniTmp;                  
         }
         else SystemInformation.ApplyOnError('Modello spedizioni non conforme','');     
       },'SQLPromotore');
     }
+  }
+
+  $scope.CreaXlsSpedizioni = function()
+  {
+    var WBook = {
+	                  SheetNames : [],
+	                  Sheets     : {}
+                };
+    
+    
+    var SheetName =  "SPEDIZIONI";
+    var BodySheet = {};
+    BodySheet['A1'] = SystemInformation.GetCellaIntestazione('DATA');
+    BodySheet['B1'] = SystemInformation.GetCellaIntestazione('DESTINATARIO');
+    BodySheet['C1'] = SystemInformation.GetCellaIntestazione('ISBN');
+    BodySheet['D1'] = SystemInformation.GetCellaIntestazione('TITOLO');
+    BodySheet['E1'] = SystemInformation.GetCellaIntestazione('QUANTITA');
+    BodySheet['F1'] = SystemInformation.GetCellaIntestazione('DOCENTE');
+    BodySheet['G1'] = SystemInformation.GetCellaIntestazione('STATO');
+    
+    $rootScope.DaSpedireFiltro = $scope.DaSpedireFiltro;
+    $rootScope.PrenotataFiltro = $scope.PrenotataFiltro;
+    $rootScope.ConsegnataFiltro = $scope.ConsegnataFiltro;
+   
+    let SpedizioniFiltrate = $filter('SpedizioneByFiltro')($scope.ListaSpedizioni,$scope.ProvinciaFiltro,$rootScope.DaSpedireFiltro,$rootScope.PrenotataFiltro,$rootScope.ConsegnataFiltro,$scope.PromotoreFiltro);
+    alert(JSON.stringify(SpedizioniFiltrate));
+ 
+    
+    for(let i = 0; i < SpedizioniFiltrate.length; i++)
+    {
+    }
+    BodySheet["!cols"] = [
+                           {wpx: 150},
+                           {wpx: 350},
+                           {wpx: 200}
+                         ];
+    BodySheet['!ref'] = 'A1:C' + parseInt($scope.ListaEventi.length + 1);
+    
+   	WBook.SheetNames.push(SheetName);
+    WBook.Sheets[SheetName] = BodySheet;
+    
+    var wbout = XLSX.write(WBook, {bookType:'xlsx', bookSST:true, type: 'binary'});
+    saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}), "EventLog.xlsx") 
   }
   
   $scope.ModificaSpedizione = function (ChiaveSpedizione,ChiaveDocente = -1)
@@ -260,11 +309,11 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce)
 
 SIRIOApp.filter('SpedizioneByFiltro',function()
 {
-  return function(ListaSpedizioni,ProvinciaFiltro,PrenotataFiltro,DaSpedireFiltro,ConsegnataFiltro)
+  return function(ListaSpedizioni,ProvinciaFiltro,PrenotataFiltro,DaSpedireFiltro,ConsegnataFiltro,PromotoreFiltro)
          {
            if (ListaSpedizioni != undefined)
            {  
-             if(ProvinciaFiltro == -1 && !PrenotataFiltro && !DaSpedireFiltro && !ConsegnataFiltro) 
+             if(ProvinciaFiltro == -1 && !PrenotataFiltro && !DaSpedireFiltro && !ConsegnataFiltro && PromotoreFiltro == -1) 
                 return(ListaSpedizioni);
              var ListaFiltrata = [];
              ProvinciaFiltro = parseInt(ProvinciaFiltro);
@@ -275,6 +324,10 @@ SIRIOApp.filter('SpedizioneByFiltro',function()
                 if(ProvinciaFiltro != -1)
                    if(Spedizione.Provincia != ProvinciaFiltro)
                       Result = false;
+                      
+                if(PromotoreFiltro != -1)
+                    if(Spedizione.Promotore != PromotoreFiltro)
+                       Result = false;
                 
                 if(Result)
                    Result = (Spedizione.NrPrenotate  != 0 && PrenotataFiltro) ||

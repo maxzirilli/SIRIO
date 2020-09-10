@@ -13,6 +13,24 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
   $scope.Data.DataRicercaDal   = new Date(TmpDate);  
   
   ScopeHeaderController.CheckButtons();
+
+  var ChiudiPdfCarico = function ()
+  {
+    if(confirm('Stampa del carico eseguita correttamente?'))
+    {
+      ListaTitoli        = [];
+      ListaCarico        = [];
+      $scope.StampaOn    = false;
+      $scope.EditingOn   = false;
+      $scope.RefreshListaOrdini();
+    }    
+  }
+  
+  
+  var TroncaTitolo = function(str, n)
+  {
+    return (str.length > n) ? str.substr(0, n-1) + '(...)' : str;
+  };   
   
   function Base64DecodeUnicode(str) 
   {
@@ -33,8 +51,8 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
         var Csv            = reader.result.split(",");         
         var CsvSplitted    = (Base64DecodeUnicode(Csv[1])).split("\n");
         var $ObjQuery      = { Operazioni : [] };
-        var ListaTitoli    = [];        
-        //$scope.FileLength  = CsvSplitted.length - 1;
+        var ListaTitoli    = []; 
+        var ListaCarico    = [];        
         $scope.Contatore   = 0;
         var i = 1;
         
@@ -62,7 +80,14 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
                                                         QUANTITA  : RecordOrdine[1]                                                                                                                
                                                       },
                                           ResetKeys :[1]
-                                        }); 
+                                        });
+              
+              ListaCarico.push({                                
+                                 Quantita   : RecordOrdine[1],
+                                 Codice     : RecordOrdine[0],
+                                 Nome       : TitoloCorrisp.TITOLO,
+                                 Ubicazione : TitoloCorrisp.POS_MAGAZZINO == undefined ? 'N.D.' : TitoloCorrisp.POS_MAGAZZINO                               
+                               })                                        
             }                                              
             $scope.Contatore++;            
             if($ObjQuery.Operazioni.length == 10)
@@ -79,13 +104,14 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
                alert ('UPLOAD ESEGUITO!');                                                               
              },false,true)                                                                 
         } 
+        
         SystemInformation.GetSQL('Accessories',{}, function(Results)
         { 
           ListaTitoli = SystemInformation.FindResults(Results,'BookList');
           if(ListaTitoli != undefined) 
           {
              CreaOrdine();
-             StampaOn = true;
+             $scope.StampaOn = true;
              
              var Data           = new Date();
              var DataAnno       = Data.getFullYear();
@@ -108,10 +134,35 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
              doc.setFontType('normal');
              CoordY += 5;             
              
-             //GENERARE LISTA DEL CARICO
-             
-             
-             $scope.RefreshListaOrdini();
+             for(let i = 0;i < ListaCarico.length;i ++)
+             {
+                 if (CoordY >= 280) 
+                  {
+                    doc.addPage();
+                    CoordY = 20;
+                    var CoordY = 30;
+                    doc.setFontSize(7);
+                    doc.text(10,CoordY,'QNT');
+                    doc.text(25,CoordY,'ISBN');
+                    doc.text(45,CoordY,'TITOLO');
+                    doc.text(180,CoordY,'UBICAZIONE');
+                    doc.setFontType('normal');
+                    CoordY += 5;
+                  }
+                    doc.setFontType('normal');
+                    var Q  = doc.getTextWidth('QNT');
+                    var Qt = doc.getTextWidth(ListaCarico[i].Quantita);
+                    doc.text(10 + Q + 1 - Qt,CoordY,ListaCarico[i].Quantita);
+                    doc.text(25,CoordY,ListaCarico[i].Codice);
+                    doc.text(45,CoordY,TroncaTitolo(ListaCarico[i].Nome,75));
+                    doc.text(180,CoordY,ListaCarico[i].Ubicazione);
+                    CoordY += 5;
+                    doc.setFontSize(6);
+                    doc.setFontType('normal');
+                    doc.text(10,290,SystemInformation.VDocCarico);
+                    doc.setFontSize(7);
+             }
+             document.getElementById('caricoPdf').src = doc.output('datauristring');
           }                
           else SystemInformation.ApplyOnError('Modello carico non conforme','');          
         },'SelectTitoliSQL');                  

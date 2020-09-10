@@ -21,6 +21,63 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
   this.VDocAdoption          = 'VERSIONE DOCUMENTO 1.0 DEL 8/9/2020';
   this.VDocLogStorage        = 'VERSIONE DOCUMENTO 1.0 DEL 8/9/2020';
   this.VDocInventory         = 'VERSIONE DOCUMENTO 1.0 DEL 8/9/2020';
+  this.VDocCarico            = 'VERSIONE DOCUMENTO 1.0 DEL 8/9/2020';
+
+  this.s2ab = function(s)
+  {
+    var buf = new ArrayBuffer(s.length);
+    var view = new Uint8Array(buf);
+    for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+    return buf;
+  }
+  
+  this.GetCellaIntestazione = function(Valore)
+  {
+    return({ t : 's', 
+             v : Valore,
+             s : {
+                   font : { 
+                            bold : true  
+                          },
+                   fill : {
+                            fgColor : { rgb: "FFFFAA00" }
+                          },
+                   border: {
+                             bottom : {
+                                         style : 'thin',
+                                         color : { rgb: "0000000" }
+                                      }
+                           }
+                 }
+           });
+  }
+  
+  this.GetCellaDati = function(Tipo,Valore)
+  {
+    return({ t : Tipo, 
+             v : Valore,
+             s : {
+                   border: {
+                             bottom : {
+                                         style : 'thin',
+                                         color : { rgb: "0000000" }
+                                      },
+                             top    : {
+                                         style : 'thin',
+                                         color : { rgb: "0000000" }
+                                      },
+                             left   : {
+                                         style : 'thin',
+                                         color : { rgb: "0000000" }
+                                      },
+                             right  : {
+                                         style : 'thin',
+                                         color : { rgb: "0000000" }
+                                      }
+                           }
+                 }
+           });
+  }
   
   this.ApplyOnError = function(Error,SubError,OnError)
   {

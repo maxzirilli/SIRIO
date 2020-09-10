@@ -94,7 +94,8 @@
     </form>        
   </div>
 
-  <div ng-if="!EditingOn && StampaOn">
+  <div ng-show="!EditingOn && StampaOn">
+    <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ChiudiPdfCarico()">ANNULLA</md-button> 
     <iframe style="background:white;" id="caricoPdf" title="Carico" height=100% width=100% ></iframe>
   </div>  
 </div>
