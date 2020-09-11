@@ -4,7 +4,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
   $scope.DaSpedireFiltro  = true;
   $scope.PrenotataFiltro  = true;
   $scope.ConsegnataFiltro = false;
-  $scope.Admin            = false;
   $scope.ProvinciaFiltro  = -1;
   $scope.PromotoreFiltro  = -1;
   $scope.DataRicercaAl    = new Date();
@@ -13,7 +12,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
   $scope.DataRicercaDal   = new Date(TmpDate);
   ListaSpedizioni         = [];
   
-  ScopeHeaderController.CheckButtons();
+  ScopeHeaderController.CheckButtons(); 
   
   $scope.ConvertiData = function (Dati)
   {
@@ -103,7 +102,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
     let TmpDate = new Date($scope.DataRicercaAl);
     TmpDate.setDate($scope.DataRicercaAl.getDate() + 1);
      
-    if($scope.Admin)
+    if($scope.isAdministrator)
     {
       SystemInformation.GetSQL('Delivery',{ Dal : ZHTMLInputFromDate($scope.DataRicercaDal), Al : ZHTMLInputFromDate(TmpDate) },function(Results)
       {
@@ -159,6 +158,11 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
 
   $scope.CreaXlsSpedizioni = function()
   {
+    if($scope.DataRicercaDal == undefined || $scope.DataRicercaAl == undefined)
+       return;
+    let TmpDate = new Date($scope.DataRicercaAl);
+    TmpDate.setDate($scope.DataRicercaAl.getDate() + 1);
+    
     var WBook = {
 	                  SheetNames : [],
 	                  Sheets     : {}
@@ -174,31 +178,78 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
     BodySheet['E1'] = SystemInformation.GetCellaIntestazione('QUANTITA');
     BodySheet['F1'] = SystemInformation.GetCellaIntestazione('DOCENTE');
     BodySheet['G1'] = SystemInformation.GetCellaIntestazione('STATO');
-    
-    $rootScope.DaSpedireFiltro = $scope.DaSpedireFiltro;
-    $rootScope.PrenotataFiltro = $scope.PrenotataFiltro;
-    $rootScope.ConsegnataFiltro = $scope.ConsegnataFiltro;
    
-    let SpedizioniFiltrate = $filter('SpedizioneByFiltro')($scope.ListaSpedizioni,$scope.ProvinciaFiltro,$rootScope.DaSpedireFiltro,$rootScope.PrenotataFiltro,$rootScope.ConsegnataFiltro,$scope.PromotoreFiltro);
-    alert(JSON.stringify(SpedizioniFiltrate));
- 
-    
-    for(let i = 0; i < SpedizioniFiltrate.length; i++)
+    let SpedizioniFiltrate = $filter('SpedizioneByFiltro')($scope.ListaSpedizioni,
+                                                           $scope.ProvinciaFiltro,
+                                                           $scope.PrenotataFiltro,
+                                                           $scope.DaSpedireFiltro,
+                                                           $scope.ConsegnataFiltro,
+                                                           $scope.PromotoreFiltro);
+    if($scope.IsAdministrator)
     {
+       SystemInformation.GetSQL('Delivery',{ Dal : ZHTMLInputFromDate($scope.DataRicercaDal), Al : ZHTMLInputFromDate(TmpDate) },function(Results)
+       {
+         var ListaSpedizioniToFilter = [];
+         var SpedCorrisp             = {};
+         var ListaSpedizioniFinale   = [];
+
+         ListaSpedizioniToFilter = SystemInformation.FindResults(Results,'DeliveryListAdminXls');
+         if(ListaSpedizioniToFilter != undefined)
+         {
+            for(let i = 0;i < ListaSpedizioniToFilter.length;i ++)
+            {
+               SpedCorrisp = SpedizioniFiltrate.find(function(ASpedizione){return (ASpedizione.Chiave == ListaSpedizioniToFilter[i].CHIAVE);});
+               if(SpedCorrisp)
+                  ListaSpedizioniFinale.push(ListaSpedizioniToFilter[i]);               
+            }
+            console.log(JSON.stringify(ListaSpedizioniFinale)); 
+         }
+         else SystemInformation.ApplyOnError('Modello spedizioni di confronto per xls non conforme','')
+       },'SQLAdminXsl');
     }
-    BodySheet["!cols"] = [
+    else
+    {
+       SystemInformation.GetSQL('Delivery',{ Dal : ZHTMLInputFromDate($scope.DataRicercaDal), Al : ZHTMLInputFromDate(TmpDate) },function(Results)
+       {
+         var ListaSpedizioniToFilter = [];
+         var SpedCorrisp             = {};
+         var ListaSpedizioniFinale   = [];
+
+         ListaSpedizioniToFilter = SystemInformation.FindResults(Results,'MyDeliveryListXls');
+         if(ListaSpedizioniToFilter != undefined)
+         {
+            for(let i = 0;i < ListaSpedizioniToFilter.length;i ++)
+            {
+               SpedCorrisp = SpedizioniFiltrate.find(function(ASpedizione){return (ASpedizione.Chiave == ListaSpedizioniToFilter[i].CHIAVE);});
+               if(SpedCorrisp)
+                  ListaSpedizioniFinale.push(ListaSpedizioniToFilter[i]);               
+            }
+            console.log(JSON.stringify(ListaSpedizioniFinale)); 
+         }
+         else SystemInformation.ApplyOnError('Modello spedizioni di confronto per xls non conforme','')
+       },'SQLPromotoreXsl');        
+    }
+  }
+
+    
+    /*for(let i = 0; i < SpedizioniFiltrate.length; i++)
+    {
+       //QUI RIEMPIO LE CELLE
+    }
+       
+    BodySheet["!cols"] = [             //QUESTE SONO LARGHEZZE COLONNE XLS
                            {wpx: 150},
                            {wpx: 350},
                            {wpx: 200}
                          ];
-    BodySheet['!ref'] = 'A1:C' + parseInt($scope.ListaEventi.length + 1);
+    BodySheet['!ref'] = 'A1:G1';
     
    	WBook.SheetNames.push(SheetName);
     WBook.Sheets[SheetName] = BodySheet;
     
     var wbout = XLSX.write(WBook, {bookType:'xlsx', bookSST:true, type: 'binary'});
-    saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}), "EventLog.xlsx") 
-  }
+    saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}), "Spedizioni.xlsx") 
+  }*/
   
   $scope.ModificaSpedizione = function (ChiaveSpedizione,ChiaveDocente = -1)
   {

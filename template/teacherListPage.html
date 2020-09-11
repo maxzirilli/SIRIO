@@ -225,7 +225,7 @@
                        Dissocia istituto
                      </md-button>
                      <md-input-container class="containerSelect" style="width:33%;"><label>ISTITUTO</label>
-                       <md-select ng-model="IstitutoVisualizzato" class="mdb-select" type="text"  name="IstitutoVisualizzato">
+                       <md-select ng-model="IstitutoVisualizzato" class="mdb-select" type="text"  name="IstitutoVisualizzato" ng-change="ImpostaDisponibilita(IstitutoVisualizzato)">
                          <md-option ng-repeat="istitutoVis in DocenteInEditing.ListaIstitutiDoc" ng-value="istitutoVis.CHIAVE" >{{istitutoVis.ISTITUTO}}</md-option> <!--ng-click="ModificaTabInsegnamenti(istitutoVis.Chiave)"-->
                        </md-optgroup>
                        </md-select>
@@ -279,67 +279,67 @@
                            <tbody>
                              <tr>
                                <th style="font-weight:bold;">LUNEDI</th>
-                               <td><input type="time" ng-model="DisponibilitaInEditing[0][0].Dal"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Lunedi.PrimaAl"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Lunedi.SecondaDal"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Lunedi.SecondaDal"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Lunedi.TerzaDal"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Lunedi.TerzaDal"></td>                               
+                               <td><input type="time" ng-model="DisponibilitaInEditing[0][0].DA"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[0][0].A"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[0][1].DA"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[0][1].A"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[0][2].DA"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[0][2].A"></td>                               
                              </tr>
                              <tr>
                                <th style="font-weight:bold;">MARTEDI</th>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Martedi.PrimaDal"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Martedi.PrimaAl"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Martedi.SecondaDal"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Martedi.SecondaDal"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Martedi.TerzaDal"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Martedi.TerzaDal"></td>                               
+                               <td><input type="time" ng-model="DisponibilitaInEditing[1][0].DA"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[1][0].A"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[1][1].DA"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[1][1].A"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[1][2].DA"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[1][2].A"></td>                               
                              </tr>
                              <tr>
                                <th style="font-weight:bold;">MERCOLEDI</th>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Mercoledi.PrimaDal"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Mercoledi.PrimaAl"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Mercoledi.SecondaDal"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Mercoledi.SecondaDal"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Mercoledi.TerzaDal"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Mercoledi.TerzaDal"></td>                               
+                               <td><input type="time" ng-model="DisponibilitaInEditing[2][0].DA"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[2][0].A"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[2][1].DA"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[2][1].A"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[2][2].DA"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[2][2].A"></td>                               
                              </tr>
                              <tr>
                                <th style="font-weight:bold;">GIOVEDI</th>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Giovedi.PrimaDal"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Giovedi.PrimaAl"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Giovedi.SecondaDal"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Giovedi.SecondaDal"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Giovedi.TerzaDal"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Giovedi.TerzaDal"></td>                               
+                               <td><input type="time" ng-model="DisponibilitaInEditing[3][0].DA"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[3][0].A"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[3][1].DA"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[3][1].A"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[3][2].DA"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[3][2].A"></td>                               
                              </tr>
                              <tr>
                                <th style="font-weight:bold;">VENERDI</th>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Venerdi.PrimaDal"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Venerdi.PrimaAl"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Venerdi.SecondaDal"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Venerdi.SecondaDal"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Venerdi.TerzaDal"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Venerdi.TerzaDal"></td>                               
+                               <td><input type="time" ng-model="DisponibilitaInEditing[4][0].DA"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[4][0].A"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[4][1].DA"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[4][1].A"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[4][2].DA"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[4][2].A"></td>                               
                              </tr>
                              <tr>
                                <th style="font-weight:bold;">SABATO</th>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Sabato.PrimaDal"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Sabato.PrimaAl"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Sabato.SecondaDal"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Sabato.SecondaDal"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Sabato.TerzaDal"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Sabato.TerzaDal"></td>                               
+                               <td><input type="time" ng-model="DisponibilitaInEditing[5][0].DA"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[5][0].A"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[5][1].DA"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[5][1].A"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[5][2].DA"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[5][2].A"></td>                               
                              </tr>
                              <tr>
                                <th style="font-weight:bold;">DOMENICA</th>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Domenica.PrimaDal"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Domenica.PrimaAl"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Domenica.SecondaDal"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Domenica.SecondaDal"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Domenica.TerzaDal"></td>
-                               <td><input type="time" ng-model="DisponibilitaInEditing.Domenica.TerzaDal"></td>                               
-                             </tr>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[6][0].DA"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[6][0].A"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[6][1].DA"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[6][1].A"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[6][2].DA"></td>
+                               <td><input type="time" ng-model="DisponibilitaInEditing[6][2].A"></td>                               
+                             </tr>                             
                            </tbody>
                          </table>
                          <md-table-pagination md-limit="GridOptions3.query.limit" 

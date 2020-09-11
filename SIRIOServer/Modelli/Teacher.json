@@ -18,7 +18,11 @@
                      {
                        "Name" : "TeacherLesson",
                        "SQL"  : "SELECT *,(SELECT ISTITUTO FROM classi WHERE CHIAVE = insegnamenti_docente.CLASSE) AS ISTITUTO,(SELECT classi.SEZIONE FROM classi WHERE classi.CHIAVE = insegnamenti_docente.CLASSE) AS SEZIONE,(SELECT classi.ANNO FROM classi WHERE classi.CHIAVE = insegnamenti_docente.CLASSE) AS ANNO FROM insegnamenti_docente WHERE DOCENTE=:CHIAVE"
-                     }                    
+                     },
+                     {
+                       "Name" : "TeacherAvailability",
+                       "SQL"  : "SELECT * FROM docenti_disponibilita WHERE DOCENTE =:CHIAVE ORDER BY ISTITUTO DESC,GIORNO DESC"
+                     }                     
                    ],
   
   "EditSQL"      : [  
@@ -51,12 +55,16 @@
                        "SQL"  : "INSERT INTO insegnamenti_docente (CHIAVE,MATERIA,CLASSE,GIORNO,ORARIO,DOCENTE) VALUES (:NewKey2,:MATERIA,:CLASSE,:GIORNO,#ORARIO,:NewKey1)"
                      },
                      {
-                       "Name" : "InsertTeacherAvailability",
-                       "SQL"  : "INSERT INTO docenti_disponibilita (CHIAVE,DOCENTE,GIORNO,DA,A) VALUES (:Newkey1,:DOCENTE,:GIORNO,#DA,#A)"
+                       "Name" : "InsertUpdateTeacherAvailability",
+                       "SQL"  : "CALL AGGIORNA_DOCENTI_DISPONIBILITA(:DocenteDisp,:IstitutoDisp,:GiornoDisp,#DaDisp,#ADisp,:PosDisp)"
+                     },
+                     {
+                       "Name" : "InsertUpdateTeacherAvailabilityAfterInsert",
+                       "SQL"  : "CALL AGGIORNA_DOCENTI_DISPONIBILITA(:NewKey1,:IstitutoDisp,:GiornoDisp,#DaDisp,#ADisp,:PosDisp)"
                      },
                      {
                        "Name" : "InsertTeacherAvailabilityAfterInsert",
-                       "SQL"  : "INSERT INTO docenti_disponibilita (CHIAVE,DOCENTE,GIORNO,DA,A) VALUES (:NewKey3,:NewKey1,:GIORNO,#DA,#A))"
+                       "SQL"  : "CALL AGGIORNA_DOCENTI_DISPONIBILITA()"
                      },                     
                      {
                        "Name" : "UpdateTeacher",
@@ -65,10 +73,6 @@
                      {
                        "Name" : "UpdateLesson",
                        "SQL"  : "UPDATE insegnamenti_docente SET MATERIA=:MATERIA,CLASSE=:CLASSE,GIORNO=:GIORNO,ORARIO=#ORARIO WHERE CHIAVE=:CHIAVE"
-                     },
-                     {
-                       "Name" : "UpdateTeacherAvailability",
-                       "SQL"  : "UPDATE docenti_disponibilita SET GIORNO=:GIORNO,DA=#DA,A=#A WHERE CHIAVE=:CHIAVE"
                      },
                      {
                        "Name" : "DeleteTeacherDeliveryBookAll",
@@ -84,7 +88,7 @@
                      },
                      {
                        "Name" : "DeleteTeacherAvailability",
-                       "SQL"  : "DELETE FROM docenti_disponibilita WHERE CHIAVE=:CHIAVE"
+                       "SQL"  : "DELETE FROM docenti_disponibilita WHERE DOCENTE=:Docente AND POSIZIONE = :Posizione AND GIORNO =:Giorno AND ISTITUTO = :Istituto"
                      },
                      {
                        "Name" : "DeleteTeacherAvailabilityAll",
@@ -100,7 +104,11 @@
                      },
                      {
                        "Name" : "DeleteLessonAfterDeleteInstitute",
-                       "SQL"  : "DELETE FROM insegnamenti_docente WHERE CLASSE IN (SELECT CHIAVE FROM classi WHERE ISTITUTO=:ISTITUTO) AND DOCENTE=:CHIAVE"
+                       "SQL"  : "DELETE FROM insegnamenti_docente WHERE CLASSE IN (SELECT CHIAVE FROM classi WHERE ISTITUTO=:ISTITUTO) AND DOCENTE=:DOCENTE"
+                     },                     
+                     {
+                       "Name" : "DeleteAvailabilityAfterDeleteInstitute",
+                       "SQL"  : "DELETE FROM docenti_disponibilita WHERE ISTITUTO=:ISTITUTO AND DOCENTE=:DOCENTE"
                      },
                      {
                        "Name" : "DeleteInstituteTeacher",

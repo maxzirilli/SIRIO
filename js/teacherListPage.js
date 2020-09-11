@@ -312,13 +312,15 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
       return([]);
   }
   
-  $scope.GetDisponibilitaSelected = function(Istituto)
+  $scope.ImpostaDisponibilita = function (Istituto)
   {
-      if($scope.DocenteInEditing.ListaIstitutiDoc != undefined)
-         for(let i = 0; i < $scope.DocenteInEditing.ListaIstitutiDoc.length;i++)
-             if($scope.DocenteInEditing.ListaIstitutiDoc[i].CHIAVE == Istituto)
-                return($scope.DocenteInEditing.ListaIstitutiDoc[i].Disponibilita); 
-      return([]);
+    if($scope.DocenteInEditing.ListaIstitutiDoc != undefined)
+       for(let i = 0;i < $scope.DocenteInEditing.ListaIstitutiDoc.length;i ++)
+           if($scope.DocenteInEditing.ListaIstitutiDoc[i].CHIAVE == Istituto)
+           {
+              $scope.DisponibilitaInEditing = $scope.DocenteInEditing.ListaIstitutiDoc[i].Disponibilita;        
+              break;
+           }
   }
   
   $scope.ModificaDocente = function(docente)
@@ -335,8 +337,9 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
       DocenteDettaglio    = SystemInformation.FindResults(Results,'TeacherDettaglio');
       Istituti            = SystemInformation.FindResults(Results,'TeacherInstitute');
       OrariAll            = SystemInformation.FindResults(Results,'TeacherLesson');
+      DisponibilitaAll    = SystemInformation.FindResults(Results,'TeacherAvailability');
 
-      if(DocenteDettaglio != undefined && Istituti != undefined && OrariAll != undefined /*&& ClassiDoc != undefined*/)
+      if(DocenteDettaglio != undefined && Istituti != undefined && OrariAll != undefined && DisponibilitaAll != undefined)
       {
         $scope.DocenteInEditing.Chiave           = DocenteDettaglio[0].CHIAVE;
         $scope.DocenteInEditing.RagioneSociale   = DocenteDettaglio[0].RAGIONE_SOCIALE;
@@ -355,12 +358,25 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
         $scope.DocenteInEditing.Provincia        = DocenteDettaglio[0].PROVINCIA == undefined ? -1 : DocenteDettaglio[0].PROVINCIA;
         $scope.DocenteInEditing.Note             = DocenteDettaglio[0].NOTE;
         $scope.DocenteInEditing.ListaIstitutiDoc = Istituti;       
-        $scope.DocenteInEditing.ListaIstitutiDoc.forEach(function(Istituto){Istituto.Orari = []});       
+        $scope.DocenteInEditing.ListaIstitutiDoc.forEach(function(Istituto){Istituto.Orari = [],Istituto.Disponibilita = GetArrayDisponibilitaVuoto()});       
         
         for (let i = 0; i < $scope.DocenteInEditing.ListaIstitutiDoc.length;i ++)
+        {
           for (let j = 0; j < OrariAll.length;j ++)
-            if (OrariAll[j].ISTITUTO == $scope.DocenteInEditing.ListaIstitutiDoc[i].CHIAVE)
-                $scope.DocenteInEditing.ListaIstitutiDoc[i].Orari.push(OrariAll[j]);
+          {
+               if (OrariAll[j].ISTITUTO == $scope.DocenteInEditing.ListaIstitutiDoc[i].CHIAVE)
+                   $scope.DocenteInEditing.ListaIstitutiDoc[i].Orari.push(OrariAll[j]);
+          }
+          for (let k = 0; k < DisponibilitaAll.length;k ++)
+          {
+            if (DisponibilitaAll[k].ISTITUTO == $scope.DocenteInEditing.ListaIstitutiDoc[i].CHIAVE)
+                $scope.DocenteInEditing.ListaIstitutiDoc[i].Disponibilita[DisponibilitaAll[k].GIORNO][DisponibilitaAll[k].POSIZIONE] = 
+                                  { DA : (DisponibilitaAll[k].DA == undefined ? undefined : ZDateFromHTMLInput('1970-01-01',DisponibilitaAll[k].DA)), 
+                                     A : (DisponibilitaAll[k].A == undefined ? undefined :  ZDateFromHTMLInput('1970-01-01',DisponibilitaAll[k].A)) };
+          }
+        }
+        if($scope.DocenteInEditing.ListaIstitutiDoc.length != 0)
+           $scope.DisponibilitaInEditing = $scope.DocenteInEditing.ListaIstitutiDoc[0].Disponibilita; 
                 
         if (DocenteDettaglio[0].MATERIA_1 != undefined)
         {
@@ -399,7 +415,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
            $scope.IstitutoVisualizzato = $scope.DocenteInEditing.ListaIstitutiDoc[0].CHIAVE       
       }       
       else SystemInformation.ApplyOnError('Modello docente non conforme','');      
-    },'SQLDettaglio'); 
+    },'SQLDettaglio');    
   }
   
   var GetArrayDisponibilitaVuoto = function()
@@ -407,11 +423,10 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
     var Result = [];
     for(let i = 0; i < 7; i++)
     {
-        Result.push([{Dal : "", Al : ""},{Dal : "", Al : ""},{Dal : "", Al : ""}]);
+        Result.push([{DA : "", A : ""},{DA : "", A : ""},{DA : "", A : ""}]);
     }
     return Result;
-  }
-  
+  } 
     
   $scope.NuovoDocente = function()
   { 
@@ -435,7 +450,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                                 Note             : '',
                                 ListaIstitutiDoc : []
                               };
-    $scope.DisponibilitaInEditing = GetArrayDisponibilitaVuoto;
+    $scope.DisponibilitaInEditing = GetArrayDisponibilitaVuoto();
   }
   
   $scope.OnAnnullaDocenteClicked = function()
@@ -514,6 +529,11 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                                 }
          if ($scope.DocenteInEditing.ListaIstitutiDocEliminati[j].Eliminato)
          {
+           $ObjQuery.Operazioni.push({
+                                       Query     : 'DeleteAvailabilityAfterDeleteInstitute',
+                                       Parametri : ParamIstitutoDoc
+                                     }); 
+           
            $ObjQuery.Operazioni.push({
                                        Query     : 'DeleteLessonAfterDeleteInstitute',
                                        Parametri : ParamIstitutoDoc
@@ -617,14 +637,65 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                                           Parametri : ParamOrario
                                         });
          }
+         
+         for(let k = 0;k < $scope.DocenteInEditing.ListaIstitutiDoc[i].Disponibilita.length;k ++)
+         {
+             for(let l = 0;l < $scope.DocenteInEditing.ListaIstitutiDoc[i].Disponibilita[k].length;l ++)
+             { 
+                 var IsTimeValid = function(TimeString)
+                 {
+                     return(TimeString != null && TimeString != undefined && TimeString != "");
+                 }
+                 
+                 if(IsTimeValid($scope.DocenteInEditing.ListaIstitutiDoc[i].Disponibilita[k][l].DA) || 
+                    IsTimeValid($scope.DocenteInEditing.ListaIstitutiDoc[i].Disponibilita[k][l].A))
+                 {
+                    var ParamDisponibilita = {
+                                                DocenteDisp  : $scope.DocenteInEditing.Chiave,
+                                                IstitutoDisp : $scope.DocenteInEditing.ListaIstitutiDoc[i].CHIAVE,
+                                                GiornoDisp   : k,
+                                                PosDisp      : l                                                                
+                                              }
+                    if(IsTimeValid($scope.DocenteInEditing.ListaIstitutiDoc[i].Disponibilita[k][l].DA))
+                       ParamDisponibilita.DaDisp = ZFormatDateTime('hh:nn',$scope.DocenteInEditing.ListaIstitutiDoc[i].Disponibilita[k][l].DA);
+                    if(IsTimeValid($scope.DocenteInEditing.ListaIstitutiDoc[i].Disponibilita[k][l].A))
+                       ParamDisponibilita.ADisp = ZFormatDateTime('hh:nn',$scope.DocenteInEditing.ListaIstitutiDoc[i].Disponibilita[k][l].A);
+                     if(!NuovoDocente)
+                     { 
+                        $ObjQuery.Operazioni.push({
+                                                    Query     : 'InsertUpdateTeacherAvailability',
+                                                    Parametri : ParamDisponibilita
+                                                  });
+                     }
+                     else
+                     {
+                        $ObjQuery.Operazioni.push({
+                                                    Query     : 'InsertUpdateTeacherAvailabilityAfterInsert',
+                                                    Parametri : ParamDisponibilita
+                                                  });                  
+                     }
+                 }
+                 else
+                 {
+                        $ObjQuery.Operazioni.push({
+                                                    Query     : 'DeleteTeacherAvailability',
+                                                    Parametri : {
+                                                                  Docente   : $scope.DocenteInEditing.Chiave,
+                                                                  Istituto  : $scope.DocenteInEditing.ListaIstitutiDoc[i].CHIAVE,
+                                                                  Giorno    : k,
+                                                                  Posizione : l                                                                
+                                                                }
+                                                  });
+                 }
+             }
+         }
     }
-
-    //QUI FA QUERY ISNERT/EDIT DISPONIBILITA        
  
     SystemInformation.PostSQL('Teacher',$ObjQuery,function(Answer)
     {
       $scope.DocenteInEditing.ListaIstitutiDoc = [];
-      $scope.EditingOn = false;
+      $scope.EditingOn                         = false;
+      $scope.DisponibilitaInEditing            = []; 
       $scope.RefreshListaDocenti();
     });  
   }
@@ -635,6 +706,11 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
    {
      var $ObjQuery    = { Operazioni : [] };
      var ParamDocente = { CHIAVE : Docente.Chiave };
+     
+     $ObjQuery.Operazioni.push({
+                                 Query     : 'DeleteTeacherAvailabilityAll',
+                                 Parametri : ParamDocente
+                               }); 
 
      $ObjQuery.Operazioni.push({
                                  Query     : 'DeleteTeacherDeliveryBookAll',
