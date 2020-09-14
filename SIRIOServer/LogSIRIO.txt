@@ -1,13 +1,7 @@
-[13-Sep-2020 15:23:17 Europe/Berlin] SELECT istituti_x_docenti.DOCENTE,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE CHIAVE = istituti_x_docenti.DOCENTE) AS NOME_DOCENTE,docenti_disponibilita.* FROM istituti_x_docenti,docenti_disponibilita WHERE istituti_x_docenti.ISTITUTO = CHIAVE ORDER BY docenti.RAGIONE_SOCIALE
-[13-Sep-2020 15:24:08 Europe/Berlin] SELECT istituti_x_docenti.DOCENTE,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE CHIAVE = istituti_x_docenti.DOCENTE) AS NOME_DOCENTE,docenti_disponibilita.* FROM istituti_x_docenti,docenti_disponibilita WHERE istituti_x_docenti.ISTITUTO = 406731 ORDER BY docenti.RAGIONE_SOCIALE
-[13-Sep-2020 15:24:13 Europe/Berlin] SELECT istituti_x_docenti.DOCENTE,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE CHIAVE = istituti_x_docenti.DOCENTE) AS NOME_DOCENTE,docenti_disponibilita.* FROM istituti_x_docenti,docenti_disponibilita WHERE istituti_x_docenti.ISTITUTO = 406731 ORDER BY docenti.RAGIONE_SOCIALE
-[14-Sep-2020 09:20:23 Europe/Berlin] SELECT *,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS NOME_DOCENTE FROM spedizioni WHERE CHIAVE= AND PROMOTORE=1
-[14-Sep-2020 09:20:23 Europe/Berlin] SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE titoli.CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.QUANTITA_MGZN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS QUANTITA_MGZN FROM dettaglio_spedizioni WHERE SPEDIZIONE=
-[14-Sep-2020 09:20:30 Europe/Berlin] SELECT *,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS NOME_DOCENTE FROM spedizioni WHERE CHIAVE= AND PROMOTORE=1
-[14-Sep-2020 09:20:30 Europe/Berlin] SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE titoli.CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.QUANTITA_MGZN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS QUANTITA_MGZN FROM dettaglio_spedizioni WHERE SPEDIZIONE=
-[14-Sep-2020 09:21:31 Europe/Berlin] SELECT *,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS NOME_DOCENTE FROM spedizioni WHERE CHIAVE= AND PROMOTORE=1
-[14-Sep-2020 09:21:31 Europe/Berlin] SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE titoli.CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.QUANTITA_MGZN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS QUANTITA_MGZN FROM dettaglio_spedizioni WHERE SPEDIZIONE=
-[14-Sep-2020 09:21:33 Europe/Berlin] SELECT *,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS NOME_DOCENTE FROM spedizioni WHERE CHIAVE= AND PROMOTORE=1
-[14-Sep-2020 09:21:33 Europe/Berlin] SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE titoli.CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.QUANTITA_MGZN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS QUANTITA_MGZN FROM dettaglio_spedizioni WHERE SPEDIZIONE=
-[14-Sep-2020 09:31:15 Europe/Berlin] DELETE FROM docenti WHERE CHIAVE=407108
-[14-Sep-2020 09:38:59 Europe/Berlin] DELETE FROM docenti WHERE CHIAVE=407108
+
+[14-Sep-2020 17:40:49 Europe/Berlin] PHP Fatal error:  Uncaught ErrorException: A non-numeric value encountered in C:\xampp\htdocs\ZLibrary\ZAdvQuery.php:481
+Stack trace:
+#0 C:\xampp\htdocs\ZLibrary\ZAdvQuery.php(481): {closure}(2, 'A non-numeric v...', 'C:\\xampp\\htdocs...', 481, Array)
+#1 C:\Lavoro\Progetti\Editoria\Sirio\SIRIO\SIRIOServer\SIRIOLogin.php(11): TAdvQuery->Login()
+#2 {main}
+  thrown in C:\xampp\htdocs\ZLibrary\ZAdvQuery.php on line 481

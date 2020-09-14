@@ -15,5 +15,6 @@
     define('PAR_PARAMETERS','SIRIOEditParams');
     define('GEN_CHIAVI','gen_key'); 
     define('FIELD_GEN_CHIAVI','CHIAVE');
+    define('FIELD_UTENTI_CAMPO_ELIMINATO','ELIMINATO');
     
 ?>    
