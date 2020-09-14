@@ -2,12 +2,14 @@
  "Version": {
   "Major": 1,
   "Minor": 1,
-  "Release": 0
+  "Release": 1
  },
  "Storia": [
+  "Versione 1.1.1    14 Settembre 2020",
+  "                  - FIX: Errore trigger inserimento spedizione",
   "Versione 1.1.0    11 Settembre 2020",
   "                  - NEW: Aggiunta la gestione delle disponibilità",
-  "                         Eliminati gli errore di terza forma normale", 
+  "                         Eliminati gli errore di terza forma normale",
   "Versione 1.0.0    07 Settembre 2020",
   "                  - Prima versione"
  ],
@@ -907,15 +909,6 @@
      "Commento": "",
      "DefaultValue": "NULL",
      "SQLAfterAddedColumn": null
-    },
-    {
-     "Nome": "CONS_A_MANO",
-     "IsNullable": true,
-     "DataType": "bit(1)",
-     "AutoIncrement": false,
-     "Commento": "",
-     "DefaultValue": "NULL",
-     "SQLAfterAddedColumn": null
     }
    ],
    "PrimaryKey": {
@@ -1030,7 +1023,7 @@
     {
      "Nome": "dettaglio_spedizioni_after_insert",
      "Event": "INSERT",
-     "Body": "BEGIN\r\nDECLARE CONS_A_MANO bit;\r\n  \r\n  IF NEW.STATO = 'C' THEN\r\n    SET CONS_A_MANO := 1 ;\r\n UPDATE titoli \r\n\t SET QUANTITA_MGZN_VOL = QUANTITA_MGZN_VOL - NEW.QUANTITA\r\n  WHERE CHIAVE = NEW.TITOLO;\r\n INSERT INTO movimenti_magazzino_volante (TITOLO,QUANTITA,DESCRIZIONE) VALUES (NEW.TITOLO,(-1)*NEW.QUANTITA,'Titolo consegnato a mano, quantita titolo rimossa dal magazzino volante');\r\n  ELSE  \r\n    SET CONS_A_MANO := 0;\r\n  END IF;\r\n\r\nEND",
+     "Body": "BEGIN\r\n  \r\n  IF NEW.STATO = 'C' THEN\r\n    SET NEW.CONS_A_MANO := 1;\r\n UPDATE titoli \r\n\t SET QUANTITA_MGZN_VOL = QUANTITA_MGZN_VOL - NEW.QUANTITA\r\n  WHERE CHIAVE = NEW.TITOLO;\r\n INSERT INTO movimenti_magazzino_volante (TITOLO,QUANTITA,DESCRIZIONE) VALUES (NEW.TITOLO,(-1)*NEW.QUANTITA,'Titolo consegnato a mano, quantita titolo rimossa dal magazzino volante');\r\n   ELSE  \r\n    SET NEW.CONS_A_MANO := 0;\r\n  END IF;\r\n\r\nEND",
      "Timing": "BEFORE"
     },
     {
