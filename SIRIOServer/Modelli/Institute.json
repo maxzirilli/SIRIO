@@ -11,7 +11,18 @@
                                      "Name" : "InstituteForDeliveryList",
                                      "SQL"  : "SELECT istituti.CHIAVE,istituti.NOME,istituti.INDIRIZZO,istituti.COMUNE,istituti.CAP,istituti.PROVINCIA,(SELECT province_all.CHIAVE FROM province_all WHERE NOME=(SELECT province.NOME FROM province WHERE CHIAVE = istituti.PROVINCIA)) AS PROVINCIA_LISTA_ALL FROM istituti ORDER BY istituti.NOME"
                                    }                       
-                                 ],                   
+                                 ],
+
+  "SelectInstituteTeacherList" : [
+                                   {
+                                     "Name" : "InstituteTeacherList",
+                                     "SQL"  : "SELECT istituti_x_docenti.DOCENTE,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE CHIAVE = istituti_x_docenti.DOCENTE) AS NOME_DOCENTE FROM istituti_x_docenti WHERE istituti_x_docenti.ISTITUTO=:CHIAVE ORDER BY NOME_DOCENTE"
+                                   },
+                                   {
+                                     "Name" : "InstituteTeacherAvailability",
+                                     "SQL"  : "SELECT docenti_disponibilita.* FROM docenti_disponibilita WHERE ISTITUTO=:CHIAVE ORDER BY DOCENTE,POSIZIONE ASC,GIORNO ASC,DA DESC,A DESC"
+                                   }
+                                 ],                               
                    
   "SQLDettaglio" : [
                      { 

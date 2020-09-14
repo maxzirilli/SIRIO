@@ -83,7 +83,7 @@
                         md-require-match="true"
                         md-clear-button="true">
             <md-item-template>
-              <span md-highlight-text="searchText">{{item.Codice}} - {{item.Nome}}</span>
+              <span md-highlight-text="searchText">ISBN : {{item.Codice}} - {{item.Nome}}</span>
             </md-item-template>
             <div ng-messages="ordineIngressoEditForm.Titolo.$error" multiple md-auto-hide="true">
               <div ng-message="required">Inserire il titolo da caricare</div>

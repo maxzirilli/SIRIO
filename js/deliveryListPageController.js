@@ -171,13 +171,14 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
     
     var SheetName =  "SPEDIZIONI";
     var BodySheet = {};
-    BodySheet['A1'] = SystemInformation.GetCellaIntestazione('DATA');
-    BodySheet['B1'] = SystemInformation.GetCellaIntestazione('DESTINATARIO');
-    BodySheet['C1'] = SystemInformation.GetCellaIntestazione('ISBN');
-    BodySheet['D1'] = SystemInformation.GetCellaIntestazione('TITOLO');
-    BodySheet['E1'] = SystemInformation.GetCellaIntestazione('QUANTITA');
-    BodySheet['F1'] = SystemInformation.GetCellaIntestazione('DOCENTE');
-    BodySheet['G1'] = SystemInformation.GetCellaIntestazione('STATO');
+    /*BodySheet['A1'] = SystemInformation.GetCellaIntestazione('DESTINATARIO');
+    BodySheet['B1'] = SystemInformation.GetCellaIntestazione('DOCENTE');
+    BodySheet['C1'] = SystemInformation.GetCellaIntestazione('INDIRIZZO');
+    BodySheet['D1'] = SystemInformation.GetCellaIntestazione('DATA');
+    BodySheet['E1'] = SystemInformation.GetCellaIntestazione('ISBN');
+    BodySheet['F1'] = SystemInformation.GetCellaIntestazione('TITOLO');
+    BodySheet['G1'] = SystemInformation.GetCellaIntestazione('QUANTITA');
+    BodySheet['H1'] = SystemInformation.GetCellaIntestazione('STATO');*/
    
     let SpedizioniFiltrate = $filter('SpedizioneByFiltro')($scope.ListaSpedizioni,
                                                            $scope.ProvinciaFiltro,
@@ -185,8 +186,19 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
                                                            $scope.DaSpedireFiltro,
                                                            $scope.ConsegnataFiltro,
                                                            $scope.PromotoreFiltro);
-    if($scope.IsAdministrator)
+    if($scope.IsAdministrator())
     {
+       BodySheet       = {};
+       BodySheet['A1'] = SystemInformation.GetCellaIntestazione('DESTINATARIO');
+       BodySheet['B1'] = SystemInformation.GetCellaIntestazione('DOCENTE');
+       BodySheet['C1'] = SystemInformation.GetCellaIntestazione('INDIRIZZO');
+       BodySheet['D1'] = SystemInformation.GetCellaIntestazione('DATA');
+       BodySheet['E1'] = SystemInformation.GetCellaIntestazione('PROMOTORE');
+       BodySheet['F1'] = SystemInformation.GetCellaIntestazione('ISBN');
+       BodySheet['G1'] = SystemInformation.GetCellaIntestazione('TITOLO');
+       BodySheet['H1'] = SystemInformation.GetCellaIntestazione('QUANTITA');
+       BodySheet['I1'] = SystemInformation.GetCellaIntestazione('STATO');
+       
        SystemInformation.GetSQL('Delivery',{ Dal : ZHTMLInputFromDate($scope.DataRicercaDal), Al : ZHTMLInputFromDate(TmpDate) },function(Results)
        {
          var ListaSpedizioniToFilter = [];
@@ -198,17 +210,87 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
          {
             for(let i = 0;i < ListaSpedizioniToFilter.length;i ++)
             {
-               SpedCorrisp = SpedizioniFiltrate.find(function(ASpedizione){return (ASpedizione.Chiave == ListaSpedizioniToFilter[i].CHIAVE);});
-               if(SpedCorrisp)
-                  ListaSpedizioniFinale.push(ListaSpedizioniToFilter[i]);               
+                SpedCorrisp = SpedizioniFiltrate.find(function(ASpedizione){return (ASpedizione.Chiave == ListaSpedizioniToFilter[i].CHIAVE);});
+                if(SpedCorrisp)
+                   ListaSpedizioniFinale.push(ListaSpedizioniToFilter[i]);
+            }              
+            var ChiaveSpedizione = -1;
+            for(let j = 0;j < ListaSpedizioniFinale.length;j ++)
+            {
+                switch(ListaSpedizioniFinale[j].STATO)
+                {
+                       case 'S' : ListaSpedizioniFinale[j].STATO = 'DA SPEDIRE';
+                                  break;
+                       case 'P' : ListaSpedizioniFinale[j].STATO = 'PRENOTATO';
+                                  break;
+                       case 'C' : ListaSpedizioniFinale[j].STATO = 'CONSEGNATO';
+                                  break;
+                }
+                
+                if (ChiaveSpedizione != ListaSpedizioniFinale[j].CHIAVE)
+                {
+                    BodySheet['A' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].PRESSO);
+                    BodySheet['B' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].NOME_DOCENTE == undefined ? '' : ListaSpedizioniFinale[j].NOME_DOCENTE);
+                    BodySheet['C' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].INDIRIZZO + ', ' + ListaSpedizioniFinale[j].COMUNE + ', ' + ListaSpedizioniFinale[j].CAP + ', ' + ListaSpedizioniFinale[j].NOME_PROVINCIA);
+                    BodySheet['D' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ZFormatDateTime('dd/mm/yyyy',ZDateFromHTMLInput(ListaSpedizioniFinale[j].DATA)));
+                    BodySheet['E' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].NOME_PROMOTORE.toUpperCase()); 
+                    BodySheet['F' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].CODICE_TITOLO);
+                    BodySheet['G' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].NOME_TITOLO);
+                    BodySheet['H' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].QUANTITA);
+                    BodySheet['I' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].STATO);
+                    
+                    ChiaveSpedizione = ListaSpedizioniFinale[j].CHIAVE;
+                }
+                else
+                {   
+                    BodySheet['A' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s','');
+                    BodySheet['B' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s','');
+                    BodySheet['C' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s','');
+                    BodySheet['D' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s','');
+                    BodySheet['E' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',''); 
+                    BodySheet['F' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].CODICE_TITOLO);
+                    BodySheet['G' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].NOME_TITOLO);
+                    BodySheet['H' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].QUANTITA);
+                    BodySheet['I' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].STATO);
+                   
+                    ChiaveSpedizione = ListaSpedizioniFinale[j].CHIAVE;
+                }                    
             }
-            console.log(JSON.stringify(ListaSpedizioniFinale)); 
+            
+            BodySheet["!cols"] = [             
+                                   {wpx: 150},
+                                   {wpx: 150},
+                                   {wpx: 250},
+                                   {wpx: 150},
+                                   {wpx: 150},
+                                   {wpx: 150},
+                                   {wpx: 200},
+                                   {wpx: 50},
+                                   {wpx: 100}
+                                 ];
+            BodySheet['!ref'] = 'A1:I1' + parseInt(ListaSpedizioniFinale.length + 1);
+            
+            WBook.SheetNames.push(SheetName);
+            WBook.Sheets[SheetName] = BodySheet;
+            
+            var wbout = XLSX.write(WBook, {bookType:'xlsx', bookSST:true, type: 'binary'});
+            saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}), "Spedizioni.xlsx")                                       
          }
          else SystemInformation.ApplyOnError('Modello spedizioni di confronto per xls non conforme','')
-       },'SQLAdminXsl');
+       },'SQLAdminXls');
     }
     else
     {
+       BodySheet       = {};
+       BodySheet['A1'] = SystemInformation.GetCellaIntestazione('DESTINATARIO');
+       BodySheet['B1'] = SystemInformation.GetCellaIntestazione('DOCENTE');
+       BodySheet['C1'] = SystemInformation.GetCellaIntestazione('INDIRIZZO');
+       BodySheet['D1'] = SystemInformation.GetCellaIntestazione('DATA');
+       BodySheet['E1'] = SystemInformation.GetCellaIntestazione('ISBN');
+       BodySheet['F1'] = SystemInformation.GetCellaIntestazione('TITOLO');
+       BodySheet['G1'] = SystemInformation.GetCellaIntestazione('QUANTITA');
+       BodySheet['H1'] = SystemInformation.GetCellaIntestazione('STATO');
+       
        SystemInformation.GetSQL('Delivery',{ Dal : ZHTMLInputFromDate($scope.DataRicercaDal), Al : ZHTMLInputFromDate(TmpDate) },function(Results)
        {
          var ListaSpedizioniToFilter = [];
@@ -222,34 +304,67 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
             {
                SpedCorrisp = SpedizioniFiltrate.find(function(ASpedizione){return (ASpedizione.Chiave == ListaSpedizioniToFilter[i].CHIAVE);});
                if(SpedCorrisp)
-                  ListaSpedizioniFinale.push(ListaSpedizioniToFilter[i]);               
+                  ListaSpedizioniFinale.push(ListaSpedizioniToFilter[i]);
+            }                              
+            var ChiaveSpedizione = -1;                          
+            for(let j = 0;j < ListaSpedizioniFinale.length;j ++)
+            {
+                switch(ListaSpedizioniFinale[j].STATO)
+                {
+                       case 'S' : ListaSpedizioniFinale[j].STATO = 'DA SPEDIRE';
+                                  break;
+                       case 'P' : ListaSpedizioniFinale[j].STATO = 'PRENOTATO';
+                                  break;
+                       case 'C' : ListaSpedizioniFinale[j].STATO = 'CONSEGNATO';
+                                  break;
+                }
+                
+                if (ChiaveSpedizione != ListaSpedizioniFinale[j].CHIAVE)
+                {
+                    BodySheet['A' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].PRESSO);
+                    BodySheet['B' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].NOME_DOCENTE == undefined ? '' : ListaSpedizioniFinale[j].NOME_DOCENTE);
+                    BodySheet['C' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].INDIRIZZO + ', ' + ListaSpedizioniFinale[j].COMUNE + ', ' + ListaSpedizioniFinale[j].CAP + ', ' + ListaSpedizioniFinale[j].NOME_PROVINCIA);
+                    BodySheet['D' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ZFormatDateTime('dd/mm/yyyy',ZDateFromHTMLInput(ListaSpedizioniFinale[j].DATA)));
+                    BodySheet['E' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].CODICE_TITOLO);
+                    BodySheet['F' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].NOME_TITOLO);
+                    BodySheet['G' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].QUANTITA);
+                    BodySheet['H' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].STATO);
+                    
+                    ChiaveSpedizione = ListaSpedizioniFinale[j].CHIAVE;
+                }
+                else
+                {
+                    BodySheet['E' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].CODICE_TITOLO);
+                    BodySheet['F' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].NOME_TITOLO);
+                    BodySheet['G' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].QUANTITA);
+                    BodySheet['H' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].STATO);
+                    
+                    ChiaveSpedizione = ListaSpedizioniFinale[j].CHIAVE;
+                }                    
             }
-            console.log(JSON.stringify(ListaSpedizioniFinale)); 
+            
+            BodySheet["!cols"] = [             
+                                   {wpx: 150},
+                                   {wpx: 150},
+                                   {wpx: 250},
+                                   {wpx: 150},
+                                   {wpx: 150},
+                                   {wpx: 200},
+                                   {wpx: 50},
+                                   {wpx: 100}
+                                 ];
+            BodySheet['!ref'] = 'A1:H1' + parseInt(ListaSpedizioniFinale.length + 1);
+            
+            WBook.SheetNames.push(SheetName);
+            WBook.Sheets[SheetName] = BodySheet;
+            
+            var wbout = XLSX.write(WBook, {bookType:'xlsx', bookSST:true, type: 'binary'});
+            saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}), "Spedizioni.xlsx")                            
          }
          else SystemInformation.ApplyOnError('Modello spedizioni di confronto per xls non conforme','')
-       },'SQLPromotoreXsl');        
+       },'SQLPromotoreXls');        
     }
   }
-
-    
-    /*for(let i = 0; i < SpedizioniFiltrate.length; i++)
-    {
-       //QUI RIEMPIO LE CELLE
-    }
-       
-    BodySheet["!cols"] = [             //QUESTE SONO LARGHEZZE COLONNE XLS
-                           {wpx: 150},
-                           {wpx: 350},
-                           {wpx: 200}
-                         ];
-    BodySheet['!ref'] = 'A1:G1';
-    
-   	WBook.SheetNames.push(SheetName);
-    WBook.Sheets[SheetName] = BodySheet;
-    
-    var wbout = XLSX.write(WBook, {bookType:'xlsx', bookSST:true, type: 'binary'});
-    saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}), "Spedizioni.xlsx") 
-  }*/
   
   $scope.ModificaSpedizione = function (ChiaveSpedizione,ChiaveDocente = -1)
   {

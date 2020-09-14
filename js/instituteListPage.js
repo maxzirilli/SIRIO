@@ -42,6 +42,229 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
          $scope.ClasseCliccata[$scope.ArrayClassiFinale[k].Sezione + $scope.ArrayClassiFinale[k].Anno] = true;
   }
   
+  $scope.CreaPdfListaDocenti = function (ChiaveIstituto,NomeIstituto,CodiceIstituto,ProvinciaIstituto)
+  {
+    $scope.StampaOn        = true;
+    $scope.EditingOn       = false;
+    var ListaDocenti       = [];
+    var ListaDisponibilita = []
+    SystemInformation.GetSQL('Institute',{CHIAVE : ChiaveIstituto},function(Results)
+    {
+      ListaDocenti       = SystemInformation.FindResults(Results,'InstituteTeacherList');
+      ListaDisponibilita = SystemInformation.FindResults(Results,'InstituteTeacherAvailability');
+      if(ListaDocenti != undefined && ListaDisponibilita != undefined)
+      {
+         if(ListaDocenti.length != 0)
+         {
+            ListaDocenti.forEach(function(Docente){Docente.DISPONIBILITA = []});
+            
+            for(let i = 0;i < ListaDocenti.length;i ++)
+                for(let j = 0;j < ListaDisponibilita.length;j ++)
+                    if (ListaDisponibilita[j].DOCENTE == ListaDocenti[i].DOCENTE)
+                        ListaDocenti[i].DISPONIBILITA.push(ListaDisponibilita[j])
+                       
+            var Data           = new Date();
+            var DataAnno       = Data.getFullYear();
+            var DataMese       = Data.getMonth()+1; 
+            var DataGiorno     = Data.getDate();
+            var DataSpedizione = DataGiorno.toString() + '/' + DataMese.toString() +  '/' + DataAnno.toString();
+          
+            var doc = new jsPDF();
+            doc.setProperties({title: 'LISTA DOCENTI ISTITUTO ' + DataSpedizione});
+            doc.setFontSize(10); 
+            doc.setFontType('bold');
+            doc.text(10,20,"LISTA DOCENTI NELL'ISTITUTO:");
+            doc.text(10,25,NomeIstituto + ' (CODICE: ' + CodiceIstituto + ' ), ' + ProvinciaIstituto);
+            doc.setFontSize(8);
+            var CoordY = 35;                       
+            
+            for(let k = 0;k < ListaDocenti.length;k ++)
+            {
+                if (CoordY >= 275) 
+                {
+                  doc.addPage();
+                  CoordY = 10;
+                }
+                doc.setFontSize(8);
+                doc.setFontType('bold');
+                doc.text(10,CoordY+5,'DOCENTE: ' + ListaDocenti[k].NOME_DOCENTE);
+                CoordY += 5;
+                doc.setFontSize(7);
+                doc.setFontType('italic');
+
+                var StringaDisponibilita = [];
+                if(ListaDocenti[k].DISPONIBILITA.length == 0)
+                {
+                   StringaDisponibilita.push('NESSUNA DISPONIBILITA ORARIA REGISTRATA');
+                   doc.text(10,CoordY+5,StringaDisponibilita.toString());
+                }
+                else
+                {  
+                   CoordY += 5;
+                   doc.text(40,CoordY,'DA');
+                   doc.text(70,CoordY,'A');
+                   doc.text(100,CoordY,'DA');
+                   doc.text(130,CoordY,'A');
+                   doc.text(160,CoordY,'DA');
+                   doc.text(190,CoordY,'A');
+                   CoordYTmp = CoordY;
+                   CoordY += 5;
+                   CoordYTmp = CoordY;
+                   doc.text(10,CoordY,'Lun');
+                   doc.setLineWidth(0.1);
+                   doc.line(10, CoordY+1.5, 200, CoordY+2);
+                   CoordY += 5;
+                   doc.text(10,CoordY,'Mar');
+                   doc.setLineWidth(0.1);
+                   doc.line(10, CoordY+1.5, 200, CoordY+2);
+                   CoordY += 5;
+                   doc.text(10,CoordY,'Mer');
+                   doc.setLineWidth(0.1);
+                   doc.line(10, CoordY+1.5, 200, CoordY+2);
+                   CoordY += 5;
+                   doc.text(10,CoordY,'Gio');
+                   doc.setLineWidth(0.1);
+                   doc.line(10, CoordY+1.5, 200, CoordY+2);
+                   CoordY += 5;
+                   doc.text(10,CoordY,'Ven');
+                   doc.setLineWidth(0.1);
+                   doc.line(10, CoordY+1.5, 200, CoordY+2);
+                   CoordY += 5;
+                   doc.text(10,CoordY,'Sab');
+                   doc.setLineWidth(0.1);
+                   doc.line(10, CoordY+1.5, 200, CoordY+2);
+                   CoordY += 5;
+                   doc.text(10,CoordY,'Dom');
+                   doc.setLineWidth(0.1);
+                   doc.line(10, CoordY+1.5, 200, CoordY+2);
+                   
+                   for(let l = 0;l < ListaDocenti[k].DISPONIBILITA.length;l ++)
+                   {
+                      switch(parseInt(ListaDocenti[k].DISPONIBILITA[l].GIORNO))
+                      {
+                             case 0 : switch(parseInt(ListaDocenti[k].DISPONIBILITA[l].POSIZIONE))
+                                      {
+                                             case 0 : doc.text(40,CoordYTmp,ListaDocenti[k].DISPONIBILITA[l].DA == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].DA, 'HH:mm:ss').format('HH:mm'));
+                                                      doc.text(70,CoordYTmp,ListaDocenti[k].DISPONIBILITA[l].A == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].A, 'HH:mm:ss').format('HH:mm'));
+                                                      break;
+                                             case 1 : doc.text(100,CoordYTmp,ListaDocenti[k].DISPONIBILITA[l].DA == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].DA, 'HH:mm:ss').format('HH:mm'));
+                                                      doc.text(130,CoordYTmp,ListaDocenti[k].DISPONIBILITA[l].A == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].A, 'HH:mm:ss').format('HH:mm'));
+                                                      break;
+                                             case 2 : doc.text(160,CoordYTmp,ListaDocenti[k].DISPONIBILITA[l].DA == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].DA, 'HH:mm:ss').format('HH:mm'));
+                                                      doc.text(190,CoordYTmp,ListaDocenti[k].DISPONIBILITA[l].A == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].A, 'HH:mm:ss').format('HH:mm'));
+                                                      break;
+                                      }
+                                      break;
+                             case 1 : switch(parseInt(ListaDocenti[k].DISPONIBILITA[l].POSIZIONE))
+                                      {
+                                             case 0 : doc.text(40,CoordYTmp+5,ListaDocenti[k].DISPONIBILITA[l].DA == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].DA, 'HH:mm:ss').format('HH:mm'));
+                                                      doc.text(70,CoordYTmp+5,ListaDocenti[k].DISPONIBILITA[l].A == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].A, 'HH:mm:ss').format('HH:mm'));
+                                                      break;
+                                             case 1 : doc.text(100,CoordYTmp+5,ListaDocenti[k].DISPONIBILITA[l].DA == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].DA, 'HH:mm:ss').format('HH:mm'));
+                                                      doc.text(130,CoordYTmp+5,ListaDocenti[k].DISPONIBILITA[l].A == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].A, 'HH:mm:ss').format('HH:mm'));
+                                                      break;
+                                             case 2 : doc.text(160,CoordYTmp+5,ListaDocenti[k].DISPONIBILITA[l].DA == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].DA, 'HH:mm:ss').format('HH:mm'));
+                                                      doc.text(190,CoordYTmp+5,ListaDocenti[k].DISPONIBILITA[l].A == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].A, 'HH:mm:ss').format('HH:mm'));
+                                                      break;
+                                      }
+                                      break;
+                             case 2 : switch(parseInt(ListaDocenti[k].DISPONIBILITA[l].POSIZIONE))
+                                      {
+                                             case 0 : doc.text(40,CoordYTmp+10,ListaDocenti[k].DISPONIBILITA[l].DA == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].DA, 'HH:mm:ss').format('HH:mm'));
+                                                      doc.text(70,CoordYTmp+10,ListaDocenti[k].DISPONIBILITA[l].A == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].A, 'HH:mm:ss').format('HH:mm'));
+                                                      break;
+                                             case 1 : doc.text(100,CoordYTmp+10,ListaDocenti[k].DISPONIBILITA[l].DA == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].DA, 'HH:mm:ss').format('HH:mm'));
+                                                      doc.text(130,CoordYTmp+10,ListaDocenti[k].DISPONIBILITA[l].A == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].A, 'HH:mm:ss').format('HH:mm'));
+                                                      break;
+                                             case 2 : doc.text(160,CoordYTmp+10,ListaDocenti[k].DISPONIBILITA[l].DA == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].DA, 'HH:mm:ss').format('HH:mm'));
+                                                      doc.text(190,CoordYTmp+10,ListaDocenti[k].DISPONIBILITA[l].A == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].A, 'HH:mm:ss').format('HH:mm'));
+                                                      break;
+                                      }
+                                      break;
+                             case 3 : switch(parseInt(ListaDocenti[k].DISPONIBILITA[l].POSIZIONE))
+                                      {
+                                             case 0 : doc.text(40,CoordYTmp+15,ListaDocenti[k].DISPONIBILITA[l].DA == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].DA, 'HH:mm:ss').format('HH:mm'));
+                                                      doc.text(70,CoordYTmp+15,ListaDocenti[k].DISPONIBILITA[l].A == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].A, 'HH:mm:ss').format('HH:mm'));
+                                                      break;
+                                             case 1 : doc.text(100,CoordYTmp+15,ListaDocenti[k].DISPONIBILITA[l].DA == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].DA, 'HH:mm:ss').format('HH:mm'));
+                                                      doc.text(130,CoordYTmp+15,ListaDocenti[k].DISPONIBILITA[l].A == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].A, 'HH:mm:ss').format('HH:mm'));
+                                                      break;
+                                             case 2 : doc.text(160,CoordYTmp+15,ListaDocenti[k].DISPONIBILITA[l].DA == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].DA, 'HH:mm:ss').format('HH:mm'));
+                                                      doc.text(190,CoordYTmp+15,ListaDocenti[k].DISPONIBILITA[l].A == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].A, 'HH:mm:ss').format('HH:mm'));
+                                                      break;
+                                      }
+                                      break;
+                             case 4 : switch(parseInt(ListaDocenti[k].DISPONIBILITA[l].POSIZIONE))
+                                      {
+                                             case 0 : doc.text(40,CoordYTmp+20,ListaDocenti[k].DISPONIBILITA[l].DA == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].DA, 'HH:mm:ss').format('HH:mm'));
+                                                      doc.text(70,CoordYTmp+20,ListaDocenti[k].DISPONIBILITA[l].A == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].A, 'HH:mm:ss').format('HH:mm'));
+                                                      break;
+                                             case 1 : doc.text(100,CoordYTmp+20,ListaDocenti[k].DISPONIBILITA[l].DA == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].DA, 'HH:mm:ss').format('HH:mm'));
+                                                      doc.text(130,CoordYTmp+20,ListaDocenti[k].DISPONIBILITA[l].A == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].A, 'HH:mm:ss').format('HH:mm'));
+                                                      break;
+                                             case 2 : doc.text(160,CoordYTmp+20,ListaDocenti[k].DISPONIBILITA[l].DA == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].DA, 'HH:mm:ss').format('HH:mm'));
+                                                      doc.text(190,CoordYTmp+20,ListaDocenti[k].DISPONIBILITA[l].A == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].A, 'HH:mm:ss').format('HH:mm'));
+                                                      break; 
+                                      }
+                                      break;
+                             case 5 : switch(parseInt(ListaDocenti[k].DISPONIBILITA[l].POSIZIONE))
+                                      {
+                                             case 0 : doc.text(40,CoordYTmp+25,ListaDocenti[k].DISPONIBILITA[l].DA == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].DA, 'HH:mm:ss').format('HH:mm'));
+                                                      doc.text(70,CoordYTmp+25,ListaDocenti[k].DISPONIBILITA[l].A == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].A, 'HH:mm:ss').format('HH:mm'));
+                                                      break;
+                                             case 1 : doc.text(100,CoordYTmp+25,ListaDocenti[k].DISPONIBILITA[l].DA == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].DA, 'HH:mm:ss').format('HH:mm'));
+                                                      doc.text(130,CoordYTmp+25,ListaDocenti[k].DISPONIBILITA[l].A == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].A, 'HH:mm:ss').format('HH:mm'));
+                                                      break;
+                                             case 2 : doc.text(160,CoordYTmp+25,ListaDocenti[k].DISPONIBILITA[l].DA == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].DA, 'HH:mm:ss').format('HH:mm'));
+                                                      doc.text(190,CoordYTmp+25,ListaDocenti[k].DISPONIBILITA[l].A == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].A, 'HH:mm:ss').format('HH:mm'));
+                                                      break;
+                                      }
+                                      break;
+                             case 6 : switch(parseInt(ListaDocenti[k].DISPONIBILITA[l].POSIZIONE))
+                                      {
+                                             case 0 : doc.text(40,CoordYTmp+30,ListaDocenti[k].DISPONIBILITA[l].DA == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].DA, 'HH:mm:ss').format('HH:mm'));
+                                                      doc.text(70,CoordYTmp+30,ListaDocenti[k].DISPONIBILITA[l].A == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].A, 'HH:mm:ss').format('HH:mm'));
+                                                      break;
+                                             case 1 : doc.text(100,CoordYTmp+30,ListaDocenti[k].DISPONIBILITA[l].DA == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].DA, 'HH:mm:ss').format('HH:mm'));
+                                                      doc.text(130,CoordYTmp+30,ListaDocenti[k].DISPONIBILITA[l].A == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].A, 'HH:mm:ss').format('HH:mm'));
+                                                      break;
+                                             case 2 : doc.text(160,CoordYTmp+30,ListaDocenti[k].DISPONIBILITA[l].DA == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].DA, 'HH:mm:ss').format('HH:mm'));
+                                                      doc.text(190,CoordYTmp+30,ListaDocenti[k].DISPONIBILITA[l].A == undefined ? '' : moment(ListaDocenti[k].DISPONIBILITA[l].A, 'HH:mm:ss').format('HH:mm'));
+                                                      break;
+                                      }
+                                      break;
+                      }                             
+                   }
+                }
+                CoordY += 5;
+                doc.setFontSize(6);
+                doc.text(10,290,SystemInformation.VDocAdoption)       
+
+                doc.text(10,290,SystemInformation.VDocListaDocIst)               
+            }
+ 
+            document.getElementById('teacherListPdf').src = doc.output('datauristring');        
+         }
+         else
+         {
+            var Data           = new Date();
+            var DataAnno       = Data.getFullYear();
+            var DataMese       = Data.getMonth()+1; 
+            var DataGiorno     = Data.getDate();
+            var DataSpedizione = DataGiorno.toString() + '/' + DataMese.toString() +  '/' + DataAnno.toString();
+            var doc = new jsPDF();
+            doc.setProperties({title: 'LISTA DOCENTI ISTITUTO ' + DataSpedizione});
+            doc.setFontSize(10); 
+            doc.setFontType('bold');
+            doc.setTextColor(255,0,0);
+            doc.text(60,20,'NESSUN DOCENTE ASSEGNATO A QUESTO ISTITUTO');
+            document.getElementById('teacherListPdf').src = doc.output('datauristring')          
+         }         
+      }
+      else SystemInformation.ApplyOnError('Modello docenti e disponibilita per istituto non conforme','');     
+    },'SelectInstituteTeacherList')
+  }
+  
   $scope.ModificaListaClassi = function(sezione,anno)
   {
     var DatoTrovato = false;

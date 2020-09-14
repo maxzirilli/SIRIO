@@ -15,7 +15,7 @@
         </md-optgroup>
       </md-select>
     </md-input-container>
-    <md-input-container ng-if="IsAdministrator"><label style="width:100%;margin-left:20px;float:left;">PROMOTORE</label>
+    <md-input-container ng-if="IsAdministrator()"><label style="width:100%;margin-left:20px;float:left;">PROMOTORE</label>
       <md-select ng-model="$parent.PromotoreFiltro" placeholder="Promotore" class="mdb-select" style="width:100%;margin-left:20px;float:left;" type="text" name="PromotoreFiltro">
         <md-optgroup>
           <md-option ng-value="-1">QUALSIASI</md-option>  

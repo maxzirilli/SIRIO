@@ -243,7 +243,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
               $scope.SpedizioneInEditing.COMUNE          = DocenteDettaglio[0].COMUNE    == null ? '' : DocenteDettaglio[0].COMUNE;
               $scope.SpedizioneInEditing.CAP             = DocenteDettaglio[0].CAP       == null ? '' : DocenteDettaglio[0].CAP;
               $scope.SpedizioneInEditing.PROVINCIA       = DocenteDettaglio[0].PROVINCIA == null ? -1 : DocenteDettaglio[0].PROVINCIA;
-              $scope.SpedizioneInEditing.PROVINCIA_NOME  = ProvinciaDoc.Nome             == undefined ? '' : ProvinciaDoc.Nome; 
+              $scope.SpedizioneInEditing.PROVINCIA_NOME  = ProvinciaDoc                  == undefined ? '' : ProvinciaDoc.Nome; 
               $scope.SpedizioneInEditing.DATA            = new Date();
               $scope.ListaIstitutiDoc                    = IstitutiDoc;
               $scope.ListaTitoliSpedizione               = [];
@@ -508,7 +508,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
                          "TITOLO"        : -1,
                          "NOME_TITOLO"   : '',
                          "QUANTITA"      : 1,
-                         "STATO"         : 'S',
+                         "STATO"         : null,
                          "QUANTITA_MGZN" : null,
                          "Nuovo"         : true,
                          "Modificato"    : false,
@@ -553,7 +553,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
 
       $scope.ConfermaPopupTitolo = function()
       { 
-        if($scope.Titolo.TITOLO == -1 || $scope.Titolo.QUANTITA == 0)
+        if($scope.Titolo.TITOLO == -1 || $scope.Titolo.QUANTITA == 0 || $scope.Titolo.STATO == null)
         {
           alert ('Dati titolo mancanti!');
           return
@@ -644,7 +644,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
       $scope.ConfermaPopupTitolo = function()
       { 
         TitoloCorrispondente = $scope.ListaTitoliSpedizione.findIndex(function(ATitolo){return (ATitolo.CHIAVE == Titolo.CHIAVE);});
-        if($scope.Titolo.TITOLO == -1 || $scope.Titolo.QUANTITA == 0)
+        if($scope.Titolo.TITOLO == -1 || $scope.Titolo.QUANTITA == 0 || $scope.Titolo.STATO == null)
         {
           alert ('Dati titolo mancanti!');
           return
@@ -688,7 +688,10 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
     $scope.ConfermaSpedizione = function()
     {
       if($scope.ListaTitoliSpedizione.length == 0)
+      {
          alert('NESSUN TITOLO INSERITO PER LA SPEDIZIONE!')
+         return
+      }
       else
       {
          if ($scope.SpedizioneMultipla && !($scope.SpedizioneAIstituto))

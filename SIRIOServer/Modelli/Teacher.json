@@ -92,7 +92,7 @@
                      },
                      {
                        "Name" : "DeleteTeacherAvailabilityAll",
-                       "SQL"  : "DELETE FROM docenti_disponibilita WHERE DOCENTE=:DOCENTE"
+                       "SQL"  : "DELETE FROM docenti_disponibilita WHERE DOCENTE=:CHIAVE"
                      },
                      {
                        "Name" : "DeleteLesson",
@@ -109,7 +109,7 @@
                      {
                        "Name" : "DeleteAvailabilityAfterDeleteInstitute",
                        "SQL"  : "DELETE FROM docenti_disponibilita WHERE ISTITUTO=:ISTITUTO AND DOCENTE=:DOCENTE"
-                     },
+                     },                     
                      {
                        "Name" : "DeleteInstituteTeacher",
                        "SQL"  : "DELETE FROM istituti_x_docenti WHERE DOCENTE=:DOCENTE AND ISTITUTO=:ISTITUTO"

@@ -483,7 +483,8 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   $scope.ConfermaDocente = function()
   {  
     //attento a mostrare messaggio se manca nome docente nella tab orari  
-    var $ObjQuery    = { Operazioni : [] };          
+    var $ObjQuery    = { Operazioni : [] };    
+    $scope.DocenteInEditing.RagioneSociale = $scope.DocenteInEditing.RagioneSociale.toUpperCase();    
     var ParamDocente = {
                          CHIAVE          : $scope.DocenteInEditing.Chiave,
                          RAGIONE_SOCIALE : $scope.DocenteInEditing.RagioneSociale == undefined ? '' : $scope.DocenteInEditing.RagioneSociale.xSQL(),
@@ -705,7 +706,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
    if(confirm('Eliminare il docente: ' + Docente.RagioneSociale + ' ?'))
    {
      var $ObjQuery    = { Operazioni : [] };
-     var ParamDocente = { CHIAVE : Docente.Chiave };
+     var ParamDocente = { CHIAVE : Docente.Chiave };     
      
      $ObjQuery.Operazioni.push({
                                  Query     : 'DeleteTeacherAvailabilityAll',
