@@ -64,7 +64,7 @@ table tr:nth-child(even)
 .MainButton
 {
   color     : white;
-  font-size : 22px;
+  font-size : 16px;
   padding   : 10px;
 }
 
