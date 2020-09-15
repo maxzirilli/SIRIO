@@ -1,5 +1,5 @@
 {
   "Oggetto"  : "#Oggetto",
   "Body"     : "#Testo",
-  "QuerySQL" : "SELECT #Destinatario AS DESTINATARI,EMAIL_ARCHIVIO AS CC FROM configurazione_ditta"
+  "QuerySQL" : "SELECT #Destinatario AS Destinatari,EMAIL_ARCHIVIO AS CC FROM configurazione_ditta"
 }

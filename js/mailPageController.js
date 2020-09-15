@@ -12,11 +12,14 @@ SIRIOApp.controller("mailPageController",['$scope','SystemInformation','$state',
   
   $scope.InviaMail = function()
   {
-    /*SystemInformation.PostSQL('MailTeacher',{Oggetto : $scope.MailInEditing.Oggetto.xSQL(),Testo : $scope.MailInEditing.Testo.xSQL(), Destinatario : $scope.MailInEditing.Destinatario.xSQL()},
-    {       
-      $scope.MailInEditing = {};
-      $state.go('teacherListPage');
-    },InvioMail = true,alertMessages = false)*/
+    SystemInformation.PostSQL('MailTeacher',{Oggetto      : $scope.MailInEditing.Oggetto.xSQL(),
+                                             Testo        : $scope.MailInEditing.Testo.xSQL(), 
+                                             Destinatario : $scope.MailInEditing.Destinatario.xSQL()},
+                              function()
+                              {       
+                                $scope.MailInEditing = {};
+                                $state.go('teacherListPage');
+                              },InvioMail = true,alertMessages = false)
   }
   
   $scope.OnAnnullaMailClicked = function()

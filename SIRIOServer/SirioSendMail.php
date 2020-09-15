@@ -1,4 +1,5 @@
 <?php 
+      require_once "mailer/PHPMailerAutoload.php";
       include_once 'SIRIOCfg.php';
       include_once 'SIRIODef.php';
       include_once PATH_LIBRERIE . 'ZAdvQuery.php';
@@ -9,5 +10,4 @@
 
       $SIRIOConnection = new TAdvQuery();
       $SIRIOConnection->SendMail();
-
 ?>

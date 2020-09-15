@@ -11,9 +11,9 @@
     define('SMTP_SECURE','tls');
     define('SMTP_AUTH',true);
     define('SMTP_USER','massimiliano.zirilli@gmail.com');
-    define('SMTP_PASSWORD','andromeda75');
+    define('SMTP_PASSWORD','ShakaVsPhoenix75');
     define('SMTP_FROM_MAIL','noreply@genovadanza.com');
-    define('SMTP_FROM_NAME','InGround');
+    define('SMTP_FROM_NAME','ZMSoftware');
 
     // Path librerie
     define('PATH_LIBRERIE',"c:\\xampp\\htdocs\\ZLibrary\\");
