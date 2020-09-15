@@ -194,10 +194,11 @@ SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformat
       DatiDittaSql     = SystemInformation.FindResults(Results,'GetCompanyData');
       if (DatiDittaSql != undefined)
       {
-        $scope.DatiDitta.INDIRIZZO = DatiDittaSql[0].INDIRIZZO;
-        $scope.DatiDitta.TELEFONO  = DatiDittaSql[0].TELEFONO;
-        $scope.DatiDitta.EMAIL     = DatiDittaSql[0].EMAIL;
-        $scope.DatiDitta.SITO_WEB  = DatiDittaSql[0].SITO_WEB;
+        $scope.DatiDitta.INDIRIZZO      = DatiDittaSql[0].INDIRIZZO;
+        $scope.DatiDitta.TELEFONO       = DatiDittaSql[0].TELEFONO;
+        $scope.DatiDitta.EMAIL          = DatiDittaSql[0].EMAIL;
+        $scope.DatiDitta.EMAIL_ARCHIVIO = DatiDittaSql[0].EMAIL_ARCHIVIO;
+        $scope.DatiDitta.SITO_WEB       = DatiDittaSql[0].SITO_WEB;
       }
       else SystemInformation.ApplyOnError('Modello dati ditta non conforme','');
     });
@@ -559,10 +560,11 @@ SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformat
     $ObjQuery.Operazioni.push({
                                 Query : 'UpdateCompanyData',
                                 Parametri : {
-                                              "INDIRIZZO" : $scope.DatiDitta.INDIRIZZO,
-                                              "TELEFONO"  : $scope.DatiDitta.TELEFONO,
-                                              "EMAIL"     : $scope.DatiDitta.EMAIL,
-                                              "SITO_WEB"  : $scope.DatiDitta.SITO_WEB
+                                              "INDIRIZZO"      : $scope.DatiDitta.INDIRIZZO.xSQL(),
+                                              "TELEFONO"       : $scope.DatiDitta.TELEFONO.xSQL(),
+                                              "EMAIL"          : $scope.DatiDitta.EMAIL.xSQL(),
+                                              "EMAIL_ARCHIVIO" : $scope.DatiDitta.EMAIL_ARCHIVIO.xSQL(),
+                                              "SITO_WEB"       : $scope.DatiDitta.SITO_WEB.xSQL()
                                             }
                                 
                               });

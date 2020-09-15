@@ -8,7 +8,7 @@
   "EditSQL"         : [
                         {
                           "Name" : "UpdateCompanyData",
-                          "SQL"  : "UPDATE configurazione_ditta SET INDIRIZZO=#INDIRIZZO,TELEFONO=#TELEFONO,EMAIL=#EMAIL,SITO_WEB=#SITO_WEB"
+                          "SQL"  : "UPDATE configurazione_ditta SET INDIRIZZO=#INDIRIZZO,TELEFONO=#TELEFONO,EMAIL=#EMAIL,EMAIL_ARCHIVIO=#EMAIL_ARCHIVIO,SITO_WEB=#SITO_WEB"
                         }  
                       ]
 }

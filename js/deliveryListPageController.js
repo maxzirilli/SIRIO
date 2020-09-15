@@ -102,7 +102,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
     let TmpDate = new Date($scope.DataRicercaAl);
     TmpDate.setDate($scope.DataRicercaAl.getDate() + 1);
      
-    if($scope.isAdministrator)
+    if($scope.IsAdministrator())
     {
       SystemInformation.GetSQL('Delivery',{ Dal : ZHTMLInputFromDate($scope.DataRicercaDal), Al : ZHTMLInputFromDate(TmpDate) },function(Results)
       {
@@ -116,10 +116,10 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
                                         DocenteNome  : ListaSpedizioniTmp[i].NOME_DOCENTE,
                                         Data         : ListaSpedizioniTmp[i].DATA,
                                         Provincia    : ListaSpedizioniTmp[i].PROVINCIA,
-                                        Stato        : ListaSpedizioniTmp[i].STATO,
                                         NrConsegnate : ListaSpedizioniTmp[i].NR_CONSEGNATE,
                                         NrDaSpedire  : ListaSpedizioniTmp[i].NR_DA_SPEDIRE,
-                                        NrPrenotate  : ListaSpedizioniTmp[i].NR_PRENOTATE
+                                        NrPrenotate  : ListaSpedizioniTmp[i].NR_PRENOTATE,
+                                        Promotore    : ListaSpedizioniTmp[i].PROMOTORE
                                       }
                   
           $scope.ListaSpedizioni = ListaSpedizioniTmp;
@@ -143,7 +143,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
                                         DocenteNome  : ListaSpedizioniTmp[i].NOME_DOCENTE,
                                         Data         : ListaSpedizioniTmp[i].DATA,
                                         Provincia    : ListaSpedizioniTmp[i].PROVINCIA,
-                                        Stato        : ListaSpedizioniTmp[i].STATO,
                                         NrConsegnate : ListaSpedizioniTmp[i].NR_CONSEGNATE,
                                         NrDaSpedire  : ListaSpedizioniTmp[i].NR_DA_SPEDIRE,
                                         NrPrenotate  : ListaSpedizioniTmp[i].NR_PRENOTATE,

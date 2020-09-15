@@ -20,10 +20,10 @@ SIRIOApp.controller("printLabelPageController",['$scope','SystemInformation','$s
     DatiDittaSql     = SystemInformation.FindResults(Results,'GetCompanyData');
     if (DatiDittaSql != undefined)
     {
-      DatiDitta.Indirizzo = DatiDittaSql[0].INDIRIZZO;
-      DatiDitta.Telefono  = DatiDittaSql[0].TELEFONO;
-      DatiDitta.Email     = DatiDittaSql[0].EMAIL;
-      DatiDitta.SitoWeb   = DatiDittaSql[0].SITO_WEB;
+      DatiDitta.Indirizzo = DatiDittaSql[0].INDIRIZZO == undefined ? '' : DatiDittaSql[0].INDIRIZZO;
+      DatiDitta.Telefono  = DatiDittaSql[0].TELEFONO == undefined ? '' : DatiDittaSql[0].TELEFONO;
+      DatiDitta.Email     = DatiDittaSql[0].EMAIL == undefined ? '' : DatiDittaSql[0].EMAIL;
+      DatiDitta.SitoWeb   = DatiDittaSql[0].SITO_WEB == undefined ? '' : DatiDittaSql[0].SITO_WEB;
     }
     else SystemInformation.ApplyOnError('Modello dati ditta non conforme','');
   });
@@ -61,27 +61,27 @@ SIRIOApp.controller("printLabelPageController",['$scope','SystemInformation','$s
                var Spedizione = {};
                
                Spedizione = {
-                              "PRESSO"         : ListaDaSpedireTmp[i].PRESSO,
-                              "DOCENTE"        : ListaDaSpedireTmp[i].DOCENTE == null ? '' : ListaDaSpedireTmp[i].DOCENTE,
-                              "NOME_DOCENTE"   : ListaDaSpedireTmp[i].NOME_DOCENTE == null ? '' : ListaDaSpedireTmp[i].NOME_DOCENTE,
-                              "TITOLO_DOCENTE" : ListaDaSpedireTmp[i].TITOLO_DOCENTE == null? '' : ListaDaSpedireTmp[i].TITOLO_DOCENTE,
-                              "INDIRIZZO"      : ListaDaSpedireTmp[i].INDIRIZZO,
-                              "COMUNE"         : ListaDaSpedireTmp[i].COMUNE,
-                              "CAP"            : ListaDaSpedireTmp[i].CAP,
-                              "PROVINCIA"      : ListaDaSpedireTmp[i].PROVINCIA,
-                              "NOME_PROVINCIA" : ListaDaSpedireTmp[i].NOME_PROVINCIA,
-                              "NOME_PROMOTORE" : ListaDaSpedireTmp[i].NOME_PROMOTORE,
+                              "PRESSO"         : ListaDaSpedireTmp[i].PRESSO == undefined ? 'N.D.' : ListaDaSpedireTmp[i].PRESSO,
+                              "DOCENTE"        : ListaDaSpedireTmp[i].DOCENTE == undefined ? 'N.D.' : ListaDaSpedireTmp[i].DOCENTE,
+                              "NOME_DOCENTE"   : ListaDaSpedireTmp[i].NOME_DOCENTE == undefined ? 'N.D.' : ListaDaSpedireTmp[i].NOME_DOCENTE,
+                              "TITOLO_DOCENTE" : ListaDaSpedireTmp[i].TITOLO_DOCENTE == undefined ? 'N.D.' : ListaDaSpedireTmp[i].TITOLO_DOCENTE,
+                              "INDIRIZZO"      : ListaDaSpedireTmp[i].INDIRIZZO == undefined ? 'N.D.' : ListaDaSpedireTmp[i].INDIRIZZO,
+                              "COMUNE"         : ListaDaSpedireTmp[i].COMUNE == undefined ? 'N.D.' : ListaDaSpedireTmp[i].COMUNE,
+                              "CAP"            : ListaDaSpedireTmp[i].CAP == undefined ? 'N.D.' : ListaDaSpedireTmp[i].CAP,
+                              "PROVINCIA"      : ListaDaSpedireTmp[i].PROVINCIA == undefined ? 'N.D.' : ListaDaSpedireTmp[i].PROVINCIA,
+                              "NOME_PROVINCIA" : ListaDaSpedireTmp[i].NOME_PROVINCIA == undefined ? 'N.D.' : ListaDaSpedireTmp[i].NOME_PROVINCIA,
+                              "NOME_PROMOTORE" : ListaDaSpedireTmp[i].NOME_PROMOTORE == undefined ? 'N.D.' : ListaDaSpedireTmp[i].NOME_PROMOTORE,
                               "ListaTitoli"    : []                                      
                             }
                ChiaveSpedizione = ListaDaSpedireTmp[i].SPEDIZIONE;
              }
              Spedizione.ListaTitoli.push({
-                                          "NOME_TITOLO" : ListaDaSpedireTmp[i].NOME_TITOLO,
-                                          "QUANTITA"    : ListaDaSpedireTmp[i].QUANTITA,
-                                          "POS_MGZN"    : ListaDaSpedireTmp[i].POS_MGZN == null ? 'ND' : ListaDaSpedireTmp[i].POS_MGZN,
-                                          "AUTORI"      : ListaDaSpedireTmp[i].AUTORI,
-                                          "EDITORE"     : ListaDaSpedireTmp[i].EDITORE,
-                                          "CODICE_ISBN" : ListaDaSpedireTmp[i].CODICE                                       
+                                          "NOME_TITOLO" : ListaDaSpedireTmp[i].NOME_TITOLO == undefined ? 'N.D.' : ListaDaSpedireTmp[i].NOME_TITOLO,
+                                          "QUANTITA"    : ListaDaSpedireTmp[i].QUANTITA == undefined ? 'N.D.' : ListaDaSpedireTmp[i].QUANTITA,
+                                          "POS_MGZN"    : ListaDaSpedireTmp[i].POS_MGZN == undefined ? 'N.D.' : ListaDaSpedireTmp[i].POS_MGZN,
+                                          "AUTORI"      : ListaDaSpedireTmp[i].AUTORI == undefined ? 'N.D' : ListaDaSpedireTmp[i].AUTORI,
+                                          "EDITORE"     : ListaDaSpedireTmp[i].EDITORE == undefined ? 'N.D' : ListaDaSpedireTmp[i].EDITORE,
+                                          "CODICE_ISBN" : ListaDaSpedireTmp[i].CODICE == undefined ? 'N.D' : ListaDaSpedireTmp[i].CODICE                                   
                                          })                                
          }             
          ListaSpedizioni.push(Spedizione);
@@ -190,7 +190,7 @@ SIRIOApp.controller("printLabelPageController",['$scope','SystemInformation','$s
               
               CoordY = 90;
                          
-              if (ListaSpedizioni[i].TITOLO_DOCENTE != '' && ListaSpedizioni[i].NOME_DOCENTE != '')
+              if (ListaSpedizioni[i].TITOLO_DOCENTE != '' && ListaSpedizioni[i].TITOLO_DOCENTE != undefined && ListaSpedizioni[i].NOME_DOCENTE != '')
               {
                   doc.text(10,CoordY + 40,ListaSpedizioni[i].TITOLO_DOCENTE);
                   doc.text(10,CoordY + 45,ListaSpedizioni[i].NOME_DOCENTE);
