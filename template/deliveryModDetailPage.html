@@ -1,11 +1,11 @@
 <div ng-controller="deliveryModDetailPageController" ng-cloak md-theme="{{ActualTheme}}" style="height:75%">
 
-    <form name="SpedizioneEditForm" ng-submit="ConfermaSpedizione()" novalidate>
+  <form name="SpedizioneEditForm" ng-submit="ConfermaSpedizione()"> <!--novalidate-->
 
     <h2 style="font-weight:bold;" ng-if="!SpedizioneMultipla">SPEDIZIONE {{SpedizioneInEditing.DOCENTE_NOME == undefined ? "" : " PER " +  SpedizioneInEditing.DOCENTE_NOME}}</h2>
     <h2 style="font-weight:bold;" ng-if="SpedizioneMultipla">SPEDIZIONE MULTIPLA</h2>
     <div layout="row" layout-align="end start">
-      <md-button class="md-raised md-accent" style="font-weight:bold;" type="submit">CONFERMA</md-button>
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-disabled="SpedizioneEditForm.$invalid" type="submit">CONFERMA</md-button>
       <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="OnAnnullaSpedizione()">ANNULLA</md-button>
     </div>
     <md-tabs style="width:100%;" md-selected="selectedSpedizioneTitoli" md-border-bottom md-autoselect md-dynamic-height md-swipe-content>
@@ -203,5 +203,5 @@
                              md-on-paginate="logPagination"></md-table-pagination>        
       </md-tab>
     </md-tabs>
-  </div>
+  </form>
 </div>

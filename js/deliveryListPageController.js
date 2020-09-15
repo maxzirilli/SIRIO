@@ -171,14 +171,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
     
     var SheetName =  "SPEDIZIONI";
     var BodySheet = {};
-    /*BodySheet['A1'] = SystemInformation.GetCellaIntestazione('DESTINATARIO');
-    BodySheet['B1'] = SystemInformation.GetCellaIntestazione('DOCENTE');
-    BodySheet['C1'] = SystemInformation.GetCellaIntestazione('INDIRIZZO');
-    BodySheet['D1'] = SystemInformation.GetCellaIntestazione('DATA');
-    BodySheet['E1'] = SystemInformation.GetCellaIntestazione('ISBN');
-    BodySheet['F1'] = SystemInformation.GetCellaIntestazione('TITOLO');
-    BodySheet['G1'] = SystemInformation.GetCellaIntestazione('QUANTITA');
-    BodySheet['H1'] = SystemInformation.GetCellaIntestazione('STATO');*/
    
     let SpedizioniFiltrate = $filter('SpedizioneByFiltro')($scope.ListaSpedizioni,
                                                            $scope.ProvinciaFiltro,

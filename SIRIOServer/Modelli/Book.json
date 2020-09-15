@@ -3,7 +3,10 @@
                             { 
                               "Name" : "BookInfoList",
                               "SQL"  : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,titoli.MATERIA,titoli.POS_MAGAZZINO,titoli.AUTORI,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL, (SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE materie_insegnamento.CHIAVE = titoli.MATERIA) AS NOME_MATERIA FROM titoli {W~FiltroI~(titoli.CHIAVE IN (SELECT istituti_x_titoli.TITOLO FROM istituti_x_titoli WHERE ISTITUTO = :FiltroI))} ORDER BY titoli.TITOLO" 
-                            },
+                            }
+                          ],
+                          
+  "SelectSQLFilter"     : [
                             {
                               "Name" : "BookListFilter",
                               "SQL"  : "SELECT titoli.CHIAVE,titoli.TITOLO,titoli.CODICE_ISBN FROM titoli"

@@ -149,7 +149,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
        $scope.ListaTitoli  = TitoliInfoLista;
     }
     else SystemInformation.ApplyOnError('Modello titoli non conforme','');   
-  });
+  },'SelectSQLFilter');
   
   $scope.queryMateria = function(searchTextMat)
   {
@@ -220,6 +220,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
        ObjParametri.FiltroT = $scope.TitoloFiltro;
        RicercaPerTitolo     = true;
     }
+    else $scope.ListaIstitutiTitolo = [];
     
     SystemInformation.GetSQL('Teacher', ObjParametri, function(Results)  
     {

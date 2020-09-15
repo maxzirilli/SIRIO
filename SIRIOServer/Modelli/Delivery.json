@@ -57,7 +57,7 @@
   "SQLDettaglioSpedizioneDocente"  : [
                                         {
                                           "Name" : "TeacherDelivery",
-                                          "SQL"  : "SELECT *,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS NOME_DOCENTE FROM spedizioni WHERE CHIAVE=:CHIAVE AND PROMOTORE=#KeyAccount"
+                                          "SQL"  : "SELECT *,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS NOME_DOCENTE FROM spedizioni WHERE CHIAVE=:CHIAVE"
                                         },
                                         {
                                           "Name" : "TeacherDeliveryBook",

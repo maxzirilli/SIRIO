@@ -238,7 +238,7 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
        $scope.ListaTitoli  = TitoliInfoLista;
     }
     else SystemInformation.ApplyOnError('Modello titoli non conforme','');   
-  });
+  },'SelectSQLFilter');
   
   $scope.queryTitolo = function(searchTextTit)
   {
