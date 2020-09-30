@@ -8,7 +8,7 @@
   "Versione 1.3.2    30 Settembre 2020",
   "                  - NEW: Aggiunto campo nascosto a tabella istituti",
   "                  - NEW: Aggiunta store procedure che unisce e nasconde gli istituti",
-  "                  - NEW: Aggiunte funzioni di calcolo per la disponibilita dei titoli",  
+  "                  - NEW: Aggiunte funzioni di calcolo per la disponibilita dei titoli",
   "Versione 1.2.2    15 Settembre 2020",
   "                  - FIX: Introdotta data attuale log movimenti",
   "                  - NEW: Inserito campo EMAIL_ARCHIVIO nella tabella configurazione_ditta",
@@ -43,15 +43,6 @@
      "SQLAfterAddedColumn": null
     },
     {
-     "Nome": "EMAIL_ARCHIVIO",
-     "IsNullable": true,
-     "DataType": "varchar(255)",
-     "AutoIncrement": false,
-     "Commento": "",
-     "DefaultValue": "NULL",
-     "SQLAfterAddedColumn": null
-    },
-    {
      "Nome": "SITO_WEB",
      "IsNullable": true,
      "DataType": "varchar(255)",
@@ -64,6 +55,15 @@
      "Nome": "TELEFONO",
      "IsNullable": true,
      "DataType": "varchar(255)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": "NULL",
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "EMAIL_ARCHIVIO",
+     "IsNullable": true,
+     "DataType": "varchar(50)",
      "AutoIncrement": false,
      "Commento": "",
      "DefaultValue": "NULL",
@@ -843,220 +843,6 @@
    "Triggers": []
   },
   {
-   "Nome": "spedizioni",
-   "Campi": [
-    {
-     "Nome": "CHIAVE",
-     "IsNullable": false,
-     "DataType": "int(11)",
-     "AutoIncrement": false,
-     "Commento": "",
-     "DefaultValue": null,
-     "SQLAfterAddedColumn": null
-    },
-    {
-     "Nome": "PRESSO",
-     "IsNullable": false,
-     "DataType": "varchar(255)",
-     "AutoIncrement": false,
-     "Commento": "",
-     "DefaultValue": "''",
-     "SQLAfterAddedColumn": null
-    },
-    {
-     "Nome": "DOCENTE",
-     "IsNullable": true,
-     "DataType": "int(11)",
-     "AutoIncrement": false,
-     "Commento": "",
-     "DefaultValue": "NULL",
-     "SQLAfterAddedColumn": null
-    },
-    {
-     "Nome": "INDIRIZZO",
-     "IsNullable": true,
-     "DataType": "varchar(255)",
-     "AutoIncrement": false,
-     "Commento": "",
-     "DefaultValue": "NULL",
-     "SQLAfterAddedColumn": null
-    },
-    {
-     "Nome": "COMUNE",
-     "IsNullable": true,
-     "DataType": "varchar(255)",
-     "AutoIncrement": false,
-     "Commento": "",
-     "DefaultValue": "NULL",
-     "SQLAfterAddedColumn": null
-    },
-    {
-     "Nome": "CAP",
-     "IsNullable": true,
-     "DataType": "varchar(255)",
-     "AutoIncrement": false,
-     "Commento": "",
-     "DefaultValue": "NULL",
-     "SQLAfterAddedColumn": null
-    },
-    {
-     "Nome": "PROVINCIA",
-     "IsNullable": true,
-     "DataType": "int(11)",
-     "AutoIncrement": false,
-     "Commento": "",
-     "DefaultValue": "NULL",
-     "SQLAfterAddedColumn": null
-    },
-    {
-     "Nome": "PROMOTORE",
-     "IsNullable": true,
-     "DataType": "int(11)",
-     "AutoIncrement": false,
-     "Commento": "",
-     "DefaultValue": "NULL",
-     "SQLAfterAddedColumn": null
-    },
-    {
-     "Nome": "DATA",
-     "IsNullable": true,
-     "DataType": "date",
-     "AutoIncrement": false,
-     "Commento": "",
-     "DefaultValue": "NULL",
-     "SQLAfterAddedColumn": null
-    }
-   ],
-   "PrimaryKey": {
-    "Campi": [
-     "CHIAVE"
-    ]
-   },
-   "ForeignKeys": [
-    {
-     "Nome": "FK_SPEDIZIONI_DOCENTI",
-     "Campo": "DOCENTE",
-     "RefTable": "docenti",
-     "RefField": "CHIAVE"
-    },
-    {
-     "Nome": "FK_SPEDIZIONI_PROVINCE_ALL",
-     "Campo": "PROVINCIA",
-     "RefTable": "province_all",
-     "RefField": "CHIAVE"
-    },
-    {
-     "Nome": "FK_SPEDIZIONI_UTENTI",
-     "Campo": "PROMOTORE",
-     "RefTable": "utenti",
-     "RefField": "CHIAVE"
-    }
-   ],
-   "UniqueKeys": [],
-   "Indexes": [],
-   "Triggers": []
-  },
-  {
-   "Nome": "dettaglio_spedizioni",
-   "Campi": [
-    {
-     "Nome": "CHIAVE",
-     "IsNullable": false,
-     "DataType": "int(11)",
-     "AutoIncrement": false,
-     "Commento": "",
-     "DefaultValue": null,
-     "SQLAfterAddedColumn": null
-    },
-    {
-     "Nome": "SPEDIZIONE",
-     "IsNullable": true,
-     "DataType": "int(11)",
-     "AutoIncrement": false,
-     "Commento": "",
-     "DefaultValue": "NULL",
-     "SQLAfterAddedColumn": null
-    },
-    {
-     "Nome": "TITOLO",
-     "IsNullable": true,
-     "DataType": "int(11)",
-     "AutoIncrement": false,
-     "Commento": "",
-     "DefaultValue": "NULL",
-     "SQLAfterAddedColumn": null
-    },
-    {
-     "Nome": "QUANTITA",
-     "IsNullable": true,
-     "DataType": "tinyint(4)",
-     "AutoIncrement": false,
-     "Commento": "",
-     "DefaultValue": "NULL",
-     "SQLAfterAddedColumn": null
-    },
-    {
-     "Nome": "STATO",
-     "IsNullable": true,
-     "DataType": "char(50)",
-     "AutoIncrement": false,
-     "Commento": "",
-     "DefaultValue": "NULL",
-     "SQLAfterAddedColumn": null
-    },
-    {
-     "Nome": "CONS_A_MANO",
-     "IsNullable": true,
-     "DataType": "bit(1)",
-     "AutoIncrement": false,
-     "Commento": "",
-     "DefaultValue": "NULL",
-     "SQLAfterAddedColumn": null
-    }
-   ],
-   "PrimaryKey": {
-    "Campi": [
-     "CHIAVE"
-    ]
-   },
-   "ForeignKeys": [
-    {
-     "Nome": "FK_DETTAGLIO_SPEDIZIONI",
-     "Campo": "SPEDIZIONE",
-     "RefTable": "spedizioni",
-     "RefField": "CHIAVE"
-    },
-    {
-     "Nome": "FK_DETTAGLIO_SPEDIZIONI_TITOLO",
-     "Campo": "TITOLO",
-     "RefTable": "titoli",
-     "RefField": "CHIAVE"
-    }
-   ],
-   "UniqueKeys": [],
-   "Indexes": [],
-   "Triggers": [
-    {
-     "Nome": "dettaglio_spedizioni_after_insert",
-     "Event": "INSERT",
-     "Body": "BEGIN\r\n  \r\n  IF NEW.STATO = 'C' THEN\r\n    SET NEW.CONS_A_MANO := 1;\r\n UPDATE titoli \r\n\t SET QUANTITA_MGZN_VOL = QUANTITA_MGZN_VOL - NEW.QUANTITA\r\n  WHERE CHIAVE = NEW.TITOLO;\r\n INSERT INTO movimenti_magazzino_volante (DATA,TITOLO,QUANTITA,DESCRIZIONE) VALUES (NOW(),NEW.TITOLO,(-1)*NEW.QUANTITA,'Titolo consegnato a mano, quantita titolo rimossa dal magazzino volante');\r\n   ELSE  \r\n    SET NEW.CONS_A_MANO := 0;\r\n  END IF;\r\n\r\nEND",
-     "Timing": "BEFORE"
-    },
-    {
-     "Nome": "dettaglio_spedizioni_after_update",
-     "Event": "UPDATE",
-     "Body": "BEGIN\r\n DECLARE ConsegnatoAMano BIT;\r\n SELECT CONS_A_MANO\r\n   FROM dettaglio_spedizioni\r\n  WHERE CHIAVE = OLD.CHIAVE\r\n   INTO ConsegnatoAMano;\r\n\r\n IF NEW.TITOLO = OLD.TITOLO THEN\r\n    IF OLD.STATO <> NEW.STATO THEN\r\n       IF OLD.STATO = 'C' THEN\r\n          IF ConsegnatoAMano = 1 THEN\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN_VOL = QUANTITA_MGZN_VOL + OLD.QUANTITA\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino_volante (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA,'Modifica dettaglio spedizione');            \r\n          ELSE\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN = QUANTITA_MGZN + OLD.QUANTITA\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA,'Modifica dettaglio spedizione');            \r\n          END IF;\r\n       END IF;\r\n       IF NEW.STATO = 'C' THEN\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN = QUANTITA_MGZN - NEW.QUANTITA\r\n            WHERE CHIAVE = NEW.TITOLO;\r\n           INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),NEW.TITOLO,(-1)*NEW.QUANTITA,'Modifica dettaglio spedizione');            \r\n       END IF;\r\n    ELSE\r\n      IF (NEW.QUANTITA <> OLD.QUANTITA) AND (NEW.STATO = 'C') THEN\r\n         IF ConsegnatoAMano = 1 THEN\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN_VOL = QUANTITA_MGZN_VOL + (OLD.QUANTITA - NEW.QUANTITA)\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino_volante (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA - NEW.QUANTITA,'Modifica dettaglio spedizione');            \r\n         ELSE\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN = QUANTITA_MGZN + (OLD.QUANTITA - NEW.QUANTITA)\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA - NEW.QUANTITA,'Modifica dettaglio spedizione');            \r\n\t\t\tEND IF;\r\n      END IF;\r\n\t END IF;\r\n ELSE\r\n    IF OLD.STATO <> NEW.STATO THEN\r\n       IF OLD.STATO = 'C' THEN\r\n          IF ConsegnatoAMano = 1 THEN\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN_VOL = QUANTITA_MGZN_VOL + OLD.QUANTITA\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino_volante (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA,'Modifica dettaglio spedizione');            \r\n          ELSE\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN = QUANTITA_MGZN + OLD.QUANTITA\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA,'Modifica dettaglio spedizione');            \r\n          END IF;\r\n       END IF;\r\n       IF NEW.STATO = 'C' THEN\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN = QUANTITA_MGZN - NEW.QUANTITA\r\n            WHERE CHIAVE = NEW.TITOLO;\r\n           INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),NEW.TITOLO,(-1)*NEW.QUANTITA,'Modifica dettaglio spedizione');            \r\n       END IF;\r\n    ELSE\r\n      IF NEW.STATO = 'C' THEN\r\n         IF ConsegnatoAMano = 1 THEN\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN_VOL = QUANTITA_MGZN_VOL + OLD.QUANTITA\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino_volante (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA,'Modifica dettaglio spedizione');            \r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN_VOL = QUANTITA_MGZN_VOL - NEW.QUANTITA\r\n            WHERE CHIAVE = NEW.TITOLO;\r\n           INSERT INTO movimenti_magazzino_volante (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),NEW.TITOLO,(-1)*NEW.QUANTITA,'Modifica dettaglio spedizione');            \r\n         ELSE\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN = QUANTITA_MGZN + OLD.QUANTITA\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA,'Modifica dettaglio spedizione');            \r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN = QUANTITA_MGZN - NEW.QUANTITA\r\n            WHERE CHIAVE = NEW.TITOLO;\r\n           INSERT INTO movimenti_magazzino(DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),NEW.TITOLO,(-1)*NEW.QUANTITA,'Modifica dettaglio spedizione');            \r\n\t\t\tEND IF;\r\n      END IF;\r\n\t END IF;\r\n END IF;\r\nEND",
-     "Timing": "AFTER"
-    },
-    {
-     "Nome": "dettaglio_spedizioni_after_delete",
-     "Event": "DELETE",
-     "Body": "BEGIN\r\n  \r\n  IF OLD.STATO = 'C' THEN\r\n     IF OLD.CONS_A_MANO = 1 THEN\r\n        UPDATE titoli \r\n\t\t     SET QUANTITA_MGZN_VOL = QUANTITA_MGZN_VOL + QUANTITA_MGZN_VOL \r\n\t\t\tWHERE CHIAVE = OLD.TITOLO;\r\n        INSERT INTO movimenti_magazzino_volante (DATA,TITOLO,QUANTITA,DESCRIZIONE) VALUES (NOW(),OLD.TITOLO,OLD.QUANTITA,'Dettaglio spedizione eliminato, quantita titolo riaggiunta al magazzino volante');\r\n     ELSE\r\n        UPDATE titoli SET QUANTITA_MGZN = QUANTITA_MGZN + OLD.QUANTITA WHERE CHIAVE = OLD.TITOLO;\r\n        INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE) VALUES (NOW(),OLD.TITOLO,OLD.QUANTITA,'Dettaglio spedizione eliminato, quantita titolo riaggiunta al magazzino');\r\n     END IF;\r\n  END IF;\r\n\r\nEND",
-     "Timing": "AFTER"
-    }
-   ]
-  },
-  {
    "Nome": "magazzino_volante",
    "Campi": [
     {
@@ -1386,6 +1172,15 @@
      "Commento": "",
      "DefaultValue": "NULL",
      "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "NASCOSTO",
+     "IsNullable": true,
+     "DataType": "bit(1)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": "NULL",
+     "SQLAfterAddedColumn": null
     }
    ],
    "PrimaryKey": {
@@ -1416,6 +1211,235 @@
    "UniqueKeys": [],
    "Indexes": [],
    "Triggers": []
+  },
+  {
+   "Nome": "spedizioni",
+   "Campi": [
+    {
+     "Nome": "CHIAVE",
+     "IsNullable": false,
+     "DataType": "int(11)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "PRESSO",
+     "IsNullable": false,
+     "DataType": "varchar(255)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": "''",
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "DOCENTE",
+     "IsNullable": true,
+     "DataType": "int(11)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": "NULL",
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "INDIRIZZO",
+     "IsNullable": true,
+     "DataType": "varchar(255)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": "NULL",
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "COMUNE",
+     "IsNullable": true,
+     "DataType": "varchar(255)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": "NULL",
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "CAP",
+     "IsNullable": true,
+     "DataType": "varchar(255)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": "NULL",
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "PROVINCIA",
+     "IsNullable": true,
+     "DataType": "int(11)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": "NULL",
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "PROMOTORE",
+     "IsNullable": true,
+     "DataType": "int(11)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": "NULL",
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "DATA",
+     "IsNullable": true,
+     "DataType": "date",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": "NULL",
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "ISTITUTO",
+     "IsNullable": true,
+     "DataType": "int(11)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": "NULL",
+     "SQLAfterAddedColumn": null
+    }
+   ],
+   "PrimaryKey": {
+    "Campi": [
+     "CHIAVE"
+    ]
+   },
+   "ForeignKeys": [
+    {
+     "Nome": "FK_SPEDIZIONI_DOCENTI",
+     "Campo": "DOCENTE",
+     "RefTable": "docenti",
+     "RefField": "CHIAVE"
+    },
+    {
+     "Nome": "FK_SPEDIZIONI_ISTITUTI",
+     "Campo": "ISTITUTO",
+     "RefTable": "istituti",
+     "RefField": "CHIAVE"
+    },
+    {
+     "Nome": "FK_SPEDIZIONI_PROVINCE_ALL",
+     "Campo": "PROVINCIA",
+     "RefTable": "province_all",
+     "RefField": "CHIAVE"
+    },
+    {
+     "Nome": "FK_SPEDIZIONI_UTENTI",
+     "Campo": "PROMOTORE",
+     "RefTable": "utenti",
+     "RefField": "CHIAVE"
+    }
+   ],
+   "UniqueKeys": [],
+   "Indexes": [],
+   "Triggers": []
+  },
+  {
+   "Nome": "dettaglio_spedizioni",
+   "Campi": [
+    {
+     "Nome": "CHIAVE",
+     "IsNullable": false,
+     "DataType": "int(11)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "SPEDIZIONE",
+     "IsNullable": true,
+     "DataType": "int(11)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": "NULL",
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "TITOLO",
+     "IsNullable": true,
+     "DataType": "int(11)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": "NULL",
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "QUANTITA",
+     "IsNullable": true,
+     "DataType": "tinyint(4)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": "NULL",
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "STATO",
+     "IsNullable": true,
+     "DataType": "char(50)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": "NULL",
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "CONS_A_MANO",
+     "IsNullable": true,
+     "DataType": "bit(1)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": "NULL",
+     "SQLAfterAddedColumn": null
+    }
+   ],
+   "PrimaryKey": {
+    "Campi": [
+     "CHIAVE"
+    ]
+   },
+   "ForeignKeys": [
+    {
+     "Nome": "FK_DETTAGLIO_SPEDIZIONI",
+     "Campo": "SPEDIZIONE",
+     "RefTable": "spedizioni",
+     "RefField": "CHIAVE"
+    },
+    {
+     "Nome": "FK_DETTAGLIO_SPEDIZIONI_TITOLO",
+     "Campo": "TITOLO",
+     "RefTable": "titoli",
+     "RefField": "CHIAVE"
+    }
+   ],
+   "UniqueKeys": [],
+   "Indexes": [],
+   "Triggers": [
+    {
+     "Nome": "dettaglio_spedizioni_after_insert",
+     "Event": "INSERT",
+     "Body": "BEGIN\r\n  \r\n  IF NEW.STATO = 'C' THEN\r\n    SET NEW.CONS_A_MANO := 1;\r\n UPDATE titoli \r\n\t SET QUANTITA_MGZN_VOL = QUANTITA_MGZN_VOL - NEW.QUANTITA\r\n  WHERE CHIAVE = NEW.TITOLO;\r\n INSERT INTO movimenti_magazzino_volante (DATA,TITOLO,QUANTITA,DESCRIZIONE) VALUES (NOW(),NEW.TITOLO,(-1)*NEW.QUANTITA,'Titolo consegnato a mano, quantita titolo rimossa dal magazzino volante');\r\n   ELSE  \r\n    SET NEW.CONS_A_MANO := 0;\r\n  END IF;\r\n\r\nEND",
+     "Timing": "BEFORE"
+    },
+    {
+     "Nome": "dettaglio_spedizioni_after_update",
+     "Event": "UPDATE",
+     "Body": "BEGIN\r\n DECLARE ConsegnatoAMano BIT;\r\n SELECT CONS_A_MANO\r\n   FROM dettaglio_spedizioni\r\n  WHERE CHIAVE = OLD.CHIAVE\r\n   INTO ConsegnatoAMano;\r\n\r\n IF NEW.TITOLO = OLD.TITOLO THEN\r\n    IF OLD.STATO <> NEW.STATO THEN\r\n       IF OLD.STATO = 'C' THEN\r\n          IF ConsegnatoAMano = 1 THEN\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN_VOL = QUANTITA_MGZN_VOL + OLD.QUANTITA\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino_volante (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA,'Modifica dettaglio spedizione');            \r\n          ELSE\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN = QUANTITA_MGZN + OLD.QUANTITA\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA,'Modifica dettaglio spedizione');            \r\n          END IF;\r\n       END IF;\r\n       IF NEW.STATO = 'C' THEN\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN = QUANTITA_MGZN - NEW.QUANTITA\r\n            WHERE CHIAVE = NEW.TITOLO;\r\n           INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),NEW.TITOLO,(-1)*NEW.QUANTITA,'Modifica dettaglio spedizione');            \r\n       END IF;\r\n    ELSE\r\n      IF (NEW.QUANTITA <> OLD.QUANTITA) AND (NEW.STATO = 'C') THEN\r\n         IF ConsegnatoAMano = 1 THEN\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN_VOL = QUANTITA_MGZN_VOL + (OLD.QUANTITA - NEW.QUANTITA)\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino_volante (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA - NEW.QUANTITA,'Modifica dettaglio spedizione');            \r\n         ELSE\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN = QUANTITA_MGZN + (OLD.QUANTITA - NEW.QUANTITA)\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA - NEW.QUANTITA,'Modifica dettaglio spedizione');            \r\n\t\t\tEND IF;\r\n      END IF;\r\n\t END IF;\r\n ELSE\r\n    IF OLD.STATO <> NEW.STATO THEN\r\n       IF OLD.STATO = 'C' THEN\r\n          IF ConsegnatoAMano = 1 THEN\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN_VOL = QUANTITA_MGZN_VOL + OLD.QUANTITA\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino_volante (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA,'Modifica dettaglio spedizione');            \r\n          ELSE\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN = QUANTITA_MGZN + OLD.QUANTITA\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA,'Modifica dettaglio spedizione');            \r\n          END IF;\r\n       END IF;\r\n       IF NEW.STATO = 'C' THEN\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN = QUANTITA_MGZN - NEW.QUANTITA\r\n            WHERE CHIAVE = NEW.TITOLO;\r\n           INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),NEW.TITOLO,(-1)*NEW.QUANTITA,'Modifica dettaglio spedizione');            \r\n       END IF;\r\n    ELSE\r\n      IF NEW.STATO = 'C' THEN\r\n         IF ConsegnatoAMano = 1 THEN\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN_VOL = QUANTITA_MGZN_VOL + OLD.QUANTITA\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino_volante (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA,'Modifica dettaglio spedizione');            \r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN_VOL = QUANTITA_MGZN_VOL - NEW.QUANTITA\r\n            WHERE CHIAVE = NEW.TITOLO;\r\n           INSERT INTO movimenti_magazzino_volante (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),NEW.TITOLO,(-1)*NEW.QUANTITA,'Modifica dettaglio spedizione');            \r\n         ELSE\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN = QUANTITA_MGZN + OLD.QUANTITA\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA,'Modifica dettaglio spedizione');            \r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN = QUANTITA_MGZN - NEW.QUANTITA\r\n            WHERE CHIAVE = NEW.TITOLO;\r\n           INSERT INTO movimenti_magazzino(DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),NEW.TITOLO,(-1)*NEW.QUANTITA,'Modifica dettaglio spedizione');            \r\n\t\t\tEND IF;\r\n      END IF;\r\n\t END IF;\r\n END IF;\r\nEND",
+     "Timing": "AFTER"
+    },
+    {
+     "Nome": "dettaglio_spedizioni_after_delete",
+     "Event": "DELETE",
+     "Body": "BEGIN\r\n  \r\n  IF OLD.STATO = 'C' THEN\r\n     IF OLD.CONS_A_MANO = 1 THEN\r\n        UPDATE titoli \r\n\t\t     SET QUANTITA_MGZN_VOL = QUANTITA_MGZN_VOL + QUANTITA_MGZN_VOL \r\n\t\t\tWHERE CHIAVE = OLD.TITOLO;\r\n        INSERT INTO movimenti_magazzino_volante (DATA,TITOLO,QUANTITA,DESCRIZIONE) VALUES (NOW(),OLD.TITOLO,OLD.QUANTITA,'Dettaglio spedizione eliminato, quantita titolo riaggiunta al magazzino volante');\r\n     ELSE\r\n        UPDATE titoli SET QUANTITA_MGZN = QUANTITA_MGZN + OLD.QUANTITA WHERE CHIAVE = OLD.TITOLO;\r\n        INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE) VALUES (NOW(),OLD.TITOLO,OLD.QUANTITA,'Dettaglio spedizione eliminato, quantita titolo riaggiunta al magazzino');\r\n     END IF;\r\n  END IF;\r\n\r\nEND",
+     "Timing": "AFTER"
+    }
+   ]
   },
   {
    "Nome": "istituti_x_titoli",
@@ -2039,6 +2063,32 @@
    ]
   },
   {
+   "Nome": "CALCOLA_DISPONIBILITA",
+   "Type": "FUNCTION",
+   "ReturnType": "int(11)",
+   "Body": "BEGIN\r\n\r\n  DECLARE QuantitaMagazzino INT;\r\n  DECLARE QuantitaDaSpedire INT;\r\n  \r\n  (SELECT titoli.QUANTITA_MGZN FROM titoli WHERE CHIAVE = ChiaveTitolo) INTO QuantitaMagazzino;\r\n  (SELECT SUM(QUANTITA) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.STATO = 'S' AND dettaglio_spedizioni.TITOLO = ChiaveTitolo) INTO QuantitaDaSpedire;\r\n  \r\n  IF QuantitaMagazzino - QuantitaDaSpedire > 0 THEN RETURN 1;\r\n  ELSE RETURN 0;\r\n  END IF; \r\n  \r\nEND",
+   "Parametri": [
+    {
+     "Nome": "ChiaveTitolo",
+     "Mode": "IN",
+     "Type": "int(11)"
+    }
+   ]
+  },
+  {
+   "Nome": "CALCOLA_DISPONIBILITA_ALL",
+   "Type": "FUNCTION",
+   "ReturnType": "int(11)",
+   "Body": "BEGIN\r\n\r\n  DECLARE QuantitaMagazzino INT;\r\n  DECLARE QuantitaDaSpedire INT;\r\n  DECLARE QuantitaFinale    INT;\r\n  \r\n  (SELECT titoli.QUANTITA_MGZN FROM titoli WHERE CHIAVE = ChiaveTitolo) INTO QuantitaMagazzino;\r\n  (SELECT SUM(QUANTITA) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.STATO = 'S' AND dettaglio_spedizioni.TITOLO = ChiaveTitolo) INTO QuantitaDaSpedire;\r\n  \r\n  IF QuantitaMagazzino - QuantitaDaSpedire > 0 THEN \r\n     SET QuantitaFinale = QuantitaMagazzino - QuantitaDaSpedire;\r\n     RETURN QuantitaFinale;\r\n  ELSE RETURN 0;\r\n  END IF; \r\n  \r\n\r\nEND",
+   "Parametri": [
+    {
+     "Nome": "ChiaveTitolo",
+     "Mode": "IN",
+     "Type": "int(11)"
+    }
+   ]
+  },
+  {
    "Nome": "ERASE_ALL",
    "Type": "PROCEDURE",
    "ReturnType": null,
@@ -2158,6 +2208,24 @@
      "Nome": "DocenteLKey",
      "Mode": "IN",
      "Type": "varchar(255)"
+    }
+   ]
+  },
+  {
+   "Nome": "UNISCI_NASCONDI_ISTITUTI",
+   "Type": "PROCEDURE",
+   "ReturnType": null,
+   "Body": "BEGIN\r\n\r\n  DELETE FROM docenti_disponibilita WHERE ISTITUTO = OldIstituto;\r\n  DELETE FROM insegnamenti_docente WHERE CLASSE IN (SELECT CHIAVE FROM classi WHERE ISTITUTO = OldIstituto);   \r\n  UPDATE IGNORE istituti_x_docenti SET ISTITUTO = NewIstituto WHERE ISTITUTO = OldIstituto;\r\n  DELETE FROM istituti_x_docenti WHERE ISTITUTO = OldIstituto;\r\n  UPDATE istituti SET NASCOSTO = 1 WHERE CHIAVE = OldIstituto;\r\n\r\nEND",
+   "Parametri": [
+    {
+     "Nome": "OldIstituto",
+     "Mode": "IN",
+     "Type": "int(11)"
+    },
+    {
+     "Nome": "NewIstituto",
+     "Mode": "IN",
+     "Type": "int(11)"
     }
    ]
   },
