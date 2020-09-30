@@ -2,7 +2,7 @@
   "SelectSQL"    : [
                      { 
                        "Name" : "OrderEntryInfoList",
-                       "SQL"  : "SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE titoli.CHIAVE = ordini_ingresso.TITOLO) AS NOME_TITOLO FROM ordini_ingresso WHERE DATA >= #Dal AND DATA <= #Al ORDER BY DATA DESC"
+                       "SQL"  : "SELECT *,(SELECT CODICE_ISBN FROM titoli WHERE CHIAVE = ordini_ingresso.TITOLO) AS CODICE,(SELECT titoli.TITOLO FROM titoli WHERE titoli.CHIAVE = ordini_ingresso.TITOLO) AS NOME_TITOLO FROM ordini_ingresso WHERE DATA >= #Dal AND DATA <= #Al ORDER BY DATA DESC"
                      }                  
                    ],
   

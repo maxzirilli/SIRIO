@@ -7,17 +7,48 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
   $scope.NuovaSpedizioneCasaEd           = false;
   $scope.ListaIstitutiSped               = [];
   $scope.SpedizioneAIstituto             = false;
-  var IstitutoSelezionatoTmp             = -1;
+  $scope.IstitutoSelezionato             = '';
   
   ScopeHeaderController.CheckButtons();
+  
+  $scope.IndirizzoByIstituto = function (Istituto)
+  {
+    if(Istituto == -1)
+    {
+     $scope.SpedizioneInEditing.INDIRIZZO       = DocenteDettaglio[0].INDIRIZZO == null ? '' : DocenteDettaglio[0].INDIRIZZO;
+     $scope.SpedizioneInEditing.COMUNE          = DocenteDettaglio[0].COMUNE    == null ? '' : DocenteDettaglio[0].COMUNE;
+     $scope.SpedizioneInEditing.CAP             = DocenteDettaglio[0].CAP       == null ? '' : DocenteDettaglio[0].CAP;
+     $scope.SpedizioneInEditing.PROVINCIA       = DocenteDettaglio[0].PROVINCIA == null ? -1 : DocenteDettaglio[0].PROVINCIA;
+     $scope.SpedizioneInEditing.PROVINCIA_NOME  = ProvinciaDoc                  == undefined ? '' : ProvinciaDoc.Nome;
+     $scope.SpedizioneInEditing.ISTITUTO        = -1
+    }
+    else
+    {
+      IstitutoCorrisp     = $scope.ListaIstitutiDoc.find(function(AIstituto){return(AIstituto.CHIAVE == Istituto);});
+      ProvinciaAllCorrisp = $scope.ListaProvinceAll.find(function(AProvincia){return(AProvincia.Nome == IstitutoCorrisp.PROVINCIA_NOME);});
+     
+      $scope.SpedizioneInEditing.INDIRIZZO       = IstitutoCorrisp.INDIRIZZO  == null ? '': IstitutoCorrisp.INDIRIZZO;
+      $scope.SpedizioneInEditing.COMUNE          = IstitutoCorrisp.COMUNE     == null ? '': IstitutoCorrisp.COMUNE;
+      $scope.SpedizioneInEditing.CAP             = IstitutoCorrisp.CAP        == null ? '': IstitutoCorrisp.CAP;
+      $scope.SpedizioneInEditing.PROVINCIA       = ProvinciaAllCorrisp.Chiave == undefined ? -1 : ProvinciaAllCorrisp.Chiave;
+      $scope.SpedizioneInEditing.PROVINCIA_NOME  = ProvinciaAllCorrisp.Nome   == undefined ? '' : IstitutoCorrisp.Nome;
+      $scope.SpedizioneInEditing.ISTITUTO        = Istituto;
+    }
+  }
   
   if(Array.isArray(SystemInformation.DataBetweenController.ListaDocSped) && SystemInformation.DataBetweenController.ListaDocSped.length > 0 && SystemInformation.DataBetweenController.SpedizioneMultipla)
   {  
      
-     $scope.SpedizioneMultipla              = true;
-     $scope.ListaDocentiSpedizione          = SystemInformation.DataBetweenController.ListaDocSped;
-     $scope.ListaDocentiEsclusi             = [];
-     IstitutoSelezionatoTmp                 = SystemInformation.DataBetweenController.IstitutoPerIndirizzo == undefined ? -1 : SystemInformation.DataBetweenController.IstitutoPerIndirizzo;
+     $scope.SpedizioneMultipla                = true;
+     $scope.ListaDocentiSpedizione            = SystemInformation.DataBetweenController.ListaDocSped;
+     $scope.ListaDocentiSpedizionePerMultipla = Array.from(SystemInformation.DataBetweenController.ListaDocSped);
+     $scope.ListaDocentiEsclusi               = [];
+     if(SystemInformation.DataBetweenController.IstitutoPerIndirizzo != undefined)
+     {
+        if(SystemInformation.DataBetweenController.IstitutoPerIndirizzo != -1)
+           $scope.IstitutoSelezionato = SystemInformation.DataBetweenController.IstitutoPerIndirizzo
+        else $scope.IstitutoSelezionato = '';      //= SystemInformation.DataBetweenController.IstitutoPerIndirizzo == undefined ? '' : SystemInformation.DataBetweenController.IstitutoPerIndirizzo;
+     }
      
      for(let i = 0;i < $scope.ListaDocentiSpedizione.length;)
      {
@@ -34,7 +65,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
   $scope.ChiaveDocente                                     = SystemInformation.DataBetweenController.ChiaveDocente;
   SystemInformation.DataBetweenController.ChiaveSpedizione = '';
   SystemInformation.DataBetweenController.ChiaveDocente    = '';
-  SystemInformation.DataBetweenController.ListaDocSped     = [];
+  //SystemInformation.DataBetweenController.ListaDocSped     = [];
   
   if($scope.ChiaveDocente == undefined && $scope.ChiaveSpedizione == undefined && !($scope.SpedizioneMultipla))
   {
@@ -52,10 +83,11 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
         { 
            for(let i = 0; i < TitoliInfoLista.length; i++)
                TitoliInfoLista[i] = { 
-                                      Chiave   : TitoliInfoLista[i].CHIAVE,
-                                      Nome     : TitoliInfoLista[i].TITOLO,
-                                      Quantita : TitoliInfoLista[i].QUANTITA_MGZN,
-                                      Codice   : TitoliInfoLista[i].CODICE_ISBN
+                                      Chiave      : TitoliInfoLista[i].CHIAVE,
+                                      Nome        : TitoliInfoLista[i].TITOLO == null ? 'N.D' : TitoliInfoLista[i].TITOLO,
+                                      Quantita    : parseInt(TitoliInfoLista[i].QUANTITA_MGZN),
+                                      QuantitaVol : parseInt(TitoliInfoLista[i].QUANTITA_MGZN_VOL),
+                                      Codice      : TitoliInfoLista[i].CODICE_ISBN == null ? 'N.D.' : TitoliInfoLista[i].CODICE_ISBN
                                     }
            $scope.ListaTitoli = TitoliInfoLista;
            GestioneParametri();
@@ -87,7 +119,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
     {
       SystemInformation.GetSQL('Institute', {}, function(Results)  
       {  
-        IstitutiInfoLista = SystemInformation.FindResults(Results,'InstituteInfoList');
+        IstitutiInfoLista = SystemInformation.FindResults(Results,'InstituteInfoListOnlyVisibile');
         if(IstitutiInfoLista != undefined)
         { 
            for(let i = 0; i < IstitutiInfoLista.length; i++)
@@ -99,7 +131,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
            LoadProvince();
         }
         else SystemInformation.ApplyOnError('Modello istituti non conforme','');   
-      });
+      },'SelectSQLOnlyVisible');
     }
     
     LoadIstituti();
@@ -163,17 +195,42 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
                                             Cap        : IstitutiListaSped[i].CAP,
                                             Provincia  : IstitutiListaSped[i].PROVINCIA_LISTA_ALL
                                           }
-               $scope.ListaIstitutiSped = IstitutiListaSped;               
+               $scope.ListaIstitutiSped = IstitutiListaSped;
 
-               if(IstitutoSelezionatoTmp != -1)
+               $scope.ResetCampi = function()
+               {
+                 if(!$scope.SpedizioneAIstituto)
+                 {
+                   $scope.IstitutoSelezionato           = '';
+                   $scope.SpedizioneInEditing.INDIRIZZO = '';
+                   $scope.SpedizioneInEditing.COMUNE    = '';
+                   $scope.SpedizioneInEditing.CAP       = '';
+                   $scope.SpedizioneInEditing.PROVINCIA = -1;
+                 }
+               }               
+
+               if($scope.IstitutoSelezionato != '')
                {
                  $scope.SpedizioneAIstituto           = true;
-                 IstitutoCorrisp                      = $scope.ListaIstitutiSped.find(function(AIstituto){return(AIstituto.Chiave == IstitutoSelezionatoTmp);});
-                 $scope.IstitutoSelezionato           = IstitutoCorrisp.Istituto;
-                 $scope.SpedizioneInEditing.INDIRIZZO = IstitutoCorrisp.Indirizzo;
-                 $scope.SpedizioneInEditing.COMUNE    = IstitutoCorrisp.Comune;
-                 $scope.SpedizioneInEditing.CAP       = IstitutoCorrisp.Cap;
-                 $scope.SpedizioneInEditing.PROVINCIA = IstitutoCorrisp.Provincia;
+                 IstitutoCorrisp                      = $scope.ListaIstitutiSped.find(function(AIstituto){return(AIstituto.Chiave == $scope.IstitutoSelezionato);});
+                 
+                 if(IstitutoCorrisp != undefined)
+                 {
+                    $scope.IstitutoSelezionato           = IstitutoCorrisp.Istituto;
+                    $scope.SpedizioneInEditing.INDIRIZZO = IstitutoCorrisp.Indirizzo;
+                    $scope.SpedizioneInEditing.COMUNE    = IstitutoCorrisp.Comune;
+                    $scope.SpedizioneInEditing.CAP       = IstitutoCorrisp.Cap;
+                    $scope.SpedizioneInEditing.PROVINCIA = IstitutoCorrisp.Provincia;
+                    $scope.SpedizioneInEditing.ISTITUTO  = IstitutoCorrisp.Chiave;
+                 }
+                 else
+                 {
+                    $scope.SpedizioneInEditing.INDIRIZZO = '';
+                    $scope.SpedizioneInEditing.COMUNE    = '';
+                    $scope.SpedizioneInEditing.CAP       = '';
+                    $scope.SpedizioneInEditing.PROVINCIA = -1;
+                    $scope.SpedizioneInEditing.ISTITUTO  = -1;
+                 }
                }
                
                $scope.PassaADaSpedire = function (Titolo)
@@ -212,8 +269,14 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
                     $scope.SpedizioneInEditing.COMUNE    = itemIstituto.Comune;
                     $scope.SpedizioneInEditing.CAP       = itemIstituto.Cap;
                     $scope.SpedizioneInEditing.PROVINCIA = itemIstituto.Provincia;
+                    $scope.SpedizioneInEditing.ISTITUTO  = itemIstituto.Chiave;
+                    //$scope.SpedizioneAIstituto = true;
                  }
-                 else $scope.IstitutoSelezionato = -1;
+                 else 
+                 {
+                    $scope.IstitutoSelezionato = -1;
+                    //$scope.SpedizioneAIstituto = false;
+                 }
                }                     
             }
             else SystemInformation.ApplyOnError('Modello indirizzi istituti per spedizione non conforme','');   
@@ -234,11 +297,35 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
 
             if(DocenteDettaglio != undefined && IstitutiDoc != undefined)
             {
+
+              $scope.ListaIstitutiDoc                    = IstitutiDoc;
+              $scope.ListaTitoliSpedizione               = [];
+              $scope.ListaTitoliEliminati                = [];
               $scope.SpedizioneInEditing.CHIAVE          = -1;
               $scope.SpedizioneInEditing.DOCENTE         = $scope.ChiaveDocente;
               $scope.SpedizioneInEditing.DOCENTE_NOME    = DocenteDettaglio[0].RAGIONE_SOCIALE;
               $scope.SpedizioneInEditing.PRESSO          = DocenteDettaglio[0].RAGIONE_SOCIALE;
-              $scope.SpedizioneInEditing.STATO           = 'P';
+              $scope.SpedizioneInEditing.DATA            = new Date();
+              $scope.SpedizioneInEditing.ISTITUTO        = -1;              
+              
+              if($scope.ListaIstitutiDoc.length == 1)
+              {
+                 $scope.IstitutoDoc = $scope.ListaIstitutiDoc[0].CHIAVE;
+                 $scope.IndirizzoByIstituto($scope.ListaIstitutiDoc[0].CHIAVE)
+                 $scope.SpedizioneInEditing.ISTITUTO = $scope.IstitutoDoc;               
+              }
+              else
+              {
+                 $scope.SpedizioneInEditing.INDIRIZZO       = '';
+                 $scope.SpedizioneInEditing.COMUNE          = '';
+                 $scope.SpedizioneInEditing.CAP             = '';
+                 $scope.SpedizioneInEditing.PROVINCIA       = -1;
+                 $scope.SpedizioneInEditing.PROVINCIA_NOME  = '';
+              }               
+              /*$scope.SpedizioneInEditing.CHIAVE          = -1;
+              $scope.SpedizioneInEditing.DOCENTE         = $scope.ChiaveDocente;
+              $scope.SpedizioneInEditing.DOCENTE_NOME    = DocenteDettaglio[0].RAGIONE_SOCIALE;
+              $scope.SpedizioneInEditing.PRESSO          = DocenteDettaglio[0].RAGIONE_SOCIALE;
               $scope.SpedizioneInEditing.INDIRIZZO       = DocenteDettaglio[0].INDIRIZZO == null ? '' : DocenteDettaglio[0].INDIRIZZO;
               $scope.SpedizioneInEditing.COMUNE          = DocenteDettaglio[0].COMUNE    == null ? '' : DocenteDettaglio[0].COMUNE;
               $scope.SpedizioneInEditing.CAP             = DocenteDettaglio[0].CAP       == null ? '' : DocenteDettaglio[0].CAP;
@@ -247,33 +334,10 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
               $scope.SpedizioneInEditing.DATA            = new Date();
               $scope.ListaIstitutiDoc                    = IstitutiDoc;
               $scope.ListaTitoliSpedizione               = [];
-              $scope.ListaTitoliEliminati                = [];           
+              $scope.ListaTitoliEliminati                = [];*/           
             }       
             else SystemInformation.ApplyOnError('Modello docente per spedizione non conforme','');      
           },'SQLDettaglio'); 
-          
-          $scope.IndirizzoByIstituto = function (Istituto)
-          {
-            if(Istituto == -1)
-            {
-             $scope.SpedizioneInEditing.INDIRIZZO       = DocenteDettaglio[0].INDIRIZZO == null ? '' : DocenteDettaglio[0].INDIRIZZO;
-             $scope.SpedizioneInEditing.COMUNE          = DocenteDettaglio[0].COMUNE    == null ? '' : DocenteDettaglio[0].COMUNE;
-             $scope.SpedizioneInEditing.CAP             = DocenteDettaglio[0].CAP       == null ? '' : DocenteDettaglio[0].CAP;
-             $scope.SpedizioneInEditing.PROVINCIA       = DocenteDettaglio[0].PROVINCIA == null ? -1 : DocenteDettaglio[0].PROVINCIA;
-             $scope.SpedizioneInEditing.PROVINCIA_NOME  = ProvinciaDoc                  == undefined ? '' : ProvinciaDoc.Nome
-            }
-            else
-            {
-              IstitutoCorrisp     = $scope.ListaIstitutiDoc.find(function(AIstituto){return(AIstituto.CHIAVE == Istituto);});
-              ProvinciaAllCorrisp = $scope.ListaProvinceAll.find(function(AProvincia){return(AProvincia.Nome == IstitutoCorrisp.PROVINCIA_NOME);});
-             
-              $scope.SpedizioneInEditing.INDIRIZZO       = IstitutoCorrisp.INDIRIZZO  == null ? '': IstitutoCorrisp.INDIRIZZO;
-              $scope.SpedizioneInEditing.COMUNE          = IstitutoCorrisp.COMUNE     == null ? '': IstitutoCorrisp.COMUNE;
-              $scope.SpedizioneInEditing.CAP             = IstitutoCorrisp.CAP        == null ? '': IstitutoCorrisp.CAP;
-              $scope.SpedizioneInEditing.PROVINCIA       = ProvinciaAllCorrisp.Chiave == undefined ? -1 : ProvinciaAllCorrisp.Chiave;
-              $scope.SpedizioneInEditing.PROVINCIA_NOME  = ProvinciaAllCorrisp.Nome   == undefined ? '' : IstitutoCorrisp.Nome; 
-            }
-          }
           
           $scope.PassaADaSpedire = function (Titolo)
           {
@@ -313,6 +377,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
                 $scope.SpedizioneInEditing.DATA             = new Date(DettaglioSpedizioneDoc[0].DATA);
                 $scope.ListaTitoliSpedizione                = [];
                 $scope.ListaTitoliEliminati                 = [];
+                $scope.SpedizioneInEditing.ISTITUTO         = DettaglioSpedizioneDoc[0].ISTITUTO == null ? -1 : DettaglioSpedizioneDoc[0].ISTITUTO;
                 
                 for(let i = 0;i < DettaglioSpedizioneTitoloDoc.length;i ++)
                 {
@@ -322,9 +387,9 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
                                                         "SPEDIZIONE"    : DettaglioSpedizioneTitoloDoc[i].SPEDIZIONE,
                                                         "TITOLO"        : DettaglioSpedizioneTitoloDoc[i].TITOLO,
                                                         "NOME_TITOLO"   : DettaglioSpedizioneTitoloDoc[i].NOME_TITOLO,
-                                                        "QUANTITA"      : DettaglioSpedizioneTitoloDoc[i].QUANTITA,
+                                                        "QUANTITA"      : parseInt(DettaglioSpedizioneTitoloDoc[i].QUANTITA),
                                                         "STATO"         : DettaglioSpedizioneTitoloDoc[i].STATO,
-                                                        "QUANTITA_MGZN" : DettaglioSpedizioneTitoloDoc[i].QUANTITA_MGZN,
+                                                        "QUANTITA_MGZN" : parseInt(DettaglioSpedizioneTitoloDoc[i].QUANTITA_MGZN),
                                                         "Nuovo"         : false,
                                                         "Modificato"    : false,
                                                         "Eliminato"     : false
@@ -353,7 +418,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
             else SystemInformation.ApplyOnError('Modello spedizione docente non conforme','');      
           },'SQLDettaglioSpedizioneDocente'); 
           
-          $scope.IndirizzoByIstituto = function (Istituto)
+          /*$scope.IndirizzoByIstituto = function (Istituto)
           {
             if(Istituto == -1)
             {
@@ -374,7 +439,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
               $scope.SpedizioneInEditing.PROVINCIA       = ProvinciaAllCorrisp.Chiave == undefined ? -1 : ProvinciaAllCorrisp.Chiave;
               $scope.SpedizioneInEditing.PROVINCIA_NOME  = ProvinciaAllCorrisp.Nome   == undefined ? '' : IstitutoCorrisp.Nome; 
             }
-          } 
+          }*/ 
           
           $scope.PassaADaSpedire = function (Titolo)
           {
@@ -403,6 +468,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
          $scope.SpedizioneInEditing.INDIRIZZO       = '';
          $scope.SpedizioneInEditing.COMUNE          = '';
          $scope.SpedizioneInEditing.CAP             = '';
+         $scope.SpedizioneInEditing.ISTITUTO        = -1;
          $scope.SpedizioneInEditing.PROVINCIA       = -1;
          $scope.SpedizioneInEditing.DATA            = new Date();
          $scope.ListaTitoliSpedizione               = [];
@@ -443,6 +509,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
                $scope.SpedizioneInEditing.CAP              = DettaglioSpedizioneCasa[0].CAP;
                $scope.SpedizioneInEditing.PROVINCIA        = DettaglioSpedizioneCasa[0].PROVINCIA
                $scope.SpedizioneInEditing.DATA             = new Date(DettaglioSpedizioneCasa[0].DATA);
+               $scope.SpedizioneInEditing.ISTITUTO         = -1;
                $scope.ListaTitoliSpedizione                = [];
                $scope.ListaTitoliEliminati                 = [];
                
@@ -454,9 +521,9 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
                                                        "SPEDIZIONE"    : DettaglioSpedizioneTitoloCasa[i].SPEDIZIONE,
                                                        "TITOLO"        : DettaglioSpedizioneTitoloCasa[i].TITOLO,
                                                        "NOME_TITOLO"   : DettaglioSpedizioneTitoloCasa[i].NOME_TITOLO,
-                                                       "QUANTITA"      : DettaglioSpedizioneTitoloCasa[i].QUANTITA,
+                                                       "QUANTITA"      : parseInt(DettaglioSpedizioneTitoloCasa[i].QUANTITA),
                                                        "STATO"         : DettaglioSpedizioneTitoloCasa[i].STATO,
-                                                       "QUANTITA_MGZN" : DettaglioSpedizioneTitoloCasa[i].QUANTITA_MGZN,                                                    
+                                                       "QUANTITA_MGZN" : parseInt(DettaglioSpedizioneTitoloCasa[i].QUANTITA_MGZN),                                                    
                                                        "Nuovo"         : false,
                                                        "Modificato"    : false,
                                                        "Eliminato"     : false
@@ -518,7 +585,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
       if($scope.SpedizioneMultipla)
       {
          $scope.Multipla = true;
-         $scope.NumeroDocenti = $scope.ListaDocentiSpedizione.length;
+         if($scope.IstitutoSelezionato != -1)
+            $scope.NumeroDocenti = $scope.ListaDocentiSpedizionePerMultipla.length;
       }
          
       $scope.queryTitolo = function(searchTextTit)
@@ -534,9 +602,10 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
       {
         if(itemTit != undefined)
         {
-           $scope.Titolo.TITOLO        = itemTit.Chiave;
-           $scope.Titolo.NOME_TITOLO   = itemTit.Nome;
-           $scope.Titolo.QUANTITA_MGZN = itemTit.Quantita;
+           $scope.Titolo.TITOLO            = itemTit.Chiave;
+           $scope.Titolo.NOME_TITOLO       = itemTit.Nome;
+           $scope.Titolo.QUANTITA_MGZN     = itemTit.Quantita;
+           $scope.Titolo.QUANTITA_MGZN_VOL = itemTit.QuantitaVol;
         }
       }
 
@@ -696,59 +765,63 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
       {
          if ($scope.SpedizioneMultipla && !($scope.SpedizioneAIstituto))
          {
-             for (let d = 0; d < $scope.ListaDocentiSpedizione.length;d ++)
+             if($scope.ListaDocentiSpedizione.length > 0)
              {
-                  $ObjQuery = {Operazioni : []};
-                  ParamSpedizione = {
-                                      "CHIAVE"         : $scope.SpedizioneInEditing.CHIAVE,
-                                      "DOCENTE"        : $scope.ListaDocentiSpedizione[d].ChiaveDocente,
-                                      "PRESSO"         : $scope.ListaDocentiSpedizione[d].NomeDocente,
-                                      "INDIRIZZO"      : $scope.ListaDocentiSpedizione[d].IndirizzoDocente,
-                                      "COMUNE"         : $scope.ListaDocentiSpedizione[d].ComuneDocente,
-                                      "CAP"            : $scope.ListaDocentiSpedizione[d].CapDocente,
-                                      "PROVINCIA"      : $scope.ListaDocentiSpedizione[d].ProvinciaDocente,
-                                      "DATA"           : $scope.SpedizioneInEditing.DATA
-                                    }
-                  $ObjQuery.Operazioni.push({
-                                              Query     : 'InsertDelivery',
-                                              Parametri : ParamSpedizione   
-                                            });
-                  for(let t = 0; t < $scope.ListaTitoliSpedizione.length;t ++)
-                  {
-                      var ParamTitolo = {
-                                          "TITOLO"     : $scope.ListaTitoliSpedizione[t].TITOLO,  
-                                          "QUANTITA"   : $scope.ListaTitoliSpedizione[t].QUANTITA,
-                                          "STATO"      : $scope.ListaTitoliSpedizione[t].STATO
-                                        }
-                      if($scope.ListaTitoliSpedizione[t].Nuovo)
-                      {
-                         $ObjQuery.Operazioni.push({
-                                                     Query     : 'InsertDeliveryBookAfterInsert',
-                                                     Parametri : ParamTitolo,
-                                                     ResetKeys : [2]
-                                                   });
-                      }             
-                  }
-                  SystemInformation.PostSQL('Delivery',$ObjQuery,function(Answer)
-                  {
-                    $ObjQuery.Operazioni          = [];
-                    $scope.SpedizioneInEditing    = {};
-                    $scope.ListaDocentiSpedizione = [];
-                    $scope.ListaDocentiEsclusi    = [];
-                    switch (SystemInformation.DataBetweenController.Provenienza)
-                    {
-                       case 'TeacherPage'  : $state.go("teacherListPage");
-                                             SystemInformation.DataBetweenController = {};
-                                             break;
-                       case 'DeliveryPage' : $state.go("deliveryListPage");
-                                             SystemInformation.DataBetweenController = {};
-                                             break;
-                       case 'StartPage'    : $state.go("startPage");
-                                             SystemInformation.DataBetweenController = {};
-                                             break;
-                    }          
-                  });          
-             }
+                for (let d = 0; d < $scope.ListaDocentiSpedizione.length;d ++)
+                {
+                     $ObjQuery = {Operazioni : []};
+                     ParamSpedizione = {
+                                         "CHIAVE"         : $scope.SpedizioneInEditing.CHIAVE,
+                                         "DOCENTE"        : $scope.ListaDocentiSpedizione[d].ChiaveDocente,
+                                         "PRESSO"         : $scope.ListaDocentiSpedizione[d].NomeDocente,
+                                         "INDIRIZZO"      : $scope.ListaDocentiSpedizione[d].IndirizzoDocente,
+                                         "COMUNE"         : $scope.ListaDocentiSpedizione[d].ComuneDocente,
+                                         "CAP"            : $scope.ListaDocentiSpedizione[d].CapDocente,
+                                         "PROVINCIA"      : $scope.ListaDocentiSpedizione[d].ProvinciaDocente,
+                                         "DATA"           : $scope.SpedizioneInEditing.DATA,
+                                         "ISTITUTO"       : null
+                                       }
+                     $ObjQuery.Operazioni.push({
+                                                 Query     : 'InsertDelivery',
+                                                 Parametri : ParamSpedizione   
+                                               });
+                     for(let t = 0; t < $scope.ListaTitoliSpedizione.length;t ++)
+                     {
+                         var ParamTitolo = {
+                                             "TITOLO"     : $scope.ListaTitoliSpedizione[t].TITOLO,  
+                                             "QUANTITA"   : $scope.ListaTitoliSpedizione[t].QUANTITA,
+                                             "STATO"      : $scope.ListaTitoliSpedizione[t].STATO
+                                           }
+                         if($scope.ListaTitoliSpedizione[t].Nuovo)
+                         {
+                            $ObjQuery.Operazioni.push({
+                                                        Query     : 'InsertDeliveryBookAfterInsert',
+                                                        Parametri : ParamTitolo,
+                                                        ResetKeys : [2]
+                                                      });
+                         }             
+                     }
+                     SystemInformation.PostSQL('Delivery',$ObjQuery,function(Answer)
+                     {
+                       $ObjQuery.Operazioni          = [];
+                       $scope.SpedizioneInEditing    = {};
+                       $scope.ListaDocentiSpedizione = [];
+                       $scope.ListaDocentiEsclusi    = [];
+                       switch (SystemInformation.DataBetweenController.Provenienza)
+                       {
+                          case 'TeacherPage'  : $state.go("teacherListPage");
+                                                SystemInformation.DataBetweenController = {};
+                                                break;
+                          case 'DeliveryPage' : $state.go("deliveryListPage");
+                                                SystemInformation.DataBetweenController = {};
+                                                break;
+                          case 'StartPage'    : $state.go("startPage");
+                                                SystemInformation.DataBetweenController = {};
+                                                break;
+                       }          
+                     })          
+                }
+             } else alert('IMPOSSIBILE SPEDIRE, NESSUNO DEI DOCENTI HA UN INDIRIZZO DI SPEDIZIONE VALIDO')
          }
          else if ($scope.SpedizioneMultipla && $scope.SpedizioneAIstituto)
          {
@@ -763,7 +836,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
                                            "COMUNE"         : $scope.SpedizioneInEditing.COMUNE,
                                            "CAP"            : $scope.SpedizioneInEditing.CAP,
                                            "PROVINCIA"      : $scope.SpedizioneInEditing.PROVINCIA,
-                                           "DATA"           : $scope.SpedizioneInEditing.DATA
+                                           "DATA"           : $scope.SpedizioneInEditing.DATA,
+                                           "ISTITUTO"       : $scope.SpedizioneInEditing.ISTITUTO
                                          }
                        $ObjQuery.Operazioni.push({
                                                    Query     : 'InsertDelivery',
@@ -802,7 +876,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
                                            "COMUNE"         : $scope.SpedizioneInEditing.COMUNE,
                                            "CAP"            : $scope.SpedizioneInEditing.CAP,
                                            "PROVINCIA"      : $scope.SpedizioneInEditing.PROVINCIA,
-                                           "DATA"           : $scope.SpedizioneInEditing.DATA
+                                           "DATA"           : $scope.SpedizioneInEditing.DATA,
+                                           "ISTITUTO"       : $scope.SpedizioneInEditing.ISTITUTO                                          
                                          }
                        $ObjQuery.Operazioni.push({
                                                    Query     : 'InsertDelivery',
@@ -865,7 +940,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
                                     "COMUNE"         : $scope.SpedizioneInEditing.COMUNE,
                                     "CAP"            : $scope.SpedizioneInEditing.CAP,
                                     "PROVINCIA"      : $scope.SpedizioneInEditing.PROVINCIA,
-                                    "DATA"           : $scope.SpedizioneInEditing.DATA
+                                    "DATA"           : $scope.SpedizioneInEditing.DATA,
+                                    "ISTITUTO"       : ($scope.SpedizioneInEditing.ISTITUTO == -1 || $scope.SpedizioneInEditing.ISTITUTO == '') ? null : $scope.SpedizioneInEditing.ISTITUTO  
                                   }
                                      
                var NuovaSpedizione = ($scope.SpedizioneInEditing.CHIAVE == -1);

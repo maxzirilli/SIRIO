@@ -71,7 +71,7 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
   
   SystemInformation.GetSQL('Institute', {}, function(Results)  
   {  
-    IstitutiInfoLista = SystemInformation.FindResults(Results,'InstituteInfoList');
+    IstitutiInfoLista = SystemInformation.FindResults(Results,'InstituteInfoListOnlyVisibile');
     if(IstitutiInfoLista != undefined)
     { 
        for(let i = 0; i < IstitutiInfoLista.length; i++)
@@ -83,7 +83,7 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
        $scope.ListaIstituti = IstitutiInfoLista;
     }
     else SystemInformation.ApplyOnError('Modello istituti non conforme','');   
-  });
+  },'SelectSQLOnlyVisible');
   
   $scope.queryIstituto = function(searchTextIstituto)
   {

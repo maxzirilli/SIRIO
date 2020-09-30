@@ -2,14 +2,21 @@
   "SelectSQL"    : [
                      { 
                        "Name" : "InstituteInfoList",
-                       "SQL"  : "SELECT istituti.CHIAVE, istituti.CODICE, istituti.NOME, istituti.PROVINCIA, province.NOME AS NOME_PROVINCIA, utenti.USERNAME AS PROMOTORE FROM province,istituti LEFT OUTER JOIN utenti ON (utenti.CHIAVE = istituti.PROMOTORE) WHERE province.CHIAVE = istituti.PROVINCIA ORDER BY istituti.NOME"
+                       "SQL"  : "SELECT istituti.CHIAVE,istituti.NASCOSTO,istituti.CODICE,istituti.NOME,(SELECT COUNT(*) FROM istituti_x_docenti WHERE ISTITUTO = istituti.CHIAVE) AS NR_DOCENTI,istituti.PROVINCIA,province.NOME AS NOME_PROVINCIA,utenti.USERNAME AS PROMOTORE FROM province,istituti LEFT OUTER JOIN utenti ON (utenti.CHIAVE = istituti.PROMOTORE) WHERE province.CHIAVE = istituti.PROVINCIA ORDER BY istituti.NOME"
                      }                       
                    ],
+ 
+ "SelectSQLOnlyVisible"    : [
+                               { 
+                                 "Name" : "InstituteInfoListOnlyVisibile",
+                                 "SQL"  : "SELECT istituti.CHIAVE,istituti.CODICE,istituti.NOME,istituti.PROVINCIA FROM istituti WHERE NASCOSTO <> 1 ORDER BY istituti.NOME"
+                               }                       
+                             ],
                    
   "SelectInstituteDelivery"    : [
                                    { 
                                      "Name" : "InstituteForDeliveryList",
-                                     "SQL"  : "SELECT istituti.CHIAVE,istituti.NOME,istituti.INDIRIZZO,istituti.COMUNE,istituti.CAP,istituti.PROVINCIA,(SELECT province_all.CHIAVE FROM province_all WHERE NOME=(SELECT province.NOME FROM province WHERE CHIAVE = istituti.PROVINCIA)) AS PROVINCIA_LISTA_ALL FROM istituti ORDER BY istituti.NOME"
+                                     "SQL"  : "SELECT istituti.CHIAVE,istituti.NOME,istituti.INDIRIZZO,istituti.COMUNE,istituti.CAP,istituti.PROVINCIA,(SELECT province_all.CHIAVE FROM province_all WHERE NOME=(SELECT province.NOME FROM province WHERE CHIAVE = istituti.PROVINCIA)) AS PROVINCIA_LISTA_ALL FROM istituti WHERE NASCOSTO <> 1 ORDER BY istituti.NOME"
                                    }                       
                                  ],
 
@@ -74,6 +81,18 @@
                      {
                        "Name" : "UpdateDatabaseInstitute",
                        "SQL"  : "CALL AGGIORNA_ISTITUTO(#CodiceIstituto,#NomeIstituto,#IndirizzoIstituto,:ProvinciaIstituto,#ComuneIstituto,#CapIstituto,#EmailIstituto,#PecIstituto,#SitoWebIstituto,:SedeIstituto,#TipologiaIstituto)"
+                     },
+                     {
+                       "Name" : "SetInstituteVisibility",
+                       "SQL"  : "UPDATE istituti SET NASCOSTO=0 WHERE CHIAVE=:CHIAVE"
+                     },
+                     {
+                       "Name" : "TransferTeacherToInstitute",
+                       "SQL"  : "UPDATE istituti_x_docenti SET ISTITUTO=:NUOVO_ISTITUTO WHERE ISTITUTO=:VECCHIO_ISTITUTO"
+                     },
+                     {
+                       "Name" : "MergeInstitute",
+                       "SQL"  : "CALL UNISCI_NASCONDI_ISTITUTI(:OldIstituto,:NewIstituto)"
                      }
                    ]        
 }

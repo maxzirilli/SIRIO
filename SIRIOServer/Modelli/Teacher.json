@@ -2,9 +2,22 @@
   "SelectSQL"    : [
                      { 
                        "Name" : "TeacherInfoList",
-                       "SQL"  : "SELECT docenti.CHIAVE,docenti.RAGIONE_SOCIALE,docenti.EMAIL,docenti.TITOLO,docenti.INDIRIZZO,docenti.COMUNE,docenti.CAP,docenti.PROVINCIA,(SELECT province_all.NOME FROM province_all WHERE CHIAVE = docenti.PROVINCIA) AS PROVINCIA_NOME,docenti.MATERIA_1,docenti.MATERIA_2,docenti.MATERIA_3 FROM docenti {W~FiltroI~(docenti.CHIAVE IN (SELECT istituti_x_docenti.DOCENTE FROM istituti_x_docenti WHERE ISTITUTO = :FiltroI))~FiltroP~(docenti.CHIAVE IN (SELECT istituti_x_docenti.DOCENTE FROM istituti_x_docenti WHERE ISTITUTO IN (SELECT istituti.CHIAVE FROM istituti WHERE PROVINCIA = :FiltroP)))~FiltroT~(docenti.CHIAVE IN (SELECT DOCENTE FROM istituti_x_docenti WHERE ISTITUTO IN (SELECT ISTITUTO FROM classi WHERE CHIAVE IN (SELECT CLASSE FROM adozioni_titolo WHERE TITOLO=:FiltroT))))} ORDER BY docenti.RAGIONE_SOCIALE" 
+                       "SQL"  : "SELECT docenti.CHIAVE,docenti.RAGIONE_SOCIALE,docenti.EMAIL,docenti.TITOLO,docenti.INDIRIZZO,docenti.COMUNE,docenti.CAP,docenti.PROVINCIA,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE = docenti.MATERIA_1) AS NOME_MATERIA1,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE = docenti.MATERIA_2) AS NOME_MATERIA2,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE = docenti.MATERIA_3) AS NOME_MATERIA3,(SELECT province_all.NOME FROM province_all WHERE CHIAVE = docenti.PROVINCIA) AS PROVINCIA_NOME,docenti.MATERIA_1,docenti.MATERIA_2,docenti.MATERIA_3 FROM docenti {W~FiltroI~(docenti.CHIAVE IN (SELECT istituti_x_docenti.DOCENTE FROM istituti_x_docenti WHERE ISTITUTO = :FiltroI))~FiltroP~(docenti.CHIAVE IN (SELECT istituti_x_docenti.DOCENTE FROM istituti_x_docenti WHERE ISTITUTO IN (SELECT istituti.CHIAVE FROM istituti WHERE PROVINCIA = :FiltroP)))~FiltroT~(docenti.CHIAVE IN (SELECT DOCENTE FROM istituti_x_docenti WHERE ISTITUTO IN (SELECT ISTITUTO FROM classi WHERE CHIAVE IN (SELECT CLASSE FROM adozioni_titolo WHERE TITOLO=:FiltroT))))} ORDER BY docenti.RAGIONE_SOCIALE" 
                      }
                    ],
+                   
+   "SelectSQLDocSpedAdmin" : [
+                               {
+                                 "Name" : "TeacherInfoListSmallAdmin",
+                                 "SQL"  : "SELECT docenti.CHIAVE,docenti.RAGIONE_SOCIALE FROM docenti ORDER BY RAGIONE_SOCIALE ASC"
+                               }
+                             ],
+   "SelectSQLDocSpedPromotore" : [
+                                   {
+                                     "Name" : "TeacherInfoListSmallPromotore",
+                                     "SQL"  : "SELECT docenti.CHIAVE,docenti.RAGIONE_SOCIALE FROM docenti WHERE CHIAVE IN (SELECT DOCENTE FROM istituti_x_docenti WHERE ISTITUTO IN (SELECT CHIAVE FROM istituti WHERE PROMOTORE=#KeyAccount)) ORDER BY RAGIONE_SOCIALE ASC"
+                                   }
+                                 ],                              
                    
   "SQLDettaglio" : [
                      { 

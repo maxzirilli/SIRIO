@@ -15,6 +15,11 @@ SIRIOApp.controller("printLabelPageController",['$scope','SystemInformation','$s
   var ListaSpedizioni   = [];
   var ListaDaSpedireTmp = [];
   
+  var TroncaTitolo = function(str, n)
+  {
+    return (str.length > n) ? str.substr(0, n-1) + '(...)' : str;
+  };
+  
   SystemInformation.GetSQL('CompanyData',{}, function (Results)
   {
     DatiDittaSql     = SystemInformation.FindResults(Results,'GetCompanyData');
@@ -111,7 +116,71 @@ SIRIOApp.controller("printLabelPageController",['$scope','SystemInformation','$s
          var CoordY = 30;
          //doc.text(10,280,'BORDO INFERIORE');
          
-         for (let i = 0;i < ListaSpedizioni.length;i ++)
+         var ListaCumulativo = [];
+         
+         for(let i = 0;i < ListaSpedizioni.length;i ++)
+         {
+             for(let j = 0;j < ListaSpedizioni[i].ListaTitoli.length;j ++)
+             {
+                 TitoloCorrisp = ListaCumulativo.findIndex(function(ATitolo){return(ATitolo.Codice == ListaSpedizioni[i].ListaTitoli[j].CODICE_ISBN);});
+                 if(TitoloCorrisp == -1)
+                 {
+                    ListaCumulativo.push({
+                                           Codice     : ListaSpedizioni[i].ListaTitoli[j].CODICE_ISBN,
+                                           Nome       : ListaSpedizioni[i].ListaTitoli[j].NOME_TITOLO,
+                                           Quantita   : ListaSpedizioni[i].ListaTitoli[j].QUANTITA,
+                                           Posizione  : ListaSpedizioni[i].ListaTitoli[j].POS_MGZN
+                                         })
+                 }
+                 else 
+                 {
+                    ListaCumulativo[TitoloCorrisp].Quantita = parseInt(ListaCumulativo[TitoloCorrisp].Quantita) + parseInt(ListaSpedizioni[i].ListaTitoli[j].QUANTITA);   
+                    ListaCumulativo[TitoloCorrisp].Quantita = ListaCumulativo[TitoloCorrisp].Quantita.toString()
+                 } 
+             }
+         }
+         CoordY = 20;
+         doc.setFontType('bold');
+         doc.setFontSize(8);
+         doc.text(10,CoordY+10,'QNT');
+         doc.text(20,CoordY+10,'ISBN');
+         doc.text(45,CoordY+10,'TITOLO');
+         doc.text(160,CoordY+10,'POS.MAGAZZINO');
+     
+         for(let k = 0;k < ListaCumulativo.length;k ++)
+         {
+             if (CoordY >= 280) 
+             {
+               doc.addPage();
+               CoordY = 20;
+               doc.setFontType('bold');
+               doc.setFontSize(8);
+               doc.text(10,CoordY+10,'TOT');
+               doc.text(20,CoordY+10,'ISBN');
+               doc.text(45,CoordY+10,'TITOLO');
+               doc.text(160,CoordY+10,'POS.MAGAZZINO');
+               doc.setFontSize(6);
+               doc.setFontType('normal');
+               doc.text(10,290,SystemInformation.VDocDelivery)
+             }
+             
+             doc.setFontType('italic');
+             CoordY += 5;
+             var Q  = doc.getTextWidth('TOT');
+             var Qt = doc.getTextWidth(ListaCumulativo[k].Quantita);
+             doc.text(10 + Q + 1 - Qt,CoordY+10,ListaCumulativo[k].Quantita);
+             doc.text(20,CoordY+10,ListaCumulativo[k].Codice);
+             doc.text(45,CoordY+10,TroncaTitolo(ListaCumulativo[k].Nome,65));
+             doc.text(160,CoordY+10,ListaCumulativo[k].Posizione);            
+           
+           /*doc.setFontSize(6);
+           doc.setFontType('normal');
+           doc.text(10,290,SystemInformation.VDocDelivery)
+           CoordY +=20;*/ 
+         }
+                
+         
+         /*for (let i = 0;i < ListaSpedizioni.length;i ++)
          {
            if (CoordY >= 280) 
            {
@@ -141,7 +210,7 @@ SIRIOApp.controller("printLabelPageController",['$scope','SystemInformation','$s
            doc.setFontType('normal');
            doc.text(10,290,SystemInformation.VDocDelivery)
            CoordY +=20;        
-         }
+         }*/
          
          for (let i = 0;i < ListaSpedizioni.length;i ++)
          {

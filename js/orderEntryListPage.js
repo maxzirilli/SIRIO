@@ -1,8 +1,9 @@
-SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$state','$rootScope', function($scope,SystemInformation,$state,$rootScope)
+SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$state','$rootScope','$filter', function($scope,SystemInformation,$state,$rootScope,$filter)
 {
 
   $scope.EditingOn        = false;
   $scope.StampaOn         = false;
+  $scope.TitoloFiltro     = -1;
   $scope.OrdineInEditing  = {};
   $scope.ListaOrdini      = [];  
   $scope.ListaTitoli      = [];
@@ -199,7 +200,8 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
                                     Data        : OrdiniInfoLista[i].DATA,   
                                     Titolo      : OrdiniInfoLista[i].TITOLO, 
                                     Nome_Titolo : OrdiniInfoLista[i].NOME_TITOLO,                                   
-                                    Quantita    : OrdiniInfoLista[i].QUANTITA  
+                                    Quantita    : OrdiniInfoLista[i].QUANTITA,
+                                    Codice      : OrdiniInfoLista[i].CODICE                                     
                                   }         
          $scope.ListaOrdini = OrdiniInfoLista;
          $scope.ConvertiData($scope.ListaOrdini);
@@ -236,6 +238,7 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
                                   Codice : TitoliInfoLista[i].CODICE_ISBN
                                 }
        $scope.ListaTitoli  = TitoliInfoLista;
+       $scope.ListaTitoliF = TitoliInfoLista;
     }
     else SystemInformation.ApplyOnError('Modello titoli non conforme','');   
   },'SelectSQLFilter');
@@ -253,6 +256,23 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
   {
     if(itemTit != undefined)
        $scope.OrdineInEditing.Titolo = itemTit.Chiave;      
+  }
+  
+  $scope.queryTitoloMain = function(searchTextTitMain)
+  {
+     searchTextTitMain = searchTextTitMain.toUpperCase();
+     return($scope.ListaTitoliF.grep(function(Elemento) 
+     { 
+       return(Elemento.Nome.toUpperCase().indexOf(searchTextTitMain) != -1 || Elemento.Codice.indexOf(searchTextTitMain) != -1);
+     }));
+  }
+  
+  $scope.selectedItemChangeTitoloMain = function(itemTitMain)
+  {
+    if(itemTitMain != undefined)
+      $scope.TitoloFiltro = itemTitMain.Chiave;
+    else $scope.TitoloFiltro = -1;
+    $scope.RefreshListaOrdini(); 
   }
   
   $scope.ModificaOrdine = function(Ordine)
@@ -341,5 +361,34 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
   
   $scope.RefreshListaOrdini();
 
-
 }]);
+
+SIRIOApp.filter('OrdineByFiltro',function()
+{
+  return function(ListaOrdini,TitoloFiltro)
+         {
+           if(TitoloFiltro == -1) 
+              return(ListaOrdini);
+           var ListaFiltrata = [];
+           TitoloFiltro = TitoloFiltro.toUpperCase();
+           
+           var OrdineOk = function(Ordine)
+           {  
+              var Result = true;
+                  
+              if(TitoloFiltro != -1)
+                 if(Ordine.Titolo != TitoloFiltro)
+                    Result = false;
+              return(Result);
+           }
+           
+            ListaOrdini.forEach(function(Ordine)
+            { 
+              if(OrdineOk(Ordine)) 
+                 ListaFiltrata.push(Ordine)                       
+            });
+            
+            return(ListaFiltrata);
+           
+         }
+});

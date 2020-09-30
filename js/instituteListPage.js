@@ -1,4 +1,4 @@
-SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation','$state','$rootScope', function($scope,SystemInformation,$state,$rootScope)
+SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','$filter', function($scope,SystemInformation,$state,$rootScope,$mdDialog,$filter)
 {
   $scope.EditingOn          = false;
   $scope.IstitutoInEditing  = {};
@@ -12,9 +12,12 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
   $scope.ListaSezioniFinale = [];
   $scope.ArrayClassiFinale  = [];
   $scope.ClasseCliccata     = [];
+  $scope.IstitutiNascosti   = false;
   
   $scope.ProvinciaFiltro    = -1;
-  $scope.NomeFiltro         = '';  
+  $scope.NomeFiltro         = ''; 
+  $scope.NomeFiltroUnione   = '';
+  //$scope.IstitutoDaUnire    = -1;
   
   ScopeHeaderController.CheckButtons();
   
@@ -422,27 +425,126 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
       IstitutiInfoLista = SystemInformation.FindResults(Results,'InstituteInfoList');
       if(IstitutiInfoLista != undefined)
       { 
-         var ListaIstitutiTmp = [];   
-         var AddIstituto = function (Chiave,Codice,Nome,Promotore,Provincia,ProvinciaNome)
-         {
-           ListaIstitutiTmp.push({ 
-                                   Chiave        : Chiave,
-                                   Codice        : Codice,   
-                                   Nome          : Nome,  
-                                   Promotore     : Promotore,
-                                   Provincia     : Provincia, 
-                                   ProvinciaNome : ProvinciaNome                                    
-                                 });
-         }
-         IstitutiInfoLista.forEach(function(Istituto)
-         {
-           AddIstituto(Istituto.CHIAVE,Istituto.CODICE,Istituto.NOME,Istituto.PROMOTORE,Istituto.PROVINCIA,Istituto.NOME_PROVINCIA)
-         });
-         $scope.ListaIstituti = ListaIstitutiTmp;
+         for(let i = 0;i < IstitutiInfoLista.length;i ++)
+         
+             IstitutiInfoLista[i] = {
+                                      Chiave        : IstitutiInfoLista[i].CHIAVE,
+                                      Codice        : (IstitutiInfoLista[i].CODICE == null || IstitutiInfoLista[i].CODICE == '') ? 'N.D.' : IstitutiInfoLista[i].CODICE,   
+                                      Nome          : (IstitutiInfoLista[i].NOME == null || IstitutiInfoLista[i].NOME == '') ? 'N.D.' : IstitutiInfoLista[i].NOME,  
+                                      Promotore     : IstitutiInfoLista[i].PROMOTORE,
+                                      Provincia     : IstitutiInfoLista[i].PROVINCIA, 
+                                      ProvinciaNome : IstitutiInfoLista[i].NOME_PROVINCIA,
+                                      Nascosto      : (IstitutiInfoLista[i].NASCOSTO == null || IstitutiInfoLista[i].NASCOSTO == 0) ? false : 1                        
+                                    }
+         
+            $scope.ListaIstituti = IstitutiInfoLista
       }
       else SystemInformation.ApplyOnError('Modello istituti non conforme','');   
     });
   }
+  
+  $scope.RendiVisibileIstituto = function (ChiaveIstituto,NomeIstituto)
+  {
+    if(confirm("Rendere visibile nuovamente l'istituto " + NomeIstituto + " ?"))
+    {
+       var $ObjQuery     = { Operazioni : [] };         
+       $ObjQuery.Operazioni.push({
+                                   Query     : 'SetInstituteVisibility',
+                                   Parametri : {CHIAVE : ChiaveIstituto}
+                                 }); 
+       
+       SystemInformation.PostSQL('Institute',$ObjQuery,function(Answer)
+       {
+         $scope.RefreshListaIstituti(); 
+       });
+    }
+  }
+  
+  $scope.UnisciIstituti = function(IstitutoOld) 
+  { 
+    $mdDialog.show({ 
+                     controller          : DialogControllerUnisciIstituti,
+                     templateUrl         : "template/transferTeacherInstitutePopup.html",
+                     targetEvent         : IstitutoOld,
+                     scope               : $scope,
+                     preserveScope       : true,
+                     clickOutsideToClose : true,
+                     locals              : {IstitutoOld}
+                   })
+    .then(function(answer) 
+    {}, 
+    function() 
+    {});
+  };
+
+  function DialogControllerUnisciIstituti($scope,$mdDialog,IstitutoOld)
+  {
+    SystemInformation.GetSQL('Institute',{},function(Results)
+    {
+      $scope.IstitutoOld = IstitutoOld.Nome;
+      $scope.ListaIstitutiPopupUnione = [];
+      var ListaIstitutiPopupTmp = []
+      
+      ListaIstitutiPopupTmp = SystemInformation.FindResults(Results,'InstituteInfoListOnlyVisibile');
+      if(ListaIstitutiPopupTmp != undefined)
+      {
+         for(let i = 0;i < ListaIstitutiPopupTmp.length;i ++)         
+             ListaIstitutiPopupTmp[i] = {
+                                          Chiave    : ListaIstitutiPopupTmp[i].CHIAVE,
+                                          Nome      : ListaIstitutiPopupTmp[i].NOME,
+                                          Codice    : ListaIstitutiPopupTmp[i].CODICE,
+                                          Provincia : ListaIstitutiPopupTmp[i].PROVINCIA              
+                                        }
+             $scope.ListaIstitutiPopupUnione = ListaIstitutiPopupTmp;
+             
+         $scope.hide = function() 
+         {
+           $mdDialog.hide();
+         };
+
+         $scope.AnnullaPopup = function() 
+         { 
+           $scope.IstitutoDaUnire = -1;
+           $mdDialog.cancel();
+         };
+         
+         $scope.ConfermaPopup = function(Istituto) 
+         {     
+           if(Istituto == -1) 
+           { 
+             alert ('Nessun istituto selezionato!');      
+             return
+           }
+           else
+           {
+             IstitutoCorrisp = $scope.ListaIstitutiPopupUnione.find(function(AIstituto){return(AIstituto.Chiave == $scope.IstitutoDaUnire);});            
+             if(confirm("Cliccando CONFERMA tutti i docenti verranno passati dall'istituto " + IstitutoOld.Nome + " all'istituto " + IstitutoCorrisp.Nome + ".Confermi?"))
+             {
+                var $ObjQuery = {Operazioni:[]}
+                ParametriUnione = {
+                                    OldIstituto : IstitutoOld.Chiave, 
+                                    NewIstituto : $scope.IstitutoDaUnire 
+                                  }
+                $ObjQuery.Operazioni.push({
+                                            Query     : 'MergeInstitute',
+                                            Parametri : ParametriUnione
+                                          });
+                SystemInformation.PostSQL('Institute',$ObjQuery,function(Answer)
+                {
+                  $scope.ListaIstitutiPopupUnione = [];
+                  $mdDialog.hide();
+                  $scope.RefreshListaIstituti();                 
+                });
+             }              
+           }
+                   
+         };
+             
+             
+      }
+      else SystemInformation.ApplyOnError('Modello istituti visibili non conforme','')      
+    },'SelectSQLOnlyVisible');
+  }  
   
   GetCodeSezione = function(Sezione)
   {
@@ -720,28 +822,65 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
 
 SIRIOApp.filter('IstitutoByFiltro',function()
 {
-  return function(ListaIstituti,ProvinciaFiltro,NomeFiltro)
+  return function(ListaIstituti,ProvinciaFiltro,NomeFiltro,NascostoFiltro)
          {
-           if(ProvinciaFiltro == -1 && NomeFiltro == '') return(ListaIstituti);
+           if(ProvinciaFiltro == -1 && NomeFiltro == '' && NascostoFiltro == true) return(ListaIstituti);
            var ListaFiltrata = [];
            NomeFiltro = NomeFiltro.toUpperCase();
            
-           if (ProvinciaFiltro != -1)
-           {            
-             ListaIstituti.forEach(function(Istituto)
-             { 
-               if(Istituto.Provincia == ProvinciaFiltro && Istituto.Nome.toUpperCase().indexOf(NomeFiltro) >= 0) 
-                  ListaFiltrata.push(Istituto)                       
-             })
+           var IstitutoOK = function(Istituto)
+           {  
+              var Result = true;
+              
+              if(NomeFiltro != '')
+                if(Istituto.Nome.toUpperCase().indexOf(NomeFiltro) < 0)
+                   Result = false;
+                  
+              if(ProvinciaFiltro != -1)
+                 if(ProvinciaFiltro != Istituto.Provincia)
+                    Result = false;
+                   
+              if(!NascostoFiltro)
+                 if(Istituto.Nascosto)
+                    Result = false;
+              
+              return(Result);
            }
-           else
-           {             
-             ListaIstituti.forEach(function(Istituto) 
-             {
-               if(Istituto.Nome.toUpperCase().indexOf(NomeFiltro) >= 0) 
-                  ListaFiltrata.push(Istituto);
-             });           
+           
+           ListaIstituti.forEach(function(Istituto)
+           { 
+             if(IstitutoOK(Istituto)) 
+                ListaFiltrata.push(Istituto)                       
+           });
+            
+           return(ListaFiltrata);
+         }
+});
+
+SIRIOApp.filter('IstitutoByNomeFiltroUnione',function()
+{
+  return function(ListaIstitutiPopupUnione,NomeFiltroUnione)
+         {
+           if(NomeFiltroUnione == '') return(ListaIstitutiPopupUnione);
+           var ListaFiltrata = [];
+           NomeFiltroUnione = NomeFiltroUnione.toUpperCase();
+           
+           var IstitutoOK = function(Istituto)
+           {  
+              var Result = true;
+              
+              if(NomeFiltroUnione != '')
+                if(Istituto.Nome.toUpperCase().indexOf(NomeFiltroUnione) < 0)
+                   Result = false;
+              
+              return(Result);
            }
+           
+           ListaIstitutiPopupUnione.forEach(function(Istituto)
+           { 
+             if(IstitutoOK(Istituto)) 
+                ListaFiltrata.push(Istituto)                       
+           });
             
            return(ListaFiltrata);
          }

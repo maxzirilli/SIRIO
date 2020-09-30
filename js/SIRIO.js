@@ -1,5 +1,5 @@
 // Inizializzazioni
-const VERSIONE_ATTUALE = '1.1.2';
+const VERSIONE_ATTUALE = '1.2.3';
 
 SIRIOApp.config(['$qProvider', function ($qProvider)
 {
@@ -157,7 +157,13 @@ SIRIOApp.config(['$stateProvider','$urlRouterProvider','$mdAriaProvider',functio
     {
         templateUrl: "template/mailPage.html",
         url: '/mailPage'
-    }) 
+    })
+    
+    $stateProvider.state('deliveryAdvancedManagementPage', 
+    {
+        templateUrl: "template/deliveryAdvancedManagementPage.html",
+        url: '/deliveryAdvancedManagementPage'
+    })    
 
     $urlRouterProvider.otherwise('loginPage');
 }]);

@@ -92,17 +92,27 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   });   
 
   SystemInformation.GetSQL('Institute', {}, function(Results)  
-  {  
+  { 
+    var ListaIstitutiAssegnati = [];  
     IstitutiInfoLista = SystemInformation.FindResults(Results,'InstituteInfoList');
     if(IstitutiInfoLista != undefined)
-    { 
+    {      
        for(let i = 0; i < IstitutiInfoLista.length; i++)
+       {
+           if(IstitutiInfoLista[i].NR_DOCENTI > 0)
+              ListaIstitutiAssegnati.push({
+                                            Chiave   : IstitutiInfoLista[i].CHIAVE,
+                                            Istituto : IstitutiInfoLista[i].NOME
+                                          });
+       
            IstitutiInfoLista[i] = { 
-                                    Chiave     : IstitutiInfoLista[i].CHIAVE,
-                                    Istituto   : IstitutiInfoLista[i].NOME
+                                    Chiave   : IstitutiInfoLista[i].CHIAVE,
+                                    Istituto : IstitutiInfoLista[i].NOME
                                   }
-       $scope.ListaIstituti = IstitutiInfoLista;
-       $scope.ListaIstitutiPopup = IstitutiInfoLista;
+       }
+       $scope.ListaIstituti         = ListaIstitutiAssegnati;
+       $scope.ListaIstitutiNoFilter = Array.from(ListaIstitutiAssegnati);       
+       $scope.ListaIstitutiPopup    = IstitutiInfoLista;
     }
     else SystemInformation.ApplyOnError('Modello istituti non conforme','');   
   });
@@ -180,9 +190,13 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   {
     if(itemTit != undefined)
       $scope.TitoloFiltro = itemTit.Chiave;
-    else $scope.TitoloFiltro = -1;
+    else
+    {
+      $scope.TitoloFiltro  = -1;
+      $scope.ListaIstituti = $scope.ListaIstitutiNoFilter;
+    } //$scope.TitoloFiltro = -1;
     $scope.RefreshListaDocenti();
-  }   
+  }  
   
   $scope.queryIstituto = function(searchTextIstituto)
   {
@@ -199,7 +213,23 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
        $scope.IstitutoFiltrato = itemIstituto.Chiave;
     else $scope.IstitutoFiltrato = -1;
     $scope.RefreshListaDocenti();
-  }   
+  }
+
+  $scope.GetMaterieDoc = function(Docente)
+  {
+     var Result = '';
+     if(Docente.DescrMateria1 == '' && Docente.DescrMateria2 == '' && Docente.DescrMateria3 == '') Result = 'NESSUNA MATERIA';
+     else
+     {
+       if (Docente.DescrMateria1 != '')
+          Result += Docente.DescrMateria1 + '</br>';
+       if (Docente.DescrMateria2 != '')            
+          Result += Docente.DescrMateria2 + '</br>'
+       if (Docente.DescrMateria3 != '')            
+          Result += Docente.DescrMateria3
+     }             
+     return($sce.trustAsHtml(Result.substr(0,Result.length)));
+  }  
   
   $scope.RefreshListaDocenti = function ()
   {
@@ -233,8 +263,11 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                                   Chiave         : DocentiInfoLista[i].CHIAVE,
                                   RagioneSociale : DocentiInfoLista[i].RAGIONE_SOCIALE,
                                   Materia1       : DocentiInfoLista[i].MATERIA_1      == null ? -1 : DocentiInfoLista[i].MATERIA_1,
+                                  DescrMateria1  : DocentiInfoLista[i].NOME_MATERIA1  == null ? '' : DocentiInfoLista[i].NOME_MATERIA1,
                                   Materia2       : DocentiInfoLista[i].MATERIA_2      == null ? -1 : DocentiInfoLista[i].MATERIA_2,
+                                  DescrMateria2  : DocentiInfoLista[i].NOME_MATERIA2  == null ? '' : DocentiInfoLista[i].NOME_MATERIA2,
                                   Materia3       : DocentiInfoLista[i].MATERIA_3      == null ? -1 : DocentiInfoLista[i].MATERIA_3,
+                                  DescrMateria3  : DocentiInfoLista[i].NOME_MATERIA3  == null ? '' : DocentiInfoLista[i].NOME_MATERIA3,
                                   Titolo         : DocentiInfoLista[i].TITOLO         == null ? '' : DocentiInfoLista[i].TITOLO,
                                   Indirizzo      : DocentiInfoLista[i].INDIRIZZO      == null ? '' : DocentiInfoLista[i].INDIRIZZO,
                                   Comune         : DocentiInfoLista[i].COMUNE         == null ? '' : DocentiInfoLista[i].COMUNE,
@@ -254,14 +287,24 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
             ListaIstitutiTitoloTmp = SystemInformation.FindResults(Results,'InstituteForBook');
             if(ListaIstitutiTitoloTmp != undefined)
             {
+               //for(let j = 0; j < ListaIstitutiTitoloTmp.length;j ++)
+               //{
+                   //ListaIstitutiTitoloTmp[j] = //{
+                                                 /*Chiave   : ListaIstitutiTitoloTmp[i].CHIAVE,
+                                                 Istituto :*/ //ListaIstitutiTitoloTmp[j].NOME == null ? 'N.D.' : ListaIstitutiTitoloTmp[j].NOME.toUpperCase()
+                                               //}
+               //}
+               //$scope.ListaIstitutiTitolo = ListaIstitutiTitoloTmp.toString();
+               
                for(let i = 0; i < ListaIstitutiTitoloTmp.length;i ++)
                {
-                   ListaIstitutiTitoloTmp[i] = //{
-                                                 /*Chiave   : ListaIstitutiTitoloTmp[i].CHIAVE,
-                                                 Istituto :*/ ListaIstitutiTitoloTmp[i].NOME.toUpperCase()
-                                               //}
+                   ListaIstitutiTitoloTmp[i] = {
+                                                 Chiave   : ListaIstitutiTitoloTmp[i].CHIAVE,
+                                                 Istituto : ListaIstitutiTitoloTmp[i] == null ? 'N.D.' : ListaIstitutiTitoloTmp[i].NOME.toUpperCase()
+                                               }
                }
-               $scope.ListaIstitutiTitolo = ListaIstitutiTitoloTmp.toString();
+               $scope.ListaIstituti = ListaIstitutiTitoloTmp;
+               
             }
             else SystemInformation.ApplyOnError('Modello istituti per titolo filtrato non conforme','')
           },'SelectInstituteList')
@@ -699,6 +742,30 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
       $scope.EditingOn                         = false;
       $scope.DisponibilitaInEditing            = []; 
       $scope.RefreshListaDocenti();
+      SystemInformation.GetSQL('Institute', {}, function(Results)  
+      { 
+        var ListaIstitutiAssegnati = [];  
+        IstitutiInfoLista = SystemInformation.FindResults(Results,'InstituteInfoList');
+        if(IstitutiInfoLista != undefined)
+        {      
+           for(let i = 0; i < IstitutiInfoLista.length; i++)
+           {
+               if(IstitutiInfoLista[i].NR_DOCENTI > 0)
+                  ListaIstitutiAssegnati.push({
+                                                Chiave   : IstitutiInfoLista[i].CHIAVE,
+                                                Istituto : IstitutiInfoLista[i].NOME
+                                              });
+           
+               IstitutiInfoLista[i] = { 
+                                        Chiave   : IstitutiInfoLista[i].CHIAVE,
+                                        Istituto : IstitutiInfoLista[i].NOME
+                                      }
+           }
+           $scope.ListaIstituti      = ListaIstitutiAssegnati;                                  
+           $scope.ListaIstitutiPopup = IstitutiInfoLista;
+        }
+        else SystemInformation.ApplyOnError('Modello istituti non conforme','');   
+      });      
     });  
   }
   
@@ -1182,18 +1249,37 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
     
     $scope.RefreshListaSpedizioni = function ()
     {
-      $scope.ListaSpedizioniDoc = [];    
+      var ListaSpedizioniDocDettaglio = [];
+      $scope.ListaSpedizioniDoc       = [];    
       if($scope.IsAdministrator())
       {
          SystemInformation.GetSQL('Delivery',{CHIAVE : Docente.Chiave},function(Results)
          {
-           $scope.ListaSpedizioniDoc = SystemInformation.FindResults(Results,'TeacherDeliveryListAdm');
-           if($scope.ListaSpedizioniDoc != undefined)
+           $scope.ListaSpedizioniDoc    = SystemInformation.FindResults(Results,'TeacherDeliveryListAdm');
+           ListaSpedizioniDocDettaglio  = SystemInformation.FindResults(Results,'TeacherDeliveryListAdmDettaglio');
+
+           if($scope.ListaSpedizioniDoc != undefined && ListaSpedizioniDocDettaglio != undefined)
            {
-             for(let i = 0;i < $scope.ListaSpedizioniDoc.length;i ++)
-             {
-                 $scope.ListaSpedizioniDoc[i].DATA = ZFormatDateTime('dd/mm/yyyy',ZDateFromHTMLInput($scope.ListaSpedizioniDoc[i].DATA))
-             } 
+              $scope.ListaSpedizioniDoc.forEach(function(Spedizione){Spedizione.DettagliTitoli = []});       
+              for(let i = 0;i < $scope.ListaSpedizioniDoc.length;i ++)
+              {
+                  $scope.ListaSpedizioniDoc[i].DATA = ZFormatDateTime('dd/mm/yyyy',ZDateFromHTMLInput($scope.ListaSpedizioniDoc[i].DATA))
+                  for(let j = 0;j < ListaSpedizioniDocDettaglio.length;j ++)
+                  {
+                      switch(ListaSpedizioniDocDettaglio[j].STATO)
+                      {
+                             case 'P' : ListaSpedizioniDocDettaglio[j].STATO = 'PRENOTATO'
+                                        break;
+                             case 'S' : ListaSpedizioniDocDettaglio[j].STATO = 'DA SPEDIRE'
+                                        break;
+                             case 'C' : ListaSpedizioniDocDettaglio[j].STATO = 'CONSEGNATO'
+                                        break;
+                                        
+                      }
+                      if($scope.ListaSpedizioniDoc[i].CHIAVE == ListaSpedizioniDocDettaglio[j].SPEDIZIONE)
+                         $scope.ListaSpedizioniDoc[i].DettagliTitoli.push(ListaSpedizioniDocDettaglio[j]);
+                  }                        
+              } 
            }
            else SystemInformation.ApplyOnError('Modello lista spedizioni docente non conforme','');       
          },'SelectSQLDocenteAdmin')
@@ -1202,20 +1288,49 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
       {
          SystemInformation.GetSQL('Delivery',{CHIAVE : Docente.Chiave},function(Results)
          {
-           $scope.ListaSpedizioniDoc = SystemInformation.FindResults(Results,'TeacherDeliveryListPrm');
-           if($scope.ListaSpedizioniDoc != undefined)
-           {
-             for(let i = 0;i < $scope.ListaSpedizioniDoc.length;i ++)
-             {
-                 $scope.ListaSpedizioniDoc[i].DATA = ZFormatDateTime('dd/mm/yyyy',ZDateFromHTMLInput($scope.ListaSpedizioniDoc[i].DATA))
-             } 
+           $scope.ListaSpedizioniDoc           = SystemInformation.FindResults(Results,'TeacherDeliveryListPrm');
+           $scope.ListaSpedizioniDocDettaglio  = SystemInformation.FindResults(Results,'TeacherDeliveryListPrmDettaglio');
+           if($scope.ListaSpedizioniDoc != undefined && $scope.ListaSpedizioniDocDettaglio != undefined)
+           { 
+              $scope.ListaSpedizioniDoc.forEach(function(Spedizione){Spedizione.DettagliTitoli = []});       
+              for(let i = 0;i < $scope.ListaSpedizioniDoc.length;i ++)
+              {
+                  $scope.ListaSpedizioniDoc[i].DATA = ZFormatDateTime('dd/mm/yyyy',ZDateFromHTMLInput($scope.ListaSpedizioniDoc[i].DATA))
+                  for(let j = 0;j < ListaSpedizioniDocDettaglio.length;j ++)
+                  {
+                      switch(ListaSpedizioniDocDettaglio[j].STATO)
+                      {
+                             case 'P' : ListaSpedizioniDocDettaglio[j].STATO = 'PRENOTATO'
+                                        break;
+                             case 'S' : ListaSpedizioniDocDettaglio[j].STATO = 'DA SPEDIRE'
+                                        break;
+                             case 'C' : ListaSpedizioniDocDettaglio[j].STATO = 'CONSEGNATO'
+                                        break;
+                                        
+                      }
+                      if($scope.ListaSpedizioniDoc[i].CHIAVE == ListaSpedizioniDocDettaglio[j].SPEDIZIONE)
+                         $scope.ListaSpedizioniDoc[i].DettagliTitoli.push(ListaSpedizioniDocDettaglio[j]);
+                  }                        
+              }           
            }
            else SystemInformation.ApplyOnError('Modello lista spedizioni docente non conforme','');       
          },'SelectSQLDocentePromotore')       
       }
     }
     
-    $scope.GetDescrStatoSpedizione = function(Spedizione)
+    $scope.GetTitoliSpedizione = function(Spedizione)
+    {
+       var Result = '';
+       for(let i = 0;i < Spedizione.DettagliTitoli.length;i ++)
+       {
+           Result += Spedizione.DettagliTitoli[i].CODICE + ' - ' + Spedizione.DettagliTitoli[i].NOME_TITOLO + ' - ' + Spedizione.DettagliTitoli[i].STATO + '</br>';
+       }
+       
+       return($sce.trustAsHtml(Result.substr(0,Result.length)));
+    }
+  
+    
+    /*$scope.GetDescrStatoSpedizione = function(Spedizione)
     {
        var Result = '';
        if(Spedizione.NR_PRENOTATE != 0)
@@ -1238,7 +1353,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
        }
        
        return($sce.trustAsHtml(Result.substr(0,Result.length - 5)));
-    }
+    }*/
     
     $scope.ModificaSpedizione = function(ChiaveSpedizione) 
     { 
@@ -1314,13 +1429,13 @@ SIRIOApp.filter('DocenteByFiltro',function()
               return(Result);
            }
            
-            ListaDocenti.forEach(function(Docente)
-            { 
-              if(DocenteOk(Docente)) 
-                 ListaFiltrata.push(Docente)                       
-            });
-            
-            return(ListaFiltrata);
+           ListaDocenti.forEach(function(Docente)
+           { 
+             if(DocenteOk(Docente)) 
+                ListaFiltrata.push(Docente)                       
+           });
+           
+           return(ListaFiltrata);
            
          }
 });

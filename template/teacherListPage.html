@@ -40,26 +40,6 @@
            Nessuna corrispondenza
          </md-not-found>
       </md-input-container>
-
-      <md-input-container class="containerSelect" style="width:20%;margin-right:10px;">
-         <label>Istituto</label>
-         <md-autocomplete
-                     md-input-name="Istituto"
-                     md-autofocus="true"
-                     md-no-cache="true"
-                     md-selected-item-change = "selectedItemChangeIstituto(item)"
-                     md-search-text="searchTextIstituto"
-                     md-items="item in queryIstituto(searchTextIstituto)"
-                     md-item-text="item.Istituto"
-                     md-require-match="true"
-                     md-clear-button="true">
-         <md-item-template>
-           <span md-highlight-text="searchText">{{item.Istituto}}</span>
-         </md-item-template>
-         <md-not-found>
-           Nessuna corrispondenza
-         </md-not-found>
-       </md-input-container>
        
        <md-input-container class="containerSelect" style="width:40%;margin-right:10px;">
          <label>Titolo</label>
@@ -81,11 +61,31 @@
            Nessuna corrispondenza
          </md-not-found>
        </md-input-container>
+       
+      <md-input-container class="containerSelect" style="width:20%;margin-right:10px;">
+         <label>Istituto</label>
+         <md-autocomplete
+                     md-input-name="Istituto"
+                     md-autofocus="true"
+                     md-no-cache="true"
+                     md-selected-item-change = "selectedItemChangeIstituto(item)"
+                     md-search-text="searchTextIstituto"
+                     md-items="item in queryIstituto(searchTextIstituto)"
+                     md-item-text="item.Istituto"
+                     md-require-match="true"
+                     md-clear-button="true">
+         <md-item-template>
+           <span md-highlight-text="searchText">{{item.Istituto}}</span>
+         </md-item-template>
+         <md-not-found>
+           Nessuna corrispondenza
+         </md-not-found>
+      </md-input-container>
     </div>    
     <div ng-if="ListaDocenti.length != 0">
-      <label style="font-weight:bold;" ng-if="ListaIstitutiTitolo.length != 0">TITOLO IN ADOZIONE PRESSO I SEGUENTI ISTITUTI:</label>
+      <!--<label style="font-weight:bold;" ng-if="ListaIstitutiTitolo.length != 0">TITOLO IN ADOZIONE PRESSO I SEGUENTI ISTITUTI:</label>
       <br>
-      <p ng-if="ListaIstitutiTitolo.length != 0">{{ListaIstitutiTitolo}}</p>
+      <p ng-if="ListaIstitutiTitolo.length != 0">{{ListaIstitutiTitolo}}</p>-->
       <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
         <tr>
           <th></th>
@@ -94,6 +94,7 @@
           <th></th>
           <th></th>
           <th>COGNOME NOME</th>
+          <th>MATERIA</th>
         </tr>  
         <tr ng-repeat="Docente in ListaDocenti | DocenteByFiltro : NomeFiltro : MateriaFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Docente.Chiave}}>
           <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA DOCENTE" ng-click="EliminaDocente(Docente)"></td> 
@@ -103,6 +104,7 @@
           <td ng-if="Docente.Email != 'Non disponibile'"><img src="img/email.png" style="width:30px;height:auto;" title="INVIA MAIL"  ng-click="InvioMail(Docente)"></td>
           <td class="off" ng-if="Docente.Email == 'Non disponibile'"><img src="img/email.png" style="width:30px;height:auto;filter:grayscale(100%);" title="MAIL NON DISPONIBILE"></td>       
           <td class="off">{{Docente.RagioneSociale}}</td>
+          <td class="off" ng-bind-html="GetMaterieDoc(Docente)"></td>
         </tr>    
       </table>
       <md-table-pagination md-limit="GridOptions.query.limit" 

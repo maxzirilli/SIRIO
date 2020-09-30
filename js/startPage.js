@@ -172,6 +172,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce)
                  alert('I seguenti titoli sono stati segnati come DA SPEDIRE : ' + TitoliDaSpedire)
               else if (TitoliNonDisponibili.length != 0 && TitoliDaSpedire.length != 0)
                  alert('I seguenti titoli sono stati segnati come DA SPEDIRE : ' + TitoliDaSpedire + '\n' + '\n' + 'I seguenti titoli non sono disponibili per essere spediti:  ' + TitoliNonDisponibili);              
+              $scope.RefreshListaUltimeSpedizioni(); 
             })                       
          }
          else SystemInformation.ApplyOnError('Modello dettaglio spedizione non conforme','');
@@ -185,20 +186,38 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce)
     {
        SystemInformation.GetSQL('Delivery',{},function(Results)
        {
-         UltimeVentiSpedizioniTmp = SystemInformation.FindResults(Results,'DeliveryListLastTwentyAdm');
+         UltimeVentiSpedizioniTmp          = SystemInformation.FindResults(Results,'DeliveryListLastTwentyAdm');
+         //UltimeVentiSpedizioniDettaglioTmp = SystemInformation.FindResults(Results,'DeliveryListLastTwentyAdmDettaglio');
          if (UltimeVentiSpedizioniTmp != undefined) 
          {
            for(let i = 0; i < UltimeVentiSpedizioniTmp.length; i++)
+           {
                UltimeVentiSpedizioniTmp[i] = {
                                                Chiave       : UltimeVentiSpedizioniTmp[i].CHIAVE,
                                                Presso       : UltimeVentiSpedizioniTmp[i].PRESSO,
                                                Docente      : UltimeVentiSpedizioniTmp[i].DOCENTE == null ? -1 : UltimeVentiSpedizioniTmp[i].DOCENTE,
-                                               DocenteNome  : UltimeVentiSpedizioniTmp[i].NOME_DOCENTE,
+                                               DocenteNome  : UltimeVentiSpedizioniTmp[i].NOME_DOCENTE == null ? 'N.D.' : UltimeVentiSpedizioniTmp[i].NOME_DOCENTE,
                                                Data         : ZFormatDateTime('dd/mm/yyyy',ZDateFromHTMLInput(UltimeVentiSpedizioniTmp[i].DATA)),
                                                NrConsegnate : UltimeVentiSpedizioniTmp[i].NR_CONSEGNATE,
                                                NrDaSpedire  : UltimeVentiSpedizioniTmp[i].NR_DA_SPEDIRE,
-                                               NrPrenotate  : UltimeVentiSpedizioniTmp[i].NR_PRENOTATE                                               
+                                               NrPrenotate  : UltimeVentiSpedizioniTmp[i].NR_PRENOTATE,
+                                               Spedibile    : false                                               
                                              }
+               SystemInformation.GetSQL('Delivery',{CHIAVE : UltimeVentiSpedizioniTmp[i].Chiave},function(Results)
+               {
+                 UltimeVentiSpedizioniDettaglioTmp = SystemInformation.FindResults(Results,'DeliveryListLastTwentyAdmDettaglio');
+                 if(UltimeVentiSpedizioniDettaglioTmp != undefined)
+                 {
+                    for(let j = 0;j < UltimeVentiSpedizioniDettaglioTmp.length;j ++)                                                            
+                        if (UltimeVentiSpedizioniDettaglioTmp[j].SPEDIBILE == 1)
+                        {                                                                   
+                            UltimeVentiSpedizioniTmp[i].Spedibile = true;
+                            break;
+                        }
+                 }
+                 else SystemInformation.ApplyOnError('Modello dettaglio spedizioni non conforme','');     
+               },'SQLUltime20AdminDettaglio')      
+           }                                            
            $scope.UltimeVentiSpedizioni = UltimeVentiSpedizioniTmp;
          }
          else SystemInformation.ApplyOnError('Modello spedizioni non conforme','');     
@@ -212,16 +231,33 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce)
          if (UltimeVentiSpedizioniTmp != undefined) 
          {
            for(let i = 0; i < UltimeVentiSpedizioniTmp.length; i++)
+           {
                UltimeVentiSpedizioniTmp[i] = {
                                                Chiave       : UltimeVentiSpedizioniTmp[i].CHIAVE,
                                                Presso       : UltimeVentiSpedizioniTmp[i].PRESSO,
                                                Docente      : UltimeVentiSpedizioniTmp[i].DOCENTE == null ? -1 : UltimeVentiSpedizioniTmp[i].DOCENTE,
-                                               DocenteNome  : UltimeVentiSpedizioniTmp[i].NOME_DOCENTE,
+                                               DocenteNome  : UltimeVentiSpedizioniTmp[i].NOME_DOCENTE == null ? 'N.D.' : UltimeVentiSpedizioniTmp[i].NOME_DOCENTE,
                                                Data         : ZFormatDateTime('dd/mm/yyyy',ZDateFromHTMLInput(UltimeVentiSpedizioniTmp[i].DATA)),
                                                NrConsegnate : UltimeVentiSpedizioniTmp[i].NR_CONSEGNATE,
                                                NrDaSpedire  : UltimeVentiSpedizioniTmp[i].NR_DA_SPEDIRE,
-                                               NrPrenotate  : UltimeVentiSpedizioniTmp[i].NR_PRENOTATE                                                
+                                               NrPrenotate  : UltimeVentiSpedizioniTmp[i].NR_PRENOTATE,
+                                               Spedibile    : false
                                              }
+               SystemInformation.GetSQL('Delivery',{CHIAVE : UltimeVentiSpedizioniTmp[i].Chiave},function(Results)
+               {
+                 UltimeVentiSpedizioniDettaglioTmp = SystemInformation.FindResults(Results,'DeliveryListLastTwentyPrmDettaglio');
+                 if(UltimeVentiSpedizioniDettaglioTmp != undefined)
+                 {
+                    for(let j = 0;j < UltimeVentiSpedizioniDettaglioTmp.length;j ++)                                                            
+                        if (UltimeVentiSpedizioniDettaglioTmp[j].SPEDIBILE == 1)
+                        {                                                                   
+                            UltimeVentiSpedizioniTmp[i].Spedibile = true;
+                            break;
+                        }
+                 }
+                 else SystemInformation.ApplyOnError('Modello dettaglio spedizioni non conforme','');     
+               },'SQLUltime20PromotoreDettaglio')  
+           }
            $scope.UltimeVentiSpedizioni = UltimeVentiSpedizioniTmp;
          }
          else SystemInformation.ApplyOnError('Modello spedizioni non conforme','');     

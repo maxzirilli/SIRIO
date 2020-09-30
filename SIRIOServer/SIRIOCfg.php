@@ -1,7 +1,7 @@
 <?php
     // Configurazione coordinate server SQL
     define('MYSQLSERVER','localhost');
-    define('MYSQLDBASE','sirio');
+    define('MYSQLDBASE','test');
     define('MYSQLACCOUNT', 'root');
     define('MYSQLPASSWORD', '');
     

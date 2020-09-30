@@ -28,16 +28,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
         $scope.Contatore   = 0;
         var i = 1;
         
-        $ObjQuery.Operazioni.push({
-                                    Query     : 'DeleteAllAdoptionTab',
-                                    Parametri : {}
-                                  })
-        
-        SystemInformation.PostSQL('Book',$ObjQuery,function(Results)
-        {
-          $ObjQuery.Operazioni = [];
-        },false,true)
-        
         var SendDieciTitoli = function()
         {
           while (i < CsvSplitted.length - 1)          

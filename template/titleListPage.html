@@ -44,7 +44,8 @@
         <tr>
           <th></th>
           <th></th>
-          <th></th>          
+          <th></th>
+          <th>CODICE ISBN</th>          
           <th>TITOLO</th>  
           <th>MATERIA</th>
           <th>AUTORE</th>  
@@ -56,6 +57,7 @@
           <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA TITOLO" ng-click="EliminaTitolo(Titolo)"></td> 
           <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA TITOLO" ng-click="ModificaTitolo(Titolo)"></td>        
           <td><img src="img/print.png" style="width:30px;height:auto;" title="STAMPA ADOZIONI" ng-click="StampaAdozioni(Titolo)"></td>                  
+          <td class="off">{{Titolo.Codice}}</td>  
           <td class="off">{{Titolo.Titolo | uppercase}}</td>  
           <td class="off">{{Titolo.NomeMateria | uppercase}}</td>
           <td class="off">{{Titolo.Autori | uppercase}} </td> 

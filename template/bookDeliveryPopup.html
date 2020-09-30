@@ -2,13 +2,13 @@
   <form ng-cloak name="PopupSpedizioneTitoloForm">
     <md-toolbar>
       <div class="md-toolbar-tools">
-        <h2>TITOLO</h2>
+        <h2 style="font-weight:bold;color:white;">TITOLO</h2>
       </div>
     </md-toolbar>
 
     <md-dialog-content>
       <div class="md-dialog-content">
-      <md-input-container class="containerSelect" style="width:500px">
+        <md-input-container class="containerSelect" style="width:500px">
           <label>TITOLO</label>
           <md-autocomplete
                       md-input-name="TitoloSpedizione"
@@ -33,8 +33,8 @@
         <md-radio-group ng-model="Titolo.STATO">
           <md-radio-button value="P">PRENOTATO</md-radio-button>
           <md-radio-button value="S" ng-if="(Titolo.QUANTITA <= Titolo.QUANTITA_MGZN) && !Multipla">DA SPEDIRE</md-radio-button>
-          <md-radio-button value="S" ng-if="((Titolo.QUANTITA*NumeroDocenti) <= Titolo.QUANTITA_MGZN) && Multipla">DA SPEDIRE</md-radio-button> 
-          <md-radio-button value="C" ng-if="!Multipla && !NuovaSpedizioneCasaEd">CONSEGNATO</md-radio-button>
+          <md-radio-button value="S" ng-if="((Titolo.QUANTITA * NumeroDocenti) <= Titolo.QUANTITA_MGZN) && Multipla">DA SPEDIRE</md-radio-button> 
+          <md-radio-button value="C" ng-if="(!SpedizioneMultipla && ChiaveSpedizione == -1 && ChiaveDocente != -1 && Titolo.QUANTITA <= Titolo.QUANTITA_MGZN_VOL)||(!SpedizioneMultipla && ChiaveSpedizione != -1 && Titolo.QUANTITA <= Titolo.QUANTITA_MGZN)">CONSEGNATO</md-radio-button>
         </md-radio-group>  
       </div>
     </md-dialog-content>

@@ -1,0 +1,34 @@
+<md-dialog>
+  <form ng-cloak name="PopupForm">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2 style="font-weight:bold;color:white;">UNIONE ISTITUTI</h2>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+      <div class="md-dialog-content">
+        <p style="font.weight:bold;">Traferimento dei docenti dall'istituto {{IstitutoOld}} all'istituto selezionato:<p>
+        <p style="font-weight:italic;color:red;">ATTENZIONE: Tutti gli orari e disponibilità dei docenti associati all istituto precedente saranno eliminati!<p>
+        <md-input-container class="containerSelect"><label>Filtra per nome...</label>
+          <input ng-model="NomeFiltroUnione" type="search">
+        </md-input-container>
+        <br>
+        <md-input-container class="containerSelect"><label>ISTITUTO</label>
+          <md-select ng-model="IstitutoDaUnire" class="mdb-select" type="text" name="istitutoDaUnire">
+            <md-option ng-repeat="Istituto in ListaIstitutiPopupUnione | IstitutoByNomeFiltroUnione: NomeFiltroUnione" ng-value="{{Istituto.Chiave}}">{{Istituto.Nome}}</md-option>
+          </md-select>
+        </md-input-container>          
+      </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ConfermaPopup(IstitutoDaUnire)">
+       CONFERMA
+      </md-button>
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="AnnullaPopup()">
+       ANNULLA
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

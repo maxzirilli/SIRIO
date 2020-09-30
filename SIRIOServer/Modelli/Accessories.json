@@ -14,7 +14,7 @@
                         },
                         {
                           "Name" : "InstituteCodeAll",
-                          "SQL"  : "SELECT istituti.CODICE FROM istituti"
+                          "SQL"  : "SELECT istituti.CODICE FROM istituti WHERE NASCOSTO <> 1"
                         }
                       ],
   
@@ -23,6 +23,15 @@
                           "Name" : "BookList",
                           "SQL"  : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL,titoli.POS_MAGAZZINO FROM titoli ORDER BY TITOLO ASC"
                         }
-                      ]
+                      ],
+                      
+  "SelectTitoliSQLAdv" : [
+                           {
+                             "Name" : "BookListAdv",
+                             "SQL"  : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,CALCOLA_DISPONIBILITA_ALL(titoli.CHIAVE) AS QUANTITA_MGZN FROM titoli ORDER BY TITOLO ASC"
+                           }
+                         ]
+                      
+
                       
 }

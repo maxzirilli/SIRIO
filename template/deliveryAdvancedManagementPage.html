@@ -1,5 +1,5 @@
-<div ng-controller="deliveryListPageController" ng-cloak md-theme="{{ActualTheme}}" style="height:75%">
-  <h2>SPEDIZIONI</h2>
+<div ng-controller="deliveryAdvancedManagementPageController" ng-cloak md-theme="{{ActualTheme}}" style="height:75%">
+  <h2>GESTIONE AVANZATA SPEDIZIONI</h2>
 
     <div layout="row" style="margin:0px;">
       <md-input-container style="float:left;margin-left:20px;">
@@ -16,19 +16,14 @@
           </md-optgroup>
         </md-select>
       </md-input-container>
-      <md-input-container ng-if="IsAdministrator()"><label style="width:100%;margin-left:20px;float:left;">PROMOTORE</label>
-        <md-select ng-model="$parent.PromotoreFiltro" placeholder="Promotore" class="mdb-select" style="width:100%;margin-left:20px;float:left;" type="text" name="PromotoreFiltro">
+      <md-input-container ng-if="IsAdministrator()"><label style="width:100%;margin-left:40px;float:left;">PROMOTORE</label>
+        <md-select ng-model="$parent.PromotoreFiltro" placeholder="Promotore" class="mdb-select" style="width:100%;margin-left:40px;float:left;" type="text" name="PromotoreFiltro">
           <md-optgroup>
             <md-option ng-value="-1">QUALSIASI</md-option>  
             <md-option ng-repeat="promotore in ListaPromotori" ng-value="promotore.Chiave">{{promotore.Nome}}</md-option>
           </md-optgroup>
         </md-select>
       </md-input-container>
-      
-      <input type="checkbox" ng-model="DaSpedireFiltro" style="margin-left:60px;">DA SPEDIRE
-      <input type="checkbox" ng-model="PrenotataFiltro" style="margin-left:20px;">PRENOTATA
-      <input type="checkbox" ng-model="ConsegnataFiltro" style="margin-left:20px;">CONSEGNATA
-
     </div>   
     <br>
     <div layout="row" layout-align="start start" style="margin-top:0px;padding-top:0px;">
@@ -70,52 +65,37 @@
            NESSUNA CORRISPONDENZA
          </md-not-found>
       </md-input-container>
-      <!--<md-input-container class="containerSelect" style="margin-left:5px;width:30%;padding-top:0px;">
-        <label>Titolo</label>
-        <md-autocomplete
-                    md-input-name="Titolo"
-                    md-autofocus="true"
-                    md-no-cache="true"
-                    md-selected-item-change = "selectedItemChangeTitolo(item)"
-                    md-search-text="searchTextTit"
-                    md-items="item in queryTitolo(searchTextTit)"
-                    md-item-text="item.Nome"
-                    md-require-match="true"
-                    md-clear-button="true">
-        <md-item-template>
-          <span md-highlight-text="searchText">ISBN : {{item.Codice}} - {{item.Nome}}</span>
-        </md-item-template>
-        <md-not-found>
-          Nessuna corrispondenza
-        </md-not-found>
-      </md-input-container>-->
+    </div>
+    <div layout="row" layout-align="start start" style="margin-top:0px;padding-top:0px;">
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="AggiungiTitoloRicerca()">AGGIUNGI TITOLO PER LA RICERCA</md-button>
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="InviaCumulativo()" ng-disabled="!CumulativoPossibile" >SPEDISCI TUTTI I TITOLI SELEZIONATI</md-button> 
+      <input type="checkbox" ng-model="CheckAll" ng-checked="SelezionaTutto()" style="margin-left:60px;margin-top:20px"><label style="margin-left:5px;margin-top:18px">SELEZIONA TUTTO</label>
+      <input type="checkbox" ng-model="UncheckAll" ng-checked="DeselezionaTutto()" style="margin-left:20px;margin-top:20px"><label style="margin-left:5px;margin-top:18px">DESELEZIONA TUTTO</label>      
     </div>
     <br>
-    <div style="text-align:right;">
-      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="NuovaSpedizioneCasaEditrice()">NUOVA SPEDIZIONE CASA EDITRICE</md-button>
-      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="CreaXlsSpedizioni()">CREA XLS SPEDIZIONI</md-button>
-      <!--<md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="GestioneAvanzataSpedizioni()">GESTIONE AVANZATA SPEDIZIONI</md-button>--->
-    </div>
+    <div layout="column" ng-if="ListaTitoliFiltro.length > 0">
+      <p style="font-weight:bold;">TITOLI IN RICERCA:</p>
+      <ul> 
+        <li ng-repeat="Titolo in ListaTitoliFiltro"><img src="img/deleteCross.png" style="width:20px;height:auto;margin-right:5px;" title="RIMUOVI TITOLO" ng-click="RimuoviTitolo(Titolo)">({{Titolo.Quantita}}) {{Titolo.Codice}} - {{Titolo.Nome}} </li>              
+      </ul>
+    </div>  
 
   <p ng-if="ListaSpedizioni.length == 0" style="font-weight:bold;font-style:italic;float:center;">NESSUNA SPEDIZIONE PRESENTE</p>  
   <div ng-if="ListaSpedizioni.length != 0">
     <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
-    <tr>
-      <th></th>
-      <th></th>
-      <th>DA SPEDIRE</th>
-      <th>DATA</th>
-      <th>PRESSO</th>
-      <th>STATO</th>
-    </tr>
-    <tr ng-repeat="Spedizione in ListaSpedizioni | SpedizioneByFiltro : ProvinciaFiltro : PrenotataFiltro : DaSpedireFiltro : ConsegnataFiltro : $parent.PromotoreFiltro : IstitutoFiltro : DocenteFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Spedizione.Chiave}}>
-      <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA SPEDIZIONE" ng-click="EliminaSpedizione(Spedizione)"></td> 
-      <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA SPEDIZIONE" ng-click="ModificaSpedizione(Spedizione.Chiave,Spedizione.Docente)"></td>
-      <td><img src="img/toSend.png" style="width:30px;height:auto;" title="SPEDIRE TITOLI DISPONIBILI" ng-click="PassaADaSpedireDisponibili(Spedizione.Chiave)" ng-if="Spedizione.Spedibile && Spedizione.NrPrenotate > 0"></td>
-      <td>{{ConvertiData(Spedizione)}}</td>
-      <td>{{Spedizione.Docente == -1 ? Spedizione.Presso : Spedizione.DocenteNome}}</td>
-      <td ng-bind-html="GetDescrStatoSpedizione(Spedizione)"></td>
-    </tr>
+      <tr>
+        <th></th>
+        <th>ISBN</th>
+        <th>TITOLO</th>
+        <th>QUANTITA</th>
+      </tr>
+      <tr ng-repeat="Elemento in ListaSpedizioni | SpedizioneByFiltroAvanzato : ProvinciaFiltro : $parent.PromotoreFiltro : IstitutoFiltro : DocenteFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" > <!--id={{Spedizione.Chiave}}-->
+        <td style="font-weight:bold;text-align:left;" ng-if="Elemento.Tipo == 0" colspan="4">SPEDIZIONE DEL {{ConvertiData(Elemento)}} PRESSO {{Elemento.Docente == -1 ? Elemento.Presso : Elemento.DocenteNome}}</td>
+        <td ng-if="Elemento.Tipo == 1"><input style="width:20px;height:20px;" type="checkbox" ng-change="CheckCumulativo()" ng-model="Elemento.Selezionato" style="margin-left:20px;margin-top:20px"></td>
+        <td ng-if="Elemento.Tipo == 1">{{Elemento.Codice}}</td>
+        <td ng-if="Elemento.Tipo == 1">{{Elemento.TitoloNome}}</td>
+        <td ng-if="Elemento.Tipo == 1">{{Elemento.Quantita}}</td>
+      </tr>
     </table>
     <md-table-pagination md-limit="GridOptions.query.limit" 
                        md-limit-options="GridOptions.limitOptions" 

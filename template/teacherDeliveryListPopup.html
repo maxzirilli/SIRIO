@@ -2,33 +2,37 @@
   <form ng-cloak name="PopupForm">
     <md-toolbar>
       <div class="md-toolbar-tools">
-        <h2>SPEDIZIONI DOCENTE</h2>
+        <h2 style="text-weight:bold;color:white;">SPEDIZIONI DOCENTE</h2>
       </div>
     </md-toolbar>
 
     <md-dialog-content>
       <div class="md-dialog-content">
-        <table style="width:100%;text-align:center;" md-row-select="GridOptions3.rowSelection" multiple="{{GridOptions3.multiSelect}}">  
-        <tr>
-          <th></th>
-          <th></th>       
-          <th>DATA</th>
-          <th>STATO</th>
-        </tr>  
-        <tr ng-repeat="Spedizione in ListaSpedizioniDoc | limitTo : GridOptions.query.limit : (GridOptions3.query.page - 1) * GridOptions3.query.limit" id={{Spedizione.Chiave}}>
-          <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA SPEDIZIONE" ng-click="EliminaSpedizione(Spedizione)"></td> 
-          <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA SPEDIZIONE" ng-click="ModificaSpedizione(Spedizione.CHIAVE)"></td>                       
-          <td class="off">{{Spedizione.DATA}}</td>
-          <td class="off" ng-bind-html="GetDescrStatoSpedizione(Spedizione)"></td>
-        </tr>    
-        </table>
-        <md-table-pagination md-limit="GridOptions3.query.limit" 
-                             md-limit-options="GridOptions3.limitOptions" 
-                             md-page="GridOptions3.query.page" 
-                             md-total="{{ListaSpedizioniDoc.length}}" 
-                             md-page-select="GridOptions3.pageSelect" 
-                             md-boundary-links="GridOptions3.boundaryLinks" 
-                             md-on-paginate="logPagination"></md-table-pagination>      
+        
+          <p style="font-weight:bold;text-align:center;width:1000px;" ng-if="ListaSpedizioniDoc.length == 0">NESSUNA SPEDIZIONE REGISTRATA</p>
+          <table style="text-align:center;width:1000px;" md-row-select="GridOptions3.rowSelection" multiple="{{GridOptions3.multiSelect}}" ng-if="ListaSpedizioniDoc.length > 0">  
+          <tr>
+            <th></th>
+            <th></th>       
+            <th>DATA</th>
+            <th>TITOLI (ISBN / CODICE / STATO)</th>
+          </tr>  
+          <tr ng-repeat="Spedizione in ListaSpedizioniDoc | limitTo : GridOptions.query.limit : (GridOptions3.query.page - 1) * GridOptions3.query.limit" id={{Spedizione.CHIAVE}}>
+            <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA SPEDIZIONE" ng-click="EliminaSpedizione(Spedizione)"></td> 
+            <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA SPEDIZIONE" ng-click="ModificaSpedizione(Spedizione.CHIAVE)"></td>                       
+            <td class="off">{{Spedizione.DATA}}</td>
+            <td style="text-align:left;" class="off" ng-bind-html="GetTitoliSpedizione(Spedizione)"></td>
+          </tr>    
+          </table>
+          <md-table-pagination md-limit="GridOptions3.query.limit" 
+                               md-limit-options="GridOptions3.limitOptions" 
+                               md-page="GridOptions3.query.page" 
+                               md-total="{{ListaSpedizioniDoc.length}}" 
+                               md-page-select="GridOptions3.pageSelect" 
+                               md-boundary-links="GridOptions3.boundaryLinks" 
+                               md-on-paginate="logPagination"
+                               style="width:1000px;"
+                               ng-if="ListaSpedizioniDoc.length > 0"></md-table-pagination>
       </div>
     </md-dialog-content>
 

@@ -30,11 +30,11 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
       var ListaTitoliTmp = SystemInformation.FindResults(Results,'BookList');
       for(let i = 0; i < ListaTitoliTmp.length; i++)
       ListaTitoliTmp[i] = {
-                             CODICE     : ListaTitoliTmp[i].CODICE_ISBN,
-                             TITOLO     : ListaTitoliTmp[i].TITOLO,
+                             CODICE     : ListaTitoliTmp[i].CODICE_ISBN == undefined ? 'N.D.' : ListaTitoliTmp[i].CODICE_ISBN,
+                             TITOLO     : ListaTitoliTmp[i].TITOLO  == undefined ? 'N.D.' : ListaTitoliTmp[i].TITOLO,
                              POS_MGZN   : ListaTitoliTmp[i].POS_MAGAZZINO == undefined ? 'N.D.' : ListaTitoliTmp[i].POS_MAGAZZINO,
-                             Q_MGZN     : ListaTitoliTmp[i].QUANTITA_MGZN,
-                             Q_MGZN_VOL : ListaTitoliTmp[i].QUANTITA_MGZN_VOL                         
+                             Q_MGZN     : ListaTitoliTmp[i].QUANTITA_MGZN  == undefined ? 'N.D.' : ListaTitoliTmp[i].QUANTITA_MGZN,
+                             Q_MGZN_VOL : ListaTitoliTmp[i].QUANTITA_MGZN_VOL  == undefined ? 'N.D.' : ListaTitoliTmp[i].QUANTITA_MGZN_VOL                         
                            }
       ListaTitoli  = ListaTitoliTmp;
       if (ListaTitoli != undefined)
@@ -121,7 +121,9 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
   
   $scope.selectedItemChangeTitolo = function(itemTit)
   {
-    $scope.TitoloFiltro = itemTit.Chiave;
+    if(itemTit == undefined)
+       return
+    else $scope.TitoloFiltro = itemTit.Chiave;
   }
   
   var TroncaTitolo = function(str, n)
@@ -134,7 +136,8 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
     if((($scope.DataRicercaDal == undefined || $scope.DataRicercaAl == undefined) || ($scope.DataRicercaDal == '' || $scope.DataRicercaAl == '')) || ($scope.DataRicercaDal == undefined && $scope.DataRicercaAl == undefined && $scope.TitoloFiltro == undefined) || ($scope.DataRicercaDal > $scope.DataRicercaAl))
        alert('Dati ricerca non validi')
     else
-    {    
+    { 
+          
        if($scope.TitoloFiltro != undefined && $scope.Magazzino == 'G')
        {
          var ParamRicercaLog = {
@@ -144,13 +147,24 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                                }
          SystemInformation.GetSQL('StorageLog',ParamRicercaLog, function(Results)
          { 
-           $scope.TitoloFiltrato = undefined;
+           $scope.TitoloFiltro = undefined;
+           $scope.TitoloFiltrato = null;
+           $scope.SearchTextTit = '';
            var ListaMovimenti = SystemInformation.FindResults(Results,'GetLogInfoMgznBook');
            if(ListaMovimenti != undefined)
-           {
+           {             
              if (ListaMovimenti.length == 0)
                  //alert('Nessun movimento del titolo nella data selezionata')
              {
+                 for(let i = 0;i < ListaMovimenti.length;i ++)                 
+                     ListaMovimenti[i] = {
+                                           CODICE      : ListaMovimenti[i].CODICE == null ? 'N.D' : ListaMovimenti[i].CODICE, 
+                                           TITOLO      : ListaMovimenti[i].TITOLO == null ? 'N.D' : ListaMovimenti[i].TITOLO, 
+                                           NOME_TITOLO : ListaMovimenti[i].NOME_TITOLO == null ? 'N.D' : ListaMovimenti[i].NOME_TITOLO,  
+                                           QUANTITA    : ListaMovimenti[i].QUANTITA == null ? 'N.D' : ListaMovimenti[i].QUANTITA,
+                                           DESCRIZIONE : ListaMovimenti[i].DESCRIZIONE == null ? 'N.D' : ListaMovimenti[i].DESCRIZIONE,
+                                           DATA        : ListaMovimenti[i].DATA == null ? 'N.D' : ListaMovimenti[i].DATA
+                                         }
                  var doc = new jsPDF();
                  doc.setProperties({title: 'STAMPA LOG'});
                  doc.setFontSize(10); 
@@ -208,7 +222,7 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                    doc.setFontSize(7);
                  } 
                  document.getElementById('logPdf').src = doc.output('datauristring');
-                 $scope.TitoloFiltrato = undefined;                
+                 //$scope.TitoloFiltrato = undefined;                
              }
            }
            else SystemInformation.ApplyOnError('Modello movimento titolo magazzino principale non valido','');         
@@ -222,13 +236,25 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                                  AL     : ZHTMLInputFromDate($scope.DataRicercaAl)   
                                }
          SystemInformation.GetSQL('StorageLog',ParamRicercaLog, function(Results)
-         {        
+         {
+           $scope.TitoloFiltro = undefined;
+           $scope.TitoloFiltrato = null;
+           $scope.SearchTextTit = '';           
            var ListaMovimenti = SystemInformation.FindResults(Results,'GetLogInfoMgzn');
            if(ListaMovimenti != undefined)
            {
              if (ListaMovimenti.length == 0)
                  //alert('Nessun movimento del titolo nella data selezionata')
              {
+                 for(let i = 0;i < ListaMovimenti.length;i ++)                 
+                     ListaMovimenti[i] = {
+                                           CODICE      : ListaMovimenti[i].CODICE == null ? 'N.D' : ListaMovimenti[i].CODICE, 
+                                           TITOLO      : ListaMovimenti[i].TITOLO == null ? 'N.D' : ListaMovimenti[i].TITOLO,
+                                           NOME_TITOLO : ListaMovimenti[i].NOME_TITOLO == null ? 'N.D' : ListaMovimenti[i].NOME_TITOLO,  
+                                           QUANTITA    : ListaMovimenti[i].QUANTITA == null ? 'N.D' : ListaMovimenti[i].QUANTITA, 
+                                           DESCRIZIONE : ListaMovimenti[i].DESCRIZIONE == null ? 'N.D' : ListaMovimenti[i].DESCRIZIONE, 
+                                           DATA        : ListaMovimenti[i].DATA == null ? 'N.D' : ListaMovimenti[i].DATA 
+                                         }
                  var doc = new jsPDF();
                  doc.setProperties({title: 'STAMPA LOG'});
                  doc.setFontSize(10); 
@@ -259,7 +285,7 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                  doc.text(25,CoordY+10,'QNT');
                  doc.text(35,CoordY+10,'ISBN');
                  doc.text(55,CoordY+10,'TITOLO');
-                 doc.text(150,CoordY+10,'DESCRIZIONE');
+                 doc.text(130,CoordY+10,'DESCRIZIONE');
                  
                  for(let i = 0;i < ListaMovimenti.length;i ++)
                  {
@@ -283,15 +309,14 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                    doc.text(10,CoordY+10,ZFormatDateTime('dd/mm/yyyy',ZDateFromHTMLInput(ListaMovimenti[i].DATA)));
                    doc.text(25 + Q + 1 - Qt,CoordY+10,ListaMovimenti[i].QUANTITA);
                    doc.text(35,CoordY+10,ListaMovimenti[i].CODICE);
-                   doc.text(55,CoordY+10,TroncaTitolo(ListaMovimenti[i].NOME_TITOLO,65));
-                   doc.text(150,CoordY+10,ListaMovimenti[i].DESCRIZIONE);
+                   doc.text(55,CoordY+10,TroncaTitolo(ListaMovimenti[i].NOME_TITOLO,50));
+                   doc.text(130,CoordY+10,ListaMovimenti[i].DESCRIZIONE);
                    doc.setFontSize(6);
                    doc.setFontType('normal');
                    doc.text(10,290,SystemInformation.VDocLogStorage);
                    doc.setFontSize(7);
                  } 
                  document.getElementById('logPdf').src = doc.output('datauristring');
-                 $scope.TitoloFiltro = undefined;
              }
            }
            else SystemInformation.ApplyOnError('Modello movimenti globali magazzino principale non valido','');       
@@ -307,11 +332,23 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                                }
          SystemInformation.GetSQL('StorageLog',ParamRicercaLog, function(Results)
          {
+           $scope.TitoloFiltro = undefined;
+           $scope.TitoloFiltrato = null;
+           $scope.SearchTextTit = ''; 
            var ListaMovimenti = SystemInformation.FindResults(Results,'GetLogInfoMgznVolBook');
            if(ListaMovimenti != undefined)
            {
              if (ListaMovimenti.length == 0)
              {
+                 for(let i = 0;i < ListaMovimenti.length;i ++)                 
+                     ListaMovimenti[i] = {
+                                           CODICE      : ListaMovimenti[i].CODICE == null ? 'N.D' : ListaMovimenti[i].CODICE, 
+                                           TITOLO      : ListaMovimenti[i].TITOLO == null ? 'N.D' : ListaMovimenti[i].TITOLO, 
+                                           NOME_TITOLO : ListaMovimenti[i].NOME_TITOLO == null ? 'N.D' : ListaMovimenti[i].NOME_TITOLO,  
+                                           QUANTITA    : ListaMovimenti[i].QUANTITA == null ? 'N.D' : ListaMovimenti[i].QUANTITA,
+                                           DESCRIZIONE : ListaMovimenti[i].DESCRIZIONE == null ? 'N.D' : ListaMovimenti[i].DESCRIZIONE, 
+                                           DATA        : ListaMovimenti[i].DATA == null ? 'N.D' : ListaMovimenti[i].DATA
+                                         }
                  var doc = new jsPDF();
                  doc.setProperties({title: 'STAMPA LOG'});
                  doc.setFontSize(10); 
@@ -369,7 +406,6 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                    doc.setFontSize(7);
                  } 
                 document.getElementById('logPdf').src = doc.output('datauristring');
-                $scope.TitoloFiltro = undefined;
              }
            }
            else SystemInformation.ApplyOnError('Modello movimento titolo magazzino volante non valido','');        
@@ -384,11 +420,23 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                                }
          SystemInformation.GetSQL('StorageLog',ParamRicercaLog, function(Results)
          {
+           $scope.TitoloFiltro = undefined;
+           $scope.TitoloFiltrato = null;
+           $scope.SearchTextTit = ''; 
            var ListaMovimenti = SystemInformation.FindResults(Results,'GetLogInfoMgznVol');
            if(ListaMovimenti != undefined)
            {
              if (ListaMovimenti.length == 0)
              {
+                 for(let i = 0;i < ListaMovimenti.length;i ++)                 
+                     ListaMovimenti[i] = {
+                                           CODICE      : ListaMovimenti[i].CODICE == null ? 'N.D' : ListaMovimenti[i].CODICE, 
+                                           TITOLO      : ListaMovimenti[i].TITOLO == null ? 'N.D' : ListaMovimenti[i].TITOLO, 
+                                           NOME_TITOLO : ListaMovimenti[i].NOME_TITOLO == null ? 'N.D' : ListaMovimenti[i].NOME_TITOLO,  
+                                           QUANTITA    : ListaMovimenti[i].QUANTITA == null ? 'N.D' : ListaMovimenti[i].QUANTITA, 
+                                           DESCRIZIONE : ListaMovimenti[i].DESCRIZIONE == null ? 'N.D' : ListaMovimenti[i].DESCRIZIONE,
+                                           DATA        : ListaMovimenti[i].DATA == null ? 'N.D' : ListaMovimenti[i].DATA
+                                         }
                  var doc = new jsPDF();
                  doc.setProperties({title: 'STAMPA LOG'});
                  doc.setFontSize(10); 
@@ -433,7 +481,7 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                      doc.text(25,CoordY,'QNT');
                      doc.text(35,CoordY+10,'ISBN');
                      doc.text(55,CoordY,'TITOLO');
-                     doc.text(150,CoordY,'DESCRIZIONE');
+                     doc.text(130,CoordY,'DESCRIZIONE');
                    }
                    doc.setFontType('italic');
                    doc.setFontSize(7);
@@ -443,15 +491,14 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                    doc.text(10,CoordY+10,ZFormatDateTime('dd/mm/yyyy',ZDateFromHTMLInput(ListaMovimenti[i].DATA)));
                    doc.text(25 + Q + 1 - Qt,CoordY+10,ListaMovimenti[i].QUANTITA);
                    doc.text(35,CoordY+10,ListaMovimenti[i].CODICE);
-                   doc.text(55,CoordY+10,TroncaTitolo(ListaMovimenti[i].NOME_TITOLO,65));
-                   doc.text(150,CoordY+10,ListaMovimenti[i].DESCRIZIONE);
+                   doc.text(55,CoordY+10,TroncaTitolo(ListaMovimenti[i].NOME_TITOLO,50));
+                   doc.text(130,CoordY+10,ListaMovimenti[i].DESCRIZIONE);
                    doc.setFontSize(6);
                    doc.setFontType('normal');
                    doc.text(10,290,SystemInformation.VDocLogStorage);
                    doc.setFontSize(7);
                  } 
                 document.getElementById('logPdf').src = doc.output('datauristring');
-                $scope.TitoloFiltro = undefined;
              }
            }
            else SystemInformation.ApplyOnError('Modello movimenti globali magazzino volante non valido','');         

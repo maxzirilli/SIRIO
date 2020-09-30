@@ -23,8 +23,8 @@ Array.prototype.Contains = function(obj)
 Array.prototype.grep = function(callback) 
 {
     var filtered = [],
-        len = this.length,
-        i = 0;
+    len = this.length,
+    i = 0;
     for (i; i < len; i++) 
     {
         var item = this[i];

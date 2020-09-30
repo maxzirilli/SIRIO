@@ -1,0 +1,64 @@
+<md-dialog>
+  <form ng-cloak name="PopupForm">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2 style="font-weight:bold;color:white;">RICERCA TITOLI</h2>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+      <div class="md-dialog-content">
+        <h2>Seleziona titoli</h2>
+        <div layout="row">
+          <md-input-container class="containerSelect"><label>Filtra per nome...</label>
+            <input ng-model="NomeFiltro" type="search">
+          </md-input-container>
+          
+          <md-input-container class="containerSelect"><label>Filtra per ISBN...</label>
+            <input ng-model="CodiceFiltro" type="search">
+          </md-input-container>
+        </div>
+  
+        <p ng-if="ListaTitoliPopup.length == 0" style="font-weight:bold;font-style:italic;float:center;">NESSUN TITOLO TROVATO</p>  
+        <div ng-if="ListaTitoliPopup.length != 0">
+          <table style="width:800px;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
+          <tr>
+            <th></th>
+            <th>ISBN</th>
+            <th>TITOLO</th>
+            <th>QUANTITA</th>
+          </tr>
+          <tr ng-repeat="Titolo in ListaTitoliPopup | TitoloPopupByFiltro : NomeFiltro : CodiceFiltro | limitTo : 30" id={{Titolo.Chiave}}> <!--GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit-->
+            <td ng-if="Titolo.Quantita > 0"><input type="checkbox" ng-model="Titolo.DaAggiungere"></td>
+            <td ng-if="Titolo.Quantita <= 0"><img src="img/notAvailable.png" style="width:15px;height:auto;" title="NON IN MAGAZZINO"></td>
+            <td>{{Titolo.Codice}}</td>
+            <td>{{Titolo.Nome}}</td>
+            <td>{{Titolo.Quantita}}</td>
+          </tr>
+          </table>
+          <md-table-pagination md-limit="GridOptions.query.limit" 
+                             md-limit-options="GridOptions.limitOptions" 
+                             md-page="GridOptions.query.page" 
+                             md-total="{{ListaTitoliPopup.length}}" 
+                             md-page-select="GridOptions.pageSelect" 
+                             md-boundary-links="GridOptions.boundaryLinks" 
+                             md-on-paginate="logPagination"></md-table-pagination>
+  </div>
+  
+  
+  
+  
+          </md-select>
+      </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ConfermaPopup()">
+       CONFERMA
+      </md-button>
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="AnnullaPopup()">
+       ANNULLA
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

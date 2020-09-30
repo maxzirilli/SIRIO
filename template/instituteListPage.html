@@ -15,12 +15,13 @@
         <md-input-container class="containerSelect" style="width:20%;"><label>Filtra per nome...</label>
           <input ng-model="NomeFiltro" type="search">
         </md-input-container>
-        <!--<md-button ng-click="ResetFiltri()"><img src="img/delete.png" style="width:40px;height:auto;"></md-button>-->
+        <input type="checkbox" ng-model="NascostoFiltro" style="margin-top:30px;margin-left:20px;"><label style="margin-top:28px;">ISTITUTI NASCOSTI</label>
       </div>
     </div>
     <div ng-if="ListaIstituti.length != 0">
       <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
         <tr>
+          <th></th>
           <th></th>
           <th></th>
           <th></th>          
@@ -29,10 +30,12 @@
           <th>PROVINCIA</th> 
           <th>PROMOTORE ASSEGNATO</th>      
         </tr>  
-        <tr ng-repeat="Istituto in ListaIstituti | IstitutoByFiltro : ProvinciaFiltro : NomeFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Istituto.Chiave}}>
+        <tr ng-repeat="Istituto in ListaIstituti | IstitutoByFiltro : ProvinciaFiltro : NomeFiltro : NascostoFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Istituto.Chiave}}>
           <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA ISTITUTO" ng-click="EliminaIstituto(Istituto)"></td> 
           <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA ISTITUTO" ng-click="ModificaIstituto(Istituto)"></td>        
           <td><img src="img/print.png" style="width:30px;height:auto;" title="LISTA DOCENTI" ng-click="CreaPdfListaDocenti(Istituto.Chiave,Istituto.Nome,Istituto.Codice,Istituto.ProvinciaNome)"></td>        
+          <td ng-if="!(Istituto.Nascosto)"><img src="img/hide.png" style="width:30px;height:auto;" title="UNISCI E NASCONDI ISTITUTO" ng-click="UnisciIstituti(Istituto)"></td>        
+          <td ng-if="Istituto.Nascosto"><img src="img/notHide.png" style="width:30px;height:auto;" title="RENDI VISIBILE ISTITUTO" ng-click="RendiVisibileIstituto(Istituto.Chiave,Istituto.Nome)"></td>        
           <td class="off">{{Istituto.Codice}}</td>  
           <td class="off">{{Istituto.Nome}}</td>
           <td class="off">{{Istituto.ProvinciaNome}}</td>
@@ -51,11 +54,11 @@
   </div>
                          
   <div ng-if="EditingOn && !StampaOn">
-    <form name="istitutoEditForm" layout="column" style="width:100%" ng-submit="ConfermaIstituto()" novalidate>
+    <form name="istitutoEditForm" layout="column" style="width:100%" ng-submit="ConfermaIstituto()">
          <div layout="row">
            <h2>ISTITUTO</h2>
            <div layout="row" style="width:100%;" layout-align="end start">
-             <md-button class="md-raised md-accent" style="font-weight:bold;" type="submit" ng-disabled="istitutoEditForm.$invalid">CONFERMA</md-button>
+             <md-button class="md-raised md-accent" style="font-weight:bold;" type="submit">CONFERMA</md-button>  <!--ng-disabled="istitutoEditForm.$invalid"-->
              <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="OnAnnullaIstitutoClicked()">ANNULLA</md-button>
            </div>
          </div>
@@ -107,7 +110,6 @@
                  <md-input-container class="containerSelect" style="width:20%;">
                    <md-select ng-model="IstitutoInEditing.Provincia" placeholder="PROVINCIA" class="mdb-select" type="text" name="Provincia" required>
                    <md-optgroup>
-                     <!--<md-option ng-value="-1">-</md-option>-->  
                      <md-option ng-repeat="provincia in ListaProvince" ng-value="provincia.Chiave">{{provincia.Nome}}</md-option>
                    </md-optgroup>
                    </md-select>
@@ -131,7 +133,7 @@
                    <label>PEC</label><input type="email" ng-model="IstitutoInEditing.Pec" type="text" name="Pec">
                  </md-input-container>
                  <md-input-container style="width:20%;">
-                   <label>SITO WEB</label><input type="email" ng-model="IstitutoInEditing.SitoWeb" type="text" name="SitoWeb">
+                   <label>SITO WEB</label><input type="text" ng-model="IstitutoInEditing.SitoWeb" type="text" name="SitoWeb">
                  </md-input-container>
                </div>
 
