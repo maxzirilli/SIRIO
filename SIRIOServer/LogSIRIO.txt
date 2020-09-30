@@ -86,3 +86,27 @@
 [30-Sep-2020 09:34:02 Europe/Berlin] SELECT *,CALCOLA_DISPONIBILITA(dettaglio_spedizioni.TITOLO) AS SPEDIBILE FROM dettaglio_spedizioni WHERE SPEDIZIONE=126398
 [30-Sep-2020 09:34:02 Europe/Berlin] SELECT *,CALCOLA_DISPONIBILITA(dettaglio_spedizioni.TITOLO) AS SPEDIBILE FROM dettaglio_spedizioni WHERE SPEDIZIONE=126401
 [30-Sep-2020 09:34:02 Europe/Berlin] SELECT *,CALCOLA_DISPONIBILITA(dettaglio_spedizioni.TITOLO) AS SPEDIBILE FROM dettaglio_spedizioni WHERE SPEDIZIONE=126393
+[30-Sep-2020 09:42:56 Europe/Berlin] SELECT ROLE FROM utenti WHERE CHIAVE = 126156
+[30-Sep-2020 09:42:56 Europe/Berlin] SELECT *,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS NOME_DOCENTE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'S') AS NR_DA_SPEDIRE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'C') AS NR_CONSEGNATE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'P') AS NR_PRENOTATE FROM spedizioni ORDER BY DATA DESC LIMIT 20
+[30-Sep-2020 09:42:56 Europe/Berlin] SELECT *,CALCOLA_DISPONIBILITA(dettaglio_spedizioni.TITOLO) AS SPEDIBILE FROM dettaglio_spedizioni WHERE SPEDIZIONE=126398
+[30-Sep-2020 09:42:56 Europe/Berlin] SELECT *,CALCOLA_DISPONIBILITA(dettaglio_spedizioni.TITOLO) AS SPEDIBILE FROM dettaglio_spedizioni WHERE SPEDIZIONE=126401
+[30-Sep-2020 09:42:56 Europe/Berlin] SELECT *,CALCOLA_DISPONIBILITA(dettaglio_spedizioni.TITOLO) AS SPEDIBILE FROM dettaglio_spedizioni WHERE SPEDIZIONE=126393
+[30-Sep-2020 09:43:03 Europe/Berlin] SELECT * FROM province ORDER BY NOME ASC
+[30-Sep-2020 09:43:03 Europe/Berlin] SELECT * FROM province_all ORDER BY NOME ASC
+[30-Sep-2020 09:43:03 Europe/Berlin] SELECT * FROM tipologie_istituto ORDER BY DESCRIZIONE ASC
+[30-Sep-2020 09:43:03 Europe/Berlin] SELECT istituti.CODICE FROM istituti WHERE NASCOSTO <> 1
+[30-Sep-2020 09:43:03 Europe/Berlin] SELECT docenti.CHIAVE,docenti.RAGIONE_SOCIALE FROM docenti ORDER BY RAGIONE_SOCIALE ASC
+[30-Sep-2020 09:43:03 Europe/Berlin] SELECT istituti.CHIAVE,istituti.CODICE,istituti.NOME,istituti.PROVINCIA FROM istituti WHERE NASCOSTO <> 1 ORDER BY istituti.NOME
+[30-Sep-2020 09:43:03 Europe/Berlin] SELECT titoli.CHIAVE,titoli.TITOLO,titoli.CODICE_ISBN FROM titoli
+[30-Sep-2020 09:43:03 Europe/Berlin] SELECT * FROM utenti WHERE ELIMINATO <> 1 ORDER BY utenti.USERNAME
+[30-Sep-2020 09:43:03 Europe/Berlin] SELECT CHIAVE FROM utenti WHERE CHIAVE = 126156
+[30-Sep-2020 09:43:03 Europe/Berlin] SELECT *,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS NOME_DOCENTE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'S') AS NR_DA_SPEDIRE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'C') AS NR_CONSEGNATE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'P') AS NR_PRENOTATE FROM spedizioni WHERE DATA >= '2020-09-23' AND DATA <= '2020-10-01' ORDER BY DATA DESC
+[30-Sep-2020 09:43:04 Europe/Berlin] SELECT *,CALCOLA_DISPONIBILITA(dettaglio_spedizioni.TITOLO) AS SPEDIBILE FROM dettaglio_spedizioni WHERE SPEDIZIONE=126398
+[30-Sep-2020 09:43:04 Europe/Berlin] SELECT *,CALCOLA_DISPONIBILITA(dettaglio_spedizioni.TITOLO) AS SPEDIBILE FROM dettaglio_spedizioni WHERE SPEDIZIONE=126401
+[30-Sep-2020 09:43:04 Europe/Berlin] SELECT *,CALCOLA_DISPONIBILITA(dettaglio_spedizioni.TITOLO) AS SPEDIBILE FROM dettaglio_spedizioni WHERE SPEDIZIONE=126393
+[30-Sep-2020 09:43:08 Europe/Berlin] SELECT istituti.CHIAVE,istituti.CODICE,istituti.NOME,istituti.PROVINCIA FROM istituti WHERE NASCOSTO <> 1 ORDER BY istituti.NOME
+[30-Sep-2020 09:43:08 Europe/Berlin] SELECT * FROM province ORDER BY NOME ASC
+[30-Sep-2020 09:43:08 Europe/Berlin] SELECT * FROM province_all ORDER BY NOME ASC
+[30-Sep-2020 09:43:08 Europe/Berlin] SELECT * FROM tipologie_istituto ORDER BY DESCRIZIONE ASC
+[30-Sep-2020 09:43:08 Europe/Berlin] SELECT istituti.CODICE FROM istituti WHERE NASCOSTO <> 1
+[30-Sep-2020 09:43:08 Europe/Berlin] SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL,titoli.POS_MAGAZZINO FROM titoli ORDER BY TITOLO ASC
