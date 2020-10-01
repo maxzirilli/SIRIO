@@ -32,9 +32,9 @@
         <br>
         <md-radio-group ng-model="Titolo.STATO">
           <md-radio-button value="P">PRENOTATO</md-radio-button>
-          <md-radio-button value="S" ng-if="(Titolo.QUANTITA <= Titolo.QUANTITA_MGZN) && !Multipla">DA SPEDIRE</md-radio-button>
-          <md-radio-button value="S" ng-if="((Titolo.QUANTITA * NumeroDocenti) <= Titolo.QUANTITA_MGZN) && Multipla">DA SPEDIRE</md-radio-button> 
-          <md-radio-button value="C" ng-if="(!SpedizioneMultipla && ChiaveSpedizione == -1 && ChiaveDocente != -1 && Titolo.QUANTITA <= Titolo.QUANTITA_MGZN_VOL)||(!SpedizioneMultipla && ChiaveSpedizione != -1 && Titolo.QUANTITA <= Titolo.QUANTITA_MGZN)">CONSEGNATO</md-radio-button>
+          <md-radio-button value="S" ng-if="(Titolo.QUANTITA <= Titolo.QUANTITA_DISP) && !Multipla">DA SPEDIRE</md-radio-button>
+          <md-radio-button value="S" ng-if="((Titolo.QUANTITA * NumeroDocenti) <= Titolo.QUANTITA_DISP) && Multipla">DA SPEDIRE</md-radio-button> 
+          <md-radio-button value="C" ng-if="(!SpedizioneMultipla && ChiaveSpedizione == -1 && ChiaveDocente != -1 && Titolo.QUANTITA <= Titolo.QUANTITA_MGZN_VOL)||(!SpedizioneMultipla && ChiaveSpedizione != -1 && Titolo.QUANTITA <= Titolo.QUANTITA_DISP)">CONSEGNATO</md-radio-button>
         </md-radio-group>  
       </div>
     </md-dialog-content>

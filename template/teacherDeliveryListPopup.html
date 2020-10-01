@@ -15,7 +15,7 @@
             <th></th>
             <th></th>       
             <th>DATA</th>
-            <th>TITOLI (ISBN / CODICE / STATO)</th>
+            <th>TITOLI (ISBN / TITOLO / STATO)</th>
           </tr>  
           <tr ng-repeat="Spedizione in ListaSpedizioniDoc | limitTo : GridOptions.query.limit : (GridOptions3.query.page - 1) * GridOptions3.query.limit" id={{Spedizione.CHIAVE}}>
             <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA SPEDIZIONE" ng-click="EliminaSpedizione(Spedizione)"></td> 

@@ -37,13 +37,13 @@
 
   <md-content>
     <div class="md-padding">
-        <md-card style="text-align: center;overflow-y:scroll;height:500px;">
+        <md-card style="text-align: center;overflow-y:scroll;height:500px;"> <!--overflow-x:scroll-->
           <md-card-title>
             <md-card-title-text style="text-align:center;">
               <span class="md-headline" style="font-weight:bold;">SPEDIZIONI</span>
             </md-card-title-text>
           </md-card-title>
-          <md-card-content style="height: 100%;">
+          <md-card-content style="height:100%;">
             <table style="width:100%;text-align:center;" ng-if="UltimeVentiSpedizioni.length != 0">
               <tr>
                 <th></th>
@@ -51,15 +51,17 @@
                 <th>DA SPEDIRE</th>
                 <th>DATA</th>
                 <th>PRESSO</th>
-                <th>STATO</th>
+                <th>ISBN / TITOLO / STATO</th>
               </tr>
               <tr ng-repeat="Spedizione in UltimeVentiSpedizioni" id="Spedizione.Chiave">
                 <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA SPEDIZIONE" ng-click="EliminaSpedizione(Spedizione)"></td> 
                 <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA SPEDIZIONE" ng-click="ModificaSpedizione(Spedizione.Chiave,Spedizione.Docente)"></td>        
-                <td><img src="img/toSend.png" style="width:30px;height:auto;" title="SPEDIRE TITOLI DISPONIBILI" ng-click="PassaADaSpedireDisponibili(Spedizione.Chiave)" ng-if="Spedizione.Spedibile && Spedizione.NrPrenotate > 0"></td>
+                <td ng-if="Spedizione.Spedibile && Spedizione.NrPrenotate > 0"><img src="img/toSend.png" style="width:30px;height:auto;" title="SPEDIRE TITOLI DISPONIBILI" ng-click="PassaADaSpedireDisponibili(Spedizione.Chiave)" ></td>
+                <td ng-if="!(Spedizione.Spedibile) && Spedizione.NrPrenotate > 0" title="NESSUN TITOLO TRA I PRENOTATI E' DISPONIBILE"><img src="img/notToSend.png" style="width:30px;height:auto;" class="off" ></td>
+                <td ng-if="Spedizione.NrPrenotate == 0"></td>
                 <td class="off">{{Spedizione.Data}}</td>  
                 <td>{{Spedizione.Docente == -1 ? Spedizione.Presso : Spedizione.DocenteNome}}</td>
-                <td class="off" ng-bind-html="GetDescrStatoSpedizione(Spedizione)"></td>
+                <td style="text-align:left;" class="off" ng-bind-html="GetTitoliSpedizione(Spedizione)"></td>
             </table>
             <p ng-if="UltimeVentiSpedizioni.length == 0" style="font-weight:bold;font-style:italic;">NESSUNA SPEDIZIONE PRESENTE</p>
           </md-card-content>

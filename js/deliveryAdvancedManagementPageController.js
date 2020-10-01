@@ -18,6 +18,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
   $scope.CumulativoPossibile  = false;
   $scope.CheckAll             = false;
   $scope.UncheckAll           = false;
+  $scope.ListaSpedizioni      = [];
+  $scope.VisualizzaNonSpedibili = false;     
  
   ScopeHeaderController.CheckButtons(); 
   
@@ -139,7 +141,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
                                   Chiave         : TitoliInfoLista[i].CHIAVE,
                                   Nome           : TitoliInfoLista[i].TITOLO,
                                   Codice         : TitoliInfoLista[i].CODICE_ISBN,
-                                  Quantita       : TitoliInfoLista[i].QUANTITA_MGZN,  // CONTROLLA QUESTA QUANTITA
+                                  Quantita       : TitoliInfoLista[i].QUANTITA_MGZN,
                                   SommaPrenotati : 0,
                                   DaAggiungere   : false                                 
                                 }
@@ -182,22 +184,54 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
 
   $scope.CheckCumulativo = function()
   {
-    for(let j = 0;j < $scope.ListaTitoliFiltro.length;j ++)
+    var ListaNonSpedibili         = [];
+    $scope.VisualizzaNonSpedibili = false;
+    $scope.ListaNonSpedibili      = '';
+    if($scope.ListaSpedizioni.length == 0)
     {
-        $scope.ListaTitoliFiltro[j].SommaPrenotati = 0;
-        $scope.ListaTitoliFiltro[j].Quantita       = parseInt($scope.ListaTitoliFiltro[j].Quantita);
-        for(let i = 0;i < $scope.ListaSpedizioni.length;i ++)
-        {
-          $scope.ListaSpedizioni[i].Quantita = parseInt($scope.ListaSpedizioni[i].Quantita);
-          if($scope.ListaSpedizioni[i].Tipo == 1 && ($scope.ListaSpedizioni[i].Titolo == $scope.ListaTitoliFiltro[j].Chiave) && $scope.ListaSpedizioni[i].Selezionato)
-             $scope.ListaTitoliFiltro[j].SommaPrenotati += $scope.ListaSpedizioni[i].Quantita
-        }
-        if($scope.ListaTitoliFiltro[j].SommaPrenotati > $scope.ListaTitoliFiltro[j].Quantita)
-        {
-           $scope.CumulativoPossibile = false;
-           return
-        }
-        else $scope.CumulativoPossibile = true;
+       $scope.CumulativoPossibile = false
+       return
+    }
+    else
+    {
+       var ContatoreCheck = 0;
+       for(let k = 0;k < $scope.ListaSpedizioni.length;k ++)       
+           if($scope.ListaSpedizioni[k].Tipo == 1 && $scope.ListaSpedizioni[k].Selezionato)
+              ContatoreCheck++;              
+       if(ContatoreCheck == 0)
+       {
+          $scope.CumulativoPossibile = false
+          return
+       }          
+
+       for(let j = 0;j < $scope.ListaTitoliFiltro.length;j ++)
+       {
+           $scope.ListaTitoliFiltro[j].SommaPrenotati = 0;
+           $scope.ListaTitoliFiltro[j].Quantita       = parseInt($scope.ListaTitoliFiltro[j].Quantita);
+           for(let i = 0;i < $scope.ListaSpedizioni.length;i ++)
+           {
+             $scope.ListaSpedizioni[i].Quantita = parseInt($scope.ListaSpedizioni[i].Quantita);
+             if($scope.ListaSpedizioni[i].Tipo == 1 && ($scope.ListaSpedizioni[i].Titolo == $scope.ListaTitoliFiltro[j].Chiave) && $scope.ListaSpedizioni[i].Selezionato)
+                $scope.ListaTitoliFiltro[j].SommaPrenotati += $scope.ListaSpedizioni[i].Quantita
+           }
+           if($scope.ListaTitoliFiltro[j].SommaPrenotati > $scope.ListaTitoliFiltro[j].Quantita)
+           {
+              $scope.CumulativoPossibile = false;
+              ListaNonSpedibili.push($scope.ListaTitoliFiltro[j].Nome)
+              //return
+           }
+           else $scope.CumulativoPossibile = true;
+       }
+       if(ListaNonSpedibili.length > 0)
+       {
+          for(let l = 0;l < ListaNonSpedibili.length;l ++)
+          {
+             $scope.ListaNonSpedibili += ListaNonSpedibili[l] + ' , ';
+          }
+          $scope.ListaNonSpedibili = $scope.ListaNonSpedibili.substring(0,$scope.ListaNonSpedibili.length - 3);
+          $scope.VisualizzaNonSpedibili = true;          
+       }
+          
     }
   }
 
@@ -218,12 +252,16 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
                               }); 
     SystemInformation.PostSQL('Delivery',$ObjQuery,function(Answer)
     {
-      $scope.RefreshListaSpedizioniAll();
+      $state.go('deliveryListPage');
     });
   }  
   
   $scope.RefreshListaSpedizioniAll = function()
   { 
+    if($scope.ListaTitoliFiltro.length == 0)
+    {
+       $scope.ListaSpedizioni = [];
+    }
     if($scope.DataRicercaDal == undefined || $scope.DataRicercaAl == undefined)
        return;
     let TmpDate = new Date($scope.DataRicercaAl);
@@ -329,25 +367,25 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
   
   $scope.SelezionaTutto = function()
   {
-    if($scope.ListaSpedizioni != undefined)
+    if($scope.ListaSpedizioni.length > 0)
     {
-     if(CheckAll)
-     {
-      for(let i = 0;i < $scope.ListaSpedizioni.length;i ++)
-          if($scope.ListaSpedizioni[i].Tipo == 1)
-             $scope.ListaSpedizioni[i].Selezionato = true;
-     }
+       for(let i = 0;i < $scope.ListaSpedizioni.length;i ++)
+           if($scope.ListaSpedizioni[i].Tipo == 1)
+              $scope.ListaSpedizioni[i].Selezionato = true;    
     }
+    $scope.CheckCumulativo();
   }
   
   $scope.DeselezionaTutto = function()
   {
-    if($scope.ListaSpedizioni != undefined)
+    if($scope.ListaSpedizioni.length > 0)
     {
-      for(let i = 0;i < $scope.ListaSpedizioni.length;i ++)
-          if($scope.ListaSpedizioni[i].Tipo == 1)
-             $scope.ListaSpedizioni[i].Selezionato = false;
+       for(let i = 0;i < $scope.ListaSpedizioni.length;i ++)
+           if($scope.ListaSpedizioni[i].Tipo == 1)
+              $scope.ListaSpedizioni[i].Selezionato = false;
+      
     }
+    $scope.CheckCumulativo();
   }
   
   $scope.AggiungiTitoloRicerca = function(ev)
@@ -429,10 +467,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
     TitoloCorrisp = $scope.ListaTitoliFiltro.findIndex(function(ATitolo){return(ATitolo.Chiave == Titolo.Chiave);});
     $scope.ListaTitoliFiltro.splice(TitoloCorrisp,1);
     $scope.RefreshListaSpedizioniAll();
+    $scope.CheckCumulativo();
   }
-  
-  //$scope.RefreshListaSpedizioniAll();
-  //$scope.CheckCumulativo();
 
 }]);
 

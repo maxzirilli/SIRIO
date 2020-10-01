@@ -83,11 +83,12 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
         { 
            for(let i = 0; i < TitoliInfoLista.length; i++)
                TitoliInfoLista[i] = { 
-                                      Chiave      : TitoliInfoLista[i].CHIAVE,
-                                      Nome        : TitoliInfoLista[i].TITOLO == null ? 'N.D' : TitoliInfoLista[i].TITOLO,
-                                      Quantita    : parseInt(TitoliInfoLista[i].QUANTITA_MGZN),
-                                      QuantitaVol : parseInt(TitoliInfoLista[i].QUANTITA_MGZN_VOL),
-                                      Codice      : TitoliInfoLista[i].CODICE_ISBN == null ? 'N.D.' : TitoliInfoLista[i].CODICE_ISBN
+                                      Chiave       : TitoliInfoLista[i].CHIAVE,
+                                      Nome         : TitoliInfoLista[i].TITOLO == null ? 'N.D' : TitoliInfoLista[i].TITOLO,
+                                      Quantita     : parseInt(TitoliInfoLista[i].QUANTITA_MGZN),
+                                      QuantitaVol  : parseInt(TitoliInfoLista[i].QUANTITA_MGZN_VOL),
+                                      QuantitaDisp : parseInt(TitoliInfoLista[i].QUANTITA_DISP),
+                                      Codice       : TitoliInfoLista[i].CODICE_ISBN == null ? 'N.D.' : TitoliInfoLista[i].CODICE_ISBN
                                     }
            $scope.ListaTitoli = TitoliInfoLista;
            GestioneParametri();
@@ -233,6 +234,14 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
                  }
                }
                
+               if($scope.SpedizioneMultipla)
+               {
+                  $scope.Multipla = true;
+                  if($scope.IstitutoSelezionato != '')
+                     $scope.NumeroDocenti = $scope.ListaDocentiSpedizionePerMultipla.length
+                  else $scope.NumeroDocenti = $scope.ListaDocentiSpedizione.length;
+               }
+               
                $scope.PassaADaSpedire = function (Titolo)
                {
                  if (Titolo.STATO == 'P')
@@ -341,7 +350,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
           
           $scope.PassaADaSpedire = function (Titolo)
           {
-            if (Titolo.STATO == 'P' && (Titolo.QUANTITA <= Titolo.QUANTITA_MGZN))
+            if (Titolo.STATO == 'P')
             {
                 if(Titolo.Nuovo == true)
                    Titolo.STATO = 'S';
@@ -390,6 +399,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
                                                         "QUANTITA"      : parseInt(DettaglioSpedizioneTitoloDoc[i].QUANTITA),
                                                         "STATO"         : DettaglioSpedizioneTitoloDoc[i].STATO,
                                                         "QUANTITA_MGZN" : parseInt(DettaglioSpedizioneTitoloDoc[i].QUANTITA_MGZN),
+                                                        "QUANTITA_DISP" : parseInt(DettaglioSpedizioneTitoloDoc[i].QUANTITA_DISP),
                                                         "Nuovo"         : false,
                                                         "Modificato"    : false,
                                                         "Eliminato"     : false
@@ -523,7 +533,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
                                                        "NOME_TITOLO"   : DettaglioSpedizioneTitoloCasa[i].NOME_TITOLO,
                                                        "QUANTITA"      : parseInt(DettaglioSpedizioneTitoloCasa[i].QUANTITA),
                                                        "STATO"         : DettaglioSpedizioneTitoloCasa[i].STATO,
-                                                       "QUANTITA_MGZN" : parseInt(DettaglioSpedizioneTitoloCasa[i].QUANTITA_MGZN),                                                    
+                                                       "QUANTITA_MGZN" : parseInt(DettaglioSpedizioneTitoloCasa[i].QUANTITA_MGZN),
+                                                       "QUANTITA_DISP" : parseInt(DettaglioSpedizioneTitoloDoc[i].QUANTITA_DISP),                                                       
                                                        "Nuovo"         : false,
                                                        "Modificato"    : false,
                                                        "Eliminato"     : false
@@ -577,6 +588,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
                          "QUANTITA"      : 1,
                          "STATO"         : null,
                          "QUANTITA_MGZN" : null,
+                         "QUANTITA_DISP" : 0,
                          "Nuovo"         : true,
                          "Modificato"    : false,
                          "Eliminato"     : false                                   
@@ -585,8 +597,9 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
       if($scope.SpedizioneMultipla)
       {
          $scope.Multipla = true;
-         if($scope.IstitutoSelezionato != -1)
-            $scope.NumeroDocenti = $scope.ListaDocentiSpedizionePerMultipla.length;
+         if($scope.IstitutoSelezionato != '')
+            $scope.NumeroDocenti = $scope.ListaDocentiSpedizionePerMultipla.length
+         else $scope.NumeroDocenti = $scope.ListaDocentiSpedizione.length;
       }
          
       $scope.queryTitolo = function(searchTextTit)
@@ -606,17 +619,21 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
            $scope.Titolo.NOME_TITOLO       = itemTit.Nome;
            $scope.Titolo.QUANTITA_MGZN     = itemTit.Quantita;
            $scope.Titolo.QUANTITA_MGZN_VOL = itemTit.QuantitaVol;
+           $scope.Titolo.QUANTITA_DISP     = itemTit.QuantitaDisp;
         }
       }
 
       $scope.hide = function() 
       {
+        $scope.TitoloPopup = undefined;
+        $scope.searchTextTit = '';
         $mdDialog.hide();
       };
 
       $scope.AnnullaPopupTitolo = function() 
       {
         $scope.TitoloPopup = undefined;
+        $scope.searchTextTit = '';
         $mdDialog.cancel();
       };
 
@@ -630,6 +647,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
         else
         {                         
           $scope.ListaTitoliSpedizione.push($scope.Titolo);
+          $scope.TitoloPopup = undefined;
+          $scope.searchTextTit = '';
           $mdDialog.hide();
         }             
       }
@@ -678,12 +697,12 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
                          "NOME_TITOLO"   : Titolo.NOME_TITOLO,
                          "QUANTITA"      : parseInt(Titolo.QUANTITA),
                          "QUANTITA_MGZN" : Titolo.QUANTITA_MGZN,
+                         "QUANTITA_DISP" : Titolo.QUANTITA_DISP,
                          "STATO"         : Titolo.STATO,
                          "Nuovo"         : Titolo.Nuovo,
                          "Modificato"    : Titolo.Modificato,
                          "Eliminato"     : Titolo.Eliminato                                   
-                      } 
-      
+                      }      
 
       $scope.queryTitolo = function(searchTextTit)
       {
@@ -693,7 +712,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
            return(Elemento.Nome.toUpperCase().indexOf(searchTextTit) != -1 || Elemento.Codice.indexOf(searchTextTit) != -1);
          }));
       }
-      
+            
       $scope.selectedItemChangeTitolo = function(itemTit)
       {
         if(itemTit != undefined)
@@ -703,10 +722,18 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
           $scope.Titolo.QUANTITA_MGZN = itemTit.Quantita;
         }
       }
+      
+      $scope.hide = function() 
+      {
+        $scope.TitoloPopup = undefined;
+        $scope.searchTextTit = '';
+        $mdDialog.hide();
+      };
 
       $scope.AnnullaPopupTitolo = function() 
       {
-        //$scope.TitoloPopup = undefined;
+        $scope.TitoloPopup = undefined;
+        $scope.searchTextTit = '';
         $mdDialog.cancel();
       };
       
@@ -729,7 +756,9 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
              $scope.ListaTitoliSpedizione[TitoloCorrispondente].Modificato = false
           else
              $scope.ListaTitoliSpedizione[TitoloCorrispondente].Modificato = true;
-        }          
+        }
+        $scope.TitoloPopup = undefined;
+        $scope.searchTextTit = '';        
         $mdDialog.hide();           
       }
     }

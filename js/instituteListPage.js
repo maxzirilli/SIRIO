@@ -438,9 +438,15 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                                     }
          
             $scope.ListaIstituti = IstitutiInfoLista
+            if(SystemInformation.DataBetweenController.ProvinciaF != undefined)
+            {
+               $scope.ProvinciaFiltro = SystemInformation.DataBetweenController.ProvinciaF;
+               SystemInformation.DataBetweenController = {};
+            }
       }
       else SystemInformation.ApplyOnError('Modello istituti non conforme','');   
     });
+    
   }
   
   $scope.RendiVisibileIstituto = function (ChiaveIstituto,NomeIstituto)
@@ -591,7 +597,6 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
        case 'V' : return(19);
                   break;         
        case 'Z' : return(20);
-       case 'Z' : return(20);
                   break;
        default  : return(-1);
                   break;
@@ -600,6 +605,7 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
   
   $scope.ModificaIstituto = function(istituto)
   {
+    //SystemInformation.DataBetweenController.ProvinciaF = $scope.ProvinciaFiltro;
     $scope.EditingOn = true;    
     SystemInformation.GetSQL('Institute', {CHIAVE : istituto.Chiave}, function(Results)
     {

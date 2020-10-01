@@ -94,7 +94,7 @@
     <div style="text-align:right;">
       <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="NuovaSpedizioneCasaEditrice()">NUOVA SPEDIZIONE CASA EDITRICE</md-button>
       <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="CreaXlsSpedizioni()">CREA XLS SPEDIZIONI</md-button>
-      <!--<md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="GestioneAvanzataSpedizioni()">GESTIONE AVANZATA SPEDIZIONI</md-button>--->
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="GestioneAvanzataSpedizioni()">GESTIONE AVANZATA SPEDIZIONI</md-button>
     </div>
 
   <p ng-if="ListaSpedizioni.length == 0" style="font-weight:bold;font-style:italic;float:center;">NESSUNA SPEDIZIONE PRESENTE</p>  
@@ -106,15 +106,17 @@
       <th>DA SPEDIRE</th>
       <th>DATA</th>
       <th>PRESSO</th>
-      <th>STATO</th>
+      <th>ISBN / TITOLO / STATO</th>
     </tr>
     <tr ng-repeat="Spedizione in ListaSpedizioni | SpedizioneByFiltro : ProvinciaFiltro : PrenotataFiltro : DaSpedireFiltro : ConsegnataFiltro : $parent.PromotoreFiltro : IstitutoFiltro : DocenteFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Spedizione.Chiave}}>
       <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA SPEDIZIONE" ng-click="EliminaSpedizione(Spedizione)"></td> 
       <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA SPEDIZIONE" ng-click="ModificaSpedizione(Spedizione.Chiave,Spedizione.Docente)"></td>
-      <td><img src="img/toSend.png" style="width:30px;height:auto;" title="SPEDIRE TITOLI DISPONIBILI" ng-click="PassaADaSpedireDisponibili(Spedizione.Chiave)" ng-if="Spedizione.Spedibile && Spedizione.NrPrenotate > 0"></td>
+      <td ng-if="Spedizione.Spedibile && Spedizione.NrPrenotate > 0"><img src="img/toSend.png" style="width:30px;height:auto;" title="SPEDIRE TITOLI DISPONIBILI" ng-click="PassaADaSpedireDisponibili(Spedizione.Chiave)"></td>
+      <td ng-if="!(Spedizione.Spedibile) && Spedizione.NrPrenotate > 0" title="NESSUN TITOLO TRA I PRENOTATI E' DISPONIBILE"><img src="img/notToSend.png" style="width:30px;height:auto;" class="off"></td>      
+      <td ng-if="Spedizione.NrPrenotate == 0"></td>      
       <td>{{ConvertiData(Spedizione)}}</td>
       <td>{{Spedizione.Docente == -1 ? Spedizione.Presso : Spedizione.DocenteNome}}</td>
-      <td ng-bind-html="GetDescrStatoSpedizione(Spedizione)"></td>
+      <td style="text-align:left;" class="off" ng-bind-html="GetTitoliSpedizione(Spedizione)"></td>   
     </tr>
     </table>
     <md-table-pagination md-limit="GridOptions.query.limit" 

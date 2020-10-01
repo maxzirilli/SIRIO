@@ -236,35 +236,57 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
           for(let i = 0; i < ListaSpedizioniTmp.length; i++)
           {
               ListaSpedizioniTmp[i] = {
-                                        Chiave       : ListaSpedizioniTmp[i].CHIAVE,
-                                        Presso       : ListaSpedizioniTmp[i].PRESSO == undefined ? 'N.D.' : ListaSpedizioniTmp[i].PRESSO,
-                                        Docente      : ListaSpedizioniTmp[i].DOCENTE == undefined ? -1 : ListaSpedizioniTmp[i].DOCENTE,
-                                        DocenteNome  : ListaSpedizioniTmp[i].NOME_DOCENTE == undefined ? '' : ListaSpedizioniTmp[i].NOME_DOCENTE,
-                                        Data         : ListaSpedizioniTmp[i].DATA,
-                                        Provincia    : ListaSpedizioniTmp[i].PROVINCIA,
-                                        NrConsegnate : ListaSpedizioniTmp[i].NR_CONSEGNATE,
-                                        NrDaSpedire  : ListaSpedizioniTmp[i].NR_DA_SPEDIRE,
-                                        NrPrenotate  : ListaSpedizioniTmp[i].NR_PRENOTATE,
-                                        Promotore    : ListaSpedizioniTmp[i].PROMOTORE,
-                                        Istituto     : ListaSpedizioniTmp[i].ISTITUTO == null ? -1 : ListaSpedizioniTmp[i].ISTITUTO,
-                                        Spedibile    : false
+                                        Chiave          : ListaSpedizioniTmp[i].CHIAVE,
+                                        Presso          : ListaSpedizioniTmp[i].PRESSO == undefined ? 'N.D.' : ListaSpedizioniTmp[i].PRESSO,
+                                        Docente         : ListaSpedizioniTmp[i].DOCENTE == undefined ? -1 : ListaSpedizioniTmp[i].DOCENTE,
+                                        DocenteNome     : ListaSpedizioniTmp[i].NOME_DOCENTE == undefined ? '' : ListaSpedizioniTmp[i].NOME_DOCENTE,
+                                        Data            : ListaSpedizioniTmp[i].DATA,
+                                        Provincia       : ListaSpedizioniTmp[i].PROVINCIA,
+                                        NrConsegnate    : ListaSpedizioniTmp[i].NR_CONSEGNATE,
+                                        NrDaSpedire     : ListaSpedizioniTmp[i].NR_DA_SPEDIRE,
+                                        NrPrenotate     : ListaSpedizioniTmp[i].NR_PRENOTATE,
+                                        Promotore       : ListaSpedizioniTmp[i].PROMOTORE,
+                                        Istituto        : ListaSpedizioniTmp[i].ISTITUTO == null ? -1 : ListaSpedizioniTmp[i].ISTITUTO,
+                                        Spedibile       : false,
+                                        DettagliTitoli  : []
                                       }
               SystemInformation.GetSQL('Delivery',{CHIAVE : ListaSpedizioniTmp[i].Chiave},function(Results)
               {
-                AdminSpedizioniDettaglioTmp = SystemInformation.FindResults(Results,'DeliveryListAllDettaglio');
+                AdminSpedizioniDettaglioTmp = SystemInformation.FindResults(Results,'GenericDeliveryDettaglio');
                 if(AdminSpedizioniDettaglioTmp != undefined)
                 {
-                   for(let j = 0;j < AdminSpedizioniDettaglioTmp.length;j ++)                                                            
+                   for(let j = 0;j < AdminSpedizioniDettaglioTmp.length;j ++)
+                   {                     
                        if (AdminSpedizioniDettaglioTmp[j].SPEDIBILE == 1)
                        {                                                                   
                            ListaSpedizioniTmp[i].Spedibile = true;
-                           break;
                        }
+                       switch(AdminSpedizioniDettaglioTmp[j].STATO)
+                       {
+                              case 'P' : AdminSpedizioniDettaglioTmp[j].STATO = 'PRENOTATO'
+                                         break;
+                              case 'S' : AdminSpedizioniDettaglioTmp[j].STATO = 'DA SPEDIRE'
+                                         break;
+                              case 'C' : AdminSpedizioniDettaglioTmp[j].STATO = 'CONSEGNATO'
+                                         break;
+                              default  : AdminSpedizioniDettaglioTmp[j].STATO = 'N.D';                                       
+                                         
+                       }
+                       AdminSpedizioniDettaglioTmp[j] = {
+                                                          Chiave       : AdminSpedizioniDettaglioTmp[j].CHIAVE,
+                                                          Titolo       : AdminSpedizioniDettaglioTmp[j].TITOLO,
+                                                          NomeTitolo   : AdminSpedizioniDettaglioTmp[j].NOME_TITOLO == undefined ? 'N.D' : AdminSpedizioniDettaglioTmp[j].NOME_TITOLO,
+                                                          CodiceTitolo : AdminSpedizioniDettaglioTmp[j].CODICE_TITOLO == undefined ? 'N.D' : AdminSpedizioniDettaglioTmp[j].CODICE_TITOLO,
+                                                          StatoTitolo  : AdminSpedizioniDettaglioTmp[j].STATO                         
+                                                        }
+
+                       ListaSpedizioniTmp[i].DettagliTitoli.push(AdminSpedizioniDettaglioTmp[j]);                                                               
+                   }                    
                 }
                 else SystemInformation.ApplyOnError('Modello dettaglio spedizioni non conforme','');     
-              },'SQLAdminDettaglio')            
-          }                  
-          $scope.ListaSpedizioni = ListaSpedizioniTmp;
+              },'SQLDettaglio')            
+          }
+          $scope.ListaSpedizioni = ListaSpedizioniTmp                           
         }
         else SystemInformation.ApplyOnError('Modello spedizioni non conforme','')     
       },'SQLAdmin')     
@@ -277,41 +299,74 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
         if (ListaSpedizioniTmp != undefined) 
         {
           for(let i = 0; i < ListaSpedizioniTmp.length; i++)
-          {    
+          {
               ListaSpedizioniTmp[i] = {
-                                        Chiave       : ListaSpedizioniTmp[i].CHIAVE,
-                                        Presso       : ListaSpedizioniTmp[i].PRESSO == undefined ? 'N.D.' : ListaSpedizioniTmp[i].PRESSO,
-                                        Docente      : ListaSpedizioniTmp[i].DOCENTE == undefined ? -1 : ListaSpedizioniTmp[i].DOCENTE,
-                                        DocenteNome  : ListaSpedizioniTmp[i].NOME_DOCENTE == undefined ? '' : ListaSpedizioniTmp[i].NOME_DOCENTE,
-                                        Data         : ListaSpedizioniTmp[i].DATA,
-                                        Provincia    : ListaSpedizioniTmp[i].PROVINCIA,
-                                        NrConsegnate : ListaSpedizioniTmp[i].NR_CONSEGNATE,
-                                        NrDaSpedire  : ListaSpedizioniTmp[i].NR_DA_SPEDIRE,
-                                        NrPrenotate  : ListaSpedizioniTmp[i].NR_PRENOTATE,
-                                        Promotore    : ListaSpedizioniTmp[i].PROMOTORE,
-                                        Istituto     : ListaSpedizioniTmp[i].ISTITUTO == null ? -1 : ListaSpedizioniTmp[i].ISTITUTO,
-                                        Spedibile    : false
+                                        Chiave          : ListaSpedizioniTmp[i].CHIAVE,
+                                        Presso          : ListaSpedizioniTmp[i].PRESSO == undefined ? 'N.D.' : ListaSpedizioniTmp[i].PRESSO,
+                                        Docente         : ListaSpedizioniTmp[i].DOCENTE == undefined ? -1 : ListaSpedizioniTmp[i].DOCENTE,
+                                        DocenteNome     : ListaSpedizioniTmp[i].NOME_DOCENTE == undefined ? '' : ListaSpedizioniTmp[i].NOME_DOCENTE,
+                                        Data            : ListaSpedizioniTmp[i].DATA,
+                                        Provincia       : ListaSpedizioniTmp[i].PROVINCIA,
+                                        NrConsegnate    : ListaSpedizioniTmp[i].NR_CONSEGNATE,
+                                        NrDaSpedire     : ListaSpedizioniTmp[i].NR_DA_SPEDIRE,
+                                        NrPrenotate     : ListaSpedizioniTmp[i].NR_PRENOTATE,
+                                        Promotore       : ListaSpedizioniTmp[i].PROMOTORE,
+                                        Istituto        : ListaSpedizioniTmp[i].ISTITUTO == null ? -1 : ListaSpedizioniTmp[i].ISTITUTO,
+                                        Spedibile       : false,
+                                        DettagliTitoli  : []
                                       }
               SystemInformation.GetSQL('Delivery',{CHIAVE : ListaSpedizioniTmp[i].Chiave},function(Results)
               {
-                PromotoreSpedizioniDettaglioTmp = SystemInformation.FindResults(Results,'MyDeliveryListDettaglio');
+                PromotoreSpedizioniDettaglioTmp = SystemInformation.FindResults(Results,'GenericDeliveryDettaglio');
                 if(PromotoreSpedizioniDettaglioTmp != undefined)
                 {
-                   for(let j = 0;j < PromotoreSpedizioniDettaglioTmp.length;j ++)                                                            
+                   for(let j = 0;j < PromotoreSpedizioniDettaglioTmp.length;j ++)
+                   {                     
                        if (PromotoreSpedizioniDettaglioTmp[j].SPEDIBILE == 1)
                        {                                                                   
                            ListaSpedizioniTmp[i].Spedibile = true;
-                           break;
                        }
+                       switch(PromotoreSpedizioniDettaglioTmp[j].STATO)
+                       {
+                              case 'P' : PromotoreSpedizioniDettaglioTmp[j].STATO = 'PRENOTATO'
+                                         break;
+                              case 'S' : PromotoreSpedizioniDettaglioTmp[j].STATO = 'DA SPEDIRE'
+                                         break;
+                              case 'C' : PromotoreSpedizioniDettaglioTmp[j].STATO = 'CONSEGNATO'
+                                         break;
+                              default  : PromotoreSpedizioniDettaglioTmp[j].STATO = 'N.D';                                       
+                                         
+                       }
+                       PromotoreSpedizioniDettaglioTmp[j] = {
+                                                              Chiave       : PromotoreSpedizioniDettaglioTmp[j].CHIAVE,
+                                                              Titolo       : PromotoreSpedizioniDettaglioTmp[j].TITOLO,
+                                                              NomeTitolo   : PromotoreSpedizioniDettaglioTmp[j].NOME_TITOLO == undefined ? 'N.D' : PromotoreSpedizioniDettaglioTmp[j].NOME_TITOLO,
+                                                              CodiceTitolo : PromotoreSpedizioniDettaglioTmp[j].CODICE_TITOLO == undefined ? 'N.D' : PromotoreSpedizioniDettaglioTmp[j].CODICE_TITOLO,
+                                                              StatoTitolo  : PromotoreSpedizioniDettaglioTmp[j].STATO                         
+                                                            }
+
+                       ListaSpedizioniTmp[i].DettagliTitoli.push(PromotoreSpedizioniDettaglioTmp[j]);                                                               
+                   }                    
                 }
                 else SystemInformation.ApplyOnError('Modello dettaglio spedizioni non conforme','');     
-              },'SQLPromotoreDettaglio')           
+              },'SQLDettaglio')            
           }
-          $scope.ListaSpedizioni = ListaSpedizioniTmp;                  
+          $scope.ListaSpedizioni = ListaSpedizioniTmp                
         }
         else SystemInformation.ApplyOnError('Modello spedizioni non conforme','');     
       },'SQLPromotore');
     }
+  }
+  
+  $scope.GetTitoliSpedizione = function(Spedizione)
+  {
+     var Result = '';
+     for(let i = 0;i < Spedizione.DettagliTitoli.length;i ++)
+     {
+         Result += Spedizione.DettagliTitoli[i].CodiceTitolo + ' - ' + Spedizione.DettagliTitoli[i].NomeTitolo + ' - ' + Spedizione.DettagliTitoli[i].StatoTitolo + '</br>';
+     }
+     
+     return($sce.trustAsHtml(Result.substr(0,Result.length)));
   }
 
   $scope.CreaXlsSpedizioni = function()
@@ -338,7 +393,9 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
                                                            $scope.PrenotataFiltro,
                                                            $scope.DaSpedireFiltro,
                                                            $scope.ConsegnataFiltro,
-                                                           $scope.PromotoreFiltro);
+                                                           $scope.PromotoreFiltro,
+                                                           $scope.IstitutoFiltro,
+                                                           $scope.DocenteFiltro);
     if($scope.IsAdministrator())
     {
        BodySheet       = {};
@@ -745,13 +802,13 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
             }
             SystemInformation.PostSQL('Delivery',$ObjQuery,function(Results)
             {                            
-              $scope.RefreshListaSpedizioniAll();
               if(TitoliNonDisponibili.length != 0 && TitoliDaSpedire.length == 0)               
                  alert('I seguenti titoli non sono disponibili per essere spediti:  ' + TitoliNonDisponibili)
               else if (TitoliNonDisponibili.length == 0 && TitoliDaSpedire.length != 0)
                  alert('I seguenti titoli sono stati segnati come DA SPEDIRE : ' + TitoliDaSpedire)
               else if (TitoliNonDisponibili.length != 0 && TitoliDaSpedire.length != 0)
                  alert('I seguenti titoli sono stati segnati come DA SPEDIRE : ' + TitoliDaSpedire + '\n' + '\n' + 'I seguenti titoli non sono disponibili per essere spediti:  ' + TitoliNonDisponibili);
+              $scope.ListaSpedizioni = [];
               $scope.RefreshListaSpedizioniAll();
             })                       
          }

@@ -165,13 +165,14 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce)
             }
             SystemInformation.PostSQL('Delivery',$ObjQuery,function(Results)
             {                            
-              $scope.RefreshListaUltimeSpedizioni(); 
+              //$scope.RefreshListaUltimeSpedizioni(); 
               if(TitoliNonDisponibili.length != 0 && TitoliDaSpedire.length == 0)               
                  alert('I seguenti titoli non sono disponibili per essere spediti:  ' + TitoliNonDisponibili)
               else if (TitoliNonDisponibili.length == 0 && TitoliDaSpedire.length != 0)
                  alert('I seguenti titoli sono stati segnati come DA SPEDIRE : ' + TitoliDaSpedire)
               else if (TitoliNonDisponibili.length != 0 && TitoliDaSpedire.length != 0)
                  alert('I seguenti titoli sono stati segnati come DA SPEDIRE : ' + TitoliDaSpedire + '\n' + '\n' + 'I seguenti titoli non sono disponibili per essere spediti:  ' + TitoliNonDisponibili);              
+              $scope.UltimeVentiSpedizioni = [];
               $scope.RefreshListaUltimeSpedizioni(); 
             })                       
          }
@@ -193,30 +194,52 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce)
            for(let i = 0; i < UltimeVentiSpedizioniTmp.length; i++)
            {
                UltimeVentiSpedizioniTmp[i] = {
-                                               Chiave       : UltimeVentiSpedizioniTmp[i].CHIAVE,
-                                               Presso       : UltimeVentiSpedizioniTmp[i].PRESSO,
-                                               Docente      : UltimeVentiSpedizioniTmp[i].DOCENTE == null ? -1 : UltimeVentiSpedizioniTmp[i].DOCENTE,
-                                               DocenteNome  : UltimeVentiSpedizioniTmp[i].NOME_DOCENTE == null ? 'N.D.' : UltimeVentiSpedizioniTmp[i].NOME_DOCENTE,
-                                               Data         : ZFormatDateTime('dd/mm/yyyy',ZDateFromHTMLInput(UltimeVentiSpedizioniTmp[i].DATA)),
-                                               NrConsegnate : UltimeVentiSpedizioniTmp[i].NR_CONSEGNATE,
-                                               NrDaSpedire  : UltimeVentiSpedizioniTmp[i].NR_DA_SPEDIRE,
-                                               NrPrenotate  : UltimeVentiSpedizioniTmp[i].NR_PRENOTATE,
-                                               Spedibile    : false                                               
+                                               Chiave          : UltimeVentiSpedizioniTmp[i].CHIAVE,
+                                               Presso          : UltimeVentiSpedizioniTmp[i].PRESSO,
+                                               Docente         : UltimeVentiSpedizioniTmp[i].DOCENTE == null ? -1 : UltimeVentiSpedizioniTmp[i].DOCENTE,
+                                               DocenteNome     : UltimeVentiSpedizioniTmp[i].NOME_DOCENTE == null ? 'N.D.' : UltimeVentiSpedizioniTmp[i].NOME_DOCENTE,
+                                               Data            : ZFormatDateTime('dd/mm/yyyy',ZDateFromHTMLInput(UltimeVentiSpedizioniTmp[i].DATA)),
+                                               NrConsegnate    : UltimeVentiSpedizioniTmp[i].NR_CONSEGNATE,
+                                               NrDaSpedire     : UltimeVentiSpedizioniTmp[i].NR_DA_SPEDIRE,
+                                               NrPrenotate     : UltimeVentiSpedizioniTmp[i].NR_PRENOTATE,
+                                               Spedibile       : false,
+                                               DettagliTitoli  : []                                               
                                              }
                SystemInformation.GetSQL('Delivery',{CHIAVE : UltimeVentiSpedizioniTmp[i].Chiave},function(Results)
                {
-                 UltimeVentiSpedizioniDettaglioTmp = SystemInformation.FindResults(Results,'DeliveryListLastTwentyAdmDettaglio');
+                 UltimeVentiSpedizioniDettaglioTmp = SystemInformation.FindResults(Results,'GenericDeliveryDettaglio');
                  if(UltimeVentiSpedizioniDettaglioTmp != undefined)
                  {
-                    for(let j = 0;j < UltimeVentiSpedizioniDettaglioTmp.length;j ++)                                                            
+                    for(let j = 0;j < UltimeVentiSpedizioniDettaglioTmp.length;j ++)
+                    {                     
                         if (UltimeVentiSpedizioniDettaglioTmp[j].SPEDIBILE == 1)
                         {                                                                   
                             UltimeVentiSpedizioniTmp[i].Spedibile = true;
-                            break;
                         }
+                        switch(UltimeVentiSpedizioniDettaglioTmp[j].STATO)
+                        {
+                               case 'P' : UltimeVentiSpedizioniDettaglioTmp[j].STATO = 'PRENOTATO'
+                                          break;
+                               case 'S' : UltimeVentiSpedizioniDettaglioTmp[j].STATO = 'DA SPEDIRE'
+                                          break;
+                               case 'C' : UltimeVentiSpedizioniDettaglioTmp[j].STATO = 'CONSEGNATO'
+                                          break;
+                               default  : UltimeVentiSpedizioniDettaglioTmp[j].STATO = 'N.D';                                       
+                                          
+                        }
+                        UltimeVentiSpedizioniDettaglioTmp[j] = {
+                                                                 Chiave       : UltimeVentiSpedizioniDettaglioTmp[j].CHIAVE,
+                                                                 Titolo       : UltimeVentiSpedizioniDettaglioTmp[j].TITOLO,
+                                                                 NomeTitolo   : UltimeVentiSpedizioniDettaglioTmp[j].NOME_TITOLO == undefined ? 'N.D' : UltimeVentiSpedizioniDettaglioTmp[j].NOME_TITOLO,
+                                                                 CodiceTitolo : UltimeVentiSpedizioniDettaglioTmp[j].CODICE_TITOLO == undefined ? 'N.D' : UltimeVentiSpedizioniDettaglioTmp[j].CODICE_TITOLO,
+                                                                 StatoTitolo  : UltimeVentiSpedizioniDettaglioTmp[j].STATO                         
+                                                               }
+
+                        UltimeVentiSpedizioniTmp[i].DettagliTitoli.push(UltimeVentiSpedizioniDettaglioTmp[j]);                                                               
+                    }                    
                  }
                  else SystemInformation.ApplyOnError('Modello dettaglio spedizioni non conforme','');     
-               },'SQLUltime20AdminDettaglio')      
+               },'SQLDettaglio')      
            }                                            
            $scope.UltimeVentiSpedizioni = UltimeVentiSpedizioniTmp;
          }
@@ -233,36 +256,69 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce)
            for(let i = 0; i < UltimeVentiSpedizioniTmp.length; i++)
            {
                UltimeVentiSpedizioniTmp[i] = {
-                                               Chiave       : UltimeVentiSpedizioniTmp[i].CHIAVE,
-                                               Presso       : UltimeVentiSpedizioniTmp[i].PRESSO,
-                                               Docente      : UltimeVentiSpedizioniTmp[i].DOCENTE == null ? -1 : UltimeVentiSpedizioniTmp[i].DOCENTE,
-                                               DocenteNome  : UltimeVentiSpedizioniTmp[i].NOME_DOCENTE == null ? 'N.D.' : UltimeVentiSpedizioniTmp[i].NOME_DOCENTE,
-                                               Data         : ZFormatDateTime('dd/mm/yyyy',ZDateFromHTMLInput(UltimeVentiSpedizioniTmp[i].DATA)),
-                                               NrConsegnate : UltimeVentiSpedizioniTmp[i].NR_CONSEGNATE,
-                                               NrDaSpedire  : UltimeVentiSpedizioniTmp[i].NR_DA_SPEDIRE,
-                                               NrPrenotate  : UltimeVentiSpedizioniTmp[i].NR_PRENOTATE,
-                                               Spedibile    : false
+                                               Chiave          : UltimeVentiSpedizioniTmp[i].CHIAVE,
+                                               Presso          : UltimeVentiSpedizioniTmp[i].PRESSO,
+                                               Docente         : UltimeVentiSpedizioniTmp[i].DOCENTE == null ? -1 : UltimeVentiSpedizioniTmp[i].DOCENTE,
+                                               DocenteNome     : UltimeVentiSpedizioniTmp[i].NOME_DOCENTE == null ? 'N.D.' : UltimeVentiSpedizioniTmp[i].NOME_DOCENTE,
+                                               Data            : ZFormatDateTime('dd/mm/yyyy',ZDateFromHTMLInput(UltimeVentiSpedizioniTmp[i].DATA)),
+                                               NrConsegnate    : UltimeVentiSpedizioniTmp[i].NR_CONSEGNATE,
+                                               NrDaSpedire     : UltimeVentiSpedizioniTmp[i].NR_DA_SPEDIRE,
+                                               NrPrenotate     : UltimeVentiSpedizioniTmp[i].NR_PRENOTATE,
+                                               Spedibile       : false,
+                                               DettagliTitoli  : []                                               
                                              }
                SystemInformation.GetSQL('Delivery',{CHIAVE : UltimeVentiSpedizioniTmp[i].Chiave},function(Results)
                {
-                 UltimeVentiSpedizioniDettaglioTmp = SystemInformation.FindResults(Results,'DeliveryListLastTwentyPrmDettaglio');
+                 UltimeVentiSpedizioniDettaglioTmp = SystemInformation.FindResults(Results,'GenericDeliveryDettaglio');
                  if(UltimeVentiSpedizioniDettaglioTmp != undefined)
                  {
-                    for(let j = 0;j < UltimeVentiSpedizioniDettaglioTmp.length;j ++)                                                            
+                    for(let j = 0;j < UltimeVentiSpedizioniDettaglioTmp.length;j ++)
+                    {                     
                         if (UltimeVentiSpedizioniDettaglioTmp[j].SPEDIBILE == 1)
                         {                                                                   
                             UltimeVentiSpedizioniTmp[i].Spedibile = true;
-                            break;
                         }
+                        switch(UltimeVentiSpedizioniDettaglioTmp[j].STATO)
+                        {
+                               case 'P' : UltimeVentiSpedizioniDettaglioTmp[j].STATO = 'PRENOTATO'
+                                          break;
+                               case 'S' : UltimeVentiSpedizioniDettaglioTmp[j].STATO = 'DA SPEDIRE'
+                                          break;
+                               case 'C' : UltimeVentiSpedizioniDettaglioTmp[j].STATO = 'CONSEGNATO'
+                                          break;
+                               default  : UltimeVentiSpedizioniDettaglioTmp[j].STATO = 'N.D';                                       
+                                          
+                        }
+                        UltimeVentiSpedizioniDettaglioTmp[j] = {
+                                                                 Chiave       : UltimeVentiSpedizioniDettaglioTmp[j].CHIAVE,
+                                                                 Titolo       : UltimeVentiSpedizioniDettaglioTmp[j].TITOLO,
+                                                                 NomeTitolo   : UltimeVentiSpedizioniDettaglioTmp[j].NOME_TITOLO == undefined ? 'N.D' : UltimeVentiSpedizioniDettaglioTmp[j].NOME_TITOLO,
+                                                                 CodiceTitolo : UltimeVentiSpedizioniDettaglioTmp[j].CODICE_TITOLO == undefined ? 'N.D' : UltimeVentiSpedizioniDettaglioTmp[j].CODICE_TITOLO,
+                                                                 StatoTitolo  : UltimeVentiSpedizioniDettaglioTmp[j].STATO                         
+                                                               }
+
+                        UltimeVentiSpedizioniTmp[i].DettagliTitoli.push(UltimeVentiSpedizioniDettaglioTmp[j]);                                                               
+                    }                    
                  }
                  else SystemInformation.ApplyOnError('Modello dettaglio spedizioni non conforme','');     
-               },'SQLUltime20PromotoreDettaglio')  
+               },'SQLDettaglio')  
            }
            $scope.UltimeVentiSpedizioni = UltimeVentiSpedizioniTmp;
          }
          else SystemInformation.ApplyOnError('Modello spedizioni non conforme','');     
        },'SQLUltime20Promotore')          
     }
+  }
+  
+  $scope.GetTitoliSpedizione = function(Spedizione)
+  {
+     var Result = '';
+     for(let i = 0;i < Spedizione.DettagliTitoli.length;i ++)
+     {
+         Result += Spedizione.DettagliTitoli[i].CodiceTitolo + ' - ' + Spedizione.DettagliTitoli[i].NomeTitolo + ' - ' + Spedizione.DettagliTitoli[i].StatoTitolo + '</br>';
+     }
+     
+     return($sce.trustAsHtml(Result.substr(0,Result.length)));
   }
        
   $scope.ModificaSpedizione = function (ChiaveSpedizione,ChiaveDocente = -1)

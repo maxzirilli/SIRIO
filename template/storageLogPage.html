@@ -1,41 +1,43 @@
 <div ng-controller="storageLogPageController">
   <h2>LOG MAGAZZINI</h2>
   <div>
-  <div layout="row">
-    <md-input-container style="margin-left:20px;" flex=10>
-      <label>DAL</label><input ng-model="DataRicercaDal" type="date" name="DataRicercaDal">
-    </md-input-container>
-    <md-input-container style="margin-left:20px;"flex=10>  
-      <label>AL</label><input ng-model="DataRicercaAl" type="date" name="DataRicercaAl">
-    </md-input-container>
-    <md-radio-group ng-model="Magazzino" style=margin-left:20px;" flex=20>
-      <md-radio-button value="G">MAGAZZINO PRINCIPALE</md-radio-button>
-      <md-radio-button value="V">MAGAZZINO VOLANTE</md-radio-button>
-    </md-radio-group>
-
-    <md-input-container flex=60>
-      <label>TITOLO</label>    
-      <md-autocomplete style="width:100%;"
-                  md-input-name="TitoloLog"
-                  md-autofocus="true"
-                  md-no-cache="true"
-                  md-selected-item="TitoloFiltrato"
-                  md-selected-item-change = "selectedItemChangeTitolo(item)"
-                  md-search-text="searchTextTit"
-                  md-items="item in queryTitolo(searchTextTit)"
-                  md-item-text="item.Nome"
-                  md-require-match="true"
-                  md-clear-button="true">
-      <md-item-template>
-        <span md-highlight-text="searchText">ISBN : {{item.Codice}} - {{item.Nome}}</span>
-      </md-item-template>
-    </md-input-container>
-    <md-button style="width:50px;height:auto;margin-right:300px;margin-top:0px;" ng-click="RicercaLog()" title="RICERCA LOG">  
-      <img src="img/searchLog.png" style="width:50px;height:auto;">
-    </md-button>
-    <md-button style="width:50px;height:auto;float:right;" ng-click="InventarioMagazzino()" title="INVENTARIO MAGAZZINO">  
-      <img src="img/print.png" style="width:50px;height:auto;">
-    </md-button>
-  </div>      
+    <div layout="row">
+      <md-input-container style="margin-left:20px;">
+        <label>DAL</label><input ng-model="DataRicercaDal" type="date" name="DataRicercaDal">
+      </md-input-container>
+      <md-input-container style="margin-left:20px;">  
+        <label>AL</label><input ng-model="DataRicercaAl" type="date" name="DataRicercaAl">
+      </md-input-container>
+      <md-radio-group ng-model="Magazzino" style=margin-left:20px;">
+        <md-radio-button value="G">MAGAZZINO PRINCIPALE</md-radio-button>
+        <md-radio-button value="V">MAGAZZINO VOLANTE</md-radio-button>
+      </md-radio-group>    
+    </div>
+    <br>
+    <div layout="row">
+      <md-input-container flex=70>
+        <label>TITOLO</label>    
+        <md-autocomplete
+                    md-input-name="TitoloLog"
+                    md-autofocus="true"
+                    md-no-cache="true"
+                    md-selected-item="TitoloFiltrato"
+                    md-selected-item-change = "selectedItemChangeTitolo(item)"
+                    md-search-text="searchTextTit"
+                    md-items="item in queryTitolo(searchTextTit)"
+                    md-item-text="item.Nome"
+                    md-require-match="true"
+                    md-clear-button="true">
+        <md-item-template>
+          <span md-highlight-text="searchText">ISBN : {{item.Codice}} - {{item.Nome}}</span>
+        </md-item-template>
+      </md-input-container>
+      <md-button style="width:50px;height:auto;margin-right:300px;margin-top:0px;" ng-click="RicercaLog()" title="RICERCA LOG">  
+        <img src="img/searchLog.png" style="width:50px;height:auto;">
+      </md-button>
+      <md-button style="width:50px;height:auto;float:right;" ng-click="InventarioMagazzino()" title="INVENTARIO MAGAZZINO">  
+        <img src="img/print.png" style="width:50px;height:auto;">
+      </md-button>
+    </div>      
   <iframe style="background:white;" id="logPdf" title="LogMagazzino" height=100% width=100% ></iframe>
 </div>

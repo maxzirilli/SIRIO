@@ -4,7 +4,7 @@
       <h2 style="margin-right:50px;">ISTITUTI</h2>
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoIstituto()">NUOVO ISTITUTO</md-button>      
       <div layout="row">
-        <md-input-container class="containerSelect" style="width:20%;margin-right:10px;"><label>Filtra per provincia...</label>
+        <md-input-container class="containerSelect" style="width:20%;margin-right:10px;"><label>PROVINCIA</label>
           <md-select ng-model="ProvinciaFiltro" placeholder="PROVINCIA" class="mdb-select" type="text" name="ProvinciaFiltro">
           <md-optgroup>
             <md-option ng-value="-1">QUALSIASI</md-option>  
@@ -12,7 +12,7 @@
           </md-optgroup>
           </md-select>
         </md-input-container>
-        <md-input-container class="containerSelect" style="width:20%;"><label>Filtra per nome...</label>
+        <md-input-container class="containerSelect" style="width:20%;"><label>NOME</label>
           <input ng-model="NomeFiltro" type="search">
         </md-input-container>
         <input type="checkbox" ng-model="NascostoFiltro" style="margin-top:30px;margin-left:20px;"><label style="margin-top:28px;">ISTITUTI NASCOSTI</label>

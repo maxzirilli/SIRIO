@@ -66,21 +66,27 @@
          </md-not-found>
       </md-input-container>
     </div>
-    <div layout="row" layout-align="start start" style="margin-top:0px;padding-top:0px;">
-      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="AggiungiTitoloRicerca()">AGGIUNGI TITOLO PER LA RICERCA</md-button>
-      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="InviaCumulativo()" ng-disabled="!CumulativoPossibile" >SPEDISCI TUTTI I TITOLI SELEZIONATI</md-button> 
-      <input type="checkbox" ng-model="CheckAll" ng-checked="SelezionaTutto()" style="margin-left:60px;margin-top:20px"><label style="margin-left:5px;margin-top:18px">SELEZIONA TUTTO</label>
-      <input type="checkbox" ng-model="UncheckAll" ng-checked="DeselezionaTutto()" style="margin-left:20px;margin-top:20px"><label style="margin-left:5px;margin-top:18px">DESELEZIONA TUTTO</label>      
-    </div>
-    <br>
-    <div layout="column" ng-if="ListaTitoliFiltro.length > 0">
-      <p style="font-weight:bold;">TITOLI IN RICERCA:</p>
-      <ul> 
-        <li ng-repeat="Titolo in ListaTitoliFiltro"><img src="img/deleteCross.png" style="width:20px;height:auto;margin-right:5px;" title="RIMUOVI TITOLO" ng-click="RimuoviTitolo(Titolo)">({{Titolo.Quantita}}) {{Titolo.Codice}} - {{Titolo.Nome}} </li>              
-      </ul>
-    </div>  
-
-  <p ng-if="ListaSpedizioni.length == 0" style="font-weight:bold;font-style:italic;float:center;">NESSUNA SPEDIZIONE PRESENTE</p>  
+      <div style="margin-top:0px;padding-top:0px;">
+        <md-button class="md-raised md-accent" style="font-weight:bold;float:left;" ng-click="AggiungiTitoloRicerca()">AGGIUNGI TITOLO PER LA RICERCA</md-button>
+        <md-button class="md-raised md-accent" style="font-weight:bold;float:left;" ng-click="InviaCumulativo()" ng-disabled="!CumulativoPossibile" >SPEDISCI TUTTI I TITOLI SELEZIONATI</md-button> 
+        
+        <md-button ng-click="SelezionaTutto()" style="float:right;"><img src="img/checkAll.png" style="width:30px;height:auto;margin-right:5px;" title="SELEZIONA TUTTO"></md-button>
+        <md-button ng-click="DeselezionaTutto()"style="float:right;"><img src="img/unCheckAll.png" style="width:30px;height:auto;margin-right:5px;" title="DESELEZIONA TUTTO"></md-button>   
+      </div>
+    <br>  
+  <br>
+  <div style="text-align:left;" ng-if="ListaTitoliFiltro.length > 0">
+    <p style="font-weight:bold;">TITOLI IN RICERCA:</p>
+    <ul> 
+      <li ng-repeat="Titolo in ListaTitoliFiltro"><img src="img/deleteCross.png" style="width:20px;height:auto;margin-right:5px;" title="RIMUOVI TITOLO" ng-click="RimuoviTitolo(Titolo)">{{Titolo.Codice}} - {{Titolo.Nome}} - ({{Titolo.Quantita}}) </li>              
+    </ul>
+  </div>
+  <br>
+  <div style="text-align:left;" ng-if="VisualizzaNonSpedibili">
+   <label style="background-color:red;color:white;font-weight:bold;padding:2px;">IMPOSSIBILE SEGNARE COME DA SPEDIRE TUTTE LE SPEDIZIONI SELEZIONATE CON I SEGUENTI TITOLI:
+   </br><label style="background-color:red;color:white;font-weight:bold;padding:2px;">{{ListaNonSpedibili}}
+  </div>
+  <p ng-if="ListaSpedizioni.length == 0" style="font-weight:bold;font-style:italic;text-align:center;">NESSUNA SPEDIZIONE PRESENTE</p>  
   <div ng-if="ListaSpedizioni.length != 0">
     <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
       <tr>

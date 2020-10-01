@@ -185,11 +185,13 @@
             <td class="off" ng-if="Titolo.STATO == 'C'">CONSEGNATO</td>
             <td class="off" ng-if="Titolo.STATO == 'S'">DA SPEDIRE</td>
             <td class="off" ng-if="Titolo.STATO == 'P'">PRENOTATO</td>
-            <td class="off" ng-if="Titolo.QUANTITA_MGZN > 0 && (Titolo.QUANTITA <= Titolo.QUANTITA_MGZN) && Titolo.STATO == 'P'">DISPONIBILE</td> 
-            <td class="off" ng-if="(Titolo.QUANTITA > Titolo.QUANTITA_MGZN) && Titolo.STATO == 'P'">NON DISPONIBILE</td>
+            
+            <td class="off" ng-if="Titolo.QUANTITA <= Titolo.QUANTITA_DISP && Titolo.STATO == 'P'">DISPONIBILE</td> 
+            <td class="off" ng-if="Titolo.QUANTITA_DISP < Titolo.QUANTITA && Titolo.STATO == 'P'">NON DISPONIBILE</td>
             <td class="off" ng-if="Titolo.STATO != 'P'"></td>
-            <td ng-if="(Titolo.QUANTITA_MGZN > 0 && (Titolo.QUANTITA <= Titolo.QUANTITA_MGZN)) && Titolo.STATO == 'P'"><img src="img/toSend.png" style="width:20px;height:auto;" ng-click="PassaADaSpedire(Titolo)"></td>
-            <td ng-if="Titolo.QUANTITA_MGZN <= 0 && Titolo.STATO == 'P'" class="off"></td>
+            
+            <td ng-if="Titolo.QUANTITA <= Titolo.QUANTITA_DISP && Titolo.STATO == 'P'"><img src="img/toSend.png" style="width:20px;height:auto;" ng-click="PassaADaSpedire(Titolo)"></td>
+            <td ng-if="Titolo.QUANTITA_DISP < Titolo.QUANTITA && Titolo.STATO == 'P'" title="TITOLO NON DISPONIBILE IN MAGAZZINO"><img src="img/notToSend.png" style="width:20px;height:auto;" class="off"></td>     
             <td ng-if="Titolo.STATO != 'P'" class="off"></td>                       
           </tr>    
         </table>

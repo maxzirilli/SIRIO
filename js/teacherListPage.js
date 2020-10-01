@@ -1274,7 +1274,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                                         break;
                              case 'C' : ListaSpedizioniDocDettaglio[j].STATO = 'CONSEGNATO'
                                         break;
-                                        
+                             default  : ListaSpedizioniDocDettaglio[j].STATO = 'N.D';                                       
                       }
                       if($scope.ListaSpedizioniDoc[i].CHIAVE == ListaSpedizioniDocDettaglio[j].SPEDIZIONE)
                          $scope.ListaSpedizioniDoc[i].DettagliTitoli.push(ListaSpedizioniDocDettaglio[j]);
