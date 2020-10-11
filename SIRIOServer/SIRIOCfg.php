@@ -16,7 +16,7 @@
     define('SMTP_FROM_NAME','ZMSoftware');
 
     // Path librerie
-    define('PATH_LIBRERIE',"c:\\xampp\\htdocs\\ZLibrary\\");
+    define('PATH_LIBRERIE',"d:\\GoogleDrive\\Lavoro\\Librerie\\PHP\\");
     define('SLASH',"\\");
 
     error_reporting(E_ALL);

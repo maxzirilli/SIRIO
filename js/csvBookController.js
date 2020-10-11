@@ -39,21 +39,23 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
             RecordTitolo[7]     = RecordTitolo[7].trim();
             RecordTitolo[11]    = RecordTitolo[11].trim();
             RecordTitolo[0]     = RecordTitolo[0].trim();
-            RecordTitolo[5]     = RecordTitolo[5].trim();            
+            RecordTitolo[5]     = RecordTitolo[5].trim();
+            RecordTitolo[4]     = RecordTitolo[4].trim();        
             $ObjQuery.Operazioni.push({ 
                                         Query     : 'UpdateDatabaseBook',
                                         Parametri : {                                                      
-                                                      CodiceTitolo       : RecordTitolo[6].xSQL(),
-                                                      TitoloTitolo       : RecordTitolo[8].xSQL(),                                                      
-                                                      SottotitoloTitolo  : RecordTitolo[9].xSQL() == 'ND' ? '' : RecordTitolo[9].xSQL(),
-                                                      DescrizioneMateria : RecordTitolo[5].xSQL(),
-                                                      AutoriTitolo       : RecordTitolo[7].xSQL(),
-                                                      EditoreTitolo      : RecordTitolo[11].xSQL() == 'ND' ? '' : RecordTitolo[11].xSQL(),                                                      
-                                                      VolumeTitolo       : isNaN(RecordTitolo[10].xSQL()) ? 0 : RecordTitolo[10].xSQL(),
-                                                      IstitutoTitolo     : RecordTitolo[0].xSQL(),
-                                                      AnnoTitolo         : RecordTitolo[1].xSQL(),
-                                                      SezioneTitolo      : RecordTitolo[2].xSQL(),
-                                                      PrezzoTitolo       : RecordTitolo[12].xSQL()                                                      
+                                                      CodiceTitolo            : RecordTitolo[6].xSQL(),
+                                                      TitoloTitolo            : RecordTitolo[8].xSQL(),                                                      
+                                                      SottotitoloTitolo       : RecordTitolo[9].xSQL() == 'ND' ? '' : RecordTitolo[9].xSQL(),
+                                                      DescrizioneMateria      : RecordTitolo[5].xSQL(),
+                                                      AutoriTitolo            : RecordTitolo[7].xSQL(),
+                                                      EditoreTitolo           : RecordTitolo[11].xSQL() == 'ND' ? '' : RecordTitolo[11].xSQL(),                                                      
+                                                      VolumeTitolo            : isNaN(RecordTitolo[10].xSQL()) ? 0 : RecordTitolo[10].xSQL(),
+                                                      IstitutoTitolo          : RecordTitolo[0].xSQL(),
+                                                      AnnoTitolo              : RecordTitolo[1].xSQL(),
+                                                      SezioneTitolo           : RecordTitolo[2].xSQL(),                                                      
+                                                      DescrizioneCombinazione : RecordTitolo[4].xSQL(),
+                                                      PrezzoTitolo            : RecordTitolo[12].xSQL()                                                      
                                                     }
                                                     
                                       });                                       
@@ -73,15 +75,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
              },false,true)                                                                 
         }
         SendDieciTitoli();
-
-        
-        /*SystemInformation.GetSQL('Accessories',{},function(Results)
-        {
-           ListaCodici = SystemInformation.FindResults(Results,'InstituteCodeAll')
-           if (ListaCodici != undefined)
-               SendDieciTitoli()
-           else SystemInformation.ApplyOnError('Modello codice istituti non conforme','');
-        });*/
       }  
     }          
     reader.readAsDataURL(file);          

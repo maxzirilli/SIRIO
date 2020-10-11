@@ -30,7 +30,7 @@
                      },
                      {
                        "Name" : "TeacherLesson",
-                       "SQL"  : "SELECT *,(SELECT ISTITUTO FROM classi WHERE CHIAVE = insegnamenti_docente.CLASSE) AS ISTITUTO,(SELECT classi.SEZIONE FROM classi WHERE classi.CHIAVE = insegnamenti_docente.CLASSE) AS SEZIONE,(SELECT classi.ANNO FROM classi WHERE classi.CHIAVE = insegnamenti_docente.CLASSE) AS ANNO FROM insegnamenti_docente WHERE DOCENTE=:CHIAVE"
+                       "SQL"  : "SELECT *,(SELECT ISTITUTO FROM classi WHERE CHIAVE = insegnamenti_docente.CLASSE) AS ISTITUTO,(SELECT classi.SEZIONE FROM classi WHERE classi.CHIAVE = insegnamenti_docente.CLASSE) AS SEZIONE,(SELECT classi.ANNO FROM classi WHERE classi.CHIAVE = insegnamenti_docente.CLASSE) AS ANNO,(SELECT DESCRIZIONE FROM classi_combinazioni WHERE CHIAVE IN (SELECT COMBINAZIONE FROM classi WHERE classi.CHIAVE = insegnamenti_docente.CLASSE)) AS COMBINAZIONE FROM insegnamenti_docente WHERE DOCENTE=:CHIAVE"
                      },
                      {
                        "Name" : "TeacherAvailability",

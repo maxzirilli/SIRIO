@@ -29,7 +29,7 @@
                                      "Name" : "InstituteTeacherAvailability",
                                      "SQL"  : "SELECT docenti_disponibilita.* FROM docenti_disponibilita WHERE ISTITUTO=:CHIAVE ORDER BY DOCENTE,POSIZIONE ASC,GIORNO ASC,DA DESC,A DESC"
                                    }
-                                 ],                               
+                                 ],                           
                    
   "SQLDettaglio" : [
                      { 
@@ -38,7 +38,7 @@
                      },
                      {
                        "Name" : "ClassiInstitute",
-                       "SQL"  : "SELECT * FROM classi WHERE ISTITUTO=:CHIAVE ORDER BY classi.SEZIONE"
+                       "SQL"  : "SELECT *,(SELECT DESCRIZIONE FROM classi_combinazioni WHERE CHIAVE = classi.COMBINAZIONE) AS COMBINAZIONE FROM classi WHERE ISTITUTO=:CHIAVE ORDER BY classi.SEZIONE,classi.ANNO"
                      }
                    ],
   

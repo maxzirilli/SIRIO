@@ -656,10 +656,11 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
       {  
          for(let i = 0; i < ListaClassiIst.length; i++)
              ListaClassiIst[i] = { 
-                                   Chiave   : ListaClassiIst[i].CHIAVE,
-                                   Anno     : ListaClassiIst[i].ANNO,
-                                   Sezione  : ListaClassiIst[i].SEZIONE,
-                                   Istituto : ListaClassiIst[i].NOME
+                                   Chiave       : ListaClassiIst[i].CHIAVE,
+                                   Anno         : ListaClassiIst[i].ANNO,
+                                   Sezione      : ListaClassiIst[i].SEZIONE,
+                                   Istituto     : ListaClassiIst[i].ISTITUTO,
+                                   Combinazione : ListaClassiIst[i].COMBINAZIONE
                                  }
          $scope.ListaClassiIstituto = ListaClassiIst;
       }
@@ -701,9 +702,10 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
           {
                if ($scope.ListaClassiIstituto[m].Chiave == $scope.TitoloInEditing.ListaIstitutiTit[IstCorrispondente].Adozioni[$scope.TitoloInEditing.ListaIstitutiTit[IstCorrispondente].Adozioni.length-1].CLASSE)
                {
-                 $scope.TitoloInEditing.ListaIstitutiTit[IstCorrispondente].Adozioni[$scope.TitoloInEditing.ListaIstitutiTit[IstCorrispondente].Adozioni.length-1].ANNO    = $scope.ListaClassiIstituto[m].Anno;
-                 $scope.TitoloInEditing.ListaIstitutiTit[IstCorrispondente].Adozioni[$scope.TitoloInEditing.ListaIstitutiTit[IstCorrispondente].Adozioni.length-1].SEZIONE = $scope.ListaClassiIstituto[m].Sezione;
-               } 
+                 $scope.TitoloInEditing.ListaIstitutiTit[IstCorrispondente].Adozioni[$scope.TitoloInEditing.ListaIstitutiTit[IstCorrispondente].Adozioni.length-1].ANNO         = $scope.ListaClassiIstituto[m].Anno;
+                 $scope.TitoloInEditing.ListaIstitutiTit[IstCorrispondente].Adozioni[$scope.TitoloInEditing.ListaIstitutiTit[IstCorrispondente].Adozioni.length-1].SEZIONE      = $scope.ListaClassiIstituto[m].Sezione;
+                 $scope.TitoloInEditing.ListaIstitutiTit[IstCorrispondente].Adozioni[$scope.TitoloInEditing.ListaIstitutiTit[IstCorrispondente].Adozioni.length-1].COMBINAZIONE = $scope.ListaClassiIstituto[m].Combinazione;
+                } 
           }
         }
       }        
@@ -754,10 +756,11 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
       {  
          for(let i = 0; i < ListaClassiIst.length; i++)
              ListaClassiIst[i] = { 
-                                   Chiave   : ListaClassiIst[i].CHIAVE,
-                                   Anno     : ListaClassiIst[i].ANNO,
-                                   Sezione  : ListaClassiIst[i].SEZIONE,
-                                   Istituto : ListaClassiIst[i].NOME
+                                   Chiave       : ListaClassiIst[i].CHIAVE,
+                                   Anno         : ListaClassiIst[i].ANNO,
+                                   Sezione      : ListaClassiIst[i].SEZIONE,
+                                   Istituto     : ListaClassiIst[i].ISTITUTO,
+                                   Combinazione : ListaClassiIst[i].COMBINAZIONE
                                  }
          $scope.ListaClassiIstituto = ListaClassiIst;
       }
@@ -796,9 +799,10 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
         {
              if ($scope.ListaClassiIstituto[m].Chiave == Adozione.CLASSE)
              {
-               $scope.TitoloInEditing.ListaIstitutiTit[IstCorrispondente].Adozioni[AdozCorrispondente].CLASSE     = $scope.ListaClassiIstituto[m].Chiave;
-               $scope.TitoloInEditing.ListaIstitutiTit[IstCorrispondente].Adozioni[AdozCorrispondente].ANNO       = $scope.ListaClassiIstituto[m].Anno;
-               $scope.TitoloInEditing.ListaIstitutiTit[IstCorrispondente].Adozioni[AdozCorrispondente].SEZIONE    = $scope.ListaClassiIstituto[m].Sezione;
+               $scope.TitoloInEditing.ListaIstitutiTit[IstCorrispondente].Adozioni[AdozCorrispondente].CLASSE          = $scope.ListaClassiIstituto[m].Chiave;
+               $scope.TitoloInEditing.ListaIstitutiTit[IstCorrispondente].Adozioni[AdozCorrispondente].ANNO            = $scope.ListaClassiIstituto[m].Anno;
+               $scope.TitoloInEditing.ListaIstitutiTit[IstCorrispondente].Adozioni[AdozCorrispondente].SEZIONE         = $scope.ListaClassiIstituto[m].Sezione;
+               $scope.TitoloInEditing.ListaIstitutiTit[IstCorrispondente].Adozioni[AdozCorrispondente].COMBINAZIONE    = $scope.ListaClassiIstituto[m].Combinazione;
                if($scope.TitoloInEditing.ListaIstitutiTit[IstCorrispondente].Adozioni[AdozCorrispondente].Nuovo)
                {
                  $scope.TitoloInEditing.ListaIstitutiTit[IstCorrispondente].Adozioni[AdozCorrispondente].Modificato = false;

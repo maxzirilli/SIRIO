@@ -181,7 +181,7 @@
                  <tr ng-repeat="Adozione in GetAdozioniSelected(IstitutoVisualizzato) | limitTo : GridOptions2.query.limit : (GridOptions2.query.page - 1) * GridOptions2.query.limit" id={{Adozione.CHIAVE}}> 
                    <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA ADOZIONE" ng-click="EliminaAdozione(Adozione)"></td> 
                    <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA ADOZIONE" ng-click="ModificaAdozione(Adozione)"></td>        
-                   <td class="off">{{Adozione.ANNO}}{{Adozione.SEZIONE}}</td>                         
+                   <td class="off">{{Adozione.ANNO}}{{Adozione.SEZIONE}} - {{Adozione.COMBINAZIONE}}</td>                         
                  </tr>    
                </table>
                <md-table-pagination md-limit="GridOptions2.query.limit" 

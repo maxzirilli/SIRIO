@@ -434,7 +434,7 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                                       Promotore     : IstitutiInfoLista[i].PROMOTORE,
                                       Provincia     : IstitutiInfoLista[i].PROVINCIA, 
                                       ProvinciaNome : IstitutiInfoLista[i].NOME_PROVINCIA,
-                                      Nascosto      : (IstitutiInfoLista[i].NASCOSTO == null || IstitutiInfoLista[i].NASCOSTO == 0) ? false : 1                        
+                                      Nascosto      : (IstitutiInfoLista[i].NASCOSTO == null || IstitutiInfoLista[i].NASCOSTO == 0) ? false : true                        
                                     }
          
             $scope.ListaIstituti = IstitutiInfoLista

@@ -204,6 +204,15 @@
                  </md-optgroup>
                  </md-select>
                </md-input-container>
+               <br>
+               <label style="display:inline-block;">COMBINAZIONE:</label> 
+               <md-input-container class="containerSelect" style="width:50%;">                           
+                 <md-select ng-model="CombinazioneSelected" ng-change="CambiaCombinazione(CombinazioneSelected)" class="mdb-select" style="display:inline-block;width:3%;" type="text" name="CombinazioneSelected">
+                 <md-optgroup label="-"> 
+                   <md-option ng-repeat="combinazione in ListaCombinazioni" ng-value="$index">{{combinazione}}</md-option>         
+                 </md-optgroup>
+                 </md-select>
+               </md-input-container>
                
                <br>
                <table table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">

@@ -1,6 +1,6 @@
 SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformation','$state','$rootScope', function($scope,SystemInformation,$state,$rootScope)
 { 
-  $scope.ListaConfigurazioni        = ['Materie','Tipologie','Tipologie Escluse','Province','Dati Pagina43'];
+  $scope.ListaConfigurazioni        = ['Materie','Tipologie','Tipologie Escluse','Province','Combinazioni','Dati Pagina43'];
   $scope.ConfigurazioneSelezionata  = 0;
   
   $scope.ListaMaterie               = [];
@@ -18,6 +18,10 @@ SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformat
   $scope.ListaProvince              = [];
   $scope.ProvinciaInEditing         = {};
   $scope.NuovaProvincia             = false;
+
+  $scope.ListaCombinazioni          = [];
+  $scope.CombinazioneInEditing      = {};
+  $scope.NuovaCombinazione          = false;
   
   ScopeHeaderController.CheckButtons(); 
   
@@ -83,28 +87,37 @@ SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformat
                                                page: 1
                                              },
                            limitOptions    : [10, 20, 30]
-                         };                         
+                         }; 
+                         
+  $scope.GridOptions_5 = {
+                          rowSelection    : false,
+                          multiSelect     : true,
+                          autoSelect      : true,
+                          decapitate      : false,
+                          largeEditDialog : false,
+                          boundaryLinks   : false,
+                          limitSelect     : true,
+                          pageSelect      : true,
+                          query           : {
+                                              limit: 10,
+                                              page: 1
+                                            },
+                          limitOptions    : [10, 20, 30]
+                        }; 
                            
   $scope.RefreshListaMaterie = function ()
   {
     SystemInformation.GetSQL('Subject', {}, function(Results)  
     {
-      MaterieInfoList = SystemInformation.FindResults(Results,'SubjectInfoList');
-      if(MaterieInfoList != undefined)
+      SubjectInfoList = SystemInformation.FindResults(Results,'SubjectInfoList');
+      if(SubjectInfoList != undefined)
       { 
-        var ListaMaterieTmp = [];   
-        var AddMateria      = function (Chiave,Descrizione)
-        {
-          ListaMaterieTmp.push({ 
-                                 Chiave      : Chiave,
-                                 Descrizione : Descrizione
-                              });
-        }
-        MaterieInfoList.forEach(function(Materia)
-        {
-          AddMateria(Materia.CHIAVE,Materia.DESCRIZIONE)
-        });
-        $scope.ListaMaterie = ListaMaterieTmp;
+         for(let i = 0;i < SubjectInfoList.length;i ++)
+         SubjectInfoList[i] = {
+                                Chiave      : SubjectInfoList[i].CHIAVE,
+                                Descrizione : SubjectInfoList[i].DESCRIZIONE
+                              }
+         $scope.ListaMaterie = SubjectInfoList
       }
       else SystemInformation.ApplyOnError('Modello materie non conforme','');   
     });
@@ -114,23 +127,16 @@ SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformat
   {
     SystemInformation.GetSQL('InstituteType', {}, function(Results)  
     {
-      TipologieInfoList = SystemInformation.FindResults(Results,'InstituteTypeInfoList');
-      if(TipologieInfoList != undefined)
+      TypeInfoList = SystemInformation.FindResults(Results,'InstituteTypeInfoList');
+      if(TypeInfoList != undefined)
       { 
-        var ListaTipologieTmp = [];   
-        var AddTipologia      = function (Chiave,Descrizione)
-        {
-          ListaTipologieTmp.push({ 
-                                    Chiave      : Chiave,
-                                    Descrizione : Descrizione
-                                 });
-        }
-        TipologieInfoList.forEach(function(Tipologia)
-        {
-          AddTipologia(Tipologia.CHIAVE,Tipologia.DESCRIZIONE)
-        });
-        $scope.ListaTipologie = ListaTipologieTmp;
-      }
+         for(let i = 0;i < TypeInfoList.length;i ++)
+         TypeInfoList[i] = {
+                             Chiave      : TypeInfoList[i].CHIAVE,
+                             Descrizione : TypeInfoList[i].DESCRIZIONE
+                           }
+         $scope.ListaTipologie = TypeInfoList
+      }      
       else SystemInformation.ApplyOnError('Modello tipologie non conforme','');   
     });
   }
@@ -139,27 +145,19 @@ SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformat
   {
     SystemInformation.GetSQL('InstituteExclType', {}, function(Results)  
     {
-      TipologieEscluseInfoList = SystemInformation.FindResults(Results,'InstituteExclTypeInfoList');
-      if(TipologieEscluseInfoList != undefined)
+      ExcludedTypeInfoList = SystemInformation.FindResults(Results,'InstituteExclTypeInfoList');
+      if(ExcludedTypeInfoList != undefined)
       { 
-        var ListaTipologieEscluseTmp = [];   
-        var AddTipologiaEsclusa      = function (Chiave,Descrizione)
-        {
-          ListaTipologieEscluseTmp.push({ 
-                                          Chiave      : Chiave,
-                                          Descrizione : Descrizione
-                                       });
-        }
-        TipologieEscluseInfoList.forEach(function(TipologiaEsclusa)
-        {
-          AddTipologiaEsclusa(TipologiaEsclusa.CHIAVE,TipologiaEsclusa.DESCRIZIONE)
-        });
-        $scope.ListaTipologieEscluse = ListaTipologieEscluseTmp;
-      }
+         for(let i = 0;i < ExcludedTypeInfoList.length;i ++)
+         ExcludedTypeInfoList[i] = {
+                                     Chiave      : ExcludedTypeInfoList[i].CHIAVE,
+                                     Descrizione : ExcludedTypeInfoList[i].DESCRIZIONE
+                                   }
+         $scope.ListaTipologieEscluse = ExcludedTypeInfoList
+      } 
       else SystemInformation.ApplyOnError('Modello tipologie escluse non conforme','');   
     });
   }
-
 
   $scope.RefreshListaProvince = function ()
   {
@@ -168,21 +166,32 @@ SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformat
       ProvinceInfoList = SystemInformation.FindResults(Results,'ProvinceInfoList');
       if(ProvinceInfoList != undefined)
       { 
-        var ListaProvinceTmp  = [];   
-        var AddProvincia      = function (Chiave,Nome)
-        {
-          ListaProvinceTmp.push({ 
-                                  Chiave : Chiave,
-                                  Nome   : Nome
-                                });
-        }
-        ProvinceInfoList.forEach(function(Provincia)
-        {
-          AddProvincia(Provincia.CHIAVE,Provincia.NOME)
-        });
-        $scope.ListaProvince = ListaProvinceTmp;
+         for(let i = 0;i < ProvinceInfoList.length;i ++)
+         ProvinceInfoList[i] = {
+                                 Chiave      : ProvinceInfoList[i].CHIAVE,
+                                 Descrizione : ProvinceInfoList[i].NOME
+                               }
+         $scope.ListaProvince = ProvinceInfoList
       }
       else SystemInformation.ApplyOnError('Modello province non conforme','');   
+    });
+  }
+
+  $scope.RefreshListaCombinazioni = function ()
+  {
+    SystemInformation.GetSQL('Combination', {}, function(Results)  
+    {
+      CombinazioniInfoList = SystemInformation.FindResults(Results,'CombinationInfoList');
+      if(CombinazioniInfoList != undefined)
+      { 
+         for(let i = 0;i < CombinazioniInfoList.length;i ++)
+         CombinazioniInfoList[i] = {
+                                     Chiave      : CombinazioniInfoList[i].CHIAVE,
+                                     Descrizione : CombinazioniInfoList[i].DESCRIZIONE
+                                   }
+         $scope.ListaCombinazioni = CombinazioniInfoList
+      } 
+      else SystemInformation.ApplyOnError('Modello materie non conforme','');   
     });
   }
   
@@ -551,6 +560,88 @@ SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformat
       });  
     }
   }
+
+  //COMBINAZIONI  
+ 
+  $scope.ModificaCombinazione = function (Combinazione)
+  {
+    var CombinazioneInEditing = prompt ("Modifica combinazione:",Combinazione.Descrizione);
+    if (CombinazioneInEditing === null) $scope.RefreshListaCombinazioni()
+    else 
+    {   
+      var ParamCombinazione = {
+                                CHIAVE      : Combinazione.Chiave,
+                                DESCRIZIONE : CombinazioneInEditing.toUpperCase()
+                              }
+      $scope.ConfermaCombinazione(ParamCombinazione);
+    }    
+  }
+  
+  $scope.NuovaCombinazione = function ()
+  { 
+    var CombinazioneInEditing = prompt ("Nuova combinazione:","");
+    if (CombinazioneInEditing === null) $scope.RefreshListaCombinazioni()
+    else 
+    {       
+      var ParamCombinazione = {
+                                CHIAVE      : -1,
+                                DESCRIZIONE : CombinazioneInEditing.toUpperCase()
+                              }
+      $scope.ConfermaCombinazione(ParamCombinazione);
+    }
+  }
+  
+  $scope.ConfermaCombinazione = function (param)
+  { 
+    CombinazioneExist = $scope.ListaCombinazioni.find(function(ACombinazione){return (ACombinazione.Descrizione == param.DESCRIZIONE);});
+    if(CombinazioneExist)
+       alert('Combinazione già esistente!')
+    else
+    {
+       var $ObjQuery         = { Operazioni : [] };     
+       var NuovaCombinazione = (param.CHIAVE == -1);
+       if(NuovaCombinazione)     
+       {           
+         $ObjQuery.Operazioni.push({
+                                     Query     : 'InsertCombination',
+                                     Parametri : param
+                                   }); 
+       }
+       else
+       {
+         $ObjQuery.Operazioni.push({
+                                     Query     : 'UpdateCombination',
+                                     Parametri : param
+                                   });
+       };
+    
+       SystemInformation.PostSQL('Combination',$ObjQuery,function(Answer)
+       {
+         if(param.CHIAVE == -1)
+            param.CHIAVE = Answer.NewKey1;
+         $scope.RefreshListaCombinazioni();
+       });
+    }    
+  }
+  
+  $scope.EliminaCombinazione = function(Combinazione)
+  {
+    if(confirm('Eliminare la combinazione: ' + Combinazione.Descrizione + ' ?'))
+    {
+      var $ObjQuery         = { Operazioni : [] };
+      var ParamCombinazione = { CHIAVE : Combinazione.Chiave };
+       
+      $ObjQuery.Operazioni.push({
+                                  Query     : 'DeleteCombination',
+                                  Parametri : ParamCombinazione
+                                });
+                                                                
+      SystemInformation.PostSQL('Combination',$ObjQuery,function(Answer)
+      {
+        $scope.RefreshListaCombinazioni();
+      });  
+    }
+  }
   
   //DATI DITTA
   
@@ -585,5 +676,6 @@ SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformat
   $scope.RefreshListaTipologieEscluse();
   $scope.RefreshListaTipologie();  
   $scope.RefreshListaMaterie();
+  $scope.RefreshListaCombinazioni();
 
 }]);

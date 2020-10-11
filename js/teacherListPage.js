@@ -448,7 +448,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                MateriaCorrispondente = $scope.ListaMaterieDoc.find(function(AMateria){return(AMateria.Chiave == $scope.DocenteInEditing.ListaIstitutiDoc[i].Orari[j].MATERIA);});               
                $scope.DocenteInEditing.ListaIstitutiDoc[i].Orari[j].MateriaNome = MateriaCorrispondente.MateriaNome;
                               
-               $scope.DocenteInEditing.ListaIstitutiDoc[i].Orari[j].ClasseNome = $scope.DocenteInEditing.ListaIstitutiDoc[i].Orari[j].ANNO + $scope.DocenteInEditing.ListaIstitutiDoc[i].Orari[j].SEZIONE;
+               $scope.DocenteInEditing.ListaIstitutiDoc[i].Orari[j].ClasseNome = $scope.DocenteInEditing.ListaIstitutiDoc[i].Orari[j].ANNO + $scope.DocenteInEditing.ListaIstitutiDoc[i].Orari[j].SEZIONE + ' - ' + $scope.DocenteInEditing.ListaIstitutiDoc[i].Orari[j].COMBINAZIONE;
 
                for(let k = 0;k < $scope.GiorniSettimana.length; k ++)
                    if ((parseInt($scope.DocenteInEditing.ListaIstitutiDoc[i].Orari[j].GIORNO) - 1) == k )
@@ -969,10 +969,11 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
       {  
          for(let i = 0; i < ListaClassiIst.length; i++)
              ListaClassiIst[i] = { 
-                                   Chiave   : ListaClassiIst[i].CHIAVE,
-                                   Anno     : ListaClassiIst[i].ANNO,
-                                   Sezione  : ListaClassiIst[i].SEZIONE,
-                                   Istituto : ListaClassiIst[i].NOME
+                                   Chiave       : ListaClassiIst[i].CHIAVE,
+                                   Anno         : ListaClassiIst[i].ANNO,
+                                   Sezione      : ListaClassiIst[i].SEZIONE,
+                                   Istituto     : ListaClassiIst[i].ISTITUTO,
+                                   Combinazione : ListaClassiIst[i].COMBINAZIONE
                                  }
          $scope.ListaClassiIstituto = ListaClassiIst;
       }
@@ -1006,7 +1007,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
             if ((parseInt(orario.GIORNO) - 1) == i)
                  GiornoCorrispondente = $scope.GiorniSettimana[i];
             
-        orario.ClasseNome  = ClasseCorrispondente.Anno + ClasseCorrispondente.Sezione;
+        orario.ClasseNome  = ClasseCorrispondente.Anno + ClasseCorrispondente.Sezione + ' - ' + ClasseCorrispondente.Combinazione;
         orario.MateriaNome = MateriaCorrispondente.Nome;
         orario.GiornoNome  = GiornoCorrispondente;        
                 
@@ -1066,10 +1067,11 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
       {  
          for(let i = 0; i < ListaClassiIst.length; i++)
              ListaClassiIst[i] = { 
-                                   Chiave   : ListaClassiIst[i].CHIAVE,
-                                   Anno     : ListaClassiIst[i].ANNO,
-                                   Sezione  : ListaClassiIst[i].SEZIONE,
-                                   Istituto : ListaClassiIst[i].NOME
+                                   Chiave       : ListaClassiIst[i].CHIAVE,
+                                   Anno         : ListaClassiIst[i].ANNO,
+                                   Sezione      : ListaClassiIst[i].SEZIONE,
+                                   Istituto     : ListaClassiIst[i].ISTITUTO,
+                                   Combinazione : ListaClassiIst[i].COMBINAZIONE
                                  }
          $scope.ListaClassiIstituto = ListaClassiIst;
       }
@@ -1102,15 +1104,16 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                  if ((parseInt(Orario.GIORNO) - 1) == i)
                       GiornoCorrispondente = $scope.GiorniSettimana[i];
                  
-             $scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari[OrarioCorrispondente].MateriaNome = MateriaCorrispondente.Nome;
-             $scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari[OrarioCorrispondente].MATERIA     = Orario.MATERIA;            
-             $scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari[OrarioCorrispondente].ClasseNome  = ClasseCorrispondente.Anno + ClasseCorrispondente.Sezione;
-             $scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari[OrarioCorrispondente].CLASSE      = $scope.ListaClassiIstituto[m].Chiave;
-             $scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari[OrarioCorrispondente].ANNO        = $scope.ListaClassiIstituto[m].Anno;               
-             $scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari[OrarioCorrispondente].SEZIONE     = $scope.ListaClassiIstituto[m].Sezione;
-             $scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari[OrarioCorrispondente].GiornoNome  = GiornoCorrispondente;
-             $scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari[OrarioCorrispondente].GIORNO      = Orario.GIORNO;   
-             $scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari[OrarioCorrispondente].ORARIO      = Orario.ORARIO;   
+             $scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari[OrarioCorrispondente].MateriaNome      = MateriaCorrispondente.Nome;
+             $scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari[OrarioCorrispondente].MATERIA          = Orario.MATERIA;            
+             $scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari[OrarioCorrispondente].ClasseNome       = ClasseCorrispondente.Anno + ClasseCorrispondente.Sezione + ' - ' + ClasseCorrispondente.Combinazione;
+             $scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari[OrarioCorrispondente].CLASSE           = $scope.ListaClassiIstituto[m].Chiave;
+             $scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari[OrarioCorrispondente].ANNO             = $scope.ListaClassiIstituto[m].Anno;               
+             $scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari[OrarioCorrispondente].SEZIONE          = $scope.ListaClassiIstituto[m].Sezione;
+             $scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari[OrarioCorrispondente].COMBINAZIONE     = $scope.ListaClassiIstituto[m].Combinazione;
+             $scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari[OrarioCorrispondente].GiornoNome       = GiornoCorrispondente;
+             $scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari[OrarioCorrispondente].GIORNO           = Orario.GIORNO;   
+             $scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari[OrarioCorrispondente].ORARIO           = Orario.ORARIO;   
              if($scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari[OrarioCorrispondente].Nuovo)
              {
                $scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari[OrarioCorrispondente].Modificato = false;

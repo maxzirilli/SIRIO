@@ -17,7 +17,7 @@
         <md-input-container class="containerSelect" style="width:200px"><label>CLASSE</label>
           <md-select ng-model="OrarioInEditing.CLASSE" class="mdb-select" type="text" name="OrarioClasse">
           <md-optgroup label="-">
-            <md-option ng-repeat="classe in ListaClassiIstituto" ng-value="classe.Chiave">{{classe.Anno}}{{classe.Sezione}}</md-option>
+            <md-option ng-repeat="classe in ListaClassiIstituto" ng-value="classe.Chiave">{{classe.Anno}}{{classe.Sezione}} - {{classe.Combinazione}}</md-option>
           </md-optgroup>
           </md-select>
         </md-input-container> 

@@ -1,0 +1,23 @@
+{ 
+  "SelectSQL" : [
+                  { 
+                    "Name" : "CombinationInfoList",
+                    "SQL"  : "SELECT * FROM classi_combinazioni ORDER BY classi_combinazioni.DESCRIZIONE" 
+                  }
+                ],
+                
+  "EditSQL"   : [   
+                  {
+                    "Name" : "InsertCombination",
+                    "SQL"  : "INSERT INTO classi_combinazioni (CHIAVE,DESCRIZIONE) VALUES (:NewKey1,#DESCRIZIONE)"
+                  }, 
+                  {
+                    "Name" : "UpdateCombination",
+                    "SQL"  : "UPDATE classi_combinazioni SET DESCRIZIONE=#DESCRIZIONE WHERE CHIAVE=:CHIAVE"
+                  },
+                  {
+                    "Name" : "DeleteCombination",
+                    "SQL"  : "DELETE FROM classi_combinazioni WHERE CHIAVE=:CHIAVE"
+                  }
+                ]        
+}

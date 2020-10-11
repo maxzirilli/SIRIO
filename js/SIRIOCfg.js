@@ -1,4 +1,4 @@
-const URL_SERVER     = 'http://localhost/SIRIO/SIRIOServer/';
+const URL_SERVER     = 'http://localhost/Sirio/SIRIOServer/';
 const VOLUME_MASSIMO = 10;
 
 

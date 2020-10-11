@@ -1,1 +1,13 @@
-[01-Oct-2020 12:25:13 Europe/Berlin] SELECT spedizioni.CHIAVE,spedizioni.PRESSO,spedizioni.PROVINCIA,spedizioni.DOCENTE,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE CHIAVE=spedizioni.DOCENTE) AS NOME_DOCENTE,spedizioni.PROMOTORE,spedizioni.ISTITUTO,spedizioni.DATA,dettaglio_spedizioni.CHIAVE AS CHIAVE_DETTAGLIO,dettaglio_spedizioni.SPEDIZIONE,dettaglio_spedizioni.TITOLO,dettaglio_spedizioni.QUANTITA,dettaglio_spedizioni.STATO,titoli.TITOLO AS NOME_TITOLO,titoli.CODICE_ISBN AS CODICE_TITOLO,CALCOLA_DISPONIBILITA_ALL(titoli.CHIAVE) AS QUANTITA_DISP FROM spedizioni,dettaglio_spedizioni,titoli WHERE spedizioni.CHIAVE = dettaglio_spedizioni.SPEDIZIONE AND dettaglio_spedizioni.TITOLO = titoli.CHIAVE AND dettaglio_spedizioni.STATO = 'P' AND titoli.QUANTITA_MGZN > 0 AND spedizioni.DATA >= '2020-09-24' AND spedizioni.DATA <= '2020-10-02' AND dettaglio_spedizioni.TITOLO IN (SELECT titoli.CHIAVE FROM titoli WHERE CHIAVE IN (86461) AND CALCOLA_DISPONIBILITA_ALL(titoli.CHIAVE) > 0 ORDER BY spedizioni.DATA DESC,spedizioni.CHIAVE
+[10-Oct-2020 17:03:31 Europe/Berlin] PHP Warning:  include_once(c:\xampp\htdocs\ZLibrary\ZAdvQuery.php): failed to open stream: No such file or directory in D:\GoogleDrive\Lavoro\Progetti\Pagina43\Sirio\Software\Sirio\SIRIOServer\SIRIOLogin.php on line 4
+[10-Oct-2020 17:03:31 Europe/Berlin] PHP Stack trace:
+[10-Oct-2020 17:03:31 Europe/Berlin] PHP   1. {main}() D:\GoogleDrive\Lavoro\Progetti\Pagina43\Sirio\Software\Sirio\SIRIOServer\SIRIOLogin.php:0
+[10-Oct-2020 17:03:31 Europe/Berlin] PHP Warning:  include_once(): Failed opening 'c:\xampp\htdocs\ZLibrary\ZAdvQuery.php' for inclusion (include_path='C:\xampp\php\PEAR') in D:\GoogleDrive\Lavoro\Progetti\Pagina43\Sirio\Software\Sirio\SIRIOServer\SIRIOLogin.php on line 4
+[10-Oct-2020 17:03:31 Europe/Berlin] PHP Stack trace:
+[10-Oct-2020 17:03:32 Europe/Berlin] PHP   1. {main}() D:\GoogleDrive\Lavoro\Progetti\Pagina43\Sirio\Software\Sirio\SIRIOServer\SIRIOLogin.php:0
+[10-Oct-2020 17:03:32 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class 'TAdvQuery' not found in D:\GoogleDrive\Lavoro\Progetti\Pagina43\Sirio\Software\Sirio\SIRIOServer\SIRIOLogin.php:10
+Stack trace:
+#0 {main}
+  thrown in D:\GoogleDrive\Lavoro\Progetti\Pagina43\Sirio\Software\Sirio\SIRIOServer\SIRIOLogin.php on line 10
+[11-Oct-2020 13:01:09 Europe/Berlin] CALL AGGIORNA_TITOLI_ADOZIONI('9788835048756','NUOVO RACCONTO MERAVIGLIOSO CLASSE 1-2-3 KIT','','CRISTIANI','LA SCUOLA EDITRICE',0,'RELIGIONE','AL1E00100P','1','A','7,40')
+[11-Oct-2020 13:03:05 Europe/Berlin] CALL AGGIORNA_TITOLI_ADOZIONI('9788825909517','COLORI DELLA LUCE (I) 1, 2, 3 + QUADERNO OPERATIVO + EBOOK','','MARCHETTI E','THEOREMA',0,'RELIGIONE','GE1E006001','1','C','7,40')
+[11-Oct-2020 13:03:26 Europe/Berlin] CALL AGGIORNA_TITOLI_ADOZIONI('9788825909517','COLORI DELLA LUCE (I) 1, 2, 3 + QUADERNO OPERATIVO + EBOOK','','MARCHETTI E','THEOREMA',0,'RELIGIONE','GE1E006001','1','C','7,40')

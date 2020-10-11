@@ -103,7 +103,7 @@
         <tr ng-repeat="provincia in ListaProvince | limitTo : GridOptions_4.query.limit : (GridOptions_4.query.page - 1) * GridOptions_4.query.limit" id={{provincia.Chiave}}>
           <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA PROVINCIA GESTITA" ng-click="EliminaProvincia(provincia)"></td> 
           <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA PROVINCIA GESTITA" ng-click="ModificaProvincia(provincia)"></td>        
-          <td class="off">{{provincia.Nome}}</td>
+          <td class="off">{{provincia.Descrizione}}</td>
         </tr>    
       </table>
       <md-table-pagination md-limit="GridOptions_4.query.limit" 
@@ -114,8 +114,34 @@
                            md-boundary-links="GridOptions_4.boundaryLinks" 
                            md-on-paginate="logPagination"></md-table-pagination>
     </div>
-    
+
     <div ng-if="ConfigurazioneSelezionata==4">
+      <div>
+        <h2 style="float:left;">COMBINAZIONI CLASSI</h2>
+        <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaCombinazione()">NUOVA COMBINAZIONE</md-button>
+      </div>
+      <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
+        <tr>
+          <th></th>
+          <th></th> 
+          <th style="font-weight:bold;">COMBINAZIONE</th>
+        </tr>  
+        <tr ng-repeat="combinazione in ListaCombinazioni | limitTo : GridOptions_5.query.limit : (GridOptions_5.query.page - 1) * GridOptions_5.query.limit" id={{combinazione.Chiave}}>
+          <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA COMBINAZIONE" ng-click="EliminaCombinazione(combinazione)"></td> 
+          <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA COMBINAZIONE" ng-click="ModificaCombinazione(combinazione)"></td>        
+          <td class="off">{{combinazione.Descrizione | uppercase}}</td>
+        </tr>    
+      </table>
+      <md-table-pagination md-limit="GridOptions_5.query.limit" 
+                           md-limit-options="GridOptions_5.limitOptions" 
+                           md-page="GridOptions_5.query.page" 
+                           md-total="{{ListaCombinazioni.length}}" 
+                           md-page-select="GridOptions_5.pageSelect" 
+                           md-boundary-links="GridOptions_5.boundaryLinks" 
+                           md-on-paginate="logPagination"></md-table-pagination>
+    </div>
+    
+    <div ng-if="ConfigurazioneSelezionata==5">
       <form name="DittaEditForm" layout="column" style="width:100%" ng-submit="ConfermaDati()">
         <div>    
           <h2 style="float:left;">DATI PAGINA43</h2>

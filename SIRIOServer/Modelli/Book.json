@@ -31,7 +31,7 @@
                             },
                             {
                               "Name" : "BookAdoption",
-                              "SQL"  : "SELECT *,(SELECT classi.ANNO FROM classi WHERE classi.CHIAVE = adozioni_titolo.CLASSE) AS ANNO,(SELECT classi.SEZIONE FROM classi WHERE classi.CHIAVE = adozioni_titolo.CLASSE) AS SEZIONE,(SELECT ISTITUTO FROM classi WHERE CHIAVE = adozioni_titolo.CLASSE) AS ISTITUTO FROM adozioni_titolo WHERE adozioni_titolo.TITOLO=:CHIAVE"
+                              "SQL"  : "SELECT *,(SELECT classi.ANNO FROM classi WHERE classi.CHIAVE = adozioni_titolo.CLASSE) AS ANNO,(SELECT classi.SEZIONE FROM classi WHERE classi.CHIAVE = adozioni_titolo.CLASSE) AS SEZIONE,(SELECT DESCRIZIONE FROM classi_combinazioni WHERE CHIAVE IN (SELECT classi.COMBINAZIONE FROM classi WHERE classi.CHIAVE = adozioni_titolo.CLASSE)) AS COMBINAZIONE,(SELECT ISTITUTO FROM classi WHERE CHIAVE = adozioni_titolo.CLASSE) AS ISTITUTO FROM adozioni_titolo WHERE adozioni_titolo.TITOLO=:CHIAVE"
                             }                     
                           ],
        
@@ -90,7 +90,7 @@
                             },
                             {
                               "Name" : "UpdateDatabaseBook",
-                              "SQL"  : "CALL AGGIORNA_TITOLI_ADOZIONI(#CodiceTitolo,#TitoloTitolo,#SottotitoloTitolo,#AutoriTitolo,#EditoreTitolo,:VolumeTitolo,#DescrizioneMateria,#IstitutoTitolo,#AnnoTitolo,#SezioneTitolo,#PrezzoTitolo)"
+                              "SQL"  : "CALL AGGIORNA_TITOLI_ADOZIONI(#CodiceTitolo,#TitoloTitolo,#SottotitoloTitolo,#AutoriTitolo,#EditoreTitolo,:VolumeTitolo,#DescrizioneMateria,#IstitutoTitolo,#AnnoTitolo,#SezioneTitolo,#DescrizioneCombinazione,#PrezzoTitolo)"
                             },
                             {
                               "Name" : "DeleteAllAdoptionTab",

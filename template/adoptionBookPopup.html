@@ -11,7 +11,7 @@
         <md-input-container class="containerSelect"><label style="width:100%;">CLASSE</label>
           <md-select ng-model="AdozioneInEditing.CLASSE" class="mdb-select" type="text"  name="AdozioneClasse">
           <md-optgroup label="-">
-            <md-option ng-repeat="classe in ListaClassiIstituto" ng-value="classe.Chiave">{{classe.Anno}}{{classe.Sezione}}</md-option>
+            <md-option ng-repeat="classe in ListaClassiIstituto" ng-value="classe.Chiave">{{classe.Anno}}{{classe.Sezione}} - {{classe.Combinazione}}</md-option>
           </md-optgroup>
           </md-select>
         </md-input-container> 
