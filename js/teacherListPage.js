@@ -973,7 +973,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                                    Anno         : ListaClassiIst[i].ANNO,
                                    Sezione      : ListaClassiIst[i].SEZIONE,
                                    Istituto     : ListaClassiIst[i].ISTITUTO,
-                                   Combinazione : ListaClassiIst[i].COMBINAZIONE
+                                   Combinazione : ListaClassiIst[i].COMBINAZIONE_DESCR
                                  }
          $scope.ListaClassiIstituto = ListaClassiIst;
       }
@@ -1071,7 +1071,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                                    Anno         : ListaClassiIst[i].ANNO,
                                    Sezione      : ListaClassiIst[i].SEZIONE,
                                    Istituto     : ListaClassiIst[i].ISTITUTO,
-                                   Combinazione : ListaClassiIst[i].COMBINAZIONE
+                                   Combinazione : ListaClassiIst[i].COMBINAZIONE_DESCR
                                  }
          $scope.ListaClassiIstituto = ListaClassiIst;
       }

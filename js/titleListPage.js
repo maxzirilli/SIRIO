@@ -194,7 +194,7 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
                    //COSA FARE PER TORNARE A CAPO SE TROPPO LUNGA STRINGA CLASSI?
                    for(let l = 0;l < TitoloInStampa.ListaIstitutiTit[k].Adozioni.length;l ++)
                    {                                                 
-                       StringaClassi.push(TitoloInStampa.ListaIstitutiTit[k].Adozioni[l].ANNO + TitoloInStampa.ListaIstitutiTit[k].Adozioni[l].SEZIONE);
+                       StringaClassi.push(TitoloInStampa.ListaIstitutiTit[k].Adozioni[l].ANNO + TitoloInStampa.ListaIstitutiTit[k].Adozioni[l].SEZIONE + ' - ' + TitoloInStampa.ListaIstitutiTit[k].Adozioni[l].COMBINAZIONE);
                    }
                    doc.text(10,CoordY+5,'CLASSI: ' + StringaClassi.toString());
                 }
@@ -660,7 +660,7 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
                                    Anno         : ListaClassiIst[i].ANNO,
                                    Sezione      : ListaClassiIst[i].SEZIONE,
                                    Istituto     : ListaClassiIst[i].ISTITUTO,
-                                   Combinazione : ListaClassiIst[i].COMBINAZIONE
+                                   Combinazione : ListaClassiIst[i].COMBINAZIONE_DESCR
                                  }
          $scope.ListaClassiIstituto = ListaClassiIst;
       }
@@ -760,7 +760,7 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
                                    Anno         : ListaClassiIst[i].ANNO,
                                    Sezione      : ListaClassiIst[i].SEZIONE,
                                    Istituto     : ListaClassiIst[i].ISTITUTO,
-                                   Combinazione : ListaClassiIst[i].COMBINAZIONE
+                                   Combinazione : ListaClassiIst[i].COMBINAZIONE_DESCR
                                  }
          $scope.ListaClassiIstituto = ListaClassiIst;
       }

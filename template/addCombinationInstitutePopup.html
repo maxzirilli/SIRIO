@@ -1,0 +1,40 @@
+<md-dialog>
+  <form ng-cloak name="PopupCombinazioneForm">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2 style="font-weight:bold;color:white;">COMBINAZIONE</h2>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+      <div class="md-dialog-content">
+        <md-input-container class="containerSelect" style="width:500px">
+          <label>COMBINAZIONE</label>
+          <md-autocomplete
+                      md-input-name="IstitutoCombinazione"
+                      md-autofocus="true"
+                      md-no-cache="true"
+                      md-select-item="CombinazionePopup"
+                      md-selected-item-change = "selectedItemChangeCombinazione(item)"
+                      md-search-text="searchTextComb"
+                      md-items="item in queryCombinazione(searchTextComb)"
+                      md-item-text="item.Descrizione"
+                      md-require-match="true"
+                      md-clear-button="true">
+          <md-item-template>
+            <span md-highlight-text="searchText">{{item.Descrizione}}</span>
+          </md-item-template>
+        </md-input-container> 
+      </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ConfermaPopupCombinazione($event)">
+       CONFERMA
+      </md-button>
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="AnnullaPopupCombinazione()">
+       ANNULLA
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

@@ -196,8 +196,8 @@
             
              <md-tab label="Classi">
                <br>
-               <label style="display:inline-block;">VISUALIZZA FINO ALLA SEZIONE:</label> 
-               <md-input-container class="containerSelect" style="width:3%;">                           
+               <label style="display:inline-block;" ng-show="ArrayClassiFinale.length > 0">VISUALIZZA FINO ALLA SEZIONE:</label> 
+               <md-input-container class="containerSelect" style="width:3%;" ng-show="IstitutoInEditing.ArrayClassiGlobale.length > 0">                           
                  <md-select ng-model="SezioneMax" ng-change="CreaListaSelezione(SezioneMax)" class="mdb-select" style="display:inline-block;width:3%;" type="text" name="SezioneMax">
                  <md-optgroup label="-"> 
                    <md-option ng-repeat="lettera in ListaSezioni" ng-value="$index">{{lettera}}</md-option>         
@@ -207,15 +207,13 @@
                <br>
                <label style="display:inline-block;">COMBINAZIONE:</label> 
                <md-input-container class="containerSelect" style="width:50%;">                           
-                 <md-select ng-model="CombinazioneSelected" ng-change="CambiaCombinazione(CombinazioneSelected)" class="mdb-select" style="display:inline-block;width:3%;" type="text" name="CombinazioneSelected">
-                 <md-optgroup label="-"> 
-                   <md-option ng-repeat="combinazione in ListaCombinazioni" ng-value="$index">{{combinazione}}</md-option>         
-                 </md-optgroup>
+                 <md-select ng-model="CombinazioneSelected" ng-change="CambiaCombinazione(CombinazioneSelected)" class="mdb-select" style="display:inline-block;width:100%;" type="text" name="CombinazioneSelected">
+                <md-option ng-repeat="combinazione in IstitutoInEditing.ArrayClassiGlobale" ng-value="combinazione.CombinazioneChiave">{{combinazione.CombinazioneNome}}</md-option>         
                  </md-select>
                </md-input-container>
-               
+               <md-button class="md-raised md-accent" style="font-weight:bold;margin-left:5px;" ng-click="AggiungiCombinazione($event)">AGGIUNGI COMBINAZIONE</md-button>                    
                <br>
-               <table table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">
+               <table table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}" ng-if="IstitutoInEditing.ArrayClassiGlobale.length > 0">
                  <thead>
                    <tr>
                     <th style="width:10%;font-weight:bold;">SEZIONE</th>

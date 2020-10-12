@@ -38,14 +38,14 @@
                      },
                      {
                        "Name" : "ClassiInstitute",
-                       "SQL"  : "SELECT *,(SELECT DESCRIZIONE FROM classi_combinazioni WHERE CHIAVE = classi.COMBINAZIONE) AS COMBINAZIONE FROM classi WHERE ISTITUTO=:CHIAVE ORDER BY classi.SEZIONE,classi.ANNO"
+                       "SQL"  : "SELECT *,(SELECT DESCRIZIONE FROM classi_combinazioni WHERE CHIAVE = classi.COMBINAZIONE) AS COMBINAZIONE_DESCR FROM classi WHERE ISTITUTO=:CHIAVE ORDER BY classi.SEZIONE,classi.ANNO,classi.COMBINAZIONE"
                      }
                    ],
   
   "GetAdozioniClasse" : [
                           {
                             "Name" : "GetAdoptionClass",
-                            "SQL"  : "SELECT COUNT(*) AS COUNT_ADOZIONI FROM adozioni_titolo WHERE CLASSE IN (SELECT CHIAVE FROM classi WHERE ISTITUTO = :Istituto AND ANNO = :Anno AND SEZIONE = #Sezione)"
+                            "SQL"  : "SELECT COUNT(*) AS COUNT_ADOZIONI FROM adozioni_titolo WHERE CLASSE IN (SELECT CHIAVE FROM classi WHERE ISTITUTO = :Istituto AND ANNO = :Anno AND SEZIONE = #Sezione AND COMBINAZIONE = :COMBINAZIONE)"
                           }
                         ],
 
@@ -56,11 +56,11 @@
                      },
                      {
                        "Name" : "InsertClass",
-                       "SQL"  : "INSERT INTO classi (CHIAVE,ANNO,SEZIONE,ISTITUTO) VALUES (:NewKey1,#ANNO,#SEZIONE,:ISTITUTO)"
+                       "SQL"  : "INSERT INTO classi (CHIAVE,ANNO,SEZIONE,ISTITUTO,COMBINAZIONE) VALUES (:NewKey1,#ANNO,#SEZIONE,:ISTITUTO,:COMBINAZIONE)"
                      }, 
                      {
                        "Name" : "InsertClassAfterInsert",
-                       "SQL"  : "INSERT INTO classi (CHIAVE,ANNO,SEZIONE,ISTITUTO) VALUES (:NewKey2,#ANNO,#SEZIONE,:NewKey1)"
+                       "SQL"  : "INSERT INTO classi (CHIAVE,ANNO,SEZIONE,ISTITUTO,COMBINAZIONE) VALUES (:NewKey2,#ANNO,#SEZIONE,:NewKey1,:COMBINAZIONE)"
                      },                     
                      {
                        "Name" : "UpdateInstitute",
@@ -72,11 +72,11 @@
                      },
                      {
                        "Name" : "DeleteClass",
-                       "SQL"  : "DELETE FROM classi WHERE ISTITUTO=:ISTITUTO AND SEZIONE = #SEZIONE AND ANNO = :ANNO"
+                       "SQL"  : "DELETE FROM classi WHERE ISTITUTO=:ISTITUTO AND SEZIONE = #SEZIONE AND ANNO = :ANNO AND COMBINAZIONE =:COMBINAZIONE"
                      },
                      {
                        "Name" : "DeleteAdoption",
-                       "SQL"  : "DELETE FROM adozioni_titolo WHERE CLASSE IN (SELECT CHIAVE FROM classi WHERE ISTITUTO=:ISTITUTO AND SEZIONE=#SEZIONE AND ANNO=:ANNO)"
+                       "SQL"  : "DELETE FROM adozioni_titolo WHERE CLASSE IN (SELECT CHIAVE FROM classi WHERE ISTITUTO=:ISTITUTO AND SEZIONE=#SEZIONE AND ANNO=:ANNO AND COMBINAZIONE=:COMBINAZIONE)"
                      },
                      {
                        "Name" : "UpdateDatabaseInstitute",
