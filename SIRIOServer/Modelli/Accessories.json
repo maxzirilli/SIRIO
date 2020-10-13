@@ -9,6 +9,10 @@
                           "SQL"  : "SELECT * FROM province_all ORDER BY NOME ASC"
                         },
                         {
+                          "Name" : "ProvinceListAllOnlyHandled",
+                          "SQL"  : "SELECT * FROM province_all WHERE UPPER(NOME) IN (SELECT province.NOME FROM province WHERE province.NOME=province_all.NOME)"
+                        },
+                        {
                           "Name" : "InstituteTypeList",
                           "SQL"  : "SELECT * FROM tipologie_istituto ORDER BY DESCRIZIONE ASC"
                         },
@@ -45,5 +49,5 @@
                               "Name" : "UpdateDataImpMailchimp",
                               "SQL"  : "UPDATE configurazioni SET ULTIMA_IMPORTAZIONE_MAIL = NOW() - INTERVAL 1 DAY"
                             }
-                          ]                     
+                          ]                    
 }

@@ -37,8 +37,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
   }
   
   if(Array.isArray(SystemInformation.DataBetweenController.ListaDocSped) && SystemInformation.DataBetweenController.ListaDocSped.length > 0 && SystemInformation.DataBetweenController.SpedizioneMultipla)
-  {  
-     
+  {    
      $scope.SpedizioneMultipla                = true;
      $scope.ListaDocentiSpedizione            = SystemInformation.DataBetweenController.ListaDocSped;
      $scope.ListaDocentiSpedizionePerMultipla = Array.from(SystemInformation.DataBetweenController.ListaDocSped);
@@ -88,9 +87,11 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
                                       Quantita     : parseInt(TitoliInfoLista[i].QUANTITA_MGZN),
                                       QuantitaVol  : parseInt(TitoliInfoLista[i].QUANTITA_MGZN_VOL),
                                       QuantitaDisp : parseInt(TitoliInfoLista[i].QUANTITA_DISP),
-                                      Codice       : TitoliInfoLista[i].CODICE_ISBN == null ? 'N.D.' : TitoliInfoLista[i].CODICE_ISBN
+                                      Codice       : TitoliInfoLista[i].CODICE_ISBN == null ? 'N.D.' : TitoliInfoLista[i].CODICE_ISBN,
+                                      DaAggiungere : false
                                     }
-           $scope.ListaTitoli = TitoliInfoLista;
+           $scope.ListaTitoli      = TitoliInfoLista;
+           $scope.ListaTitoliPopup = TitoliInfoLista;
            GestioneParametri();
         }
         else SystemInformation.ApplyOnError('Modello titoli non conforme','');   
@@ -155,6 +156,21 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
 
         
     $scope.GridOptions2 = {
+                            rowSelection    : false,
+                            multiSelect     : true,
+                            autoSelect      : true,
+                            decapitate      : false,
+                            largeEditDialog : false,
+                            boundaryLinks   : false,
+                            limitSelect     : true,
+                            pageSelect      : true,
+                            query           : {
+                                                limit: 10,
+                                                page: 1
+                                              },
+                            limitOptions    : [10, 20, 30]
+                          };
+    $scope.GridOptions3 = {
                             rowSelection    : false,
                             multiSelect     : true,
                             autoSelect      : true,
@@ -279,7 +295,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
                     $scope.SpedizioneInEditing.CAP       = itemIstituto.Cap;
                     $scope.SpedizioneInEditing.PROVINCIA = itemIstituto.Provincia;
                     $scope.SpedizioneInEditing.ISTITUTO  = itemIstituto.Chiave;
-                    //$scope.SpedizioneAIstituto = true;
+                    $scope.SpedizioneAIstituto = true;
                  }
                  else 
                  {
@@ -558,7 +574,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
            }
          } 
        }
-    }    
+    }   
    
     $scope.AggiungiTitoloSpedizione = function (ev)
     {    
@@ -760,6 +776,139 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
         $scope.TitoloPopup = undefined;
         $scope.searchTextTit = '';        
         $mdDialog.hide();           
+      }
+    }
+
+    $scope.AggiungiTitoliMultipli = function(ev)
+    {
+      $mdDialog.show({ 
+                       controller          : DialogControllerTitoliMultipli,
+                       templateUrl         : "template/addMultipleBookFilterPopup.html",
+                       targetEvent         : ev,
+                       scope               : $scope,
+                       preserveScope       : true,
+                       clickOutsideToClose : true
+                     })
+      .then(function(answer) 
+      {}, 
+      function() 
+      {});
+    }
+
+    function DialogControllerTitoliMultipli()
+    {
+      $scope.NomeFiltro        = '';
+      $scope.CodiceFiltro      = '';              
+      $scope.ListaTitoliToAdd  = [];
+      
+      $scope.hide = function() 
+      {
+        $mdDialog.hide();
+      };
+  
+      $scope.AnnullaPopup = function() 
+      {
+        for(let i = 0;i < $scope.ListaTitoliPopup.length;i ++)
+            $scope.ListaTitoliPopup[i].DaAggiungere = false;
+        $scope.NomeFiltro        = '';
+        $scope.CodiceFiltro      = '';              
+        $scope.ListaTitoliToAdd  = [];
+        $mdDialog.cancel();
+      };
+  
+      $scope.ConfermaPopup = function()
+      {  
+        for(let j = 0;j < $scope.ListaTitoliPopup.length;j ++)
+        {
+          if($scope.ListaTitoliPopup[j].DaAggiungere)
+          {
+             $scope.ListaTitoliToAdd.push($scope.ListaTitoliPopup[j]); 
+             $scope.ListaTitoliPopup[j].DaAggiungere = false;
+          }
+        }                   
+        $scope.NomeFiltro   = '';
+        $scope.CodiceFiltro = '';        
+        $mdDialog.hide();
+        $scope.GestisciTitoliAggiunti($scope.ListaTitoliToAdd)          
+      };
+    }
+
+    $scope.GestisciTitoliAggiunti = function(ListaTitoli)
+    {
+      $mdDialog.show({ 
+                        controller          : DialogControllerGestioneTitoliMultipli,
+                        templateUrl         : "template/handleMultipleBookPopup.html",
+                        targetEvent         : ListaTitoli,
+                        scope               : $scope,
+                        preserveScope       : true,
+                        clickOutsideToClose : true,
+                        locals              :{ListaTitoli}
+                      })
+      .then(function(answer) 
+      {}, 
+      function() 
+      {});
+    }
+
+    function DialogControllerGestioneTitoliMultipli($scope,$mdDialog,ListaTitoli)
+    {
+      $scope.ListaTitoliToHandle = ListaTitoli
+      $scope.SpedizioneMultipla;
+      $scope.ChiaveSpedizione;
+      
+      if($scope.SpedizioneMultipla)
+      {
+          $scope.Multipla = true;
+          if($scope.IstitutoSelezionato != '')
+            $scope.NumeroDocenti = $scope.ListaDocentiSpedizionePerMultipla.length
+          else $scope.NumeroDocenti = $scope.ListaDocentiSpedizione.length;
+      }
+
+      for(let i = 0;i < $scope.ListaTitoliToHandle.length;i ++)
+      {
+        $scope.ListaTitoliToHandle[i] = {
+                                          "CHIAVE"            : -1,
+                                          "TITOLO"            : $scope.ListaTitoliToHandle[i].Chiave,
+                                          "NOME_TITOLO"       : $scope.ListaTitoliToHandle[i].Nome,
+                                          "QUANTITA"          : 1,
+                                          "CODICE"            : $scope.ListaTitoliToHandle[i].Codice,
+                                          "STATO"             : null,
+                                          "QUANTITA_MGZN"     : $scope.ListaTitoliToHandle[i].Quantita,
+                                          "QUANTITA_MGZN_VOL" : $scope.ListaTitoliToHandle[i].QuantitaVol,
+                                          "QUANTITA_DISP"     : $scope.ListaTitoliToHandle[i].QuantitaDisp,
+                                          "Nuovo"             : true,
+                                          "Modificato"        : false,
+                                          "Eliminato"         : false                                   
+                                        }
+      }
+
+      $scope.hide = function() 
+      {
+        $mdDialog.hide();
+      };
+
+      $scope.AnnullaMultipliPopup = function() 
+      {
+        $scope.ListaTitoliToHandle = [];
+        $mdDialog.cancel();
+      };
+
+      $scope.ConfermaMultipliPopup = function()
+      {
+        for(let i = 0;i < $scope.ListaTitoliToHandle.length;i ++)
+        {
+           if($scope.ListaTitoliToHandle[i].TITOLO == -1 || $scope.ListaTitoliToHandle[i].QUANTITA == 0 || $scope.ListaTitoliToHandle[i].STATO == null)
+           {
+              alert ('Dati titolo mancanti!');
+              return
+           }
+           else
+           {                         
+              $scope.ListaTitoliSpedizione.push($scope.ListaTitoliToHandle[i]);
+           }
+        }
+        $scope.ListaTitoliToHandle = [];
+        $mdDialog.hide();
       }
     }
     
@@ -1076,6 +1225,43 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
          }
       }      
     }    
-  }
-  
+  } 
 }]);
+
+
+SIRIOApp.filter('TitoliMultipliPopupByFiltro',function()
+{
+  return function(ListaTitoliPopup,NomeFiltro,CodiceFiltro)
+         {
+           if(NomeFiltro == '' && CodiceFiltro == '') 
+             return(ListaTitoliPopup);
+           var ListaFiltrata = [];
+           NomeFiltro = NomeFiltro.toUpperCase();
+           CodiceFiltro = CodiceFiltro.toUpperCase();
+           
+           var TitoloOk = function(Titolo)
+           {  
+              var Result = true;
+              
+              if(NomeFiltro != '')              
+                if(Titolo.Nome.toUpperCase().indexOf(NomeFiltro) < 0)
+                   Result = false;
+              
+              if(CodiceFiltro != '')
+                 if(Titolo.Codice.toUpperCase().indexOf(CodiceFiltro) < 0)
+                   Result = false;              
+              
+              return(Result);
+           }
+           
+           ListaTitoliPopup.forEach(function(Titolo)
+           { 
+             if(TitoloOk(Titolo)) 
+                ListaFiltrata.push(Titolo)                       
+           });
+           
+           return(ListaFiltrata);
+           
+         }
+});
+

@@ -51,7 +51,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
   
   SystemInformation.GetSQL('Accessories',{}, function(Results)
   {
-    ListaProvinceAllTmp = SystemInformation.FindResults(Results,'ProvinceListAll');
+    ListaProvinceAllTmp = SystemInformation.FindResults(Results,'ProvinceListAllOnlyHandled');
     if (ListaProvinceAllTmp != undefined) 
     {
       for(let i = 0; i < ListaProvinceAllTmp.length; i++)
@@ -230,8 +230,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
           }
           $scope.ListaNonSpedibili = $scope.ListaNonSpedibili.substring(0,$scope.ListaNonSpedibili.length - 3);
           $scope.VisualizzaNonSpedibili = true;          
-       }
-          
+       }          
     }
   }
 
@@ -543,13 +542,13 @@ SIRIOApp.filter('SpedizioneByFiltroAvanzato',function()
              
              var AddTitoli = false;
              
-             for(let i = 0; i < ListaDettaglio.length; i++)
+             for(let i = 0; i < ListaSpedizioni.length; i++)
              {
-                 if(ListaDettaglio[i].Tipo == 0)
+                 if(ListaSpedizioni[i].Tipo == 0)
                  {
-                  if(SpedizioniOk(ListaDettaglio[i]))
+                  if(SpedizioneOk(ListaSpedizioni[i]))
                   {
-                     ListaFiltrata.push(ListaDettaglio[i]);
+                     ListaFiltrata.push(ListaSpedizioni[i]);
                      AddTitoli = true;
                   }
                   else AddTitoli = false
@@ -557,7 +556,7 @@ SIRIOApp.filter('SpedizioneByFiltroAvanzato',function()
                  else
                  {
                   if(AddTitoli)
-                     ListaFiltrata.push(ListaDettaglio[i]);
+                     ListaFiltrata.push(ListaSpedizioni[i]);
                  }
              }                            
              return(ListaFiltrata);

@@ -24,24 +24,26 @@
           <table style="width:800px;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
           <tr>
             <th></th>
+            <th></th>
             <th>ISBN</th>
             <th>TITOLO</th>
             <th>QUANTITA</th>
           </tr>
-          <tr ng-repeat="Titolo in ListaTitoliPopup | TitoloPopupByFiltro : NomeFiltro : CodiceFiltro | limitTo : 30" id={{Titolo.Chiave}}> <!--GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit-->
-            <td ng-if="Titolo.Quantita > 0"><input type="checkbox" ng-model="Titolo.DaAggiungere"></td>
+          <tr ng-repeat="Titolo in ListaTitoliPopup | TitoliMultipliPopupByFiltro : NomeFiltro : CodiceFiltro | limitTo : 30" id={{Titolo.Chiave}}> <!--GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit-->
+            <td><input type="checkbox" ng-model="Titolo.DaAggiungere"></td>
             <td ng-if="Titolo.Quantita <= 0"><img src="img/notAvailable.png" style="width:15px;height:auto;" title="NON IN MAGAZZINO"></td>
+            <td ng-if="Titolo.Quantita > 0"><img src="img/available.png" style="width:15px;height:auto;" title="IN MAGAZZINO"></td>
             <td>{{Titolo.Codice}}</td>
             <td>{{Titolo.Nome}}</td>
             <td>{{Titolo.Quantita}}</td>
           </tr>
           </table>
-          <md-table-pagination md-limit="GridOptions.query.limit" 
-                             md-limit-options="GridOptions.limitOptions" 
-                             md-page="GridOptions.query.page" 
+          <md-table-pagination md-limit="GridOptions_3.query.limit" 
+                             md-limit-options="GridOptions_3.limitOptions" 
+                             md-page="GridOptions_3.query.page" 
                              md-total="{{ListaTitoliPopup.length}}" 
-                             md-page-select="GridOptions.pageSelect" 
-                             md-boundary-links="GridOptions.boundaryLinks" 
+                             md-page-select="GridOptions_3.pageSelect" 
+                             md-boundary-links="GridOptions_3.boundaryLinks" 
                              md-on-paginate="logPagination"></md-table-pagination>
          </div>
       </div>
