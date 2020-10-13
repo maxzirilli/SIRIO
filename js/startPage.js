@@ -1,5 +1,5 @@
-SIRIOApp.controller("startPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','$sce',
-function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce)
+SIRIOApp.controller("startPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','$sce','$http',
+function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http)
 {
   ScopeHeaderController.CheckButtons();
   $scope.MostraListaSpedizioni = false;  
@@ -78,7 +78,12 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce)
   {
     $state.go("csvCatalogDeAgostiniPage");
   }
-  
+
+  $scope.ApriMailChimpUpload = function()
+  {
+    $state.go("mailchimpUploadPage");
+  }
+
   $scope.IsAdministrator = function ()
   {
     return SystemInformation.UserInformation.Ruolo == RUOLO_AMMINISTRATORE;

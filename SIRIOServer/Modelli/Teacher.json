@@ -138,6 +138,10 @@
                      {
                        "Name" : "UpdateDatabaseInstituteFromTeacher",
                        "SQL"  : "CALL LYBRO_AGGIORNA_ISTITUTI(#CodiceIstituto,#NomeIstituto,#IndirizzoIstituto,#ProvinciaIstituto,#ComuneIstituto,#CapIstituto,#EmailIstituto,#SitoWebIstituto,#PresideIstituto,#VicePresIstituto,#DirAmmIstituto,#Telefono1,#Referente1,#Telefono2,#Referente2,#Telefono3,#Referente3,#DocenteLybro)"
+                     },
+                     {
+                       "Name" : "UpdateTeacherMailFromMailChimp",
+                       "SQL"  : "CALL MAIL_FROM_MAILCHIMP(#MailDocente,#NomeDocente)"
                      }                                         
                    ]        
 }

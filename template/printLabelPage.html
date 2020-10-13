@@ -2,7 +2,7 @@
   <h2>STAMPA ETICHETTE</h2>
   <div style="float:right;">
     <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="AnnullaStampa()">ANNULLA STAMPA</md-button>
-    <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ConfermaStampa()">STAMPA ETICHETTE COMPLETATA</md-button>
+    <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ConfermaStampa()" ng-disabled="NienteDaSpedire">STAMPA ETICHETTE COMPLETATA</md-button>
   </div>
   <iframe style="background:white;" id="repPdf" title="Etichette" height=100% width=100% ></iframe>
 </div>

@@ -2,7 +2,8 @@ SIRIOApp.controller("printLabelPageController",['$scope','SystemInformation','$s
 {
   
   ScopeHeaderController.CheckButtons();
-  
+  $scope.NienteDaSpedire = false;
+
   $scope.AnnullaStampa = function ()
   {
     var DatiDitta         = {};
@@ -52,6 +53,7 @@ SIRIOApp.controller("printLabelPageController",['$scope','SystemInformation','$s
          doc.setFontType('bold');
          doc.setTextColor(255,0,0);
          doc.text(80,20,'NESSUN TITOLO DA SPEDIRE');
+         $scope.NienteDaSpedire = true;
          document.getElementById('repPdf').src = doc.output('datauristring')
       }
       else
@@ -298,7 +300,8 @@ SIRIOApp.controller("printLabelPageController",['$scope','SystemInformation','$s
               doc.setFontSize(6);
               doc.text(10,290,SystemInformation.VDocDelivery)
          }
-         document.getElementById('repPdf').src = doc.output('datauristring')
+         //document.getElementById('repPdf').src = doc.output('datauristring')
+         doc.save('repPdf.pdf',{});
       }
     }
     else SystemInformation.ApplyOnError('Modello lista spedizioni non conforme','')

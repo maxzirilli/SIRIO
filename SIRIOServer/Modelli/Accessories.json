@@ -17,6 +17,14 @@
                           "SQL"  : "SELECT istituti.CODICE FROM istituti WHERE NASCOSTO <> 1"
                         }
                       ],
+ 
+ "SelectDataImpSQL" : [
+                        {
+                          "Name" : "LastUpdateMailChimp",
+                          "SQL"  : "SELECT ULTIMA_IMPORTAZIONE_MAIL FROM configurazioni"
+                        }
+                      ],
+    
   
   "SelectTitoliSQL" : [
                         {
@@ -30,8 +38,12 @@
                              "Name" : "BookListAdv",
                              "SQL"  : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,CALCOLA_DISPONIBILITA_ALL(titoli.CHIAVE) AS QUANTITA_MGZN FROM titoli ORDER BY TITOLO ASC"
                            }
-                         ]
-                      
-
-                      
+                         ],
+  
+  "EditSQL"            : [
+                            {
+                              "Name" : "UpdateDataImpMailchimp",
+                              "SQL"  : "UPDATE configurazioni SET ULTIMA_IMPORTAZIONE_MAIL = NOW() - INTERVAL 1 DAY"
+                            }
+                          ]                     
 }

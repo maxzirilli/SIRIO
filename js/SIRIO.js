@@ -1,5 +1,5 @@
 // Inizializzazioni
-const VERSIONE_ATTUALE = '1.3.4';
+const VERSIONE_ATTUALE = '1.4.5';
 
 SIRIOApp.config(['$qProvider', function ($qProvider)
 {
@@ -163,7 +163,13 @@ SIRIOApp.config(['$stateProvider','$urlRouterProvider','$mdAriaProvider',functio
     {
         templateUrl: "template/deliveryAdvancedManagementPage.html",
         url: '/deliveryAdvancedManagementPage'
-    })    
+    })
+    
+    $stateProvider.state('mailchimpUploadPage', 
+    {
+        templateUrl: "template/mailchimpUploadPage.html",
+        url: '/mailchimpUploadPage'
+    }) 
 
     $urlRouterProvider.otherwise('loginPage');
 }]);

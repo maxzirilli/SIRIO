@@ -221,7 +221,8 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                    doc.text(10,290,SystemInformation.VDocLogStorage);
                    doc.setFontSize(7);
                  } 
-                 document.getElementById('logPdf').src = doc.output('datauristring');
+                 //document.getElementById('logPdf').src = doc.output('datauristring');
+                 doc.save('storageLogPdf.pdf',{});      
                  //$scope.TitoloFiltrato = undefined;                
              }
            }
@@ -316,7 +317,8 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                    doc.text(10,290,SystemInformation.VDocLogStorage);
                    doc.setFontSize(7);
                  } 
-                 document.getElementById('logPdf').src = doc.output('datauristring');
+                 //document.getElementById('logPdf').src = doc.output('datauristring');
+                 doc.save('storageLogPdf.pdf',{});
              }
            }
            else SystemInformation.ApplyOnError('Modello movimenti globali magazzino principale non valido','');       
@@ -405,7 +407,8 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                    doc.text(10,290,SystemInformation.VDocLogStorage);
                    doc.setFontSize(7);
                  } 
-                document.getElementById('logPdf').src = doc.output('datauristring');
+                //document.getElementById('logPdf').src = doc.output('datauristring');
+                doc.save('storageLogPdf.pdf',{});
              }
            }
            else SystemInformation.ApplyOnError('Modello movimento titolo magazzino volante non valido','');        
@@ -498,7 +501,8 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                    doc.text(10,290,SystemInformation.VDocLogStorage);
                    doc.setFontSize(7);
                  } 
-                document.getElementById('logPdf').src = doc.output('datauristring');
+                //document.getElementById('logPdf').src = doc.output('datauristring');
+                doc.save('storageLogPdf.pdf',{});
              }
            }
            else SystemInformation.ApplyOnError('Modello movimenti globali magazzino volante non valido','');         
