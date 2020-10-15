@@ -36,6 +36,13 @@
                           "SQL"  : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL,CALCOLA_DISPONIBILITA_ALL(titoli.CHIAVE) AS QUANTITA_DISP,titoli.POS_MAGAZZINO FROM titoli ORDER BY TITOLO ASC"
                         }
                       ],
+
+  "SelectTitoliInventarioSQL" : [
+                                  {
+                                    "Name" : "BookListInventory",
+                                    "SQL"  : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL,titoli.POS_MAGAZZINO FROM titoli WHERE QUANTITA_MGZN <> 0 OR QUANTITA_MGZN_VOL <> 0 ORDER BY TITOLO ASC"
+                                  }
+                                ],
                       
   "SelectTitoliSQLAdv" : [
                            {

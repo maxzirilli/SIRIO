@@ -346,20 +346,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
                  $scope.SpedizioneInEditing.CAP             = '';
                  $scope.SpedizioneInEditing.PROVINCIA       = -1;
                  $scope.SpedizioneInEditing.PROVINCIA_NOME  = '';
-              }               
-              /*$scope.SpedizioneInEditing.CHIAVE          = -1;
-              $scope.SpedizioneInEditing.DOCENTE         = $scope.ChiaveDocente;
-              $scope.SpedizioneInEditing.DOCENTE_NOME    = DocenteDettaglio[0].RAGIONE_SOCIALE;
-              $scope.SpedizioneInEditing.PRESSO          = DocenteDettaglio[0].RAGIONE_SOCIALE;
-              $scope.SpedizioneInEditing.INDIRIZZO       = DocenteDettaglio[0].INDIRIZZO == null ? '' : DocenteDettaglio[0].INDIRIZZO;
-              $scope.SpedizioneInEditing.COMUNE          = DocenteDettaglio[0].COMUNE    == null ? '' : DocenteDettaglio[0].COMUNE;
-              $scope.SpedizioneInEditing.CAP             = DocenteDettaglio[0].CAP       == null ? '' : DocenteDettaglio[0].CAP;
-              $scope.SpedizioneInEditing.PROVINCIA       = DocenteDettaglio[0].PROVINCIA == null ? -1 : DocenteDettaglio[0].PROVINCIA;
-              $scope.SpedizioneInEditing.PROVINCIA_NOME  = ProvinciaDoc                  == undefined ? '' : ProvinciaDoc.Nome; 
-              $scope.SpedizioneInEditing.DATA            = new Date();
-              $scope.ListaIstitutiDoc                    = IstitutiDoc;
-              $scope.ListaTitoliSpedizione               = [];
-              $scope.ListaTitoliEliminati                = [];*/           
+              }                      
             }       
             else SystemInformation.ApplyOnError('Modello docente per spedizione non conforme','');      
           },'SQLDettaglio'); 
@@ -403,7 +390,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
                 $scope.ListaTitoliSpedizione                = [];
                 $scope.ListaTitoliEliminati                 = [];
                 $scope.SpedizioneInEditing.ISTITUTO         = DettaglioSpedizioneDoc[0].ISTITUTO == null ? -1 : DettaglioSpedizioneDoc[0].ISTITUTO;
-                
+                if($scope.SpedizioneInEditing.ISTITUTO != -1)
+                   $scope.IstitutoDoc = $scope.SpedizioneInEditing.ISTITUTO;
                 for(let i = 0;i < DettaglioSpedizioneTitoloDoc.length;i ++)
                 {
                     if(DettaglioSpedizioneTitoloDoc[i].SPEDIZIONE == $scope.ChiaveSpedizione)
@@ -443,29 +431,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
             }
             else SystemInformation.ApplyOnError('Modello spedizione docente non conforme','');      
           },'SQLDettaglioSpedizioneDocente'); 
-          
-          /*$scope.IndirizzoByIstituto = function (Istituto)
-          {
-            if(Istituto == -1)
-            {
-             $scope.SpedizioneInEditing.INDIRIZZO       = DocenteDettaglio[0].INDIRIZZO == null ? '' : DocenteDettaglio[0].INDIRIZZO;
-             $scope.SpedizioneInEditing.COMUNE          = DocenteDettaglio[0].COMUNE    == null ? '' : DocenteDettaglio[0].COMUNE;
-             $scope.SpedizioneInEditing.CAP             = DocenteDettaglio[0].CAP       == null ? '' : DocenteDettaglio[0].CAP;
-             $scope.SpedizioneInEditing.PROVINCIA       = DocenteDettaglio[0].PROVINCIA == null ? -1 : DocenteDettaglio[0].PROVINCIA;
-             $scope.SpedizioneInEditing.PROVINCIA_NOME  = ProvinciaDoc                  == undefined ? '' : ProvinciaDoc.Nome
-            }
-            else
-            {
-              IstitutoCorrisp = $scope.ListaIstitutiDoc.find(function(AIstituto){return(AIstituto.CHIAVE == Istituto);});
-              ProvinciaAllCorrisp = $scope.ListaProvinceAll.find(function(AProvincia){return(AProvincia.Nome == IstitutoCorrisp.PROVINCIA_NOME);});
-             
-              $scope.SpedizioneInEditing.INDIRIZZO       = IstitutoCorrisp.INDIRIZZO  == null ? '': IstitutoCorrisp.INDIRIZZO;
-              $scope.SpedizioneInEditing.COMUNE          = IstitutoCorrisp.COMUNE     == null ? '': IstitutoCorrisp.COMUNE;
-              $scope.SpedizioneInEditing.CAP             = IstitutoCorrisp.CAP        == null ? '': IstitutoCorrisp.CAP;
-              $scope.SpedizioneInEditing.PROVINCIA       = ProvinciaAllCorrisp.Chiave == undefined ? -1 : ProvinciaAllCorrisp.Chiave;
-              $scope.SpedizioneInEditing.PROVINCIA_NOME  = ProvinciaAllCorrisp.Nome   == undefined ? '' : IstitutoCorrisp.Nome; 
-            }
-          }*/ 
           
           $scope.PassaADaSpedire = function (Titolo)
           {
@@ -718,7 +683,9 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
                          "Nuovo"         : Titolo.Nuovo,
                          "Modificato"    : Titolo.Modificato,
                          "Eliminato"     : Titolo.Eliminato                                   
-                      }      
+                      }
+                      
+      $scope.searchTextTit = Titolo.NOME_TITOLO;
 
       $scope.queryTitolo = function(searchTextTit)
       {

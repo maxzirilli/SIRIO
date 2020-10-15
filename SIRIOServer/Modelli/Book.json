@@ -5,6 +5,13 @@
                               "SQL"  : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,titoli.MATERIA,titoli.POS_MAGAZZINO,titoli.AUTORI,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL, (SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE materie_insegnamento.CHIAVE = titoli.MATERIA) AS NOME_MATERIA FROM titoli {W~FiltroI~(titoli.CHIAVE IN (SELECT istituti_x_titoli.TITOLO FROM istituti_x_titoli WHERE ISTITUTO IN (SELECT CHIAVE FROM istituti WHERE CHIAVE = :FiltroI)))} ORDER BY titoli.TITOLO" 
                             }
                           ],
+
+  "SelectAllTitoliInventario" : [
+                                  {
+                                    "Name" : "BookListInventoryAll",
+                                    "SQL"  : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL,titoli.POS_MAGAZZINO FROM titoli ORDER BY TITOLO ASC"
+                                  }
+                                ],
                           
   "SelectSQLFilter"     : [
                             {
@@ -103,6 +110,14 @@
                             {
                               "Name" : "UpdateDatabaseBookCatalogDeAgostini",
                               "SQL"  : "CALL AGGIORNA_TITOLI_FROM_CATALOGHI_DEAGOSTINI(#CodiceTitolo,#TitoloTitolo,#EditoreTitolo,:VolumeTitolo,#PrezzoTitolo)"
+                            },
+                            {
+                              "Name" : "ResetAllInventory",
+                              "SQL"  : "UPDATE titoli SET QUANTITA_MGZN=0,QUANTITA_MGZN_VOL=0"
+                            },
+                            {
+                              "Name" : "UpdateBookFromInventory",
+                              "SQL"  : "CALL UPDATE_TITOLI_FROM_INVENTARIO(:ChiaveTitolo,:QuantitaTitolo,:QuantitaVolanteTitolo)"
                             }
                           ]
 }       

@@ -78,14 +78,14 @@
         <md-card-content>
           <div layout="row">
             <div>
-              <md-button ng-click="ApriPaginaEtichette()" style="float:left;"><img src="img/print.png" style="width:50px;height:auto;margin-right:10px"></md-button>
-              <p style="font-weight:bold;float:rigth;padding:0px;">STAMPA ETICHETTE</p>
-              <p style="font-style:italic;float:rigth;padding:0px;margin-left:100px;">Stampa etichette per le spedizioni</p>              
+              <md-button ng-click="ApriPaginaEtichette()" style="float:left;"><img src="img/print.png" style="width:55px;height:auto;margin-right:10px"></md-button>
+              <p style="font-weight:bold;float:rigth;padding:0px;">ETICHETTE</p>
+              <p style="font-style:italic;float:rigth;padding:0px;margin-left:100px;">Etichette per spedizioni</p>              
             </div>       
             <div>
-              <md-button ng-click="ApriLogMagazzini()" style="float:left;"><img src="img/print.png" style="width:50px;height:auto;margin-right:10px"></md-button>
+              <md-button ng-click="ApriLogMagazzini()" style="float:left;"><img src="img/print.png" style="width:55px;height:auto;margin-right:10px"></md-button>
               <p style="font-weight:bold;float:rigth;padding:0px;">LOG MAGAZZINI / INVENTARIO</p>
-              <p style="font-style:italic;float:rigth;padding:0px;margin-left:100px;">Stampa log dei magazzini per i movimenti dei titoli</p>              
+              <p style="font-style:italic;float:rigth;padding:0px;margin-left:100px;">Log magazzini e inventario</p>              
             </div>       
           </div>
         </md-card-content>
@@ -98,6 +98,11 @@
         </md-card-title>
         <md-card-content>
           <div layout="row">
+            <div ng-if="IsAdministrator()">
+              <md-button ng-click="ApriGestioneInventario()" style="float:left;"><img src="img/inventory.png" style="width:55px;height:auto;margin-right:10px"></md-button>
+              <p style="font-weight:bold;float:rigth;padding:0px;">INVENTARIO</p>
+              <p style="font-style:italic;float:rigth;padding:0px;margin-left:100px;">Gestione inventario</p>              
+            </div>
             <div>
               <md-button ng-click="ApriMagazzinoVolante()" style="float:left;"><img src="img/flyingStorage.png" style="width:55px;height:auto;margin-right:10px"></md-button>
               <p style="font-weight:bold;float:rigth;padding:0px;">MAGAZZINO VOLANTE</p>
@@ -106,7 +111,7 @@
             <div>
               <md-button ng-click="NuovaSpedizioneCasaEditrice()" style="float:left;"><img src="img/delivery.png" style="width:55px;height:auto;margin-right:10px"></md-button>
               <p style="font-weight:bold;float:rigth;padding:0px;">SPEDIZIONE</p>
-              <p style="font-style:italic;float:rigth;padding:0px;margin-left:100px;">Aggiungi nuova spedizione</p>              
+              <p style="font-style:italic;float:rigth;padding:0px;margin-left:100px;">Nuova spedizione generica</p>              
             </div>              
           </div>
         </md-card-content>

@@ -2,7 +2,7 @@
   <div ng-if="!EditingOn && !StampaOn">
     <div>
       <h2>TITOLI</h2>
-      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoTitolo()">NUOVO TITOLO</md-button>      
+      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoTitolo()">NUOVO TITOLO</md-button>
     </div>  
     <div layout="row">        
       <md-input-container class="containerSelect" style="width:40%;float:left;margin-right:10px;"><label>MATERIA</label>
@@ -33,7 +33,7 @@
          </md-not-found>
        </md-input-container>
     </div>
-    <div layout="row">               
+    <div>               
       <md-input-container class="containerSelect" style="width:40%;float:left;"><label>NOME</label>
         <input ng-model="NomeFiltro" type="search">
       </md-input-container>
@@ -76,6 +76,9 @@
                            md-boundary-links="GridOptions.boundaryLinks" 
                            md-on-paginate="logPagination"></md-table-pagination>
     </div>
+  </div>
+  <br>
+  <div>
     <p ng-if="ListaTitoli.length == 0" style="font-weight:bold;font-style:italic;text-align:center;">NESSUN TITOLO PRESENTE</p>
   </div>
   

@@ -19,6 +19,11 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
   }  
   
   ScopeHeaderController.CheckButtons();
+
+  $scope.IsAdministrator = function ()
+  {
+    return SystemInformation.UserInformation.Ruolo == RUOLO_AMMINISTRATORE;
+  }
   
   $scope.GridOptions = {
                          rowSelection    : false,

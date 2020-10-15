@@ -228,6 +228,25 @@
                  </tbody>
                </table>           
             </md-tab>
+          <md-tab label="Adozioni" ng-if="IstitutoInEditing.ListaAdozioniIstituto.length > 0">
+            <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">
+              <tr>
+                <th>CLASSE</th>
+                <th>TITOLI</th>
+              </tr>
+              <tr ng-repeat="classe in IstitutoInEditing.ListaAdozioniIstituto | limitTo : GridOptions_2.query.limit : (GridOptions_2.query.page - 1) * GridOptions_2.query.limit">
+                <td>{{classe.NomeClasse}} {{classe.CombinazioneClasse}}</td>
+                <td style="text-align:left;" ng-bind-html="GetTitoliClasse(classe)"></td>
+              </tr>
+            </table>
+            <md-table-pagination  md-limit="GridOptions_2.query.limit" 
+                                  md-limit-options="GridOptions_2.limitOptions" 
+                                  md-page="GridOptions_2.query.page" 
+                                  md-total="{{IstitutoInEditing.ListaAdozioniIstituto.length}}" 
+                                  md-page-select="GridOptions_2.pageSelect" 
+                                  md-boundary-links="GridOptions_2.boundaryLinks" 
+                                  md-on-paginate="logPagination"></md-table-pagination>
+          </md-tab>
          </md-tabs>       
     </form>        
   </div>

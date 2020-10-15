@@ -46,23 +46,25 @@
         <table style="width:100%;text-align:center;" md-row-select="GridOptions2.rowSelection" multiple="{{GridOptions2.multiSelect}}">  
           <tr>
             <th></th>
-            <th></th> 
+            <th></th>
+            <th>ISBN</th> 
             <th>TITOLO</th>
             <th>QUANTITA</th>
           </tr>  
-          <tr ng-repeat="Titolo in ListaCarico | limitTo : GridOptions2.query.limit : (GridOptions.query.page - 1) * GridOptions2.query.limit" id={{Titolo.CHIAVE}}>
+          <tr ng-repeat="Titolo in ListaCarico | limitTo : GridOptions2.query.limit : (GridOptions_2.query.page - 1) * GridOptions2.query.limit" id={{Titolo.CHIAVE}}>
             <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA TITOLO" ng-click="EliminaTitolo(Titolo)"></td> 
             <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA TITOLO" ng-click="ModificaTitolo(Titolo)"></td>        
+            <td class="off">{{Titolo.CODICE_TITOLO}}</td>           
             <td class="off">{{Titolo.NOME_TITOLO | uppercase}}</td> 
             <td class="off">{{Titolo.QUANTITA}}</td>           
           </tr>    
         </table>
-        <md-table-pagination md-limit="GridOptions2.query.limit" 
-                             md-limit-options="GridOptions2.limitOptions" 
-                             md-page="GridOptions2.query.page" 
+        <md-table-pagination md-limit="GridOptions_2.query.limit" 
+                             md-limit-options="GridOptions_2.limitOptions" 
+                             md-page="GridOptions_2.query.page" 
                              md-total="{{ListaCarico.length}}" 
-                             md-page-select="GridOptions2.pageSelect" 
-                             md-boundary-links="GridOptions2.boundaryLinks" 
+                             md-page-select="GridOptions_2.pageSelect" 
+                             md-boundary-links="GridOptions_2.boundaryLinks" 
                              md-on-paginate="logPagination"></md-table-pagination>        
   </div>
     

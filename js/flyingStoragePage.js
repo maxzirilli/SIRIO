@@ -4,6 +4,37 @@ SIRIOApp.controller("flyingStoragePageController",['$scope','SystemInformation',
   $scope.EditingOn    = false;
   
   ScopeHeaderController.CheckButtons();
+
+  $scope.GridOptions = {
+                          rowSelection    : false,
+                          multiSelect     : true,
+                          autoSelect      : true,
+                          decapitate      : false,
+                          largeEditDialog : false,
+                          boundaryLinks   : false,
+                          limitSelect     : true,
+                          pageSelect      : true,
+                          query           : {
+                                              limit: 10,
+                                              page: 1
+                                            },
+                          limitOptions    : [10, 20, 30]
+                       };
+$scope.GridOptions_2 = {
+                          rowSelection    : false,
+                          multiSelect     : true,
+                          autoSelect      : true,
+                          decapitate      : false,
+                          largeEditDialog : false,
+                          boundaryLinks   : false,
+                          limitSelect     : true,
+                          pageSelect      : true,
+                          query           : {
+                                              limit: 10,
+                                              page: 1
+                                            },
+                          limitOptions    : [10, 20, 30]
+                      };
   
   $scope.ConvertiData = function (Dati)
   {
@@ -102,24 +133,25 @@ SIRIOApp.controller("flyingStoragePageController",['$scope','SystemInformation',
              $scope.ListaCarico[i].Modificato = false;
              $scope.ListaCarico[i].Eliminato  = false;
         }
+        SystemInformation.GetSQL('Accessories', {}, function(Results)  
+        {  
+          TitoliInfoLista = SystemInformation.FindResults(Results,'BookList');
+          if(TitoliInfoLista != undefined)
+          { 
+            for(let i = 0; i < TitoliInfoLista.length; i++)
+                TitoliInfoLista[i] = { 
+                                        Chiave        : TitoliInfoLista[i].CHIAVE,
+                                        Nome          : TitoliInfoLista[i].TITOLO,
+                                        Codice        : TitoliInfoLista[i].CODICE_ISBN,
+                                        Quantita_Mgzn : TitoliInfoLista[i].QUANTITA_MGZN
+                                      }
+            $scope.ListaTitoli = TitoliInfoLista;
+          }
+          else SystemInformation.ApplyOnError('Modello titoli non conforme','');   
+        },'SelectTitoliSQL');   
       }
       else SystemInformation.ApplyOnError('Modello dettaglio movimento non conforme','');
     },'SQLDettaglio');
-    
-    SystemInformation.GetSQL('Accessories', {}, function(Results)  
-    {  
-      TitoliInfoLista = SystemInformation.FindResults(Results,'BookList');
-      if(TitoliInfoLista != undefined)
-      { 
-         for(let i = 0; i < TitoliInfoLista.length; i++)
-             TitoliInfoLista[i] = { 
-                                    Chiave : TitoliInfoLista[i].CHIAVE,
-                                    Nome   : TitoliInfoLista[i].TITOLO
-                                  }
-         $scope.ListaTitoli = TitoliInfoLista;
-      }
-      else SystemInformation.ApplyOnError('Modello titoli non conforme','');   
-    },'SelectTitoliSQL');   
   }
   
   $scope.AggiungiTitoloCarico = function (ev)
@@ -145,37 +177,49 @@ SIRIOApp.controller("flyingStoragePageController",['$scope','SystemInformation',
     $scope.Titolo = {
                        "CHIAVE"      : -1,
                        "TITOLO"      : -1,
+                       "CODICE_TITOLO" : -1,
                        "NOME_TITOLO" : '',
-                       "QUANTITA"    : 1,
+                       "QUANTITA"    : 0,
                        "Nuovo"       : true,
                        "Modificato"  : false,
-                       "Eliminato"   : false                                   
+                       "Eliminato"   : false,
+                       "QuantitaMax" : 0                                   
                     } 
                               
     $scope.queryTitolo = function(searchTextTit)
     {
-       searchTextTit = searchTextTit.toUpperCase();
-       return($scope.ListaTitoli.grep(function(Elemento) 
-       { 
-         return(Elemento.Nome.toUpperCase().indexOf(searchTextTit) != -1 || Elemento.Codice.indexOf(searchTextTit) != -1);
-       }));
+       if(searchTextTit != undefined)
+       {
+          searchTextTit = searchTextTit.toUpperCase();
+          return($scope.ListaTitoli.grep(function(Elemento) 
+          { 
+            return(Elemento.Nome.toUpperCase().indexOf(searchTextTit) != -1 || Elemento.Codice.indexOf(searchTextTit) != -1);
+          }));
+      }
     }
     
     $scope.selectedItemChangeTitolo = function(itemTit)
     {
-      $scope.Titolo.TITOLO       = itemTit.Chiave;
-      $scope.Titolo.NOME_TITOLO  = itemTit.Nome;
-      $scope.Titolo.QuantitaMgzn = itemTit.Quantita_Mgzn;
+      if(itemTit != undefined)
+      {
+        $scope.Titolo.TITOLO        = itemTit.Chiave;
+        $scope.Titolo.NOME_TITOLO   = itemTit.Nome;
+        $scope.Titolo.CODICE_TITOLO = itemTit.Codice;
+        $scope.Titolo.QuantitaMax   = itemTit.Quantita_Mgzn
+      }
     }
 
     $scope.hide = function() 
     {
+      $scope.searchTextTit = '';
       $scope.TitoloPopup = undefined;
       $mdDialog.hide();
     };
 
     $scope.AnnullaPopupTitolo = function() 
     {
+      $scope.searchTextTit = '';
+      $scope.TitoloPopup   = undefined;
       $mdDialog.cancel();
     };
 
@@ -186,15 +230,11 @@ SIRIOApp.controller("flyingStoragePageController",['$scope','SystemInformation',
         alert ('Dati titolo mancanti!');
         return
       }
-      else if($scope.Titolo.QUANTITA > $scope.Titolo.QuantitaMgzn)
-      {
-              alert('Quantita selezionata maggiore della quantità presente in magazzino!');
-              return
-      }
       else
       {                         
         $scope.ListaCarico.push($scope.Titolo);
-        $scope.TitoloPopup = undefined;
+        $scope.searchTextTit = '';
+        $scope.TitoloPopup   = undefined;
         $mdDialog.hide();
       }             
     }
@@ -225,13 +265,16 @@ SIRIOApp.controller("flyingStoragePageController",['$scope','SystemInformation',
                        "CHIAVE"       : Titolo.CHIAVE,
                        "TITOLO"       : Titolo.TITOLO,
                        "NOME_TITOLO"  : Titolo.NOME_TITOLO,
+                       "CODICE_TITOLO"  : Titolo.CODICE_TITOLO,
                        "QUANTITA"     : parseInt(Titolo.QUANTITA),
                        "QuantitaMgzn" : Titolo.QUANTITA_MGZN_MAX,
                        "Nuovo"        : false,
                        "Modificato"   : true,
                        "Eliminato"    : false                                   
-                    } 
-                              
+                    }
+    //$scope.searchTextTit = 'ISBN : ' + Titolo.CODICE_TITOLO + ' - ' + Titolo.NOME_TITOLO; 
+    $scope.searchTextTit = Titolo.NOME_TITOLO;                        
+   
     $scope.queryTitolo = function(searchTextTit)
     {
        searchTextTit = searchTextTit.toUpperCase();
@@ -243,19 +286,26 @@ SIRIOApp.controller("flyingStoragePageController",['$scope','SystemInformation',
     
     $scope.selectedItemChangeTitolo = function(itemTit)
     {
-      $scope.Titolo.TITOLO       = itemTit.Chiave;
-      $scope.Titolo.NOME_TITOLO  = itemTit.Nome;
-      $scope.Titolo.QuantitaMgzn = itemTit.Quantita_Mgzn;
+      if(itemTit != undefined)
+      {
+        $scope.Titolo.TITOLO        = itemTit.Chiave;
+        $scope.Titolo.NOME_TITOLO   = itemTit.Nome;
+        $scope.Titolo.CODICE_TITOLO = itemTit.Codice;
+        $scope.Titolo.QuantitaMax   = itemTit.Quantita_Mgzn;
+      }
     }
 
     $scope.hide = function() 
     {
+      $scope.searchTextTit = '';
       $scope.TitoloPopup = undefined;
       $mdDialog.hide();
     };
 
     $scope.AnnullaPopupTitolo = function() 
     {
+      $scope.searchTextTit = '';
+      $scope.TitoloPopup   = undefined;
       $mdDialog.cancel();
     };
 
@@ -267,11 +317,6 @@ SIRIOApp.controller("flyingStoragePageController",['$scope','SystemInformation',
          alert ('Dati titolo mancanti!');
          return
       }
-      else if($scope.Titolo.QUANTITA > $scope.Titolo.QuantitaMgzn)
-      {
-              alert('Quantita selezionata maggiore della quantità presente in magazzino!');
-              return
-      }
       else
       {        
          $scope.ListaCarico[TitoloCorrispondente].TITOLO      = $scope.Titolo.TITOLO;
@@ -282,7 +327,8 @@ SIRIOApp.controller("flyingStoragePageController",['$scope','SystemInformation',
          else
             $scope.ListaCarico[TitoloCorrispondente].Modificato = true;
       }
-      $scope.TitoloPopup = undefined;      
+      $scope.TitoloPopup = undefined;
+      $scope.searchTextTit = '';
       $mdDialog.hide();     
     }                
   }

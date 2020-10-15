@@ -39,6 +39,10 @@
                      {
                        "Name" : "ClassiInstitute",
                        "SQL"  : "SELECT *,(SELECT DESCRIZIONE FROM classi_combinazioni WHERE CHIAVE = classi.COMBINAZIONE) AS COMBINAZIONE_DESCR FROM classi WHERE ISTITUTO=:CHIAVE ORDER BY classi.SEZIONE,classi.ANNO,classi.COMBINAZIONE"
+                     },
+                     {
+                      "Name" : "GetAdoptionListInstitute",
+                      "SQL"  : "SELECT adozioni_titolo.TITOLO,adozioni_titolo.CHIAVE,adozioni_titolo.CLASSE,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE = adozioni_titolo.TITOLO) AS NOME_TITOLO,(SELECT titoli.CODICE_ISBN FROM titoli WHERE CHIAVE = adozioni_titolo.TITOLO) AS CODICE_TITOLO,(SELECT ANNO FROM classi WHERE CHIAVE = adozioni_titolo.CLASSE) AS ANNO_CLASSE,(SELECT SEZIONE FROM classi WHERE CHIAVE = adozioni_titolo.CLASSE) AS SEZIONE_CLASSE,(SELECT DESCRIZIONE FROM classi_combinazioni WHERE CHIAVE IN (SELECT CHIAVE FROM classi WHERE CHIAVE = adozioni_titolo.CLASSE)) AS COMBINAZIONE_CLASSE FROM adozioni_titolo WHERE CLASSE IN (SELECT CHIAVE FROM classi WHERE ISTITUTO = #CHIAVE) ORDER BY CLASSE,COMBINAZIONE_CLASSE,SEZIONE_CLASSE,ANNO_CLASSE,NOME_TITOLO"
                      }
                    ],
   

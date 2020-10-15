@@ -10,7 +10,7 @@
                    [
                      {
                        "Name" : "FlyingDettaglio",
-                       "SQL"  : "SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE = dettaglio_magazzino_volante.TITOLO) AS NOME_TITOLO,(SELECT titoli.QUANTITA_MGZN FROM titoli WHERE CHIAVE = dettaglio_magazzino_volante.TITOLO) AS QUANTITA_MGZN_MAX FROM dettaglio_magazzino_volante WHERE MOVIMENTO=:CHIAVE"
+                       "SQL"  : "SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE = dettaglio_magazzino_volante.TITOLO) AS NOME_TITOLO,(SELECT titoli.CODICE_ISBN FROM titoli WHERE CHIAVE = dettaglio_magazzino_volante.TITOLO) AS CODICE_TITOLO,(SELECT titoli.QUANTITA_MGZN FROM titoli WHERE CHIAVE = dettaglio_magazzino_volante.TITOLO) AS QUANTITA_MGZN_MAX FROM dettaglio_magazzino_volante WHERE MOVIMENTO=:CHIAVE"
                      }
                    ],
   "EditSQL"      :

@@ -1,0 +1,44 @@
+<div ng-controller="inventoryManagementController" ng-cloak md-theme="{{ActualTheme}}" style="height:75%">
+  <h2>GESTIONE INVENTARIO</h2>
+  <md-button ng-click="ResetInventario()" title="RESET INVENTARIO" ng-if="IsAdministrator()" style="color:red;font-weight:bold;font-size:30;float:right;margin-bottom:10px;"><img src="img/deleteInventory.png" style="width:70px;height:auto;margin-right:10px"></md-button>
+
+  <div layout="row" style="padding-bottom:0px;">
+   <md-input-container class="containerSelect" style="width:33%;height:20px;"><label>CODICE ISBN DEL TITOLO</label>
+     <input ng-model="CodiceBippato" ng-keyup="AggiungiInserimento($event)">
+   </md-input-container>
+   <img title="SVUOTA CAMPO" src="img/deleteCross.png" style="height:30px;margin-top:20px;margin-left:10px;" ng-click="ResetIsbnInput()">
+  </div>
+
+   <div>
+    <div layout="row" style="width:100%;" layout-align="end start">
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ConfermaGestioneInventario()" ng-disabled="ListaCodiciToHandle.length == 0">CONFERMA</md-button>
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ChiudiGestioneInventario()">ANNULLA</md-button>
+    </div>
+     <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
+       <tr>
+         <th></th>
+         <th></th>
+         <th>ISBN</th>
+         <th>TITOLO</th>
+         <th>NUOVA QUANTITA MAGAZZINO</th>
+         <th>NUOVA QUANTITA MAGAZZINO VOLANTE</th>
+       </tr>  
+       <tr ng-repeat="Titolo in ListaCodiciToHandle | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit">
+         <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA INSERIMENTO" ng-click="EliminaInserimento(Titolo)"></td> 
+         <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA QUANTITA" ng-click="ModificaInserimento(Titolo)"></td>
+         <td class="off">{{Titolo.Codice}}</td>
+         <td class="off">{{Titolo.Nome}}</td>
+         <td><input type=number ng-model="Titolo.QuantitaMgzn" ng-disabled="!Titolo.ModificaAbilitata"></td>
+         <td><input type=number ng-model="Titolo.QuantitaMgznVol" ng-disabled="!Titolo.ModificaAbilitata"></td>
+       </tr>    
+     </table>
+     <md-table-pagination md-limit="GridOptions.query.limit" 
+                          md-limit-options="GridOptions.limitOptions" 
+                          md-page="GridOptions.query.page" 
+                          md-total="{{ListaCodiciToHandle.length}}" 
+                          md-page-select="GridOptions.pageSelect" 
+                          md-boundary-links="GridOptions.boundaryLinks" 
+                          md-on-paginate="logPagination"></md-table-pagination>
+     </div>
+   </div>
+</div>

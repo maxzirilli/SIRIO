@@ -174,45 +174,7 @@ SIRIOApp.controller("printLabelPageController",['$scope','SystemInformation','$s
              doc.text(20,CoordY+10,ListaCumulativo[k].Codice);
              doc.text(45,CoordY+10,TroncaTitolo(ListaCumulativo[k].Nome,65));
              doc.text(160,CoordY+10,ListaCumulativo[k].Posizione);            
-           
-           /*doc.setFontSize(6);
-           doc.setFontType('normal');
-           doc.text(10,290,SystemInformation.VDocDelivery)
-           CoordY +=20;*/ 
          }
-                
-         
-         /*for (let i = 0;i < ListaSpedizioni.length;i ++)
-         {
-           if (CoordY >= 280) 
-           {
-             doc.addPage();
-             CoordY = 20;
-           }
-           doc.setFontType('bold');
-           doc.setFontSize(8);
-           doc.text(10,CoordY,'Spedizione presso ' + ListaSpedizioni[i].PRESSO + ', ' + ListaSpedizioni[i].INDIRIZZO + ', ' + ListaSpedizioni[i].COMUNE + ', ' + ListaSpedizioni[i].CAP + ', ' + ListaSpedizioni[i].NOME_PROVINCIA + ' : ');
-           doc.text(10,CoordY+5,'PROMOTORE: ' + ListaSpedizioni[i].NOME_PROMOTORE);
-           doc.text(10,CoordY+10,'QNT');
-           doc.text(20,CoordY+10 ,'ISBN');
-           doc.text(45,CoordY+10 ,'TITOLO');
-           doc.text(160,CoordY+10,'POS.MAGAZZINO');
-           for (let j = 0;j < ListaSpedizioni[i].ListaTitoli.length;j ++)
-           { 
-               doc.setFontType('italic');
-               CoordY += 5;
-               var Q  = doc.getTextWidth('QNT');
-               var Qt = doc.getTextWidth(ListaSpedizioni[i].ListaTitoli[j].QUANTITA);
-               doc.text(10 + Q + 1 - Qt,CoordY+10,ListaSpedizioni[i].ListaTitoli[j].QUANTITA);
-               doc.text(20,CoordY+10,ListaSpedizioni[i].ListaTitoli[j].CODICE_ISBN);
-               doc.text(45,CoordY+10,ListaSpedizioni[i].ListaTitoli[j].NOME_TITOLO);
-               doc.text(160,CoordY+10,ListaSpedizioni[i].ListaTitoli[j].POS_MGZN);            
-           }
-           doc.setFontSize(6);
-           doc.setFontType('normal');
-           doc.text(10,290,SystemInformation.VDocDelivery)
-           CoordY +=20;        
-         }*/
          
          for (let i = 0;i < ListaSpedizioni.length;i ++)
          {
@@ -301,7 +263,7 @@ SIRIOApp.controller("printLabelPageController",['$scope','SystemInformation','$s
               doc.text(10,290,SystemInformation.VDocDelivery)
          }
          //document.getElementById('repPdf').src = doc.output('datauristring')
-         doc.save('repPdf.pdf',{});
+         doc.save('EtichettePDF' + DataSpedizione + '.pdf',{});
       }
     }
     else SystemInformation.ApplyOnError('Modello lista spedizioni non conforme','')

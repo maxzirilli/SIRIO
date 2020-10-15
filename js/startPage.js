@@ -84,6 +84,11 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http)
     $state.go("mailchimpUploadPage");
   }
 
+  $scope.ApriGestioneInventario = function()
+  {
+    $state.go("inventoryManagementPage");
+  }
+
   $scope.IsAdministrator = function ()
   {
     return SystemInformation.UserInformation.Ruolo == RUOLO_AMMINISTRATORE;

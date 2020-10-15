@@ -9,7 +9,7 @@
         <label>AL</label><input ng-model="DataRicercaAl" type="date" name="DataRicercaAl" ng-change="RefreshListaSpedizioniAll()">
       </md-input-container>
       <md-input-container><label style="width:100%;margin-left:20px;float:left;">PROVINCIA</label>
-        <md-select ng-model="ProvinciaFiltro" placeholder="Provincia di spedizione" class="mdb-select" style="width:100%;margin-left:20px;float:left;" type="text" name="ProvinciaFiltro">
+        <md-select ng-model="ProvinciaFiltro" placeholder="Provincia di spedizione" class="mdb-select" ng-change="RefreshListaSpedizioniAll()" style="width:100%;margin-left:20px;float:left;" type="text" name="ProvinciaFiltro">
           <md-optgroup>
             <md-option ng-value="-1">QUALSIASI</md-option>  
             <md-option ng-repeat="provincia in ListaProvinceAll" ng-value="provincia.Chiave">{{provincia.Nome}}</md-option>
@@ -17,7 +17,7 @@
         </md-select>
       </md-input-container>
       <md-input-container ng-if="IsAdministrator()"><label style="width:100%;margin-left:40px;float:left;">PROMOTORE</label>
-        <md-select ng-model="$parent.PromotoreFiltro" placeholder="Promotore" class="mdb-select" style="width:100%;margin-left:40px;float:left;" type="text" name="PromotoreFiltro">
+        <md-select ng-model="$parent.PromotoreFiltro" placeholder="Promotore" class="mdb-select" ng-change="RefreshListaSpedizioniAll()" style="width:100%;margin-left:40px;float:left;" type="text" name="PromotoreFiltro">
           <md-optgroup>
             <md-option ng-value="-1">QUALSIASI</md-option>  
             <md-option ng-repeat="promotore in ListaPromotori" ng-value="promotore.Chiave">{{promotore.Nome}}</md-option>
@@ -75,7 +75,7 @@
       </div>
     <br>  
   <br>
-  <div style="text-align:left;" ng-if="ListaTitoliFiltro.length > 0">
+  <div style="text-align:left;" ng-if="ListaTitoliFiltro.length > 0 && RicercaPerTitolo">
     <p style="font-weight:bold;">TITOLI IN RICERCA:</p>
     <ul> 
       <li ng-repeat="Titolo in ListaTitoliFiltro"><img src="img/deleteCross.png" style="width:20px;height:auto;margin-right:5px;" title="RIMUOVI TITOLO" ng-click="RimuoviTitolo(Titolo)">{{Titolo.Codice}} - {{Titolo.Nome}} - ({{Titolo.Quantita}}) </li>              
@@ -95,7 +95,7 @@
         <th>TITOLO</th>
         <th>QUANTITA</th>
       </tr>
-      <tr ng-repeat="Elemento in ListaSpedizioni | SpedizioneByFiltroAvanzato : ProvinciaFiltro : $parent.PromotoreFiltro : IstitutoFiltro : DocenteFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" > <!--id={{Spedizione.Chiave}}-->
+      <tr ng-repeat="Elemento in ListaSpedizioni | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" > <!--| SpedizioneByFiltroAvanzato : ProvinciaFiltro : $parent.PromotoreFiltro : IstitutoFiltro : DocenteFiltro --> 
         <td style="font-weight:bold;text-align:left;" ng-if="Elemento.Tipo == 0" colspan="4">SPEDIZIONE DEL {{ConvertiData(Elemento)}} PRESSO {{Elemento.Docente == -1 ? Elemento.Presso : Elemento.DocenteNome}}</td>
         <td ng-if="Elemento.Tipo == 1"><input style="width:20px;height:20px;" type="checkbox" ng-change="CheckCumulativo()" ng-model="Elemento.Selezionato" style="margin-left:20px;margin-top:20px"></td>
         <td ng-if="Elemento.Tipo == 1">{{Elemento.Codice}}</td>

@@ -9,6 +9,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
   let TmpDate             = new Date($scope.DataRicercaAl);
   TmpDate.setDate(TmpDate.getDate() - 7);
   $scope.DataRicercaDal   = new Date(TmpDate);
+  $scope.RicercaPerTitolo = false;
   
   $scope.ListaTitoliFiltroTmp = [];
   $scope.ListaTitoliFiltro    = [];
@@ -21,7 +22,14 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
   $scope.ListaSpedizioni      = [];
   $scope.VisualizzaNonSpedibili = false;     
  
-  ScopeHeaderController.CheckButtons(); 
+  ScopeHeaderController.CheckButtons();
+  
+  $scope.IsAdministrator = function ()
+  {
+    return SystemInformation.UserInformation.Ruolo == RUOLO_AMMINISTRATORE;
+  }
+  
+  $scope.IsAdministrator(); 
   
   $scope.GridOptions = {
                          rowSelection    : false,
@@ -43,11 +51,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
   {
      return(ZFormatDateTime('dd/mm/yyyy',ZDateFromHTMLInput(Dati.Data)));
   }  
-  
-  $scope.IsAdministrator = function ()
-  {
-    return SystemInformation.UserInformation.Ruolo == RUOLO_AMMINISTRATORE;
-  }
   
   SystemInformation.GetSQL('Accessories',{}, function(Results)
   {
@@ -162,8 +165,9 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
   $scope.selectedItemChangeDocente = function(itemDocente)
   {
     if(itemDocente != undefined)
-       $scope.DocenteFiltro = itemDocente.Chiave;
+       $scope.DocenteFiltro = itemDocente.Chiave;     
     else $scope.DocenteFiltro = -1;
+    $scope.RefreshListaSpedizioniAll()
   }  
 
   $scope.queryIstituto = function(searchTextIstituto)
@@ -180,6 +184,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
     if(itemIstituto != undefined)
        $scope.IstitutoFiltro = itemIstituto.Chiave;
     else $scope.IstitutoFiltro = -1;
+    $scope.RefreshListaSpedizioniAll()
   }
 
   $scope.CheckCumulativo = function()
@@ -256,11 +261,10 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
   }  
   
   $scope.RefreshListaSpedizioniAll = function()
-  { 
-    if($scope.ListaTitoliFiltro.length == 0)
-    {
-       $scope.ListaSpedizioni = [];
-    }
+  {
+    if(!$scope.RicercaPerTitolo) 
+    $scope.ListaTitoliFiltro = [];
+
     if($scope.DataRicercaDal == undefined || $scope.DataRicercaAl == undefined)
        return;
     let TmpDate = new Date($scope.DataRicercaAl);
@@ -269,22 +273,34 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
     var ParamSpedizione = {
                             Dal          : ZHTMLInputFromDate($scope.DataRicercaDal), 
                             Al           : ZHTMLInputFromDate(TmpDate),
-                            ChiaviTitolo : []
+                            FiltroMain   : 1
                           };
-    
-    if($scope.ListaTitoliFiltro.length > 0)
+    if($scope.IstitutoFiltro != -1)
+       ParamSpedizione.FiltroI = $scope.IstitutoFiltro;
+    if($scope.ProvinciaFiltro != -1)
+       ParamSpedizione.FiltroP = $scope.ProvinciaFiltro;
+    if($scope.DocenteFiltro != -1)
+       ParamSpedizione.FiltroD = $scope.DocenteFiltro;
+    if($scope.PromotoreFiltro != -1 && $scope.IsAdministrator())
+       ParamSpedizione.FiltroPr = $scope.PromotoreFiltro;
+
+    if($scope.RicercaPerTitolo && $scope.ListaTitoliFiltro.length > 0)
     {
-       for(let i = 0;i < $scope.ListaTitoliFiltro.length;i ++)
-           ParamSpedizione.ChiaviTitolo.push($scope.ListaTitoliFiltro[i].Chiave)
-       ParamSpedizione.ChiaviTitolo = ParamSpedizione.ChiaviTitolo.toString()         
+      var ChiaviTitoli = [];
+      for(let i = 0;i < $scope.ListaTitoliFiltro.length;i ++)
+      {
+          ChiaviTitoli.push($scope.ListaTitoliFiltro[i].Chiave) 
+      }
+      ParamSpedizione.FiltroT = ChiaviTitoli.toString();
+      $scope.ListaTitoliFiltro = [];
     }
-    else return 
      
     if($scope.IsAdministrator())
     {
       SystemInformation.GetSQL('Delivery',ParamSpedizione,function(Results)
       {
-        ListaSpedizioniTmp = SystemInformation.FindResults(Results,'DettaglioDisponibiliAdmin');
+        var ListaSpedizioniTmp = [];
+        ListaSpedizioniTmp     = SystemInformation.FindResults(Results,'DettaglioDisponibiliAdmin');
         if (ListaSpedizioniTmp != undefined) 
         {
           var LastSpedizione = -1;
@@ -316,16 +332,30 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
                                            Selezionato     : false
                                         });
             
-          }                  
+            var TitoloTrovato = $scope.ListaTitoliFiltro.find(function(ATitolo){return(ATitolo.Chiave == ListaSpedizioniTmp[i].TITOLO);})
+            if(TitoloTrovato == undefined)
+            {
+               $scope.ListaTitoliFiltro.push({
+                                               Chiave         : ListaSpedizioniTmp[i].TITOLO,
+                                               Nome           : ListaSpedizioniTmp[i].NOME_TITOLO,
+                                               Codice         : ListaSpedizioniTmp[i].CODICE_TITOLO,
+                                               Quantita       : ListaSpedizioniTmp[i].QUANTITA_DISP,
+                                               SommaPrenotati : 0,
+                                               DaAggiungere   : true 
+                                             })
+            }
+          }  
         }
         else SystemInformation.ApplyOnError('Modello spedizione non conforme','')     
       },'SQLDettaglioTitoliDisponibiliAdmin')     
     }
     else
-    {    
+    {
+      alert('ERRORE USER INFORMATION!')   
       SystemInformation.GetSQL('Delivery',ParamSpedizione,function(Results)
       {
-        ListaSpedizioniTmp = SystemInformation.FindResults(Results,'DettaglioDisponibiliPromotore');
+        var ListaSpedizioniTmp = [];
+        ListaSpedizioniTmp     = SystemInformation.FindResults(Results,'DettaglioDisponibiliPromotore');
         if (ListaSpedizioniTmp != undefined) 
         {
           var LastSpedizione = -1;
@@ -357,10 +387,22 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
                                            Selezionato     : false
                                         });
             
-          }                  
+            var TitoloTrovato = $scope.ListaTitoliFiltro.find(function(ATitolo){return(ATitolo.Chiave == ListaSpedizioniTmp[i].TITOLO);})
+            if(TitoloTrovato == undefined)
+            {
+               $scope.ListaTitoliFiltro.push({
+                                               Chiave         : ListaSpedizioniTmp[i].TITOLO,
+                                               Nome           : ListaSpedizioniTmp[i].NOME_TITOLO,
+                                               Codice         : ListaSpedizioniTmp[i].CODICE_TITOLO,
+                                               Quantita       : ListaSpedizioniTmp[i].QUANTITA_DISP,
+                                               SommaPrenotati : 0,
+                                               DaAggiungere   : true 
+                                             })
+            }
+          }  
         }
-        else SystemInformation.ApplyOnError('Modello spedizione non conforme','')     
-      },'SQLDettaglioTitoliDisponibiliPromotore')  
+        else SystemInformation.ApplyOnError('Modello spedizione non conforme','') 
+      },'SQLDettaglioTitoliDisponibiliPromotore') 
     }
   }
   
@@ -423,7 +465,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
     };
 
     $scope.ConfermaPopup = function()
-    {  
+    {
+      $scope.ListaTitoliFiltro = [];
       var ContatoreTitoli = 0;
       var ContatoreDoppi  = 0;      
       for(let i = 0;i < $scope.ListaTitoliPopup.length;i ++)
@@ -454,7 +497,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
             alert('Alcuni titoli erano già stati inseriti nel filtro!');          
          $scope.ListaTitoliFiltroTmp = [];
          $scope.NomeFiltro   = '';
-         $scope.CodiceFiltro = '';        
+         $scope.CodiceFiltro = '';
+         $scope.RicercaPerTitolo = true;       
          $mdDialog.hide();
          $scope.RefreshListaSpedizioniAll();
       }      
@@ -465,9 +509,13 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
   {
     TitoloCorrisp = $scope.ListaTitoliFiltro.findIndex(function(ATitolo){return(ATitolo.Chiave == Titolo.Chiave);});
     $scope.ListaTitoliFiltro.splice(TitoloCorrisp,1);
+    if($scope.ListaTitoliFiltro.length == 0)
+       $scope.RicercaPerTitolo = false;
+    else $scope.RicercaPerTitolo = true;
     $scope.RefreshListaSpedizioniAll();
-    $scope.CheckCumulativo();
   }
+  
+  $scope.RefreshListaSpedizioniAll();
 
 }]);
 
@@ -507,7 +555,7 @@ SIRIOApp.filter('TitoloPopupByFiltro',function()
          }
 });
 
-SIRIOApp.filter('SpedizioneByFiltroAvanzato',function()
+/*SIRIOApp.filter('SpedizioneByFiltroAvanzato',function()
 {
   return function(ListaSpedizioni,ProvinciaFiltro,PromotoreFiltro,IstitutoFiltro,DocenteFiltro)
          {
@@ -562,4 +610,4 @@ SIRIOApp.filter('SpedizioneByFiltroAvanzato',function()
              return(ListaFiltrata);
            }
          }         
-});
+});*/
