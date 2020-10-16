@@ -292,7 +292,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
           ChiaviTitoli.push($scope.ListaTitoliFiltro[i].Chiave) 
       }
       ParamSpedizione.FiltroT = ChiaviTitoli.toString();
-      $scope.ListaTitoliFiltro = [];
     }
      
     if($scope.IsAdministrator())
@@ -331,18 +330,21 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
                                            QuantitaMgzn    : ListaSpedizioniTmp[i].QUANTITA_DISP,
                                            Selezionato     : false
                                         });
-            
-            var TitoloTrovato = $scope.ListaTitoliFiltro.find(function(ATitolo){return(ATitolo.Chiave == ListaSpedizioniTmp[i].TITOLO);})
-            if(TitoloTrovato == undefined)
+            if(!$scope.RicercaPerTitolo)
             {
-               $scope.ListaTitoliFiltro.push({
-                                               Chiave         : ListaSpedizioniTmp[i].TITOLO,
-                                               Nome           : ListaSpedizioniTmp[i].NOME_TITOLO,
-                                               Codice         : ListaSpedizioniTmp[i].CODICE_TITOLO,
-                                               Quantita       : ListaSpedizioniTmp[i].QUANTITA_DISP,
-                                               SommaPrenotati : 0,
-                                               DaAggiungere   : true 
-                                             })
+                var TitoloTrovato = $scope.ListaTitoliFiltro.find(function(ATitolo){return(ATitolo.Chiave == ListaSpedizioniTmp[i].TITOLO);})
+              
+                if(TitoloTrovato == undefined)
+                {
+                  $scope.ListaTitoliFiltro.push({
+                                                Chiave         : ListaSpedizioniTmp[i].TITOLO,
+                                                Nome           : ListaSpedizioniTmp[i].NOME_TITOLO,
+                                                Codice         : ListaSpedizioniTmp[i].CODICE_TITOLO,
+                                                Quantita       : ListaSpedizioniTmp[i].QUANTITA_DISP,
+                                                SommaPrenotati : 0,
+                                                DaAggiungere   : true 
+                                              })
+                }
             }
           }  
         }
@@ -351,7 +353,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
     }
     else
     {
-      alert('ERRORE USER INFORMATION!')   
       SystemInformation.GetSQL('Delivery',ParamSpedizione,function(Results)
       {
         var ListaSpedizioniTmp = [];
@@ -386,18 +387,21 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
                                            QuantitaMgzn    : ListaSpedizioniTmp[i].QUANTITA_DISP,
                                            Selezionato     : false
                                         });
-            
-            var TitoloTrovato = $scope.ListaTitoliFiltro.find(function(ATitolo){return(ATitolo.Chiave == ListaSpedizioniTmp[i].TITOLO);})
-            if(TitoloTrovato == undefined)
+            if(!$scope.RicercaPerTitolo)
             {
-               $scope.ListaTitoliFiltro.push({
-                                               Chiave         : ListaSpedizioniTmp[i].TITOLO,
-                                               Nome           : ListaSpedizioniTmp[i].NOME_TITOLO,
-                                               Codice         : ListaSpedizioniTmp[i].CODICE_TITOLO,
-                                               Quantita       : ListaSpedizioniTmp[i].QUANTITA_DISP,
-                                               SommaPrenotati : 0,
-                                               DaAggiungere   : true 
-                                             })
+                var TitoloTrovato = $scope.ListaTitoliFiltro.find(function(ATitolo){return(ATitolo.Chiave == ListaSpedizioniTmp[i].TITOLO);})
+              
+                if(TitoloTrovato == undefined)
+                {
+                  $scope.ListaTitoliFiltro.push({
+                                                Chiave         : ListaSpedizioniTmp[i].TITOLO,
+                                                Nome           : ListaSpedizioniTmp[i].NOME_TITOLO,
+                                                Codice         : ListaSpedizioniTmp[i].CODICE_TITOLO,
+                                                Quantita       : ListaSpedizioniTmp[i].QUANTITA_DISP,
+                                                SommaPrenotati : 0,
+                                                DaAggiungere   : true 
+                                              })
+                }
             }
           }  
         }
@@ -554,60 +558,3 @@ SIRIOApp.filter('TitoloPopupByFiltro',function()
            
          }
 });
-
-/*SIRIOApp.filter('SpedizioneByFiltroAvanzato',function()
-{
-  return function(ListaSpedizioni,ProvinciaFiltro,PromotoreFiltro,IstitutoFiltro,DocenteFiltro)
-         {
-           if (ListaSpedizioni != undefined)
-           {  
-             if(ProvinciaFiltro == -1 && PromotoreFiltro == -1 && IstitutoFiltro == -1 && DocenteFiltro == -1) 
-                return(ListaSpedizioni);
-             var ListaFiltrata = [];
-             ProvinciaFiltro = parseInt(ProvinciaFiltro);
-             
-             var SpedizioneOk = function(Spedizione)
-             {  
-                var Result = true;
-                if(ProvinciaFiltro != -1)
-                   if(Spedizione.Provincia != ProvinciaFiltro)
-                      Result = false;
-                
-                if(DocenteFiltro != -1)
-                   if(Spedizione.Docente != DocenteFiltro)
-                      Result = false;
-                      
-                if(IstitutoFiltro != -1)
-                    if(Spedizione.Istituto != IstitutoFiltro)
-                       Result = false;
-                
-                if(PromotoreFiltro != -1)
-                    if(Spedizione.Promotore != PromotoreFiltro)
-                       Result = false;
-                     
-                return(Result);
-             }
-             
-             var AddTitoli = false;
-             
-             for(let i = 0; i < ListaSpedizioni.length; i++)
-             {
-                 if(ListaSpedizioni[i].Tipo == 0)
-                 {
-                  if(SpedizioneOk(ListaSpedizioni[i]))
-                  {
-                     ListaFiltrata.push(ListaSpedizioni[i]);
-                     AddTitoli = true;
-                  }
-                  else AddTitoli = false
-                 }
-                 else
-                 {
-                  if(AddTitoli)
-                     ListaFiltrata.push(ListaSpedizioni[i]);
-                 }
-             }                            
-             return(ListaFiltrata);
-           }
-         }         
-});*/

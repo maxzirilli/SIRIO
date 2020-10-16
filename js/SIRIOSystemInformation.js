@@ -18,7 +18,7 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
   this.DataBetweenController = {};
   this.BordoEtichetta        = true;
   this.VDocDelivery          = 'VERSIONE DOCUMENTO 2.0 DEL 14/10/2020';
-  this.VDocAdoption          = 'VERSIONE DOCUMENTO 1.0 DEL 8/9/2020';
+  this.VDocAdoption          = 'VERSIONE DOCUMENTO 1.1 DEL 16/10/2020';
   this.VDocLogStorage        = 'VERSIONE DOCUMENTO 1.0 DEL 8/9/2020';
   this.VDocInventory         = 'VERSIONE DOCUMENTO 1.1 DEL 13/10/2020';
   this.VDocCarico            = 'VERSIONE DOCUMENTO 1.0 DEL 8/9/2020';

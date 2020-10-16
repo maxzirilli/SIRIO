@@ -1,7 +1,6 @@
 SIRIOApp.controller("loginController",['$scope','SystemInformation','$state','$rootScope',
 function($scope,SystemInformation,$state,$rootScope)
 {
-  //$rootScope.ActualTheme = STATE_NOT_LOGGED;
   $scope.HTTPError = SystemInformation.HTTPError;
   $scope.SubHTTPError = SystemInformation.SubHTTPError;
 

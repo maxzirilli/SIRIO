@@ -4,7 +4,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
   ScopeHeaderController.CheckButtons();
   $scope.Contatore = 0;
   $scope.FileLength = 0;  
-  //SystemInformation.UploadRunning = false;
   
  function Base64DecodeUnicode(str) 
   {

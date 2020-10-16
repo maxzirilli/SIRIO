@@ -288,7 +288,7 @@ SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformat
                                   Parametri : ParamMateria
                                 });
       
-      $ObjQuery.Operazioni.push({
+      /*$ObjQuery.Operazioni.push({
                                   Query     : 'DeleteTeacherSubject1',
                                   Parametri : ParamMateria
                                 });
@@ -301,7 +301,7 @@ SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformat
       $ObjQuery.Operazioni.push({
                                   Query     : 'DeleteTeacherSubject3',
                                   Parametri : ParamMateria
-                                });
+                                });*/
                                                                 
       SystemInformation.PostSQL('Subject',$ObjQuery,function(Answer)
       {
@@ -380,10 +380,10 @@ SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformat
       var $ObjQuery      = { Operazioni : [] };
       var ParamTipologia = { CHIAVE : Tipologia.Chiave };
        
-      $ObjQuery.Operazioni.push({
+      /*$ObjQuery.Operazioni.push({
                                   Query     : 'DeleteInstituteInstituteType',
                                   Parametri : ParamTipologia
-                                });
+                                });*/
       
       $ObjQuery.Operazioni.push({
                                   Query     : 'DeleteInstituteType',

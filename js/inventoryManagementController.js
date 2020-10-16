@@ -28,24 +28,6 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
     return SystemInformation.UserInformation.Ruolo == RUOLO_AMMINISTRATORE;
   }
 
-  $scope.ResetInventario = function()
-  {
-    if(confirm('Questa operazione eseguirà il reset di tutte le quantità dei titoli nel magazzino e nel magazzino volante. Confermi?'))
-       if(confirm("SEI SICURO DI ESEGUIRE IL RESET DELL'INVENTARIO? L'OPERAZIONE E' IRREVERSIBILE!"))
-       {
-          $ObjQuery = { Operazioni : [] };
-          $ObjQuery.Operazioni.push({
-                                      Query     : 'ResetAllInventory',
-                                      Parametri : {}
-                                    })
-          SystemInformation.PostSQL('Book',$ObjQuery,function(Answer)
-          {
-            alert("IL MAGAZZINO E' STATO RESETTATO CON SUCCESSO")
-            $ObjQuery = {};
-          })
-       }
-  }
-
   SystemInformation.GetSQL('Book',{},function(Results)
   {
     ListaTitoliAllTmp = SystemInformation.FindResults(Results,'BookListInventoryAll')
@@ -64,12 +46,12 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
     else SystemInformation.ApplyOnError('Modello lista titoli inventario non conforme','')
   },'SelectAllTitoliInventario')
 
-  $scope.ModificaInserimento = function(Titolo)
+  /*$scope.ModificaInserimento = function(Titolo)
   {
     if(!Titolo.ModificaAbilitata)
        Titolo.ModificaAbilitata = true;
     else Titolo.ModificaAbilitata = false;
-  }
+  }*/
 
   $scope.EliminaInserimento = function(Inserimento)
   {
@@ -84,13 +66,15 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
 
   $scope.ResetIsbnInput = function()
   {
-    $scope.CodiceBippato = '';
-    $scope.CodiceFocused = undefined;
+    $scope.CodiceBippatoVisible = '';
+    //$scope.CodiceFocused = undefined;
   }
   
 
   $scope.AggiungiInserimento = function(KeyPressed)
   {
+    $scope.CodiceBippato = $scope.CodiceBippatoVisible;
+    
     if($scope.CodiceFocused == undefined)
        $scope.CodiceFocused = {Chiave : -1, Codice : -1, Nome : '', QuantitaMgzn : 0, QuantitaMgznVol : 0, ModificaAbilitata : false};
 
@@ -137,6 +121,7 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
               }
             }
       }
+      $scope.CodiceBippatoVisible = '';
     }  
   }
 

@@ -1,6 +1,6 @@
 <div ng-controller="deliveryModDetailPageController" ng-cloak md-theme="{{ActualTheme}}" style="height:75%">
 
-  <form name="SpedizioneEditForm" ng-submit="ConfermaSpedizione()"> <!--novalidate-->
+  <form name="SpedizioneEditForm" ng-submit="ConfermaSpedizione()"> 
 
     <h2 style="font-weight:bold;" ng-if="!SpedizioneMultipla">SPEDIZIONE {{SpedizioneInEditing.DOCENTE_NOME == undefined ? "" : " PER " +  SpedizioneInEditing.DOCENTE_NOME}}</h2>
     <h2 style="font-weight:bold;" ng-if="SpedizioneMultipla">SPEDIZIONE MULTIPLA</h2>

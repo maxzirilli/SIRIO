@@ -384,7 +384,6 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
   
   $scope.ModificaIstituto = function(istituto)
   {
-    //SystemInformation.DataBetweenController.ProvinciaF = $scope.ProvinciaFiltro;
     $scope.EditingOn = true;    
     SystemInformation.GetSQL('Institute', {CHIAVE : istituto.Chiave}, function(Results)
     {

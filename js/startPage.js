@@ -156,7 +156,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http)
               {
                  var ParamSpedizione = {
                                          "CHIAVE" : ListaTitoliSped[j].ChiaveDettaglio
-                                         //"TITOLO" : ListaTitoliSped[j].Titolo
                                        }
                  $ObjQuery.Operazioni.push({
                                              Query     : 'ChangeDeliveryToSend',
@@ -175,7 +174,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http)
             }
             SystemInformation.PostSQL('Delivery',$ObjQuery,function(Results)
             {                            
-              //$scope.RefreshListaUltimeSpedizioni(); 
               if(TitoliNonDisponibili.length != 0 && TitoliDaSpedire.length == 0)               
                  alert('I seguenti titoli non sono disponibili per essere spediti:  ' + TitoliNonDisponibili)
               else if (TitoliNonDisponibili.length == 0 && TitoliDaSpedire.length != 0)

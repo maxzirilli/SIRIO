@@ -46,7 +46,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
      {
         if(SystemInformation.DataBetweenController.IstitutoPerIndirizzo != -1)
            $scope.IstitutoSelezionato = SystemInformation.DataBetweenController.IstitutoPerIndirizzo
-        else $scope.IstitutoSelezionato = '';      //= SystemInformation.DataBetweenController.IstitutoPerIndirizzo == undefined ? '' : SystemInformation.DataBetweenController.IstitutoPerIndirizzo;
+        else $scope.IstitutoSelezionato = '';     
      }
      
      for(let i = 0;i < $scope.ListaDocentiSpedizione.length;)
@@ -64,7 +64,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
   $scope.ChiaveDocente                                     = SystemInformation.DataBetweenController.ChiaveDocente;
   SystemInformation.DataBetweenController.ChiaveSpedizione = '';
   SystemInformation.DataBetweenController.ChiaveDocente    = '';
-  //SystemInformation.DataBetweenController.ListaDocSped     = [];
   
   if($scope.ChiaveDocente == undefined && $scope.ChiaveSpedizione == undefined && !($scope.SpedizioneMultipla))
   {

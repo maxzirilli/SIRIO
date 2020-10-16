@@ -246,17 +246,7 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
            if(ListaMovimenti != undefined)
            {             
              if (ListaMovimenti.length == 0)
-                 //alert('Nessun movimento del titolo nella data selezionata')
              {
-                 for(let i = 0;i < ListaMovimenti.length;i ++)                 
-                     ListaMovimenti[i] = {
-                                           CODICE      : ListaMovimenti[i].CODICE == null ? 'N.D' : ListaMovimenti[i].CODICE, 
-                                           TITOLO      : ListaMovimenti[i].TITOLO == null ? 'N.D' : ListaMovimenti[i].TITOLO, 
-                                           NOME_TITOLO : ListaMovimenti[i].NOME_TITOLO == null ? 'N.D' : ListaMovimenti[i].NOME_TITOLO,  
-                                           QUANTITA    : ListaMovimenti[i].QUANTITA == null ? 'N.D' : ListaMovimenti[i].QUANTITA,
-                                           DESCRIZIONE : ListaMovimenti[i].DESCRIZIONE == null ? 'N.D' : ListaMovimenti[i].DESCRIZIONE,
-                                           DATA        : ListaMovimenti[i].DATA == null ? 'N.D' : ListaMovimenti[i].DATA
-                                         }
                  var doc = new jsPDF();
                  doc.setProperties({title: 'STAMPA LOG'});
                  doc.setFontSize(10); 
@@ -337,17 +327,7 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
            if(ListaMovimenti != undefined)
            {
              if (ListaMovimenti.length == 0)
-                 //alert('Nessun movimento del titolo nella data selezionata')
              {
-                 for(let i = 0;i < ListaMovimenti.length;i ++)                 
-                     ListaMovimenti[i] = {
-                                           CODICE      : ListaMovimenti[i].CODICE == null ? 'N.D' : ListaMovimenti[i].CODICE, 
-                                           TITOLO      : ListaMovimenti[i].TITOLO == null ? 'N.D' : ListaMovimenti[i].TITOLO,
-                                           NOME_TITOLO : ListaMovimenti[i].NOME_TITOLO == null ? 'N.D' : ListaMovimenti[i].NOME_TITOLO,  
-                                           QUANTITA    : ListaMovimenti[i].QUANTITA == null ? 'N.D' : ListaMovimenti[i].QUANTITA, 
-                                           DESCRIZIONE : ListaMovimenti[i].DESCRIZIONE == null ? 'N.D' : ListaMovimenti[i].DESCRIZIONE, 
-                                           DATA        : ListaMovimenti[i].DATA == null ? 'N.D' : ListaMovimenti[i].DATA 
-                                         }
                  var doc = new jsPDF();
                  doc.setProperties({title: 'STAMPA LOG'});
                  doc.setFontSize(10); 

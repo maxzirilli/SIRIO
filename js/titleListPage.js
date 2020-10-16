@@ -56,7 +56,24 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
                                             },
                           limitOptions    : [10, 20, 30]
                         };
-                         
+
+  $scope.ResetInventario = function()
+  {
+    if(confirm('Questa operazione eseguirà il reset di tutte le quantità dei titoli nel magazzino e nel magazzino volante. Confermi?'))
+      if(confirm("SEI SICURO DI ESEGUIRE IL RESET DELL'INVENTARIO? L'OPERAZIONE E' IRREVERSIBILE!"))
+      {
+          $ObjQuery = { Operazioni : [] };
+          $ObjQuery.Operazioni.push({
+                                      Query     : 'ResetAllInventory',
+                                      Parametri : {}
+                                    })
+          SystemInformation.PostSQL('Book',$ObjQuery,function(Answer)
+          {
+            alert("I MAGAZZINI SONO STATI STATO RESETTATI CON SUCCESSO")
+            $ObjQuery = {};
+          })
+      }
+  }                        
 
   SystemInformation.GetSQL('Subject',{}, function(Results)
   {
@@ -184,8 +201,9 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
                 doc.setFontSize(8);
                 doc.setFontType('bold');
                 doc.text(10,CoordY+5,'ISTITUTO: ' + TitoloInStampa.ListaIstitutiTit[k].ISTITUTO);
-                CoordY += 5;
                 doc.setFontSize(7);
+                doc.text(10,CoordY+10,'LISTA CLASSI:');
+                CoordY += 10;
                 doc.setFontType('italic'); 
 
                 var StringaClassi = [];
@@ -196,12 +214,11 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
                 }
                 else
                 {
-                   //COSA FARE PER TORNARE A CAPO SE TROPPO LUNGA STRINGA CLASSI?
                    for(let l = 0;l < TitoloInStampa.ListaIstitutiTit[k].Adozioni.length;l ++)
                    {                                                 
-                       StringaClassi.push(TitoloInStampa.ListaIstitutiTit[k].Adozioni[l].ANNO + TitoloInStampa.ListaIstitutiTit[k].Adozioni[l].SEZIONE + ' - ' + TitoloInStampa.ListaIstitutiTit[k].Adozioni[l].COMBINAZIONE);
-                   }
-                   doc.text(10,CoordY+5,'CLASSI: ' + StringaClassi.toString());
+                       doc.text(10,CoordY+5,TitoloInStampa.ListaIstitutiTit[k].Adozioni[l].ANNO + TitoloInStampa.ListaIstitutiTit[k].Adozioni[l].SEZIONE + ' - ' + TitoloInStampa.ListaIstitutiTit[k].Adozioni[l].COMBINAZIONE);
+                       CoordY+=5;
+                   }  
                 }
                 CoordY += 10;
                 doc.setFontSize(6);
@@ -221,7 +238,7 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
             doc.setFontSize(10); 
             doc.setFontType('bold');
             doc.setTextColor(255,0,0);
-            doc.text(80,20,'TITOLO NON ADOTTATO IN NESSUN ISTITUTO');
+            doc.text(80,20,'TITOLO ADOTTATO IN NESSUN ISTITUTO');
             document.getElementById('adoptionPdf').src = doc.output('datauristring')
          }
       }

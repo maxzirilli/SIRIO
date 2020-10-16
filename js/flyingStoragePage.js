@@ -272,7 +272,6 @@ $scope.GridOptions_2 = {
                        "Modificato"   : true,
                        "Eliminato"    : false                                   
                     }
-    //$scope.searchTextTit = 'ISBN : ' + Titolo.CODICE_TITOLO + ' - ' + Titolo.NOME_TITOLO; 
     $scope.searchTextTit = Titolo.NOME_TITOLO;                        
    
     $scope.queryTitolo = function(searchTextTit)

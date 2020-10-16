@@ -130,63 +130,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
     else SystemInformation.ApplyOnError('Modello promotori non conforme','');    
   });
   
-  SystemInformation.GetSQL('Book', {}, function(Results)  
-  {  
-    TitoliInfoLista = SystemInformation.FindResults(Results,'BookListFilter');
-    if(TitoliInfoLista != undefined)
-    { 
-       for(let i = 0; i < TitoliInfoLista.length; i++)
-           TitoliInfoLista[i] = { 
-                                  Chiave : TitoliInfoLista[i].CHIAVE,
-                                  Nome   : TitoliInfoLista[i].TITOLO,
-                                  Codice : TitoliInfoLista[i].CODICE_ISBN
-                                }
-       $scope.ListaTitoli  = TitoliInfoLista;
-    }
-    else SystemInformation.ApplyOnError('Modello titoli non conforme','');   
-  },'SelectSQLFilter');
-  
-  $scope.queryTitolo = function(searchTextTit)
-  {
-     searchTextTit = searchTextTit.toUpperCase();
-     return($scope.ListaTitoli.grep(function(Elemento) 
-     { 
-       return(Elemento.Nome.toUpperCase().indexOf(searchTextTit) != -1 || Elemento.Codice.indexOf(searchTextTit) != -1);
-     }));
-  }
-  
-  $scope.selectedItemChangeTitolo = function(itemTit)
-  {
-    if(itemTit != undefined)
-      $scope.TitoloFiltro = itemTit.Chiave;
-    else $scope.TitoloFiltro = -1;
-  }   
-  
-  $scope.GetDescrStatoSpedizione = function(Spedizione)
-  {
-     var Result = '';
-     if(Spedizione.NrPrenotate != 0)
-     {
-        if(Spedizione.NrDaSpedire == 0 && Spedizione.NrConsegnate == 0)
-           Result += 'PRENOTATE<br/>';  
-        else Result += Spedizione.NrPrenotate + ' PRENOTATE<br/>';  
-     }
-     if(Spedizione.NrDaSpedire != 0)
-     {
-        if(Spedizione.NrConsegnate == 0 && Spedizione.NrPrenotate == 0)
-           Result += 'DA SPEDIRE<br/>';  
-        else Result += Spedizione.NrDaSpedire + ' DA SPEDIRE<br/>';  
-     }
-     if(Spedizione.NrConsegnate != 0)
-     {
-        if(Spedizione.NrDaSpedire == 0 && Spedizione.NrPrenotate == 0)
-           Result += 'CONSEGNATE<br/>';  
-        else Result += Spedizione.NrConsegnate + 'CONSEGNATE<br/>';  
-     }
-     
-     return($sce.trustAsHtml(Result.substr(0,Result.length - 5)));
-  }
-  
   $scope.queryDocente = function(searchTextDocente)
   {
      searchTextDocente = searchTextDocente.toUpperCase();
@@ -783,7 +726,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
               {
                  var ParamSpedizione = {
                                          "CHIAVE" : ListaTitoliSped[j].ChiaveDettaglio
-                                         //"TITOLO" : ListaTitoliSped[j].Titolo
                                        }
                  $ObjQuery.Operazioni.push({
                                              Query     : 'ChangeDeliveryToSend',

@@ -194,7 +194,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
     {
       $scope.TitoloFiltro  = -1;
       $scope.ListaIstituti = $scope.ListaIstitutiNoFilter;
-    } //$scope.TitoloFiltro = -1;
+    } 
     $scope.RefreshListaDocenti();
   }  
   
@@ -287,15 +287,6 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
             ListaIstitutiTitoloTmp = SystemInformation.FindResults(Results,'InstituteForBook');
             if(ListaIstitutiTitoloTmp != undefined)
             {
-               //for(let j = 0; j < ListaIstitutiTitoloTmp.length;j ++)
-               //{
-                   //ListaIstitutiTitoloTmp[j] = //{
-                                                 /*Chiave   : ListaIstitutiTitoloTmp[i].CHIAVE,
-                                                 Istituto :*/ //ListaIstitutiTitoloTmp[j].NOME == null ? 'N.D.' : ListaIstitutiTitoloTmp[j].NOME.toUpperCase()
-                                               //}
-               //}
-               //$scope.ListaIstitutiTitolo = ListaIstitutiTitoloTmp.toString();
-               
                for(let i = 0; i < ListaIstitutiTitoloTmp.length;i ++)
                {
                    ListaIstitutiTitoloTmp[i] = {
@@ -526,7 +517,6 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   
   $scope.ConfermaDocente = function()
   {  
-    //attento a mostrare messaggio se manca nome docente nella tab orari  
     var $ObjQuery    = { Operazioni : [] };    
     $scope.DocenteInEditing.RagioneSociale = $scope.DocenteInEditing.RagioneSociale.toUpperCase();    
     var ParamDocente = {
@@ -824,13 +814,9 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                      clickOutsideToClose : true
                    })
     .then(function(answer) 
-    {
-      //A promise that can be resolved with $mdDialog.hide()...
-    }, 
+    {}, 
     function() 
-    {
-      //...or rejected with $mdDialog.cancel().
-    });
+    {});
   };
   
   function DialogControllerIstituto($scope,$mdDialog)  
@@ -937,13 +923,9 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                        locals              : {Istituto,Docente}
                      })
       .then(function(answer) 
-      {
-        //A promise that can be resolved with $mdDialog.hide()...
-      }, 
+      {}, 
       function() 
-      {
-        //...or rejected with $mdDialog.cancel().
-      });
+      {});
     }
   };
  
@@ -1030,13 +1012,9 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                      locals              : {Orario}
                    })
     .then(function(answer) 
-    {
-      //A promise that can be resolved with $mdDialog.hide() or rejected with $mdDialog.cancel()...
-    }, 
+    {}, 
     function() 
-    {
-      //...or rejected with $mdDialog.cancel().
-    });
+    {});
   };
   
   function DialogControllerOrarioMod($scope,$mdDialog,Orario)  
@@ -1159,13 +1137,9 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                      clickOutsideToClose : true
                    })
     .then(function(answer) 
-    {
-      //A promise that can be resolved with $mdDialog.hide()...
-    }, 
+    {}, 
     function() 
-    {
-      //...or rejected with $mdDialog.cancel().
-    });
+    {});
   };
   
   function DialogControllerIstitutoFiltro($scope,$mdDialog)  
@@ -1223,13 +1197,9 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                      locals              : {Docente}
                    })
     .then(function(answer) 
-    {
-      //A promise that can be resolved with $mdDialog.hide()...
-    }, 
+    {}, 
     function() 
-    {
-      //...or rejected with $mdDialog.cancel().
-    });
+    {});
   };
   
   function DialogControllerListaSpedizioni($scope,$mdDialog,Docente)   
@@ -1331,32 +1301,6 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
        
        return($sce.trustAsHtml(Result.substr(0,Result.length)));
     }
-  
-    
-    /*$scope.GetDescrStatoSpedizione = function(Spedizione)
-    {
-       var Result = '';
-       if(Spedizione.NR_PRENOTATE != 0)
-       {
-          if(Spedizione.NR_DA_SPEDIRE == 0 && Spedizione.NR_CONSEGNATE == 0)
-             Result += 'PRENOTATE<br/>';  
-          else Result += Spedizione.NR_PRENOTATE + ' PRENOTATE<br/>';  
-       }
-       if(Spedizione.NR_DA_SPEDIRE != 0)
-       {
-          if(Spedizione.NR_CONSEGNATE == 0 && Spedizione.NR_PRENOTATE == 0)
-             Result += 'DA SPEDIRE<br/>';  
-          else Result += Spedizione.NR_DA_SPEDIRE + ' DA SPEDIRE<br/>';  
-       }
-       if(Spedizione.NR_CONSEGNATE != 0)
-       {
-          if(Spedizione.NR_DA_SPEDIRE == 0 && Spedizione.NR_PRENOTATE == 0)
-             Result += 'CONSEGNATE<br/>';  
-          else Result += Spedizione.NR_CONSEGNATE + 'CONSEGNATE<br/>';  
-       }
-       
-       return($sce.trustAsHtml(Result.substr(0,Result.length - 5)));
-    }*/
     
     $scope.ModificaSpedizione = function(ChiaveSpedizione) 
     { 

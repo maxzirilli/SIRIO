@@ -1,10 +1,8 @@
 <div ng-controller="inventoryManagementController" ng-cloak md-theme="{{ActualTheme}}" style="height:75%">
   <h2>GESTIONE INVENTARIO</h2>
-  <md-button ng-click="ResetInventario()" title="RESET INVENTARIO" ng-if="IsAdministrator()" style="color:red;font-weight:bold;font-size:30;float:right;margin-bottom:10px;"><img src="img/deleteInventory.png" style="width:70px;height:auto;margin-right:10px"></md-button>
-
   <div layout="row" style="padding-bottom:0px;">
    <md-input-container class="containerSelect" style="width:33%;height:20px;"><label>CODICE ISBN DEL TITOLO</label>
-     <input ng-model="CodiceBippato" ng-keyup="AggiungiInserimento($event)">
+     <input ng-model="CodiceBippatoVisible" ng-keyup="AggiungiInserimento($event)">
    </md-input-container>
    <img title="SVUOTA CAMPO" src="img/deleteCross.png" style="height:30px;margin-top:20px;margin-left:10px;" ng-click="ResetIsbnInput()">
   </div>
@@ -28,8 +26,8 @@
          <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA QUANTITA" ng-click="ModificaInserimento(Titolo)"></td>
          <td class="off">{{Titolo.Codice}}</td>
          <td class="off">{{Titolo.Nome}}</td>
-         <td><input type=number ng-model="Titolo.QuantitaMgzn" ng-disabled="!Titolo.ModificaAbilitata"></td>
-         <td><input type=number ng-model="Titolo.QuantitaMgznVol" ng-disabled="!Titolo.ModificaAbilitata"></td>
+         <td><input type=number ng-model="Titolo.QuantitaMgzn"></td>
+         <td><input type=number ng-model="Titolo.QuantitaMgznVol"></td>
        </tr>    
      </table>
      <md-table-pagination md-limit="GridOptions.query.limit" 

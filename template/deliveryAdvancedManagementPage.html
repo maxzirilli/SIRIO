@@ -75,7 +75,7 @@
       </div>
     <br>  
   <br>
-  <div style="text-align:left;" ng-if="ListaTitoliFiltro.length > 0 && RicercaPerTitolo">
+  <div style="text-align:left;" ng-if="RicercaPerTitolo">
     <p style="font-weight:bold;">TITOLI IN RICERCA:</p>
     <ul> 
       <li ng-repeat="Titolo in ListaTitoliFiltro"><img src="img/deleteCross.png" style="width:20px;height:auto;margin-right:5px;" title="RIMUOVI TITOLO" ng-click="RimuoviTitolo(Titolo)">{{Titolo.Codice}} - {{Titolo.Nome}} - ({{Titolo.Quantita}}) </li>              
@@ -95,7 +95,7 @@
         <th>TITOLO</th>
         <th>QUANTITA</th>
       </tr>
-      <tr ng-repeat="Elemento in ListaSpedizioni | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" > <!--| SpedizioneByFiltroAvanzato : ProvinciaFiltro : $parent.PromotoreFiltro : IstitutoFiltro : DocenteFiltro --> 
+      <tr ng-repeat="Elemento in ListaSpedizioni | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" > 
         <td style="font-weight:bold;text-align:left;" ng-if="Elemento.Tipo == 0" colspan="4">SPEDIZIONE DEL {{ConvertiData(Elemento)}} PRESSO {{Elemento.Docente == -1 ? Elemento.Presso : Elemento.DocenteNome}}</td>
         <td ng-if="Elemento.Tipo == 1"><input style="width:20px;height:20px;" type="checkbox" ng-change="CheckCumulativo()" ng-model="Elemento.Selezionato" style="margin-left:20px;margin-top:20px"></td>
         <td ng-if="Elemento.Tipo == 1">{{Elemento.Codice}}</td>

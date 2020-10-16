@@ -1,11 +1,20 @@
 {
  "Version": {
   "Major": 1,
-  "Minor": 3,
+  "Minor": 4,
   "Release": 3
  },
  "Storia": [
-  "Versione 1.3.3    1 Ottobre 2020",
+  "Versione 1.4.3    16 Ottobre 2020",
+  "                  - NEW: Campo combinazione in tabella classi",
+  "                  - NEW: Store procedure importazione mailchimp",
+  "                  - NEW: Tabella log mailchimp",
+  "                  - NEW: Tabella configurazioni con campo data ultima importazione mail",
+  "                  - NEW: Store Procedure update dei titoli tramite inventario ",
+  "                  - NEW: Store Procedure reset inventario",
+  "                  - FIX: Modificata store procedure importazione titoli",
+  "                  - FIX: Tutti i campi bit sostituiti con tinyint",
+  "Versione 1.3.3    01 Ottobre 2020",
   "                  - FIX: corretto inserimento data in trigger sui magazzini controlla entrambi db",
   "                  - FIX: corrette funzioni calcola disponibilita dei titoli",
   "Versione 1.3.2    30 Settembre 2020",
@@ -25,6 +34,38 @@
  ],
  "ListaTabelle": [
   {
+   "Nome": "classi_combinazioni",
+   "Campi": [
+    {
+     "Nome": "CHIAVE",
+     "IsNullable": false,
+     "DataType": "int(11)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "DESCRIZIONE",
+     "IsNullable": true,
+     "DataType": "varchar(255)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
+    }
+   ],
+   "PrimaryKey": {
+    "Campi": [
+     "CHIAVE"
+    ]
+   },
+   "ForeignKeys": [],
+   "UniqueKeys": [],
+   "Indexes": [],
+   "Triggers": []
+  },
+  {
    "Nome": "configurazione_ditta",
    "Campi": [
     {
@@ -33,7 +74,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -42,7 +83,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -51,7 +92,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -60,7 +101,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -69,7 +110,26 @@
      "DataType": "varchar(50)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
+    }
+   ],
+   "PrimaryKey": null,
+   "ForeignKeys": [],
+   "UniqueKeys": [],
+   "Indexes": [],
+   "Triggers": []
+  },
+  {
+   "Nome": "configurazioni",
+   "Campi": [
+    {
+     "Nome": "ULTIMA_IMPORTAZIONE_MAIL",
+     "IsNullable": true,
+     "DataType": "date",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     }
    ],
@@ -88,7 +148,53 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
+    }
+   ],
+   "PrimaryKey": null,
+   "ForeignKeys": [],
+   "UniqueKeys": [],
+   "Indexes": [],
+   "Triggers": []
+  },
+  {
+   "Nome": "log_mailchimp",
+   "Campi": [
+    {
+     "Nome": "RAGIONE_SOCIALE",
+     "IsNullable": true,
+     "DataType": "varchar(255)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "MAIL",
+     "IsNullable": true,
+     "DataType": "varchar(255)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "CHIAVE_DOC",
+     "IsNullable": true,
+     "DataType": "int(11)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "DATA",
+     "IsNullable": true,
+     "DataType": "date",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     }
    ],
@@ -116,7 +222,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     }
    ],
@@ -148,7 +254,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -157,7 +263,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -166,7 +272,7 @@
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -175,7 +281,7 @@
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -184,7 +290,7 @@
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -193,7 +299,7 @@
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -202,7 +308,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -211,7 +317,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -220,7 +326,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -229,7 +335,7 @@
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -238,7 +344,7 @@
      "DataType": "char(1)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -247,7 +353,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -256,7 +362,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -265,7 +371,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -274,7 +380,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -283,7 +389,7 @@
      "DataType": "text",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     }
    ],
@@ -334,7 +440,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     }
    ],
@@ -366,7 +472,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "''",
+     "DefaultValue": "",
      "SQLAfterAddedColumn": null
     }
    ],
@@ -398,7 +504,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "''",
+     "DefaultValue": "",
      "SQLAfterAddedColumn": null
     }
    ],
@@ -430,7 +536,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     }
    ],
@@ -462,7 +568,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -471,7 +577,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -480,7 +586,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -489,7 +595,7 @@
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -498,7 +604,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -507,7 +613,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -516,7 +622,7 @@
      "DataType": "tinyint(4)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -525,7 +631,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -552,7 +658,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     }
    ],
@@ -604,7 +710,7 @@
      "DataType": "date",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -613,7 +719,7 @@
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -622,7 +728,7 @@
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     }
    ],
@@ -671,7 +777,7 @@
      "DataType": "date",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -680,7 +786,7 @@
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -689,7 +795,7 @@
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -698,7 +804,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     }
    ],
@@ -724,7 +830,7 @@
      "DataType": "date",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -733,7 +839,7 @@
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -742,7 +848,7 @@
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -751,7 +857,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     }
    ],
@@ -786,7 +892,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -795,7 +901,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -804,7 +910,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -813,7 +919,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -828,10 +934,10 @@
     {
      "Nome": "ELIMINATO",
      "IsNullable": true,
-     "DataType": "bit(1)",
+     "DataType": "tinyint(4)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "b'0'",
+     "DefaultValue": "0",
      "SQLAfterAddedColumn": null
     }
    ],
@@ -863,7 +969,7 @@
      "DataType": "date",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -911,7 +1017,7 @@
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -920,7 +1026,7 @@
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -929,7 +1035,7 @@
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     }
    ],
@@ -993,7 +1099,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1002,7 +1108,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1011,7 +1117,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1020,7 +1126,7 @@
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1029,7 +1135,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1038,7 +1144,7 @@
      "DataType": "varchar(5)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1047,7 +1153,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1056,7 +1162,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1065,7 +1171,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1074,7 +1180,7 @@
      "DataType": "bit(1)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1083,7 +1189,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1092,7 +1198,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1101,7 +1207,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1110,7 +1216,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1119,7 +1225,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1128,7 +1234,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1137,7 +1243,7 @@
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1146,7 +1252,7 @@
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1155,7 +1261,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1164,7 +1270,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1173,16 +1279,16 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
      "Nome": "NASCOSTO",
      "IsNullable": true,
-     "DataType": "bit(1)",
+     "DataType": "tinyint(4)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": "0",
      "SQLAfterAddedColumn": null
     }
    ],
@@ -1233,7 +1339,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "''",
+     "DefaultValue": "",
      "SQLAfterAddedColumn": null
     },
     {
@@ -1242,7 +1348,7 @@
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1251,7 +1357,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1260,7 +1366,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1269,7 +1375,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1278,7 +1384,7 @@
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1287,7 +1393,7 @@
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1296,7 +1402,7 @@
      "DataType": "date",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1305,7 +1411,7 @@
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     }
    ],
@@ -1362,7 +1468,7 @@
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1371,7 +1477,7 @@
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1380,7 +1486,7 @@
      "DataType": "tinyint(4)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1389,16 +1495,16 @@
      "DataType": "char(50)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
      "Nome": "CONS_A_MANO",
      "IsNullable": true,
-     "DataType": "bit(1)",
+     "DataType": "tinyint(4)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": "0",
      "SQLAfterAddedColumn": null
     }
    ],
@@ -1433,7 +1539,7 @@
     {
      "Nome": "dettaglio_spedizioni_after_update",
      "Event": "UPDATE",
-     "Body": "BEGIN\r\n DECLARE ConsegnatoAMano BIT;\r\n SELECT CONS_A_MANO\r\n   FROM dettaglio_spedizioni\r\n  WHERE CHIAVE = OLD.CHIAVE\r\n   INTO ConsegnatoAMano;\r\n\r\n IF NEW.TITOLO = OLD.TITOLO THEN\r\n    IF OLD.STATO <> NEW.STATO THEN\r\n       IF OLD.STATO = 'C' THEN\r\n          IF ConsegnatoAMano = 1 THEN\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN_VOL = QUANTITA_MGZN_VOL + OLD.QUANTITA\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino_volante (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA,'Modifica dettaglio spedizione');            \r\n          ELSE\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN = QUANTITA_MGZN + OLD.QUANTITA\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA,'Modifica dettaglio spedizione');            \r\n          END IF;\r\n       END IF;\r\n       IF NEW.STATO = 'C' THEN\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN = QUANTITA_MGZN - NEW.QUANTITA\r\n            WHERE CHIAVE = NEW.TITOLO;\r\n           INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),NEW.TITOLO,(-1)*NEW.QUANTITA,'Modifica dettaglio spedizione');            \r\n       END IF;\r\n    ELSE\r\n      IF (NEW.QUANTITA <> OLD.QUANTITA) AND (NEW.STATO = 'C') THEN\r\n         IF ConsegnatoAMano = 1 THEN\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN_VOL = QUANTITA_MGZN_VOL + (OLD.QUANTITA - NEW.QUANTITA)\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino_volante (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA - NEW.QUANTITA,'Modifica dettaglio spedizione');            \r\n         ELSE\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN = QUANTITA_MGZN + (OLD.QUANTITA - NEW.QUANTITA)\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA - NEW.QUANTITA,'Modifica dettaglio spedizione');            \r\n\t\t\tEND IF;\r\n      END IF;\r\n\t END IF;\r\n ELSE\r\n    IF OLD.STATO <> NEW.STATO THEN\r\n       IF OLD.STATO = 'C' THEN\r\n          IF ConsegnatoAMano = 1 THEN\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN_VOL = QUANTITA_MGZN_VOL + OLD.QUANTITA\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino_volante (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA,'Modifica dettaglio spedizione');            \r\n          ELSE\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN = QUANTITA_MGZN + OLD.QUANTITA\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA,'Modifica dettaglio spedizione');            \r\n          END IF;\r\n       END IF;\r\n       IF NEW.STATO = 'C' THEN\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN = QUANTITA_MGZN - NEW.QUANTITA\r\n            WHERE CHIAVE = NEW.TITOLO;\r\n           INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),NEW.TITOLO,(-1)*NEW.QUANTITA,'Modifica dettaglio spedizione');            \r\n       END IF;\r\n    ELSE\r\n      IF NEW.STATO = 'C' THEN\r\n         IF ConsegnatoAMano = 1 THEN\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN_VOL = QUANTITA_MGZN_VOL + OLD.QUANTITA\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino_volante (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA,'Modifica dettaglio spedizione');            \r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN_VOL = QUANTITA_MGZN_VOL - NEW.QUANTITA\r\n            WHERE CHIAVE = NEW.TITOLO;\r\n           INSERT INTO movimenti_magazzino_volante (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),NEW.TITOLO,(-1)*NEW.QUANTITA,'Modifica dettaglio spedizione');            \r\n         ELSE\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN = QUANTITA_MGZN + OLD.QUANTITA\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA,'Modifica dettaglio spedizione');            \r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN = QUANTITA_MGZN - NEW.QUANTITA\r\n            WHERE CHIAVE = NEW.TITOLO;\r\n           INSERT INTO movimenti_magazzino(DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),NEW.TITOLO,(-1)*NEW.QUANTITA,'Modifica dettaglio spedizione');            \r\n\t\t\tEND IF;\r\n      END IF;\r\n\t END IF;\r\n END IF;\r\nEND",
+     "Body": "BEGIN\r\n DECLARE ConsegnatoAMano TINYINT;\r\n SELECT CONS_A_MANO\r\n   FROM dettaglio_spedizioni\r\n  WHERE CHIAVE = OLD.CHIAVE\r\n   INTO ConsegnatoAMano;\r\n\r\n IF NEW.TITOLO = OLD.TITOLO THEN\r\n    IF OLD.STATO <> NEW.STATO THEN\r\n       IF OLD.STATO = 'C' THEN\r\n          IF ConsegnatoAMano = 1 THEN\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN_VOL = QUANTITA_MGZN_VOL + OLD.QUANTITA\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino_volante (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA,'Modifica dettaglio spedizione');            \r\n          ELSE\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN = QUANTITA_MGZN + OLD.QUANTITA\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA,'Modifica dettaglio spedizione');            \r\n          END IF;\r\n       END IF;\r\n       IF NEW.STATO = 'C' THEN\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN = QUANTITA_MGZN - NEW.QUANTITA\r\n            WHERE CHIAVE = NEW.TITOLO;\r\n           INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),NEW.TITOLO,(-1)*NEW.QUANTITA,'Modifica dettaglio spedizione');            \r\n       END IF;\r\n    ELSE\r\n      IF (NEW.QUANTITA <> OLD.QUANTITA) AND (NEW.STATO = 'C') THEN\r\n         IF ConsegnatoAMano = 1 THEN\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN_VOL = QUANTITA_MGZN_VOL + (OLD.QUANTITA - NEW.QUANTITA)\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino_volante (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA - NEW.QUANTITA,'Modifica dettaglio spedizione');            \r\n         ELSE\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN = QUANTITA_MGZN + (OLD.QUANTITA - NEW.QUANTITA)\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA - NEW.QUANTITA,'Modifica dettaglio spedizione');            \r\n\t\t\tEND IF;\r\n      END IF;\r\n\t END IF;\r\n ELSE\r\n    IF OLD.STATO <> NEW.STATO THEN\r\n       IF OLD.STATO = 'C' THEN\r\n          IF ConsegnatoAMano = 1 THEN\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN_VOL = QUANTITA_MGZN_VOL + OLD.QUANTITA\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino_volante (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA,'Modifica dettaglio spedizione');            \r\n          ELSE\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN = QUANTITA_MGZN + OLD.QUANTITA\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA,'Modifica dettaglio spedizione');            \r\n          END IF;\r\n       END IF;\r\n       IF NEW.STATO = 'C' THEN\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN = QUANTITA_MGZN - NEW.QUANTITA\r\n            WHERE CHIAVE = NEW.TITOLO;\r\n           INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),NEW.TITOLO,(-1)*NEW.QUANTITA,'Modifica dettaglio spedizione');            \r\n       END IF;\r\n    ELSE\r\n      IF NEW.STATO = 'C' THEN\r\n         IF ConsegnatoAMano = 1 THEN\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN_VOL = QUANTITA_MGZN_VOL + OLD.QUANTITA\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino_volante (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA,'Modifica dettaglio spedizione');            \r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN_VOL = QUANTITA_MGZN_VOL - NEW.QUANTITA\r\n            WHERE CHIAVE = NEW.TITOLO;\r\n           INSERT INTO movimenti_magazzino_volante (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),NEW.TITOLO,(-1)*NEW.QUANTITA,'Modifica dettaglio spedizione');            \r\n         ELSE\r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN = QUANTITA_MGZN + OLD.QUANTITA\r\n            WHERE CHIAVE = OLD.TITOLO;\r\n           INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,OLD.QUANTITA,'Modifica dettaglio spedizione');            \r\n           UPDATE titoli\r\n              SET QUANTITA_MGZN = QUANTITA_MGZN - NEW.QUANTITA\r\n            WHERE CHIAVE = NEW.TITOLO;\r\n           INSERT INTO movimenti_magazzino(DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),NEW.TITOLO,(-1)*NEW.QUANTITA,'Modifica dettaglio spedizione');            \r\n\t\t\tEND IF;\r\n      END IF;\r\n\t END IF;\r\n END IF;\r\nEND",
      "Timing": "AFTER"
     },
     {
@@ -1554,7 +1660,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1563,7 +1669,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1572,7 +1678,16 @@
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "COMBINAZIONE",
+     "IsNullable": true,
+     "DataType": "int(11)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     }
    ],
@@ -1582,6 +1697,12 @@
     ]
    },
    "ForeignKeys": [
+    {
+     "Nome": "FK_CLASSI_COMBINAZIONE",
+     "Campo": "COMBINAZIONE",
+     "RefTable": "classi_combinazioni",
+     "RefField": "CHIAVE"
+    },
     {
      "Nome": "FK_CLASSI_ISTITUTO",
      "Campo": "ISTITUTO",
@@ -1611,7 +1732,7 @@
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1620,7 +1741,7 @@
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     }
    ],
@@ -1665,7 +1786,7 @@
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1674,7 +1795,7 @@
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1683,7 +1804,7 @@
      "DataType": "tinyint(1)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1692,7 +1813,7 @@
      "DataType": "varchar(255)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     },
     {
@@ -1701,7 +1822,7 @@
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "NULL",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     }
    ],
@@ -1773,7 +1894,7 @@
      "DataType": "time",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "'00:00:00'",
+     "DefaultValue": "00:00:00",
      "SQLAfterAddedColumn": null
     },
     {
@@ -1782,7 +1903,7 @@
      "DataType": "time",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "'00:00:00'",
+     "DefaultValue": "00:00:00",
      "SQLAfterAddedColumn": null
     }
    ],
@@ -1925,7 +2046,7 @@
    "Nome": "AGGIORNA_TITOLI_ADOZIONI",
    "Type": "PROCEDURE",
    "ReturnType": null,
-   "Body": "BEGIN\r\n  DECLARE NewKey INT;\r\n  DECLARE KeyMateria INT;\r\n  DECLARE KeyClasse INT;\r\n  DECLARE KeyAdozione INT;\r\n  DECLARE KeyIstituto INT;\r\n  SELECT MAX(CHIAVE)\r\n    FROM materie_insegnamento \r\n\tWHERE UPPER(DESCRIZIONE) = DescrizioneMateria \r\n\t INTO KeyMateria;\r\n  \r\n  IF KeyMateria IS NULL THEN\r\n     UPDATE gen_key SET CHIAVE = CHIAVE + 1;\r\n     SELECT MAX(CHIAVE) FROM gen_key INTO KeyMateria; \r\n     INSERT INTO materie_insegnamento(CHIAVE,DESCRIZIONE) VALUES (KeyMateria,DescrizioneMateria);\r\n  END IF;\r\n  \r\n  IF (SELECT count(*) FROM titoli WHERE CODICE_ISBN = CodiceTitolo) > 0 THEN\r\n      UPDATE titoli \r\n\t\t   SET TITOLO = TitoloTitolo, SOTTOTITOLO = SottotitoloTitolo, AUTORI = AutoriTitolo, EDITORE = EditoreTitolo, VOLUME = VolumeTitolo, PREZZO = PrezzoTitolo\r\n\t\t WHERE CODICE_ISBN = CodiceTitolo;\r\n  ELSE\r\n      UPDATE gen_key SET CHIAVE = CHIAVE + 1;\r\n      SELECT MAX(CHIAVE) FROM gen_key INTO NewKey; \r\n      INSERT INTO titoli (CHIAVE,CODICE_ISBN,TITOLO,SOTTOTITOLO,AUTORI,EDITORE,VOLUME,MATERIA,PREZZO) VALUES (NewKey,CodiceTitolo,TitoloTitolo,SottotitoloTitolo,AutoriTitolo,EditoreTitolo,VolumeTitolo,KeyMateria,PrezzoTitolo);\r\n  END IF;\r\n  \r\n  SELECT istituti.CHIAVE \r\n    FROM istituti \r\n\tWHERE istituti.CODICE = IstitutoTitolo  \r\n\t INTO KeyIstituto;\r\n\t \r\n  IF KeyIstituto IS NOT NULL THEN\r\n     INSERT IGNORE INTO istituti_x_titoli (TITOLO,ISTITUTO) VALUES ((SELECT titoli.CHIAVE FROM titoli WHERE CODICE_ISBN = CodiceTitolo),KeyIstituto); \r\n\r\n\t  SELECT MAX(CHIAVE)\r\n\t  FROM classi \r\n\t  WHERE UPPER(ANNO) = AnnoTitolo AND UPPER(SEZIONE) = SezioneTitolo AND ISTITUTO = KeyIstituto\r\n\t  INTO KeyClasse;\r\n\t  \r\n\t  IF KeyClasse IS NULL THEN\r\n\t     UPDATE gen_key \r\n\t\t  SET CHIAVE = CHIAVE + 1;\r\n\t     SELECT MAX(CHIAVE) FROM gen_key INTO KeyClasse; \r\n\t     INSERT INTO classi (CHIAVE,ANNO,SEZIONE,ISTITUTO) VALUES (KeyClasse,AnnoTitolo,SezioneTitolo,KeyIstituto);\r\n\t  END IF;\r\n\t  \r\n\t  SELECT MAX(CHIAVE)\r\n\t  FROM adozioni_titolo\r\n\t  WHERE TITOLO = (SELECT titoli.CHIAVE FROM titoli WHERE CODICE_ISBN = CodiceTitolo) AND CLASSE = KeyClasse\r\n\t  INTO KeyAdozione;\r\n\t  \r\n\t  IF KeyAdozione IS NULL THEN\r\n\t     UPDATE gen_key \r\n\t\t  SET CHIAVE = CHIAVE + 1;\r\n\t     SELECT MAX(CHIAVE) FROM gen_key INTO KeyAdozione; \r\n\t     INSERT INTO adozioni_titolo (CHIAVE,TITOLO,CLASSE) VALUES (KeyAdozione,(SELECT titoli.CHIAVE FROM titoli WHERE CODICE_ISBN = CodiceTitolo),KeyClasse);\r\n\t  END IF;\r\n\t  \r\n  END IF;\r\n  \r\nEND",
+   "Body": "BEGIN\r\n  DECLARE NewKey INT;\r\n  DECLARE KeyMateria INT;\r\n  DECLARE KeyClasse INT;\r\n  DECLARE KeyAdozione INT;\r\n  DECLARE KeyIstituto INT;\r\n  DECLARE KeyCombinazione INT;\r\n  \r\n  SELECT MAX(CHIAVE)\r\n    FROM materie_insegnamento \r\n\tWHERE UPPER(DESCRIZIONE) = DescrizioneMateria \r\n\t INTO KeyMateria;\r\n  \r\n  IF KeyMateria IS NULL THEN\r\n     UPDATE gen_key SET CHIAVE = CHIAVE + 1;\r\n     SELECT MAX(CHIAVE) FROM gen_key INTO KeyMateria; \r\n     INSERT INTO materie_insegnamento(CHIAVE,DESCRIZIONE) VALUES (KeyMateria,DescrizioneMateria);\r\n  END IF;\r\n  \r\n  SELECT MAX(CHIAVE) \r\n    FROM classi_combinazioni\r\n   WHERE UPPER(DESCRIZIONE) = DescrizioneCombinazione\r\n    INTO KeyCombinazione;\r\n    \r\n  IF KeyCombinazione IS NULL THEN\r\n     UPDATE gen_key SET CHIAVE = CHIAVE + 1;\r\n     SELECT MAX(CHIAVE) FROM gen_key INTO KeyCombinazione;\r\n     INSERT INTO classi_combinazioni(CHIAVE,DESCRIZIONE)VALUES(KeyCombinazione,DescrizioneCombinazione);\r\n  END IF;\r\n  \r\n  IF (SELECT count(*) FROM titoli WHERE CODICE_ISBN = CodiceTitolo) > 0 THEN\r\n      UPDATE titoli \r\n\t\t   SET TITOLO = TitoloTitolo, SOTTOTITOLO = SottotitoloTitolo, AUTORI = AutoriTitolo, EDITORE = EditoreTitolo, VOLUME = VolumeTitolo, PREZZO = PrezzoTitolo\r\n\t\t WHERE CODICE_ISBN = CodiceTitolo;\r\n  ELSE\r\n      UPDATE gen_key SET CHIAVE = CHIAVE + 1;\r\n      SELECT MAX(CHIAVE) FROM gen_key INTO NewKey; \r\n      INSERT INTO titoli (CHIAVE,CODICE_ISBN,TITOLO,SOTTOTITOLO,AUTORI,EDITORE,VOLUME,MATERIA,PREZZO) VALUES (NewKey,CodiceTitolo,TitoloTitolo,SottotitoloTitolo,AutoriTitolo,EditoreTitolo,VolumeTitolo,KeyMateria,PrezzoTitolo);\r\n  END IF;\r\n  \r\n  SELECT istituti.CHIAVE \r\n    FROM istituti \r\n\tWHERE istituti.CODICE = IstitutoTitolo  \r\n\t INTO KeyIstituto;\r\n\t \r\n  IF KeyIstituto IS NOT NULL THEN\r\n     INSERT IGNORE INTO istituti_x_titoli (TITOLO,ISTITUTO) VALUES ((SELECT titoli.CHIAVE FROM titoli WHERE CODICE_ISBN = CodiceTitolo),KeyIstituto); \r\n\r\n\t  SELECT MAX(CHIAVE)\r\n\t  FROM classi \r\n\t  WHERE UPPER(ANNO) = AnnoTitolo AND UPPER(SEZIONE) = SezioneTitolo AND ISTITUTO = KeyIstituto AND COMBINAZIONE = KeyCombinazione\r\n\t  INTO KeyClasse;\r\n\t  \r\n\t  IF KeyClasse IS NULL THEN\r\n\t     UPDATE gen_key \r\n\t\t  SET CHIAVE = CHIAVE + 1;\r\n\t     SELECT MAX(CHIAVE) FROM gen_key INTO KeyClasse; \r\n\t     INSERT INTO classi (CHIAVE,ANNO,SEZIONE,ISTITUTO,COMBINAZIONE) VALUES (KeyClasse,AnnoTitolo,SezioneTitolo,KeyIstituto,KeyCombinazione);\r\n\t  END IF;\r\n\t  \r\n\t  SELECT MAX(CHIAVE)\r\n\t  FROM adozioni_titolo\r\n\t  WHERE TITOLO = (SELECT titoli.CHIAVE FROM titoli WHERE CODICE_ISBN = CodiceTitolo) AND CLASSE = KeyClasse\r\n\t  INTO KeyAdozione;\r\n\t  \r\n\t  IF KeyAdozione IS NULL THEN\r\n\t     UPDATE gen_key \r\n\t\t  SET CHIAVE = CHIAVE + 1;\r\n\t     SELECT MAX(CHIAVE) FROM gen_key INTO KeyAdozione; \r\n\t     INSERT INTO adozioni_titolo (CHIAVE,TITOLO,CLASSE) VALUES (KeyAdozione,(SELECT titoli.CHIAVE FROM titoli WHERE CODICE_ISBN = CodiceTitolo),KeyClasse);\r\n\t  END IF;\r\n\t  \r\n  END IF;\r\n  \r\nEND",
    "Parametri": [
     {
      "Nome": "CodiceTitolo",
@@ -1974,6 +2095,11 @@
     },
     {
      "Nome": "SezioneTitolo",
+     "Mode": "IN",
+     "Type": "varchar(255)"
+    },
+    {
+     "Nome": "DescrizioneCombinazione",
      "Mode": "IN",
      "Type": "varchar(255)"
     },
@@ -2092,10 +2218,24 @@
    ]
   },
   {
+   "Nome": "CLEAR_INVENTARIO_ALL",
+   "Type": "PROCEDURE",
+   "ReturnType": null,
+   "Body": "BEGIN\r\n\r\n\tDECLARE CicloFinito INTEGER DEFAULT 0;\r\n\tDECLARE ChiaveTitolo INT;\r\n\tDECLARE OldQuantita INT;\r\n\tDECLARE OldQuantitaVol INT;\r\n\r\n\tDEClARE CursoreTitoli \r\n\t\tCURSOR FOR \r\n\t\t\tSELECT CHIAVE,QUANTITA_MGZN,QUANTITA_MGZN_VOL FROM titoli WHERE QUANTITA_MGZN <> 0 OR QUANTITA_MGZN_VOL <> 0;\r\n\r\n\tDECLARE CONTINUE HANDLER \r\n        FOR NOT FOUND SET CicloFinito = 1;\r\n\r\n\tOPEN CursoreTitoli;\r\n\r\n\tGetTitoli: LOOP\r\n\t\tFETCH CursoreTitoli INTO ChiaveTitolo,OldQuantita,OldQuantitaVol;\r\n\t\tIF CicloFinito = 1 THEN \r\n\t\t\tLEAVE GetTitoli;\r\n\t\tEND IF;\r\n\t\t\r\n\t   IF OldQuantita <> 0 AND OldQuantitaVol = 0 THEN\r\n\t\t   UPDATE titoli SET QUANTITA_MGZN = 0  WHERE CHIAVE = ChiaveTitolo;\r\n\t\t   INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),ChiaveTitolo,0,'Quantita azzerata da reset inventario');\r\n      END IF;\r\n\t   IF OldQuantita = 0 AND OldQuantitaVol <> 0 THEN\r\n\t      UPDATE titoli SET QUANTITA_MGZN_VOL = 0  WHERE CHIAVE = ChiaveTitolo;\r\n\t      INSERT INTO movimenti_magazzino_volante (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),ChiaveTitolo,0,'Quantita volante azzerata da reset inventario');\r\n\t   END IF;\r\n\t\tIF OldQuantita <> 0 AND OldQuantitaVol <> 0 THEN\r\n\t\t   UPDATE titoli SET QUANTITA_MGZN = 0,QUANTITA_MGZN_VOL = 0 WHERE CHIAVE = ChiaveTitolo;\r\n\t      INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),ChiaveTitolo,0,'Quantita azzerata da reset inventario');\r\n\t      INSERT INTO movimenti_magazzino_volante (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),ChiaveTitolo,0,'Quantita volante azzerata da reset inventario');\r\n\t   END IF;\r\n\r\n\tEND LOOP GetTitoli;\r\n\t\r\n\tCLOSE CursoreTitoli;\r\n\r\nEND",
+   "Parametri": []
+  },
+  {
    "Nome": "ERASE_ALL",
    "Type": "PROCEDURE",
    "ReturnType": null,
    "Body": "BEGIN\r\n DELETE FROM istituti_x_titoli;\r\n DELETE FROM istituti_x_docenti;\r\n DELETE FROM istituti;\r\n DELETE FROM insegnamenti_docente;\r\n DELETE FROM titoli;\r\n DELETE FROM docenti;\r\n DELETE FROM materie_insegnamento;\r\n DELETE FROM tipologie_istituto;\r\nEND",
+   "Parametri": []
+  },
+  {
+   "Nome": "ERASE_CLASSI",
+   "Type": "PROCEDURE",
+   "ReturnType": null,
+   "Body": "BEGIN\r\n\r\n  DELETE FROM insegnamenti_docente;\r\n  DELETE FROM adozioni_titolo;\r\n  DELETE FROM classi;\r\n\r\nEND",
    "Parametri": []
   },
   {
@@ -2197,6 +2337,24 @@
    ]
   },
   {
+   "Nome": "MAIL_FROM_MAILCHIMP",
+   "Type": "PROCEDURE",
+   "ReturnType": null,
+   "Body": "BEGIN\r\n\r\nDECLARE ChiaveDocente INT;\r\nDECLARE DocentiOmonimi INT;\r\n\r\nSELECT COUNT(*) FROM docenti WHERE UPPER(RAGIONE_SOCIALE) = UPPER(NomeDocente) INTO DocentiOmonimi;\r\nSELECT CHIAVE FROM docenti WHERE UPPER(RAGIONE_SOCIALE) = UPPER(NomeDocente) LIMIT 1 INTO ChiaveDocente;\r\n\r\nIF ChiaveDocente IS NULL AND DocentiOmonimi = 0 THEN \r\n   INSERT INTO log_mailchimp (RAGIONE_SOCIALE,MAIL,CHIAVE_DOC,DATA)VALUES(NomeDocente,MailDocente,NULL,NOW());\r\nELSEIF ChiaveDocente IS NOT NULL AND DocentiOmonimi < 2 THEN\r\n        INSERT INTO log_mailchimp (RAGIONE_SOCIALE,MAIL,CHIAVE_DOC,DATA)VALUES(NomeDocente,MailDocente,ChiaveDocente,NOW());\r\n        UPDATE docenti SET EMAIL = MailDocente WHERE CHIAVE = ChiaveDocente;\r\nELSE INSERT INTO log_mailchimp (RAGIONE_SOCIALE,MAIL,CHIAVE_DOC,DATA)VALUES(NomeDocente,MailDocente,0,NOW());\r\nEND IF;\r\n\r\nEND",
+   "Parametri": [
+    {
+     "Nome": "MailDocente",
+     "Mode": "IN",
+     "Type": "varchar(255)"
+    },
+    {
+     "Nome": "NomeDocente",
+     "Mode": "IN",
+     "Type": "varchar(255)"
+    }
+   ]
+  },
+  {
    "Nome": "MATERIE_FROM_LYBRO",
    "Type": "PROCEDURE",
    "ReturnType": null,
@@ -2227,6 +2385,29 @@
     },
     {
      "Nome": "NewIstituto",
+     "Mode": "IN",
+     "Type": "int(11)"
+    }
+   ]
+  },
+  {
+   "Nome": "UPDATE_TITOLI_FROM_INVENTARIO",
+   "Type": "PROCEDURE",
+   "ReturnType": null,
+   "Body": "BEGIN\r\n\r\n  UPDATE titoli SET QUANTITA_MGZN = QuantitaTitolo, QUANTITA_MGZN_VOL = QuantitaVolanteTitolo WHERE CHIAVE = ChiaveTitolo;\r\n  INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),ChiaveTitolo,QuantitaTitolo,'Nuova quantita magazzino da inventario');\r\n  INSERT INTO movimenti_magazzino_volante (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),ChiaveTitolo,QuantitaVolanteTitolo,'Nuova quantita magazzino volante da inventario');\r\n\r\nEND",
+   "Parametri": [
+    {
+     "Nome": "ChiaveTitolo",
+     "Mode": "IN",
+     "Type": "int(11)"
+    },
+    {
+     "Nome": "QuantitaTitolo",
+     "Mode": "IN",
+     "Type": "int(11)"
+    },
+    {
+     "Nome": "QuantitaVolanteTitolo",
      "Mode": "IN",
      "Type": "int(11)"
     }

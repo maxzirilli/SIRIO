@@ -13,12 +13,6 @@ SIRIOApp.config(['$mdThemingProvider', function($mdThemingProvider)
       .primaryPalette('orange')
       .accentPalette('orange')
       .warnPalette('red');
-
-/*    $mdThemingProvider.theme(STATE_LOGGED)
-      .primaryPalette('indigo')
-      .accentPalette('pink');
-
-    $mdThemingProvider.alwaysWatchTheme(true);*/
 }]);
   
 
@@ -180,7 +174,6 @@ SIRIOApp.config(['$stateProvider','$urlRouterProvider','$mdAriaProvider',functio
     $urlRouterProvider.otherwise('loginPage');
 }]);
 
-// Controller dell'header
 var ScopeHeaderController = undefined;
 SIRIOApp.controller("headerController",['$scope','$rootScope','SystemInformation','$state',function($scope,$rootScope,SystemInformation,$state)
 {
@@ -211,7 +204,6 @@ SIRIOApp.controller("headerController",['$scope','$rootScope','SystemInformation
    {
      SystemInformation.Logout();
      $scope.LoginEffettuato = false;
-     //$rootScope.ActualTheme = STATE_NOT_LOGGED;
    };
    
    $scope.GoHome = function()
@@ -227,7 +219,6 @@ SIRIOApp.controller("headerController",['$scope','$rootScope','SystemInformation
 
 SIRIOApp.run(['$rootScope','SystemInformation','$state','$http',function($rootScope,SystemInformation,$state,$http)
 {
-   //$rootScope.ActualTheme = STATE_NOT_LOGGED;
    $rootScope.appVersion = VERSIONE_ATTUALE;
    $http.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
    SystemInformation.GetInformation(
@@ -237,11 +228,9 @@ SIRIOApp.run(['$rootScope','SystemInformation','$state','$http',function($rootSc
          {
             $state.go('startPage');
          }
-         //$rootScope.ActualTheme = STATE_LOGGED;
        },
        function()
        {
-         //$rootScope.ActualTheme = STATE_NOT_LOGGED;
          if(SystemInformation.HTTPResponse == HTTP_ERROR_NOT_LOGGED)
          {
             SystemInformation.HTTPError = '';

@@ -113,7 +113,7 @@
                             },
                             {
                               "Name" : "ResetAllInventory",
-                              "SQL"  : "UPDATE titoli SET QUANTITA_MGZN=0,QUANTITA_MGZN_VOL=0"
+                              "SQL"  : "CALL CLEAR_INVENTARIO_ALL()"
                             },
                             {
                               "Name" : "UpdateBookFromInventory",

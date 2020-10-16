@@ -2,9 +2,9 @@
   <div ng-if="!EditingOn && !StampaOn">
     <div>
       <h2>TITOLI</h2>
-      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoTitolo()">NUOVO TITOLO</md-button>
-    </div>  
-    <div layout="row">        
+      <md-button ng-click="ResetInventario()" title="RESET INVENTARIO" ng-if="IsAdministrator()" style="color:red;font-weight:bold;font-size:30;float:right;margin-bottom:10px;"><img src="img/deleteInventory.png" style="width:60px;height:auto;margin-right:10px"></md-button>
+    </div>
+    <div layout="row">  
       <md-input-container class="containerSelect" style="width:40%;float:left;margin-right:10px;"><label>MATERIA</label>
         <md-select ng-model="MateriaFiltro" placeholder="MATERIA" class="mdb-select" type="text" name="MateriaFiltro">
         <md-optgroup>
@@ -40,8 +40,10 @@
       <md-input-container class="containerSelect" style="width:30%;float:left;"><label>CODICE ISBN</label>
         <input ng-model="CodiceFiltro" type="search">
       </md-input-container>
+      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoTitolo()">NUOVO TITOLO</md-button>
+
     </div>
-    <div ng-if="ListaTitoli.length != 0">
+    <div ng-if="ListaTitoli.length > 0">
       <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
         <tr>
           <th></th>
@@ -58,7 +60,7 @@
         <tr ng-repeat="Titolo in ListaTitoli | TitoloByFiltro : MateriaFiltro : NomeFiltro : CodiceFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Titolo.Chiave}}> 
           <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA TITOLO" ng-click="EliminaTitolo(Titolo)"></td> 
           <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA TITOLO" ng-click="ModificaTitolo(Titolo)"></td>        
-          <td><img src="img/print.png" style="width:30px;height:auto;" title="STAMPA ADOZIONI" ng-click="StampaAdozioni(Titolo)"></td>                  
+          <td><img src="img/printPDF.png" style="width:30px;height:auto;" title="STAMPA ADOZIONI" ng-click="StampaAdozioni(Titolo)"></td>                  
           <td class="off">{{Titolo.Codice}}</td>  
           <td class="off">{{Titolo.Titolo | uppercase}}</td>  
           <td class="off">{{Titolo.NomeMateria | uppercase}}</td>
@@ -68,19 +70,19 @@
           <td class="off">{{Titolo.Q_MagazzinoVolante}}</td>        
         </tr>    
       </table>
-      <md-table-pagination md-limit="GridOptions.query.limit" 
-                           md-limit-options="GridOptions.limitOptions" 
-                           md-page="GridOptions.query.page" 
-                           md-total="{{ListaTitoli.length}}" 
-                           md-page-select="GridOptions.pageSelect" 
-                           md-boundary-links="GridOptions.boundaryLinks" 
-                           md-on-paginate="logPagination"></md-table-pagination>
+      <md-table-pagination  md-limit="GridOptions.query.limit" 
+                            md-limit-options="GridOptions.limitOptions" 
+                            md-page="GridOptions.query.page" 
+                            md-total="{{ListaTitoli.length}}" 
+                            md-page-select="GridOptions.pageSelect" 
+                            md-boundary-links="GridOptions.boundaryLinks" 
+                            md-on-paginate="logPagination"></md-table-pagination>
+      </div>
+    <div>
+      <p ng-if="ListaTitoli.length == 0" style="font-weight:bold;font-style:italic;text-align:center;">NESSUN TITOLO PRESENTE</p>
     </div>
   </div>
-  <br>
-  <div>
-    <p ng-if="ListaTitoli.length == 0" style="font-weight:bold;font-style:italic;text-align:center;">NESSUN TITOLO PRESENTE</p>
-  </div>
+    
   
   <div ng-if="EditingOn && !StampaOn">
     <form name="titoloEditForm" layout="column" style="width:100%" ng-submit="ConfermaTitolo()" novalidate>
