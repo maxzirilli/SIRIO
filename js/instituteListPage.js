@@ -87,6 +87,22 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
     }
     else SystemInformation.ApplyOnError('Modello promotori non conforme','');     
   });
+
+  SystemInformation.GetSQL('Combination',{},function(Results)
+  {
+    $scope.ListaCombinazioniAll = [];
+    CombinationInfoList = SystemInformation.FindResults(Results,'CombinationInfoList');
+    if(CombinationInfoList != undefined)
+    {
+      for(let i = 0;i < CombinationInfoList.length;i ++)
+          CombinationInfoList[i] = {
+                                      Chiave      : CombinationInfoList[i].CHIAVE,
+                                      Descrizione : CombinationInfoList[i].DESCRIZIONE
+                                    }
+          $scope.ListaCombinazioniAll = CombinationInfoList
+    }
+    else SystemInformation.ApplyOnError('Modello tipi di combinazioni per classi non conforme','')
+  })
     
   $scope.GridOptions = {
                          rowSelection    : false,
@@ -438,22 +454,6 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                                                                                                                                            })
             ClassKey =  IstitutoListaAdozioni[i].CLASSE;                                                                                          
         }
-        
-        SystemInformation.GetSQL('Combination',{},function(Results)
-        {
-          $scope.ListaCombinazioniAll = [];
-          CombinationInfoList = SystemInformation.FindResults(Results,'CombinationInfoList');
-          if(CombinationInfoList != undefined)
-          {
-             for(let i = 0;i < CombinationInfoList.length;i ++)
-                 CombinationInfoList[i] = {
-                                            Chiave      : CombinationInfoList[i].CHIAVE,
-                                            Descrizione : CombinationInfoList[i].DESCRIZIONE
-                                          }
-                 $scope.ListaCombinazioniAll = CombinationInfoList
-          }
-          else SystemInformation.ApplyOnError('Modello tipi di combinazioni per classi non conforme','')
-        })
              
         if(IstitutoDettaglioClassi.length > 0)
         { 

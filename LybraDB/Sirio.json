@@ -1,10 +1,12 @@
 {
  "Version": {
   "Major": 1,
-  "Minor": 4,
+  "Minor": 5,
   "Release": 3
  },
  "Storia": [
+  "Versione 1.5.3    18 Ottobre 2020",                 
+  "                  - NEW: Aggiunta tabella adv_query",
   "Versione 1.4.3    16 Ottobre 2020",
   "                  - NEW: Campo combinazione in tabella classi",
   "                  - NEW: Store procedure importazione mailchimp",
@@ -33,6 +35,58 @@
   "                  - Prima versione"
  ],
  "ListaTabelle": [
+  {
+   "Nome": "advquery_access",
+   "Campi": [
+    {
+     "Nome": "DATA",
+     "IsNullable": false,
+     "DataType": "timestamp",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": "CURRENT_TIMESTAMP",
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "IP_ADDRESS",
+     "IsNullable": false,
+     "DataType": "varchar(255)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "SUCCESS",
+     "IsNullable": false,
+     "DataType": "tinyint(4)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "USERNAME",
+     "IsNullable": false,
+     "DataType": "varchar(255)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
+    }
+   ],
+   "PrimaryKey": {
+    "Campi": [
+     "DATA",
+     "IP_ADDRESS",
+     "SUCCESS"
+    ]
+   },
+   "ForeignKeys": [],
+   "UniqueKeys": [],
+   "Indexes": [],
+   "Triggers": []
+  },
   {
    "Nome": "classi_combinazioni",
    "Campi": [
@@ -1894,7 +1948,7 @@
      "DataType": "time",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "'00:00:00'",
+     "DefaultValue": "00:00:00",
      "SQLAfterAddedColumn": null
     },
     {
@@ -1903,7 +1957,7 @@
      "DataType": "time",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "'00:00:00'",
+     "DefaultValue": "00:00:00",
      "SQLAfterAddedColumn": null
     }
    ],
