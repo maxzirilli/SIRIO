@@ -123,6 +123,7 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
        case HTTP_ERROR_WRONG_USER       : Self.HTTPError = 'Account errato'; break;
        case HTTP_ERROR_MODEL_LOAD       : Self.HTTPError = 'Errore di caricamento del modello'; break;
        case HTTP_ERROR_PARAMETERS       : Self.HTTPError = 'Parametri errati'; break; 
+       case HTTP_ERROR_ACCESS_DENIED    : Self.HTTPError = 'Accesso negato. Sospetto attacco DDoS'; break;
        default                          : Self.HTTPError = 'Errore sconosciuto'; break;
     }
    Self.SubHTTPError = ''; 

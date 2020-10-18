@@ -9,6 +9,7 @@ const HTTP_ERROR_WRONG_PASSWORD    = 5;
 const HTTP_ERROR_WRONG_USER        = 6;
 const HTTP_ERROR_MODEL_LOAD        = 7;
 const HTTP_ERROR_PARAMETERS        = 8;
+const HTTP_ERROR_ACCESS_DENIED     = 9; 
 
 const STATE_LOGGED     = 'L';
 const STATE_NOT_LOGGED = 'N';

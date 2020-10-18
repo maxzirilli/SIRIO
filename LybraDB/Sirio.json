@@ -1894,7 +1894,7 @@
      "DataType": "time",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "00:00:00",
+     "DefaultValue": "'00:00:00'",
      "SQLAfterAddedColumn": null
     },
     {
@@ -1903,7 +1903,7 @@
      "DataType": "time",
      "AutoIncrement": false,
      "Commento": "",
-     "DefaultValue": "00:00:00",
+     "DefaultValue": "'00:00:00'",
      "SQLAfterAddedColumn": null
     }
    ],
