@@ -1,13 +1,13 @@
 {
  "Version": {
   "Major": 1,
-  "Minor": 5,
-  "Release": 3
+  "Minor": 6,
+  "Release": 4
  },
  "Storia": [
   "Versione 1.6.4    20 Ottobre 2020",
   "                  - NEW: Aggiunta tabella case editrici",
-                     - CHG: Modificata store procedure per importazione titoli da catalogo de agostini",
+  "                  - CHG: Modificata store procedure per importazione titoli da catalogo de agostini",
   "Versione 1.5.3    18 Ottobre 2020",
   "                  - NEW: Aggiunta tabella adv_query",
   "Versione 1.4.3    16 Ottobre 2020",
