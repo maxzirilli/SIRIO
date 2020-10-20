@@ -50,7 +50,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
   
   SystemInformation.GetSQL('Accessories',{}, function(Results)
   {
-    ListaProvinceAllTmp = SystemInformation.FindResults(Results,'ProvinceListAll');
+    ListaProvinceAllTmp = SystemInformation.FindResults(Results,'ProvinceListAllOnlyHandled');
     if (ListaProvinceAllTmp != undefined) 
     {
       for(let i = 0; i < ListaProvinceAllTmp.length; i++)

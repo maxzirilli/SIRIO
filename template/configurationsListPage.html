@@ -10,8 +10,89 @@
      </md-select>
    </md-input-container>
   </div>
-  
+
   <div ng-if="ConfigurazioneSelezionata==0">
+    <div>
+      <h2 style="float:left;">COMBINAZIONI CLASSI</h2>
+      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaCombinazione()">NUOVA COMBINAZIONE</md-button>
+    </div>
+    <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
+      <tr>
+        <th></th>
+        <th></th> 
+        <th style="font-weight:bold;">COMBINAZIONE</th>
+      </tr>  
+      <tr ng-repeat="combinazione in ListaCombinazioni | limitTo : GridOptions_5.query.limit : (GridOptions_5.query.page - 1) * GridOptions_5.query.limit" id={{combinazione.Chiave}}>
+        <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA COMBINAZIONE" ng-click="EliminaCombinazione(combinazione)"></td> 
+        <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA COMBINAZIONE" ng-click="ModificaCombinazione(combinazione)"></td>        
+        <td class="off">{{combinazione.Descrizione | uppercase}}</td>
+      </tr>    
+    </table>
+    <md-table-pagination md-limit="GridOptions_5.query.limit" 
+                         md-limit-options="GridOptions_5.limitOptions" 
+                         md-page="GridOptions_5.query.page" 
+                         md-total="{{ListaCombinazioni.length}}" 
+                         md-page-select="GridOptions_5.pageSelect" 
+                         md-boundary-links="GridOptions_5.boundaryLinks" 
+                         md-on-paginate="logPagination"></md-table-pagination>
+  </div>
+
+  <div ng-if="ConfigurazioneSelezionata==1">
+    <div>
+      <h2 style="float:left;">CASE EDITRICI GESTITE</h2>
+      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaCasa()">NUOVA CASA EDITRICE GESTITA</md-button>
+    </div>
+    <table style="width:100%;text-align:center;" md-row-select="GridOptions_5.rowSelection" multiple="{{GridOptions_5.multiSelect}}">  
+      <tr>
+        <th></th>
+        <th></th> 
+        <th style="font-weight:bold;">NOME</th>
+      </tr>  
+      <tr ng-repeat="casa in ListaCase | limitTo : GridOptions_6.query.limit : (GridOptions_6.query.page - 1) * GridOptions_6.query.limit" id={{casa.Chiave}}>
+        <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA CASA EDITRICE GESTITA" ng-click="EliminaCasa(casa)"></td> 
+        <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA CASA EDITRICE GESTITA" ng-click="ModificaCasa(casa)"></td>        
+        <td class="off">{{casa.Descrizione}}</td>
+      </tr>    
+    </table>
+    <md-table-pagination md-limit="GridOptions_6.query.limit" 
+                         md-limit-options="GridOptions_6.limitOptions" 
+                         md-page="GridOptions_6.query.page" 
+                         md-total="{{ListaCase.length}}" 
+                         md-page-select="GridOptions_6.pageSelect" 
+                         md-boundary-links="GridOptions_6.boundaryLinks" 
+                         md-on-paginate="logPagination"></md-table-pagination>
+  </div>
+
+  <div ng-if="ConfigurazioneSelezionata==2">
+    <form name="DittaEditForm" layout="column" style="width:100%" ng-submit="ConfermaDati()">
+      <div>    
+        <h2 style="float:left;">DATI PAGINA43</h2>
+        <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" type="submit">CONFERMA</md-button>
+        <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="AnnullaDati()">ANNULLA</md-button>
+      </div>
+      <br>
+      <div layout="row">
+        <md-input-container style="width:25%;">
+          <label>INDIRIZZO</label><input ng-model="DatiDitta.INDIRIZZO" type="text" name="Indirizzo">
+        </md-input-container>
+        <md-input-container style="width:25%;">
+          <label>TELEFONO</label><input ng-model="DatiDitta.TELEFONO" type="text" name="Telefono">
+        </md-input-container>
+        <md-input-container style="width:25%;">
+          <label>EMAIL</label><input ng-model="DatiDitta.EMAIL" type="email" name="Email">
+        </md-input-container>
+        <md-input-container style="width:25%;">
+          <label>EMAIL PER CONOSCENZA</label><input type="email" ng-model="DatiDitta.EMAIL_ARCHIVIO" type="text" name="EmailArchivio">
+        </md-input-container>
+        <br>          
+        <md-input-container style="width:25%;">
+          <label>SITO WEB</label><input ng-model="DatiDitta.SITO_WEB" type="text" name="SitoWeb">
+        </md-input-container>
+      </div>
+    </form>
+  </div>
+  
+  <div ng-if="ConfigurazioneSelezionata==3">
       <div>
         <h2 style="float:left;">MATERIE</h2>
         <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaMateria()">NUOVA MATERIA</md-button>
@@ -37,7 +118,7 @@
                            md-on-paginate="logPagination"></md-table-pagination>
     </div>
     
-    <div ng-if="ConfigurazioneSelezionata==1">
+    <div ng-if="ConfigurazioneSelezionata==4">
       <div>
         <h2 style="float:left;">TIPOLOGIE ISTITUTI</h2>
         <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaTipologia()">NUOVA TIPOLOGIA</md-button>
@@ -63,7 +144,7 @@
                            md-on-paginate="logPagination"></md-table-pagination>
     </div>
     
-    <div ng-if="ConfigurazioneSelezionata==2">
+    <div ng-if="ConfigurazioneSelezionata==5">
       <div>
         <h2 style="float:left;">TIPOLOGIE ESCLUSE ISTITUTI</h2>
         <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaTipologiaEsclusa()">NUOVA TIPOLOGIA ESCLUSA</md-button>
@@ -89,7 +170,7 @@
                            md-on-paginate="logPagination"></md-table-pagination>
     </div>
     
-    <div ng-if="ConfigurazioneSelezionata==3">
+    <div ng-if="ConfigurazioneSelezionata==6">
       <div>
         <h2 style="float:left;">PROVINCE GESTITE</h2>
         <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaProvincia()">NUOVA PROVINCIA GESTITA</md-button>
@@ -114,61 +195,5 @@
                            md-boundary-links="GridOptions_4.boundaryLinks" 
                            md-on-paginate="logPagination"></md-table-pagination>
     </div>
-
-    <div ng-if="ConfigurazioneSelezionata==4">
-      <div>
-        <h2 style="float:left;">COMBINAZIONI CLASSI</h2>
-        <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaCombinazione()">NUOVA COMBINAZIONE</md-button>
-      </div>
-      <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
-        <tr>
-          <th></th>
-          <th></th> 
-          <th style="font-weight:bold;">COMBINAZIONE</th>
-        </tr>  
-        <tr ng-repeat="combinazione in ListaCombinazioni | limitTo : GridOptions_5.query.limit : (GridOptions_5.query.page - 1) * GridOptions_5.query.limit" id={{combinazione.Chiave}}>
-          <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA COMBINAZIONE" ng-click="EliminaCombinazione(combinazione)"></td> 
-          <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA COMBINAZIONE" ng-click="ModificaCombinazione(combinazione)"></td>        
-          <td class="off">{{combinazione.Descrizione | uppercase}}</td>
-        </tr>    
-      </table>
-      <md-table-pagination md-limit="GridOptions_5.query.limit" 
-                           md-limit-options="GridOptions_5.limitOptions" 
-                           md-page="GridOptions_5.query.page" 
-                           md-total="{{ListaCombinazioni.length}}" 
-                           md-page-select="GridOptions_5.pageSelect" 
-                           md-boundary-links="GridOptions_5.boundaryLinks" 
-                           md-on-paginate="logPagination"></md-table-pagination>
-    </div>
-    
-    <div ng-if="ConfigurazioneSelezionata==5">
-      <form name="DittaEditForm" layout="column" style="width:100%" ng-submit="ConfermaDati()">
-        <div>    
-          <h2 style="float:left;">DATI PAGINA43</h2>
-          <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" type="submit">CONFERMA</md-button>
-          <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="AnnullaDati()">ANNULLA</md-button>
-        </div>
-        <br>
-        <div layout="row">
-          <md-input-container style="width:25%;">
-            <label>INDIRIZZO</label><input ng-model="DatiDitta.INDIRIZZO" type="text" name="Indirizzo">
-          </md-input-container>
-          <md-input-container style="width:25%;">
-            <label>TELEFONO</label><input ng-model="DatiDitta.TELEFONO" type="text" name="Telefono">
-          </md-input-container>
-          <md-input-container style="width:25%;">
-            <label>EMAIL</label><input ng-model="DatiDitta.EMAIL" type="email" name="Email">
-          </md-input-container>
-          <md-input-container style="width:25%;">
-            <label>EMAIL PER CONOSCENZA</label><input type="email" ng-model="DatiDitta.EMAIL_ARCHIVIO" type="text" name="EmailArchivio">
-          </md-input-container>
-          <br>          
-          <md-input-container style="width:25%;">
-            <label>SITO WEB</label><input ng-model="DatiDitta.SITO_WEB" type="text" name="SitoWeb">
-          </md-input-container>
-        </div>
-      </form>
-    </div>
-
 
 </div>

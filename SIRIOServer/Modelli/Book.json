@@ -9,14 +9,14 @@
   "SelectAllTitoliInventario" : [
                                   {
                                     "Name" : "BookListInventoryAll",
-                                    "SQL"  : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL,titoli.POS_MAGAZZINO FROM titoli ORDER BY TITOLO ASC"
+                                    "SQL"  : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL,titoli.POS_MAGAZZINO FROM titoli WHERE EDITORE IN (SELECT DESCRIZIONE FROM case_editrici WHERE DESCRIZIONE=titoli.EDITORE) ORDER BY TITOLO ASC"
                                   }
                                 ],
                           
   "SelectSQLFilter"     : [
                             {
                               "Name" : "BookListFilter",
-                              "SQL"  : "SELECT titoli.CHIAVE,titoli.TITOLO,titoli.CODICE_ISBN FROM titoli"
+                              "SQL"  : "SELECT titoli.CHIAVE,titoli.TITOLO,titoli.CODICE_ISBN FROM titoli WHERE EDITORE IN (SELECT DESCRIZIONE FROM case_editrici WHERE DESCRIZIONE = titoli.EDITORE) ORDER BY TITOLO"
                             }
                           ],  
   

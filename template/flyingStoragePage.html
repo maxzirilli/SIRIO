@@ -3,9 +3,7 @@
     <div>
       <h2 style="float:left;margin-right:50px;">MAGAZZINO VOLANTE</h2>
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoMovimento()">INSERISCI NUOVO MOVIMENTO</md-button> 
-    </div>
-
-    <p ng-if="ListaVolante.length == 0" style="font-weight:bold;font-style:italic;">NESSUN CARICO ESEGUITO</p>
+    </div>    
     
     <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}" ng-if="ListaVolante.length > 0">  
       <tr>
@@ -27,13 +25,20 @@
                          md-total="{{ListaVolante.length}}" 
                          md-page-select="GridOptions.pageSelect" 
                          md-boundary-links="GridOptions.boundaryLinks" 
-                         md-on-paginate="logPagination"></md-table-pagination>
+                         md-on-paginate="logPagination" 
+                         ng-if="ListaVolante.length > 0"></md-table-pagination>
+  <br>
+  <br>
+  <br>
+  <div>
+    <p ng-if="ListaVolante.length == 0" style="text-align:center;font-weight:bold;font-style:italic;">NESSUN CARICO ESEGUITO</p>
+  </div>
   </div>
   <div ng-if="EditingOn">
   <div layout="row">
     <h2>CARICO MAGAZZINO VOLANTE</h2>
     <div style="width:100%;" layout="row" layout-align="end start">
-      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ConfermaMovimento()">CONFERMA</md-button>
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ConfermaMovimento()" ng-disabled="ListaCarico.length==0">CONFERMA</md-button>
       <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="OnAnnullaMovimento()">ANNULLA</md-button>
     </div>
   </div>

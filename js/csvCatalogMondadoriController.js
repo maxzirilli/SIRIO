@@ -45,7 +45,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
                                                       SottotitoloTitolo  : '',                                                      
                                                       DescrizioneMateria : RecordTitolo[3].xSQL(),
                                                       AutoriTitolo       : RecordTitolo[1].xSQL(),
-                                                      EditoreTitolo      : 'MONDADORI (C)',
+                                                      EditoreTitolo      : 'MONDADORI',
                                                       PrezzoTitolo       : RecordTitolo[5],
                                                       VolumeTitolo       : 0                                                      
                                                     }                                                   

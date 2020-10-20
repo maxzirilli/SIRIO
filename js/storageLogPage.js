@@ -57,11 +57,11 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
             
             for(let j = 0;j < ListaTitoli.length;j ++)
             {                
-                    BodySheet['A' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[j].CODICE);
-                    BodySheet['B' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[j].TITOLO);
-                    BodySheet['C' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[j].Q_MGZN);
-                    BodySheet['D' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[j].Q_MGZN_VOL);
-                    BodySheet['E' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[j].POS_MGZN);
+                BodySheet['A' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[j].CODICE);
+                BodySheet['B' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[j].TITOLO);
+                BodySheet['C' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[j].Q_MGZN);
+                BodySheet['D' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[j].Q_MGZN_VOL);
+                BodySheet['E' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[j].POS_MGZN);
             }   
             
             BodySheet["!cols"] = [             

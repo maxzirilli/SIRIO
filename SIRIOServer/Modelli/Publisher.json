@@ -1,0 +1,23 @@
+{ 
+  "SelectSQL"  : [
+                   {
+                     "Name" : "PublisherInfoList",
+                     "SQL"  : "SELECT * FROM case_editrici ORDER BY DESCRIZIONE"
+                   }
+                 ],
+                
+  "EditSQL"   : [   
+                  {
+                    "Name" : "InsertPublisher",
+                    "SQL"  : "INSERT INTO case_editrici (CHIAVE,DESCRIZIONE) VALUES (:NewKey1,#DESCRIZIONE)"
+                  }, 
+                  {
+                    "Name" : "UpdatePublisher",
+                    "SQL"  : "UPDATE case_editrici SET DESCRIZIONE=#DESCRIZIONE WHERE CHIAVE=:CHIAVE"
+                  },
+                  {
+                    "Name" : "DeletePublisher",
+                    "SQL"  : "DELETE FROM case_editrici WHERE CHIAVE=:CHIAVE"
+                  }
+                ]        
+}

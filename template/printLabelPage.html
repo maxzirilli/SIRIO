@@ -1,8 +1,138 @@
 <div ng-controller="printLabelPageController" ng-cloak md-theme="{{ActualTheme}}" style="height:75%">
   <h2>STAMPA ETICHETTE</h2>
-  <div style="float:right;">
+      
+      <div layout="row" style="width:100%;" layout-align="end start">
+        <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ConfermaEtichetteToSend()" ng-if="!SpedizioneImmediata">CONFERMA ETICHETTE DA STAMPARE</md-button>
+        <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ConfermaStampa()" ng-if="AbilitaConfermaStampa">CONFERMA STAMPA ESEGUITA</md-button>
+        <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="AnnullaStampa()">ANNULLA</md-button>
+      </div>
+  
+      <div layout="row" style="margin:0px;">
+        <md-input-container style="float:left;margin-left:20px;">
+          <label>DAL</label><input ng-model="DataRicercaDal" type="date" name="DataRicercaDal" ng-change="RefreshListaSpedizioniAll()">
+        </md-input-container>
+        <md-input-container style="float:left;margin-left:20px;">  
+          <label>AL</label><input ng-model="DataRicercaAl" type="date" name="DataRicercaAl" ng-change="RefreshListaSpedizioniAll()">
+        </md-input-container>
+        <md-input-container><label style="width:100%;margin-left:20px;float:left;">PROVINCIA</label>
+          <md-select ng-model="ProvinciaFiltro" placeholder="Provincia di spedizione" class="mdb-select" ng-change="RefreshListaSpedizioniAll()" style="width:100%;margin-left:20px;float:left;" type="text" name="ProvinciaFiltro">
+            <md-optgroup>
+              <md-option ng-value="-1">QUALSIASI</md-option>  
+              <md-option ng-repeat="provincia in ListaProvinceAll" ng-value="provincia.Chiave">{{provincia.Nome}}</md-option>
+            </md-optgroup>
+          </md-select>
+        </md-input-container>
+        <md-input-container ng-if="IsAdministrator()"><label style="width:100%;margin-left:40px;float:left;">PROMOTORE</label>
+          <md-select ng-model="$parent.PromotoreFiltro" placeholder="Promotore" class="mdb-select" ng-change="RefreshListaSpedizioniAll()" style="width:100%;margin-left:40px;float:left;" type="text" name="PromotoreFiltro">
+            <md-optgroup>
+              <md-option ng-value="-1">QUALSIASI</md-option>  
+              <md-option ng-repeat="promotore in ListaPromotori" ng-value="promotore.Chiave">{{promotore.Nome}}</md-option>
+            </md-optgroup>
+          </md-select>
+        </md-input-container>
+      </div>   
+      <br>
+      <div layout="row" layout-align="start start" style="margin-top:0px;padding-top:0px;">
+        <md-input-container class="containerSelect" style="margin-left:5px;width:30%;padding-top:0px;">
+           <label>ISTITUTO</label>
+           <md-autocomplete
+                       md-input-name="Istituto"
+                       md-autofocus="true"
+                       md-no-cache="true"
+                       md-selected-item-change = "selectedItemChangeIstituto(item)"
+                       md-search-text="searchTextIstituto"
+                       md-items="item in queryIstituto(searchTextIstituto)"
+                       md-item-text="item.Istituto"
+                       md-require-match="true"
+                       md-clear-button="true">
+           <md-item-template>
+             <span md-highlight-text="searchText">{{item.Istituto}}</span>
+           </md-item-template>
+           <md-not-found>
+             NESSUNA CORRISPONDENZA
+           </md-not-found>
+        </md-input-container>
+        <md-input-container class="containerSelect" style="margin-left:5px;width:30%;padding-top:0px;">
+           <label>DOCENTE</label>
+           <md-autocomplete
+                       md-input-name="Docente"
+                       md-autofocus="true"
+                       md-no-cache="true"
+                       md-selected-item-change = "selectedItemChangeDocente(item)"
+                       md-search-text="searchTextDocente"
+                       md-items="item in queryDocente(searchTextDocente)"
+                       md-item-text="item.Nome"
+                       md-require-match="true"
+                       md-clear-button="true">
+           <md-item-template>
+             <span md-highlight-text="searchText">{{item.Nome}}</span>
+           </md-item-template>
+           <md-not-found>
+             NESSUNA CORRISPONDENZA
+           </md-not-found>
+        </md-input-container>
+      </div>
+      <div style="margin-top:0px;padding-top:0px;">
+        <md-button class="md-raised md-accent" style="font-weight:bold;float:left;" ng-click="AggiungiTitoloRicerca()">AGGIUNGI TITOLO PER LA RICERCA</md-button>
+        <md-button class="md-raised md-accent" style="font-weight:bold;float:left;" ng-click="InviaCumulativo()" ng-disabled="!CumulativoPossibile" >SPEDISCI TUTTI I TITOLI SELEZIONATI</md-button> 
+        
+        <md-button ng-click="SelezionaTutto()" style="float:right;"><img src="img/checkAll.png" style="width:30px;height:auto;margin-right:5px;" title="SELEZIONA TUTTO"></md-button>
+        <md-button ng-click="DeselezionaTutto()"style="float:right;"><img src="img/unCheckAll.png" style="width:30px;height:auto;margin-right:5px;" title="DESELEZIONA TUTTO"></md-button>   
+      </div>
+      <br>  
+      <br>
+      <div style="text-align:left;" ng-if="RicercaPerTitolo">
+        <p style="font-weight:bold;">TITOLI IN RICERCA:</p>
+        <ul> 
+          <li ng-repeat="Titolo in ListaTitoliFiltro"><img src="img/deleteCross.png" style="width:20px;height:auto;margin-right:5px;" title="RIMUOVI TITOLO" ng-click="RimuoviTitolo(Titolo)">{{Titolo.Codice}} - {{Titolo.Nome}} - ({{Titolo.Quantita}}) </li>              
+        </ul>
+      </div>
+      <br>
+      <p ng-if="ListaSpedizioni.length == 0" style="font-weight:bold;font-style:italic;text-align:center;">NESSUNA SPEDIZIONE PRESENTE</p>  
+      <div ng-if="ListaSpedizioni.length != 0">
+        <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
+          <tr>
+            <th></th>
+            <th>ISBN</th>
+            <th>TITOLO</th>
+            <th>QUANTITA</th>
+          </tr>
+          <tr ng-repeat="Elemento in ListaSpedizioni | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" > 
+            <td style="font-weight:bold;text-align:left;" ng-if="Elemento.Tipo == 0" colspan="4">SPEDIZIONE DEL {{ConvertiData(Elemento)}} PRESSO {{Elemento.Docente == -1 ? Elemento.Presso : Elemento.DocenteNome}} {{Elemento.NomeIstituto == '' ? '' : '- ISTITUTO: '}}{{Elemento.NomeIstituto}}</td>
+            <td ng-if="Elemento.Tipo == 1"><input style="width:20px;height:20px;" type="checkbox" ng-change="CheckCumulativo()" ng-model="Elemento.Selezionato" style="margin-left:20px;margin-top:20px"></td>
+            <td ng-if="Elemento.Tipo == 1">{{Elemento.Codice}}</td>
+            <td ng-if="Elemento.Tipo == 1">{{Elemento.TitoloNome}}</td>
+            <td ng-if="Elemento.Tipo == 1">{{Elemento.Quantita}}</td>
+          </tr>
+        </table>
+        <md-table-pagination md-limit="GridOptions.query.limit" 
+                          md-limit-options="GridOptions.limitOptions" 
+                          md-page="GridOptions.query.page" 
+                          md-total="{{ListaSpedizioni.length}}" 
+                          md-page-select="GridOptions.pageSelect" 
+                          md-boundary-links="GridOptions.boundaryLinks" 
+                          md-on-paginate="logPagination"></md-table-pagination>
+      </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <!--<div style="float:right;">
     <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="AnnullaStampa()">ANNULLA STAMPA</md-button>
     <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ConfermaStampa()" ng-disabled="NienteDaSpedire">STAMPA ETICHETTE COMPLETATA</md-button>
   </div>
   <iframe style="background:white;" id="repPdf" title="Etichette" height=100% width=100% ></iframe>
-</div>
+</div>-->

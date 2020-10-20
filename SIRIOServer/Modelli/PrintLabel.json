@@ -2,13 +2,19 @@
   "SelectSQL" : [
                   {
                     "Name" : "LabelPrintDeliveryToSend",
-                    "SQL"  : "SELECT spedizioni.PRESSO,spedizioni.DOCENTE,(SELECT utenti.RAGIONE_SOCIALE FROM utenti WHERE CHIAVE = spedizioni.PROMOTORE) AS NOME_PROMOTORE,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS NOME_DOCENTE,(SELECT docenti.TITOLO FROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS TITOLO_DOCENTE,spedizioni.INDIRIZZO,spedizioni.COMUNE,spedizioni.CAP,spedizioni.PROVINCIA,(SELECT province_all.NOME FROM province_all WHERE CHIAVE = spedizioni.PROVINCIA) AS NOME_PROVINCIA,dettaglio_spedizioni.*,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.POS_MAGAZZINO FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS POS_MGZN,(SELECT titoli.CODICE_ISBN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS CODICE,(SELECT titoli.AUTORI FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS AUTORI,(SELECT titoli.EDITORE FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS EDITORE FROM spedizioni,dettaglio_spedizioni WHERE spedizioni.CHIAVE = dettaglio_spedizioni.SPEDIZIONE AND dettaglio_spedizioni.STATO = 'S' ORDER BY spedizioni.CHIAVE"
+                    "SQL"  : "SELECT spedizioni.PRESSO,spedizioni.DOCENTE,(SELECT utenti.RAGIONE_SOCIALE FROM utenti WHERE CHIAVE = spedizioni.PROMOTORE) AS NOME_PROMOTORE,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS NOME_DOCENTE,(SELECT docenti.TITOLO FROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS TITOLO_DOCENTE,spedizioni.INDIRIZZO,spedizioni.COMUNE,spedizioni.CAP,spedizioni.PROVINCIA,(SELECT province_all.NOME FROM province_all WHERE CHIAVE = spedizioni.PROVINCIA) AS NOME_PROVINCIA,dettaglio_spedizioni.*,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.POS_MAGAZZINO FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS POS_MGZN,(SELECT titoli.CODICE_ISBN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS CODICE,(SELECT titoli.AUTORI FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS AUTORI,(SELECT titoli.EDITORE FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS EDITORE FROM spedizioni,dettaglio_spedizioni WHERE spedizioni.CHIAVE = dettaglio_spedizioni.SPEDIZIONE AND dettaglio_spedizioni.STATO = 'S' AND dettaglio_spedizioni.CHIAVE IN ?ChiaviDaSpedire ORDER BY spedizioni.CHIAVE"
                   }
                 ],
   "EditSQL"   : [
                   {
                     "Name" : "DeliveryBookToDelivered",
                     "SQL"  : "UPDATE dettaglio_spedizioni SET STATO = 'C' WHERE CHIAVE=:CHIAVE"
+                  },                
+                  {
+                   
+                    "Name" : "DeliveryBookToDeliveredAll",
+                    "SQL"  : "UUPDATE dettaglio_spedizioni SET STATO = 'C' WHERE CHIAVE IN ?ChiaviDaSpedire" 
+
                   }
                 ]
 }

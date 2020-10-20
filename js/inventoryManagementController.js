@@ -28,6 +28,24 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
     return SystemInformation.UserInformation.Ruolo == RUOLO_AMMINISTRATORE;
   }
 
+  $scope.ResetInventario = function()
+  {
+    if(confirm('Questa operazione eseguirà il reset di tutte le quantità dei titoli nel magazzino e nel magazzino volante. Confermi?'))
+      if(confirm("SEI SICURO DI ESEGUIRE IL RESET DELL'INVENTARIO? L'OPERAZIONE E' IRREVERSIBILE!"))
+      {
+          $ObjQuery = { Operazioni : [] };
+          $ObjQuery.Operazioni.push({
+                                      Query     : 'ResetAllInventory',
+                                      Parametri : {}
+                                    })
+          SystemInformation.PostSQL('Book',$ObjQuery,function(Answer)
+          {
+            alert("I MAGAZZINI SONO STATI STATO RESETTATI CON SUCCESSO")
+            $ObjQuery = {};
+          })
+      }
+  } 
+
   SystemInformation.GetSQL('Book',{},function(Results)
   {
     ListaTitoliAllTmp = SystemInformation.FindResults(Results,'BookListInventoryAll')
@@ -45,13 +63,6 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
     }
     else SystemInformation.ApplyOnError('Modello lista titoli inventario non conforme','')
   },'SelectAllTitoliInventario')
-
-  /*$scope.ModificaInserimento = function(Titolo)
-  {
-    if(!Titolo.ModificaAbilitata)
-       Titolo.ModificaAbilitata = true;
-    else Titolo.ModificaAbilitata = false;
-  }*/
 
   $scope.EliminaInserimento = function(Inserimento)
   {
@@ -108,7 +119,6 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
               }
               else
               {
-                 alert('TITOLO CORRISPONDENTE : ' + TitoloTrovato.NomeTitolo.toUpperCase())
                  $scope.CodiceFocused                 = {Codice : 0, Nome : '', QuantitaMgzn : 0, QuantitaMgznVol : 0, ModificaAbilitata : false};
                  $scope.CodiceFocused.Chiave          = TitoloTrovato.ChiaveTitolo;
                  $scope.CodiceFocused.Codice          = $scope.CodiceBippato;
@@ -165,9 +175,59 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
      SystemInformation.PostSQL('Book',$ObjQuery,function(Answer)
      {
        alert('AGGIORNAMENTO DEL MAGAZZINO COMPLETATO CON SUCCESSO')
+      
+       $scope.ListaCodiciToHandle.sort(function(a,b)
+       {
+         let TitoloA = a.Nome;
+         let TitoloB = b.Nome;
+         return (TitoloA < TitoloB) ? -1 : (TitoloA > TitoloB) ? 1 : 0;
+       });        
+
+       var Data           = new Date();
+       var DataAnno       = Data.getFullYear();
+       var DataMese       = Data.getMonth()+1; 
+       var DataGiorno     = Data.getDate();
+       var DataInventario = DataGiorno.toString() + '/' + DataMese.toString() +  '/' + DataAnno.toString();
+       var WBook = {
+                     SheetNames : [],
+                     Sheets     : {}
+                   };
+                     
+       var SheetName   = 'INVENTARIO (DA CODICE) - ' + DataInventario;
+       var BodySheet   = {};               
+       BodySheet       = {};
+       BodySheet['A1'] = SystemInformation.GetCellaIntestazione('ISBN');
+       BodySheet['B1'] = SystemInformation.GetCellaIntestazione('TITOLO');
+       BodySheet['C1'] = SystemInformation.GetCellaIntestazione('QUANTITA MAGAZZINO');
+       BodySheet['D1'] = SystemInformation.GetCellaIntestazione('QUANTITA MAGAZZINO VOLANTE');
+       
+       for(let i = 0;i < $scope.ListaCodiciToHandle.length;i ++)
+       {                
+           BodySheet['A' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',$scope.ListaCodiciToHandle[i].Codice);
+           BodySheet['B' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',$scope.ListaCodiciToHandle[i].Nome);
+           BodySheet['C' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',$scope.ListaCodiciToHandle[i].QuantitaMgzn.toString());
+           BodySheet['D' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',$scope.ListaCodiciToHandle[i].QuantitaMgznVol.toString());
+       }   
+       
+       BodySheet["!cols"] = [             
+                             {wpx: 300},
+                             {wpx: 300},
+                             {wpx: 300},
+                             {wpx: 300}
+                           ];
+       
+       BodySheet['!ref'] = 'A1:D1' + parseInt($scope.ListaCodiciToHandle.length + 1);
+       
+       WBook.SheetNames.push(SheetName);
+       WBook.Sheets[SheetName] = BodySheet;            
+       
+       var wbout = XLSX.write(WBook, {bookType:'xlsx', bookSST:true, type: 'binary'});
+       saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}),"InventarioDaCodiceXLS" + DataInventario + ".xlsx");            
+       
        $scope.ListaCodiciToHandle = [];
        $scope.CodiceBippato       = '';
        $scope.CodiceFocused       = undefined;
+       //if(confirm('Il file XLS è stato salvato correttamente?'))
        $state.go("startPage")
      })
   }

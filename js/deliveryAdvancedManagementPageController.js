@@ -46,6 +46,21 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
                                            },
                          limitOptions    : [10, 20, 30]
                        };
+$scope.GridOptions_2 = {
+                        rowSelection    : false,
+                        multiSelect     : true,
+                        autoSelect      : true,
+                        decapitate      : false,
+                        largeEditDialog : false,
+                        boundaryLinks   : false,
+                        limitSelect     : true,
+                        pageSelect      : true,
+                        query           : {
+                                            limit: 10,
+                                            page: 1
+                                          },
+                        limitOptions    : [10, 20, 30]
+                      };
   
   $scope.ConvertiData = function (Dati)
   {
@@ -243,11 +258,14 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
   {
     var $ObjQuery = {Operazioni:[]};
     var ParametriSpedizione = '';
+    SystemInformation.DataBetweenController.ListaChiaviFromAdvanced = [];
     for(let i = 0;i < $scope.ListaSpedizioni.length;i ++)
     {
         if($scope.ListaSpedizioni[i].Tipo == 1 && $scope.ListaSpedizioni[i].Selezionato)
-           ParametriSpedizione += ParametriSpedizione + $scope.ListaSpedizioni[i].ChiaveDettaglio + ',';
-          
+        {
+          SystemInformation.DataBetweenController.ListaChiaviFromAdvanced.push($scope.ListaSpedizioni[i].ChiaveDettaglio)
+          ParametriSpedizione += ParametriSpedizione + $scope.ListaSpedizioni[i].ChiaveDettaglio + ',';
+        }      
     }
     ParametriSpedizione = ParametriSpedizione.substring(0, ParametriSpedizione.length - 1) 
     $ObjQuery.Operazioni.push({
@@ -256,7 +274,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
                               }); 
     SystemInformation.PostSQL('Delivery',$ObjQuery,function(Answer)
     {
-      $state.go('deliveryListPage');
+      $state.go('printLabelPage');
     });
   }  
   
@@ -317,7 +335,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
                                              DocenteNome      : ListaSpedizioniTmp[i].NOME_DOCENTE == null ? 'N.D.' : ListaSpedizioniTmp[i].NOME_DOCENTE,
                                              Provincia        : ListaSpedizioniTmp[i].PROVINCIA,
                                              Promotore        : ListaSpedizioniTmp[i].PROMOTORE,
-                                             Istituto         : ListaSpedizioniTmp[i].ISTITUTO
+                                             Istituto         : ListaSpedizioniTmp[i].ISTITUTO,
+                                             NomeIstituto     : ListaSpedizioniTmp[i].NOME_ISTITUTO == null ? '' : ListaSpedizioniTmp[i].NOME_ISTITUTO
                                            })
             }
             $scope.ListaSpedizioni.push({ 
@@ -374,7 +393,9 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
                                              DocenteNome      : ListaSpedizioniTmp[i].NOME_DOCENTE == null ? 'N.D.' : ListaSpedizioniTmp[i].NOME_DOCENTE,
                                              Provincia        : ListaSpedizioniTmp[i].PROVINCIA,
                                              Promotore        : ListaSpedizioniTmp[i].PROMOTORE,
-                                             Istituto         : ListaSpedizioniTmp[i].ISTITUTO
+                                             Istituto         : ListaSpedizioniTmp[i].ISTITUTO,
+                                             NomeIstituto     : ListaSpedizioniTmp[i].NOME_ISTITUTO == null ? '' : ListaSpedizioniTmp[i].NOME_ISTITUTO
+
                                            })
             }
             $scope.ListaSpedizioni.push({ 

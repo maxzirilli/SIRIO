@@ -33,21 +33,21 @@
   "SelectTitoliSQL" : [
                         {
                           "Name" : "BookList",
-                          "SQL"  : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL,CALCOLA_DISPONIBILITA_ALL(titoli.CHIAVE) AS QUANTITA_DISP,titoli.POS_MAGAZZINO FROM titoli ORDER BY TITOLO ASC"
+                          "SQL"  : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL,CALCOLA_DISPONIBILITA_ALL(titoli.CHIAVE) AS QUANTITA_DISP,titoli.POS_MAGAZZINO FROM titoli WHERE EDITORE IN (SELECT DESCRIZIONE FROM case_editrici WHERE DESCRIZIONE=titoli.EDITORE) ORDER BY TITOLO ASC"
                         }
                       ],
 
   "SelectTitoliInventarioSQL" : [
                                   {
                                     "Name" : "BookListInventory",
-                                    "SQL"  : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL,titoli.POS_MAGAZZINO FROM titoli WHERE QUANTITA_MGZN <> 0 OR QUANTITA_MGZN_VOL <> 0 ORDER BY TITOLO ASC"
+                                    "SQL"  : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL,titoli.POS_MAGAZZINO FROM titoli WHERE QUANTITA_MGZN <> 0 OR QUANTITA_MGZN_VOL <> 0 AND EDITORE IN (SELECT DESCRIZIONE FROM case_editrici WHERE DESCRIZIONE=titoli.EDITORE) BY TITOLO ASC"
                                   }
                                 ],
                       
   "SelectTitoliSQLAdv" : [
                            {
                              "Name" : "BookListAdv",
-                             "SQL"  : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,CALCOLA_DISPONIBILITA_ALL(titoli.CHIAVE) AS QUANTITA_MGZN FROM titoli ORDER BY TITOLO ASC"
+                             "SQL"  : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,CALCOLA_DISPONIBILITA_ALL(titoli.CHIAVE) AS QUANTITA_MGZN FROM titoli WHERE EDITORE IN (SELECT DESCRIZIONE FROM case_editrici WHERE DESCRIZIONE=titoli.EDITORE) ORDER BY TITOLO ASC"
                            }
                          ],
   

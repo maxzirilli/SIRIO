@@ -55,25 +55,7 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
                                               page: 1
                                             },
                           limitOptions    : [10, 20, 30]
-                        };
-
-  $scope.ResetInventario = function()
-  {
-    if(confirm('Questa operazione eseguirà il reset di tutte le quantità dei titoli nel magazzino e nel magazzino volante. Confermi?'))
-      if(confirm("SEI SICURO DI ESEGUIRE IL RESET DELL'INVENTARIO? L'OPERAZIONE E' IRREVERSIBILE!"))
-      {
-          $ObjQuery = { Operazioni : [] };
-          $ObjQuery.Operazioni.push({
-                                      Query     : 'ResetAllInventory',
-                                      Parametri : {}
-                                    })
-          SystemInformation.PostSQL('Book',$ObjQuery,function(Answer)
-          {
-            alert("I MAGAZZINI SONO STATI STATO RESETTATI CON SUCCESSO")
-            $ObjQuery = {};
-          })
-      }
-  }                        
+                        };                       
 
   SystemInformation.GetSQL('Subject',{}, function(Results)
   {

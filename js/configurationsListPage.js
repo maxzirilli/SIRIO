@@ -1,6 +1,6 @@
 SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformation','$state','$rootScope', function($scope,SystemInformation,$state,$rootScope)
 { 
-  $scope.ListaConfigurazioni        = ['Materie','Tipologie','Tipologie Escluse','Province','Combinazioni','Dati Pagina43'];
+  $scope.ListaConfigurazioni        = ['COMBINAZIONI CLASSI','CASE EDITRICI GESTITE','DATI PAGINA 43','MATERIE','TIPOLOGIE GESTITE','TIPOLOGIE ESCLUSE','PROVINCE GESTITE'];
   $scope.ConfigurazioneSelezionata  = 0;
   
   $scope.ListaMaterie               = [];
@@ -22,6 +22,10 @@ SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformat
   $scope.ListaCombinazioni          = [];
   $scope.CombinazioneInEditing      = {};
   $scope.NuovaCombinazione          = false;
+
+  $scope.ListaCase                  = [];
+  $scope.CasaInEditing              = {};
+  $scope.NuovaCasa                  = false;
   
   ScopeHeaderController.CheckButtons(); 
   
@@ -103,7 +107,23 @@ SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformat
                                               page: 1
                                             },
                           limitOptions    : [10, 20, 30]
-                        }; 
+                        };
+                        
+$scope.GridOptions_6 = {
+                          rowSelection    : false,
+                          multiSelect     : true,
+                          autoSelect      : true,
+                          decapitate      : false,
+                          largeEditDialog : false,
+                          boundaryLinks   : false,
+                          limitSelect     : true,
+                          pageSelect      : true,
+                          query           : {
+                                              limit: 10,
+                                              page: 1
+                                            },
+                          limitOptions    : [10, 20, 30]
+                        };
                            
   $scope.RefreshListaMaterie = function ()
   {
@@ -192,6 +212,24 @@ SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformat
          $scope.ListaCombinazioni = CombinazioniInfoList
       } 
       else SystemInformation.ApplyOnError('Modello materie non conforme','');   
+    });
+  }
+
+  $scope.RefreshListaCase = function ()
+  {
+    SystemInformation.GetSQL('Publisher', {}, function(Results)  
+    {
+      CaseInfoList = SystemInformation.FindResults(Results,'PublisherInfoList');
+      if(CaseInfoList != undefined)
+      { 
+         for(let i = 0;i < CaseInfoList.length;i ++)
+         CaseInfoList[i] = {
+                             Chiave      : CaseInfoList[i].CHIAVE,
+                             Descrizione : CaseInfoList[i].DESCRIZIONE
+                           }
+         $scope.ListaCase = CaseInfoList
+      } 
+      else SystemInformation.ApplyOnError('Modello case editrici non conforme','');   
     });
   }
   
@@ -642,6 +680,88 @@ SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformat
       });  
     }
   }
+
+  //CASE EDITRICI  
+ 
+  $scope.ModificaCasa = function (Casa)
+  {
+    var CasaInEditing = prompt ("Modifica combinazione:",Casa.Descrizione);
+    if (CasaInEditing === null) $scope.RefreshListaCase()
+    else 
+    {   
+      var ParamCasa = {
+                        CHIAVE      : Casa.Chiave,
+                        DESCRIZIONE : Casa.toUpperCase()
+                      }
+      $scope.ConfermaCasa(ParamCasa);
+    }    
+  }
+  
+  $scope.NuovaCasa = function ()
+  { 
+    var CasaInEditing = prompt ("Nuova casa editrice:","");
+    if (CasaInEditing === null) $scope.RefreshListaCase()
+    else 
+    {       
+      var ParamCasa = {
+                        CHIAVE      : -1,
+                        DESCRIZIONE : CasaInEditing.toUpperCase()
+                      }
+      $scope.ConfermaCasa(ParamCasa);
+    }
+  }
+  
+  $scope.ConfermaCasa = function (param)
+  { 
+    CasaExist = $scope.ListaCase.find(function(ACasa){return (ACasa.Descrizione == param.DESCRIZIONE);});
+    if(CasaExist)
+       alert('Casa editrice già esistente!')
+    else
+    {
+       var $ObjQuery         = { Operazioni : [] };     
+       var NuovaCasa = (param.CHIAVE == -1);
+       if(NuovaCasa)     
+       {           
+         $ObjQuery.Operazioni.push({
+                                     Query     : 'InsertPublisher',
+                                     Parametri : param
+                                   }); 
+       }
+       else
+       {
+         $ObjQuery.Operazioni.push({
+                                     Query     : 'UpdatePublisher',
+                                     Parametri : param
+                                   });
+       };
+    
+       SystemInformation.PostSQL('Publisher',$ObjQuery,function(Answer)
+       {
+         if(param.CHIAVE == -1)
+            param.CHIAVE = Answer.NewKey1;
+         $scope.RefreshListaCase();
+       });
+    }    
+  }
+  
+  $scope.EliminaCasa = function(Casa)
+  {
+    if(confirm('Eliminare la casa editrice: ' + Casa.Descrizione + ' ?'))
+    {
+      var $ObjQuery = { Operazioni : [] };
+      var ParamCasa = { CHIAVE : Casa.Chiave };
+       
+      $ObjQuery.Operazioni.push({
+                                  Query     : 'DeletePublisher',
+                                  Parametri : ParamCasa
+                                });
+                                                                
+      SystemInformation.PostSQL('Publisher',$ObjQuery,function(Answer)
+      {
+        $scope.RefreshListaCase();
+      });  
+    }
+  }
   
   //DATI DITTA
   
@@ -671,11 +791,12 @@ SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformat
     $state.go('startPage');
   }
   
-  $scope.GetDatiDitta();  
-  $scope.RefreshListaProvince();
-  $scope.RefreshListaTipologieEscluse();
-  $scope.RefreshListaTipologie();  
-  $scope.RefreshListaMaterie();
   $scope.RefreshListaCombinazioni();
+  $scope.RefreshListaCase();
+  $scope.GetDatiDitta();
+  $scope.RefreshListaMaterie();
+  $scope.RefreshListaTipologie();
+  $scope.RefreshListaTipologieEscluse();
+  $scope.RefreshListaProvince();
 
 }]);
