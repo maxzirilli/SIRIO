@@ -4,6 +4,7 @@
       <h2>DOCENTI</h2>
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoDocente()">NUOVO DOCENTE</md-button>
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaSpedizioneMultipla(NomeFiltro)">SPEDIZIONE MULTIPLA</md-button>
+      <md-button ng-click="ResetFiltri()" title="RESET FILTRI" ng-if="IsAdministrator()" style="color:red;font-weight:bold;font-size:30;float:right;margin-bottom:10px;"><img src="img/resetGeneric.png" style="width:40px;height:auto;margin-right:10px"></md-button>
     </div>
     
     <div layout="row" style="padding-bottom:0px;">
@@ -47,7 +48,6 @@
                      md-input-name="Titolo"
                      md-autofocus="true"
                      md-no-cache="true"
-                     md-selected-item="TitoloVisualizzato"
                      md-selected-item-change = "selectedItemChangeTitolo(item)"
                      md-search-text="searchTextTit"
                      md-items="item in queryTitolo(searchTextTit)"
@@ -123,7 +123,7 @@
            <div layout="row">
              <h2>DOCENTE</h2>
              <div layout="row" style="width:100%;" layout-align="end start">
-               <md-button class="md-raised md-accent" style="font-weight:bold;" type="submit" ng-disabled="docenteEditForm.$invalid">CONFERMA</md-button>
+               <md-button class="md-raised md-accent" style="font-weight:bold;" type="submit">CONFERMA</md-button> <!--ng-disabled="docenteEditForm.$invalid"-->
                <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="OnAnnullaDocenteClicked()">ANNULLA</md-button>
              </div>
            </div>
@@ -133,12 +133,30 @@
                        <md-input-container style="width:10%;">
                          <label>TITOLO</label><input ng-model="DocenteInEditing.Titolo" type="text" name="Titolo">
                        </md-input-container>        
-                       <md-input-container style="width:20%;">
-                         <label>COGNOME NOME</label><input ng-model="DocenteInEditing.RagioneSociale" type="text" name="RagioneSociale" required> 
+                       <md-input-container style="width:20%;" ng-show="DocenteInEditing.Chiave != -1 || (IstitutoForNewDocente == -1 && DocenteInEditing.Chiave == -1)">
+                         <label>COGNOME NOME</label><input ng-model="DocenteInEditing.RagioneSociale" type="text" name="RagioneSociale" > <!--required
                          <div ng-messages="docenteEditForm.RagioneSociale.$error" multiple md-auto-hide="true">
                            <div ng-message="required">Inserire la ragione sociale del docente</div>
-                         </div>
+                         </div>-->
                        </md-input-container>
+
+                       <md-input-container class="containerSelect" style="margin-left:5px;width:30%;padding-top:0px;" ng-if="DocenteInEditing.Chiave == -1 && IstitutoForNewDocente != -1">
+                        <label>DOCENTE</label>
+                        <md-autocomplete
+                                    md-input-name="Docente"
+                                    md-autofocus="true"
+                                    md-no-cache="true"
+                                    md-selected-item-change = "selectedItemChangeDoc(item)"
+                                    md-search-text="searchTextDoc"
+                                    md-items="item in queryDoc(searchTextDoc)"
+                                    md-item-text="item.NomeDoc"
+                                    md-require-match="true"
+                                    md-clear-button="true">
+                        <md-item-template>
+                          <span md-highlight-text="searchText">{{item.NomeDoc}}</span>
+                        </md-item-template>
+                     </md-input-container>
+
                      </div>
                                  
                      <div layout="row">

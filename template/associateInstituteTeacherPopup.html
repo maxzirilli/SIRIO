@@ -7,12 +7,12 @@
     </md-toolbar>
 
     <md-dialog-content>
-      <div class="md-dialog-content">
+      <div class="md-dialog-content" style="width:500px;">
         <h2>Seleziona istituto</h2>
-        <md-input-container class="containerSelect"><label>Filtra per nome...</label>
+        <md-input-container class="containerSelect" style="width:400px"><label>Filtra per nome...</label>
           <input ng-model="NomeFiltro" type="search">
         </md-input-container>
-        <md-input-container class="containerSelect"><label>ISTITUTO</label>
+        <md-input-container class="containerSelect" style="width:400px"><label style="width:400px">ISTITUTO</label>
           <md-select ng-model="IstitutoDaAssociare" class="mdb-select" type="text" name="istitutoDaAssociare">
             <md-option ng-repeat="istituto in ListaIstitutiPopup | IstitutoByNomeFiltro: NomeFiltro" ng-value="{{istituto.Chiave}}">{{istituto.Istituto}}</md-option>
           </md-select>
