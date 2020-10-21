@@ -60,13 +60,13 @@
           <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA TITOLO" ng-click="EliminaTitolo(Titolo)"></td> 
           <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA TITOLO" ng-click="ModificaTitolo(Titolo)"></td>        
           <td><img src="img/printPDF.png" style="width:30px;height:auto;" title="STAMPA ADOZIONI" ng-click="StampaAdozioni(Titolo)"></td>                  
-          <td class="off">{{Titolo.Codice}}</td>  
-          <td class="off">{{Titolo.Titolo | uppercase}}</td>  
-          <td class="off">{{Titolo.NomeMateria | uppercase}}</td>
-          <td class="off">{{Titolo.Autori | uppercase}} </td> 
-          <td class="off">{{Titolo.Pos_Magazzino | uppercase }}</td> 
-          <td class="off">{{Titolo.Q_Magazzino}}</td>
-          <td class="off">{{Titolo.Q_MagazzinoVolante}}</td>        
+          <td>{{Titolo.Codice}}</td>  
+          <td>{{Titolo.Titolo | uppercase}}</td>  
+          <td>{{Titolo.NomeMateria | uppercase}}</td>
+          <td>{{Titolo.Autori | uppercase}} </td> 
+          <td>{{Titolo.Pos_Magazzino | uppercase }}</td> 
+          <td>{{Titolo.Q_Magazzino}}</td>
+          <td>{{Titolo.Q_MagazzinoVolante}}</td>        
         </tr>    
       </table>
       <md-table-pagination  md-limit="GridOptions.query.limit" 
@@ -185,7 +185,7 @@
                  <tr ng-repeat="Adozione in GetAdozioniSelected(IstitutoVisualizzato) | limitTo : GridOptions2.query.limit : (GridOptions2.query.page - 1) * GridOptions2.query.limit" id={{Adozione.CHIAVE}}> 
                    <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA ADOZIONE" ng-click="EliminaAdozione(Adozione)"></td> 
                    <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA ADOZIONE" ng-click="ModificaAdozione(Adozione)"></td>        
-                   <td class="off">{{Adozione.ANNO}}{{Adozione.SEZIONE}} - {{Adozione.COMBINAZIONE}}</td>                         
+                   <td>{{Adozione.ANNO}}{{Adozione.SEZIONE}} - {{Adozione.COMBINAZIONE}}</td>                         
                  </tr>    
                </table>
                <md-table-pagination md-limit="GridOptions2.query.limit" 

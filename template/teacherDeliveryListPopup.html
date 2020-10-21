@@ -2,7 +2,7 @@
   <form ng-cloak name="PopupForm">
     <md-toolbar>
       <div class="md-toolbar-tools">
-        <h2 style="text-weight:bold;color:white;">SPEDIZIONI DOCENTE</h2>
+        <h2 style="font-weight:bold;color:white;">SPEDIZIONI DOCENTE</h2>
       </div>
     </md-toolbar>
 
@@ -20,8 +20,8 @@
           <tr ng-repeat="Spedizione in ListaSpedizioniDoc | limitTo : GridOptions.query.limit : (GridOptions3.query.page - 1) * GridOptions3.query.limit" id={{Spedizione.CHIAVE}}>
             <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA SPEDIZIONE" ng-click="EliminaSpedizione(Spedizione)"></td> 
             <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA SPEDIZIONE" ng-click="ModificaSpedizione(Spedizione.CHIAVE)"></td>                       
-            <td class="off">{{Spedizione.DATA}}</td>
-            <td style="text-align:left;" class="off" ng-bind-html="GetTitoliSpedizione(Spedizione)"></td>
+            <td>{{Spedizione.DATA}}</td>
+            <td style="text-align:left;" ng-bind-html="GetTitoliSpedizione(Spedizione)"></td>
           </tr>    
           </table>
           <md-table-pagination md-limit="GridOptions3.query.limit" 

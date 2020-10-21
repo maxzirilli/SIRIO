@@ -410,27 +410,27 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
       {
         // Carica dati istituto 
         $scope.IstitutoInEditing.Chiave                = IstitutoDettaglio[0].CHIAVE;
-        $scope.IstitutoInEditing.Codice                = IstitutoDettaglio[0].CODICE      == undefined ? '' : IstitutoDettaglio[0].CODICE;
-        $scope.IstitutoInEditing.Nome                  = IstitutoDettaglio[0].NOME        == undefined ? '' : IstitutoDettaglio[0].NOME;
-        $scope.IstitutoInEditing.Tipologia             = IstitutoDettaglio[0].TIPOLOGIA   == undefined ? -1 : IstitutoDettaglio[0].TIPOLOGIA;
-        $scope.IstitutoInEditing.Indirizzo             = IstitutoDettaglio[0].CODICE      == undefined ? '' : IstitutoDettaglio[0].INDIRIZZO;
-        $scope.IstitutoInEditing.Comune                = IstitutoDettaglio[0].COMUNE      == undefined ? '' : IstitutoDettaglio[0].COMUNE;
-        $scope.IstitutoInEditing.Provincia             = IstitutoDettaglio[0].PROVINCIA   == undefined ? -1 : IstitutoDettaglio[0].PROVINCIA;
-        $scope.IstitutoInEditing.Cap                   = IstitutoDettaglio[0].CAP         == undefined ? '' : IstitutoDettaglio[0].CAP;
-        $scope.IstitutoInEditing.Email                 = IstitutoDettaglio[0].EMAIL       == undefined ? '' : IstitutoDettaglio[0].EMAIL;
-        $scope.IstitutoInEditing.Pec                   = IstitutoDettaglio[0].PEC         == undefined ? '' : IstitutoDettaglio[0].PEC;
-        $scope.IstitutoInEditing.SitoWeb               = IstitutoDettaglio[0].SITO_WEB    == undefined ? '' : IstitutoDettaglio[0].SITO_WEB;
-        $scope.IstitutoInEditing.SedeSuccursale        = IstitutoDettaglio[0].SEDE        == undefined ? 1  : IstitutoDettaglio[0].SEDE;
-        $scope.IstitutoInEditing.Referente_1           = IstitutoDettaglio[0].REFERENTE_1 == undefined ? '' : IstitutoDettaglio[0].REFERENTE_1;
-        $scope.IstitutoInEditing.NumeroTelefono_1      = IstitutoDettaglio[0].TELEFONO_1  == undefined ? '' : IstitutoDettaglio[0].TELEFONO_1;
-        $scope.IstitutoInEditing.Referente_2           = IstitutoDettaglio[0].REFERENTE_2 == undefined ? '' : IstitutoDettaglio[0].REFERENTE_2;
-        $scope.IstitutoInEditing.NumeroTelefono_2      = IstitutoDettaglio[0].TELEFONO_2  == undefined ? '' : IstitutoDettaglio[0].TELEFONO_2;
-        $scope.IstitutoInEditing.Referente_3           = IstitutoDettaglio[0].REFERENTE_3 == undefined ? '' : IstitutoDettaglio[0].REFERENTE_3;
-        $scope.IstitutoInEditing.NumeroTelefono_3      = IstitutoDettaglio[0].TELEFONO_3  == undefined ? '' : IstitutoDettaglio[0].TELEFONO_3;
-        $scope.IstitutoInEditing.PromotoreAssegnato    = IstitutoDettaglio[0].PROMOTORE   == undefined ? -1 : IstitutoDettaglio[0].PROMOTORE;
-        $scope.IstitutoInEditing.Preside               = IstitutoDettaglio[0].PRESIDE     == undefined ? '' : IstitutoDettaglio[0].PRESIDE;
-        $scope.IstitutoInEditing.Vicepreside           = IstitutoDettaglio[0].VICEPRESIDE == undefined ? '' : IstitutoDettaglio[0].VICEPRESIDE;
-        $scope.IstitutoInEditing.DirAmmnstr            = IstitutoDettaglio[0].DIR_AMMNSTR == undefined ? '' : IstitutoDettaglio[0].DIR_AMMNSTR;
+        $scope.IstitutoInEditing.Codice                = IstitutoDettaglio[0].CODICE      == null ? '' : IstitutoDettaglio[0].CODICE;
+        $scope.IstitutoInEditing.Nome                  = IstitutoDettaglio[0].NOME        == null ? '' : IstitutoDettaglio[0].NOME;
+        $scope.IstitutoInEditing.Tipologia             = IstitutoDettaglio[0].TIPOLOGIA   == null ? -1 : IstitutoDettaglio[0].TIPOLOGIA;
+        $scope.IstitutoInEditing.Indirizzo             = IstitutoDettaglio[0].CODICE      == null ? '' : IstitutoDettaglio[0].INDIRIZZO;
+        $scope.IstitutoInEditing.Comune                = IstitutoDettaglio[0].COMUNE      == null ? '' : IstitutoDettaglio[0].COMUNE;
+        $scope.IstitutoInEditing.Provincia             = IstitutoDettaglio[0].PROVINCIA   == null ? -1 : IstitutoDettaglio[0].PROVINCIA;
+        $scope.IstitutoInEditing.Cap                   = IstitutoDettaglio[0].CAP         == null ? '' : IstitutoDettaglio[0].CAP;
+        $scope.IstitutoInEditing.Email                 = IstitutoDettaglio[0].EMAIL       == null ? '' : IstitutoDettaglio[0].EMAIL;
+        $scope.IstitutoInEditing.Pec                   = IstitutoDettaglio[0].PEC         == null ? '' : IstitutoDettaglio[0].PEC;
+        $scope.IstitutoInEditing.SitoWeb               = IstitutoDettaglio[0].SITO_WEB    == null ? '' : IstitutoDettaglio[0].SITO_WEB;
+        $scope.IstitutoInEditing.SedeSuccursale        = IstitutoDettaglio[0].SEDE        == null ? 1  : IstitutoDettaglio[0].SEDE;
+        $scope.IstitutoInEditing.Referente_1           = IstitutoDettaglio[0].REFERENTE_1 == null ? '' : IstitutoDettaglio[0].REFERENTE_1;
+        $scope.IstitutoInEditing.NumeroTelefono_1      = IstitutoDettaglio[0].TELEFONO_1  == null ? '' : IstitutoDettaglio[0].TELEFONO_1;
+        $scope.IstitutoInEditing.Referente_2           = IstitutoDettaglio[0].REFERENTE_2 == null ? '' : IstitutoDettaglio[0].REFERENTE_2;
+        $scope.IstitutoInEditing.NumeroTelefono_2      = IstitutoDettaglio[0].TELEFONO_2  == null ? '' : IstitutoDettaglio[0].TELEFONO_2;
+        $scope.IstitutoInEditing.Referente_3           = IstitutoDettaglio[0].REFERENTE_3 == null ? '' : IstitutoDettaglio[0].REFERENTE_3;
+        $scope.IstitutoInEditing.NumeroTelefono_3      = IstitutoDettaglio[0].TELEFONO_3  == null ? '' : IstitutoDettaglio[0].TELEFONO_3;
+        $scope.IstitutoInEditing.PromotoreAssegnato    = IstitutoDettaglio[0].PROMOTORE   == null ? -1 : IstitutoDettaglio[0].PROMOTORE;
+        $scope.IstitutoInEditing.Preside               = IstitutoDettaglio[0].PRESIDE     == null ? '' : IstitutoDettaglio[0].PRESIDE;
+        $scope.IstitutoInEditing.Vicepreside           = IstitutoDettaglio[0].VICEPRESIDE == null ? '' : IstitutoDettaglio[0].VICEPRESIDE;
+        $scope.IstitutoInEditing.DirAmmnstr            = IstitutoDettaglio[0].DIR_AMMNSTR == null ? '' : IstitutoDettaglio[0].DIR_AMMNSTR;
         $scope.IstitutoInEditing.ArrayClassiGlobale    = [];
         $scope.IstitutoInEditing.ListaAdozioniIstituto = [];
         $scope.SezioneMax                              = 10;
@@ -546,27 +546,27 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
      var $ObjQuery     = { Operazioni : [] };          
      var ParamIstituto = {
                            CHIAVE      : $scope.IstitutoInEditing.Chiave,
-                           CODICE      : $scope.IstitutoInEditing.Codice,
-                           NOME        : $scope.IstitutoInEditing.Nome.xSQL(),
+                           CODICE      : $scope.IstitutoInEditing.Codice == '' ? null : $scope.IstitutoInEditing.Codice.xSQL(),
+                           NOME        : $scope.IstitutoInEditing.Nome == '' ? null : $scope.IstitutoInEditing.Nome.xSQL(),
                            INDIRIZZO   : $scope.IstitutoInEditing.Indirizzo.xSQL(),
                            TIPOLOGIA   : $scope.IstitutoInEditing.Tipologia == -1 ? null : $scope.IstitutoInEditing.Tipologia,
                            COMUNE      : $scope.IstitutoInEditing.Comune.xSQL(),
                            PROVINCIA   : $scope.IstitutoInEditing.Provincia == -1 ? null : $scope.IstitutoInEditing.Provincia,
-                           CAP         : $scope.IstitutoInEditing.Cap.xSQL(),
-                           EMAIL       : $scope.IstitutoInEditing.Email.xSQL(),
-                           PEC         : $scope.IstitutoInEditing.Pec.xSQL(),
-                           SITO_WEB    : $scope.IstitutoInEditing.SitoWeb.xSQL(),
-                           SEDE        : $scope.IstitutoInEditing.SedeSuccursale,
-                           REFERENTE_1 : $scope.IstitutoInEditing.Referente_1.xSQL(),
-                           TELEFONO_1  : $scope.IstitutoInEditing.NumeroTelefono_1.xSQL(),
-                           REFERENTE_2 : $scope.IstitutoInEditing.Referente_2.xSQL(),
-                           TELEFONO_2  : $scope.IstitutoInEditing.NumeroTelefono_2.xSQL(),
-                           REFERENTE_3 : $scope.IstitutoInEditing.Referente_3.xSQL(),
-                           TELEFONO_3  : $scope.IstitutoInEditing.NumeroTelefono_3.xSQL(),
+                           CAP         : $scope.IstitutoInEditing.Cap == '' ? null : $scope.IstitutoInEditing.Cap.xSQL(),
+                           EMAIL       : $scope.IstitutoInEditing.Email == '' ? null : $scope.IstitutoInEditing.Email.xSQL(),
+                           PEC         : $scope.IstitutoInEditing.Pec == '' ? null : $scope.IstitutoInEditing.Pec.xSQL(),
+                           SITO_WEB    : $scope.IstitutoInEditing.SitoWeb == '' ? null : $scope.IstitutoInEditing.SitoWeb.xSQL(),
+                           SEDE        : $scope.IstitutoInEditing.SedeSuccursale == null ? 1 : $scope.IstitutoInEditing.SedeSuccursale,
+                           REFERENTE_1 : $scope.IstitutoInEditing.Referente_1 == '' ? null : $scope.IstitutoInEditing.Referente_1.xSQL(),
+                           TELEFONO_1  : $scope.IstitutoInEditing.NumeroTelefono_1 == '' ? null : $scope.IstitutoInEditing.NumeroTelefono_1.xSQL(),
+                           REFERENTE_2 : $scope.IstitutoInEditing.Referente_2 == '' ? null : $scope.IstitutoInEditing.Referente_2.xSQL(),
+                           TELEFONO_2  : $scope.IstitutoInEditing.NumeroTelefono_2 == '' ? null : $scope.IstitutoInEditing.NumeroTelefono_2.xSQL(),
+                           REFERENTE_3 : $scope.IstitutoInEditing.Referente_3 == '' ? null : $scope.IstitutoInEditing.Referente_3.xSQL(),
+                           TELEFONO_3  : $scope.IstitutoInEditing.NumeroTelefono_3 == '' ? null : $scope.IstitutoInEditing.NumeroTelefono_3.xSQL(),
                            PROMOTORE   : $scope.IstitutoInEditing.PromotoreAssegnato == -1 ? null : $scope.IstitutoInEditing.PromotoreAssegnato,
-                           PRESIDE     : $scope.IstitutoInEditing.Preside.xSQL(),
-                           VICEPRESIDE : $scope.IstitutoInEditing.Vicepreside.xSQL(),
-                           DIR_AMMNSTR : $scope.IstitutoInEditing.DirAmmnstr.xSQL()                         
+                           PRESIDE     : $scope.IstitutoInEditing.Preside == '' ? null : $scope.IstitutoInEditing.Preside.xSQL(),
+                           VICEPRESIDE : $scope.IstitutoInEditing.Vicepreside == '' ? null : $scope.IstitutoInEditing.Vicepreside.xSQL(),
+                           DIR_AMMNSTR : $scope.IstitutoInEditing.DirAmmnstr == '' ? null : $scope.IstitutoInEditing.DirAmmnstr.xSQL()                         
                         };
                                                                   
      var NuovoIstituto = ($scope.IstitutoInEditing.Chiave == -1);

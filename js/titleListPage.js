@@ -124,10 +124,10 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
                                   Chiave             : TitoliInfoLista[i].CHIAVE,
                                   Codice             : TitoliInfoLista[i].CODICE_ISBN,
                                   Titolo             : TitoliInfoLista[i].TITOLO,
-                                  Materia            : TitoliInfoLista[i].MATERIA,
-                                  NomeMateria        : TitoliInfoLista[i].NOME_MATERIA,
+                                  Materia            : TitoliInfoLista[i].MATERIA == null ? 'N.D.' : TitoliInfoLista[i].MATERIA,
+                                  NomeMateria        : TitoliInfoLista[i].NOME_MATERIA == null ? 'N.D.' : TitoliInfoLista[i].NOME_MATERIA ,
                                   Pos_Magazzino      : TitoliInfoLista[i].POS_MAGAZZINO == null ? 'N.D.' : TitoliInfoLista[i].POS_MAGAZZINO,
-                                  Autori             : TitoliInfoLista[i].AUTORI,
+                                  Autori             : TitoliInfoLista[i].AUTORI == null ? 'N.D' : TitoliInfoLista[i].AUTORI,
                                   Q_Magazzino        : TitoliInfoLista[i].QUANTITA_MGZN == undefined ? 0 : TitoliInfoLista[i].QUANTITA_MGZN,
                                   Q_MagazzinoVolante : TitoliInfoLista[i].QUANTITA_MGZN_VOL == undefined ? 0 : TitoliInfoLista[i].QUANTITA_MGZN_VOL
                                 };
@@ -319,14 +319,14 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
     var ParamTitolo  = {
                          CHIAVE            : $scope.TitoloInEditing.Chiave,
                          CODICE_ISBN       : $scope.TitoloInEditing.Codice.xSQL(),
-                         TITOLO            : $scope.TitoloInEditing.Titolo.xSQL() == '' ? null : $scope.TitoloInEditing.Titolo.xSQL(),
-                         SOTTOTITOLO       : $scope.TitoloInEditing.Sottotitolo.xSQL() == '' ? null : $scope.TitoloInEditing.Sottotitolo.xSQL(),
-                         MATERIA           : $scope.TitoloInEditing.Materia.xSQL() == -1 ? null : $scope.TitoloInEditing.Materia.xSQL(),
-                         AUTORI            : $scope.TitoloInEditing.Autori.xSQL() == '' ? null : $scope.TitoloInEditing.Autori.xSQL(),
-                         EDITORE           : $scope.TitoloInEditing.Editore.xSQL() == '' ? null : $scope.TitoloInEditing.Editore.xSQL(),
+                         TITOLO            : $scope.TitoloInEditing.Titolo == '' ? null : $scope.TitoloInEditing.Titolo.xSQL(),
+                         SOTTOTITOLO       : $scope.TitoloInEditing.Sottotitolo == '' ? null : $scope.TitoloInEditing.Sottotitolo.xSQL(),
+                         MATERIA           : $scope.TitoloInEditing.Materia == -1 ? null : $scope.TitoloInEditing.Materia.xSQL(),
+                         AUTORI            : $scope.TitoloInEditing.Autori == '' ? null : $scope.TitoloInEditing.Autori.xSQL(),
+                         EDITORE           : $scope.TitoloInEditing.Editore == '' ? null : $scope.TitoloInEditing.Editore.xSQL(),
                          VOLUME            : $scope.TitoloInEditing.Volume,
-                         POS_MAGAZZINO     : $scope.TitoloInEditing.Pos_Magazzino.xSQL() == '' ? null : $scope.TitoloInEditing.Pos_Magazzino.xSQL(),
-                         PREZZO            : $scope.TitoloInEditing.Prezzo == '' ? null : $scope.TitoloInEditing.Prezzo,
+                         POS_MAGAZZINO     : $scope.TitoloInEditing.Pos_Magazzino == '' ? null : $scope.TitoloInEditing.Pos_Magazzino.xSQL(),
+                         PREZZO            : $scope.TitoloInEditing.Prezzo == '' ? null : $scope.TitoloInEditing.Prezzo.xSQL(),
                          QUANTITA_MGZN     : $scope.TitoloInEditing.Q_Mgzn,
                          QUANTITA_MGZN_VOL : $scope.TitoloInEditing.Q_Mgzn_Vol                     
                        }
@@ -345,14 +345,14 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
       ParamTitolo = {
                       ChiaveTitolo      : $scope.TitoloInEditing.Chiave,
                       Codice            : $scope.TitoloInEditing.Codice.xSQL(),
-                      Titolo            : $scope.TitoloInEditing.Titolo.xSQL() == '' ? null : $scope.TitoloInEditing.Titolo.xSQL(),
-                      Sottotitolo       : $scope.TitoloInEditing.Sottotitolo.xSQL() == '' ? null : $scope.TitoloInEditing.Sottotitolo.xSQL(),
-                      Materia           : $scope.TitoloInEditing.Materia.xSQL() == -1 ? null : $scope.TitoloInEditing.Materia.xSQL(),
-                      Autori            : $scope.TitoloInEditing.Autori.xSQL() == '' ? null : $scope.TitoloInEditing.Autori.xSQL(),
-                      Editore           : $scope.TitoloInEditing.Editore.xSQL() == '' ? null : $scope.TitoloInEditing.Editore.xSQL(),
+                      Titolo            : $scope.TitoloInEditing.Titolo == '' ? null : $scope.TitoloInEditing.Titolo.xSQL(),
+                      Sottotitolo       : $scope.TitoloInEditing.Sottotitolo == '' ? null : $scope.TitoloInEditing.Sottotitolo.xSQL(),
+                      Materia           : $scope.TitoloInEditing.Materia  == -1 ? null : $scope.TitoloInEditing.Materia.xSQL(),
+                      Autori            : $scope.TitoloInEditing.Autori == '' ? null : $scope.TitoloInEditing.Autori.xSQL(),
+                      Editore           : $scope.TitoloInEditing.Editore == '' ? null : $scope.TitoloInEditing.Editore.xSQL(),
                       Volume            : $scope.TitoloInEditing.Volume,
-                      Prezzo            : $scope.TitoloInEditing.Prezzo == '' ? null : $scope.TitoloInEditing.Prezzo,
-                      PosMgzn           : $scope.TitoloInEditing.Pos_Magazzino.xSQL() == '' ? null : $scope.TitoloInEditing.Pos_Magazzino.xSQL(),
+                      Prezzo            : $scope.TitoloInEditing.Prezzo == '' ? null : $scope.TitoloInEditing.Prezzo.xSQL(),
+                      PosMgzn           : $scope.TitoloInEditing.Pos_Magazzino == '' ? null : $scope.TitoloInEditing.Pos_Magazzino.xSQL(),
                       QuantitaMgzn      : $scope.TitoloInEditing.Q_Mgzn,
                       QuantitaMgznVol   : $scope.TitoloInEditing.Q_Mgzn_Vol 
                     }                               
@@ -882,7 +882,7 @@ SIRIOApp.filter('TitoloByFiltro',function()
          }           
 });
 
-SIRIOApp.filter('IstitutoByNomeFiltro',function()
+/*SIRIOApp.filter('IstitutoByNomeFiltro',function()
 {  
   return function(ListaistitutiPopup,NomeFiltro)
          {  
@@ -908,4 +908,4 @@ SIRIOApp.filter('IstitutoByNomeFiltro',function()
            
            return(ListaFiltrataI);
          }           
-});
+});*/

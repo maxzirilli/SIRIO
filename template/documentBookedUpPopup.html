@@ -1,0 +1,31 @@
+<md-dialog>
+  <form ng-cloak name="PopupCumulativoPrenotatiForm">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2 style="font-weight:bold;color:white;">XLS CUMULATIVO PRENOTATI</h2>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content >
+      <div class="md-dialog-content">
+        <div layout="row">        
+          <md-input-container style="float:left;">
+            <label>DAL</label><input ng-model="DataRicercaDalPrnt" type="date" name="DataRicercaDalPrnt">
+          </md-input-container>
+          <md-input-container style="float:left;margin-left:20px;">  
+            <label>AL</label><input ng-model="DataRicercaAlPrnt" type="date" name="DataRicercaAlPrnt">
+          </md-input-container>
+        </div>   
+       </div>
+       <div style="text-align:center;">
+        <md-button ng-click="CreaXlsPrenotati()" title="GENERA XLS PRENOTATI"><img src="img/printXLS.png" style="width:100px;height:auto;"></md-button>
+      </div> 
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="AnnullaPopupPrenotati()">
+       CHIUDI
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

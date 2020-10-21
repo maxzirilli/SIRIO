@@ -25,7 +25,7 @@
       <tr ng-repeat="combinazione in ListaCombinazioni | limitTo : GridOptions_5.query.limit : (GridOptions_5.query.page - 1) * GridOptions_5.query.limit" id={{combinazione.Chiave}}>
         <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA COMBINAZIONE" ng-click="EliminaCombinazione(combinazione)"></td> 
         <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA COMBINAZIONE" ng-click="ModificaCombinazione(combinazione)"></td>        
-        <td class="off">{{combinazione.Descrizione | uppercase}}</td>
+        <td>{{combinazione.Descrizione | uppercase}}</td>
       </tr>    
     </table>
     <md-table-pagination md-limit="GridOptions_5.query.limit" 
@@ -51,7 +51,7 @@
       <tr ng-repeat="casa in ListaCase | limitTo : GridOptions_6.query.limit : (GridOptions_6.query.page - 1) * GridOptions_6.query.limit" id={{casa.Chiave}}>
         <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA CASA EDITRICE GESTITA" ng-click="EliminaCasa(casa)"></td> 
         <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA CASA EDITRICE GESTITA" ng-click="ModificaCasa(casa)"></td>        
-        <td class="off">{{casa.Descrizione}}</td>
+        <td>{{casa.Descrizione}}</td>
       </tr>    
     </table>
     <md-table-pagination md-limit="GridOptions_6.query.limit" 
@@ -106,7 +106,7 @@
         <tr ng-repeat="materia in ListaMaterie | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{materia.Chiave}}>
           <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA MATERIA" ng-click="EliminaMateria(materia)"></td> 
           <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA MATERIA" ng-click="ModificaMateria(materia)"></td>        
-          <td class="off">{{materia.Descrizione | uppercase}}</td>
+          <td>{{materia.Descrizione | uppercase}}</td>
         </tr>    
       </table>
       <md-table-pagination md-limit="GridOptions.query.limit" 
@@ -132,7 +132,7 @@
         <tr ng-repeat="tipologia in ListaTipologie | limitTo : GridOptions_2.query.limit : (GridOptions_2.query.page - 1) * GridOptions_2.query.limit" id={{tipologia.Chiave}}>
           <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA TIPOLOGIA" ng-click="EliminaTipologia(tipologia)"></td> 
           <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA TIPOLOGIA" ng-click="ModificaTipologia(tipologia)"></td>        
-          <td class="off">{{tipologia.Descrizione | uppercase}}</td>
+          <td>{{tipologia.Descrizione | uppercase}}</td>
         </tr>    
       </table>
       <md-table-pagination md-limit="GridOptions_2.query.limit" 
@@ -158,7 +158,7 @@
         <tr ng-repeat="tipologiaEsclusa in ListaTipologieEscluse | limitTo : GridOptions_3.query.limit : (GridOptions_3.query.page - 1) * GridOptions_3.query.limit" id={{tipologiaEsclusa.Chiave}}>
           <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA TIPOLOGIA ESCLUSA" ng-click="EliminaTipologiaEsclusa(tipologiaEsclusa)"></td> 
           <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA TIPOLOGIA ESCLUSA" ng-click="ModificaTipologiaEsclusa(tipologiaEsclusa)"></td>        
-          <td class="off">{{tipologiaEsclusa.Descrizione | uppercase}}</td>
+          <td>{{tipologiaEsclusa.Descrizione | uppercase}}</td>
         </tr>    
       </table>
       <md-table-pagination md-limit="GridOptions_3.query.limit" 
@@ -184,7 +184,7 @@
         <tr ng-repeat="provincia in ListaProvince | limitTo : GridOptions_4.query.limit : (GridOptions_4.query.page - 1) * GridOptions_4.query.limit" id={{provincia.Chiave}}>
           <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA PROVINCIA GESTITA" ng-click="EliminaProvincia(provincia)"></td> 
           <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA PROVINCIA GESTITA" ng-click="ModificaProvincia(provincia)"></td>        
-          <td class="off">{{provincia.Descrizione}}</td>
+          <td>{{provincia.Descrizione}}</td>
         </tr>    
       </table>
       <md-table-pagination md-limit="GridOptions_4.query.limit" 

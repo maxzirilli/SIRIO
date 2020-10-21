@@ -8,13 +8,13 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
   $scope.PromotoreFiltro  = -1;
   $scope.IstitutoFiltro   = -1;
   $scope.DocenteFiltro    = -1;
+  ListaSpedizioni         = [];
   //$scope.TitoloFiltro     = -1;
   $scope.DataRicercaAl    = new Date();
   let TmpDate             = new Date($scope.DataRicercaAl);
   TmpDate.setDate(TmpDate.getDate() - 7);
   $scope.DataRicercaDal   = new Date(TmpDate);
-  ListaSpedizioni         = [];
-  
+ 
   ScopeHeaderController.CheckButtons(); 
   
   $scope.IsAdministrator = function ()
@@ -30,6 +30,229 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
   $scope.GestioneAvanzataSpedizioni = function()
   {
     $state.go("deliveryAdvancedManagementPage");
+  }
+
+  function CreaDocumentoCumulativo(CumulativoTitoli,NomeDocumento)
+  {           
+    var WBook = {
+                  SheetNames : [],
+                  Sheets     : {}
+                };
+
+    var SheetName          = "CUMULATIVO PRENOTAZIONI";
+    var BodySheet          = {};
+
+    BodySheet['A1'] = SystemInformation.GetCellaIntestazione('EDITORE');
+    BodySheet['B1'] = SystemInformation.GetCellaIntestazione('ISBN');
+    BodySheet['C1'] = SystemInformation.GetCellaIntestazione('TITOLO');
+    BodySheet['D1'] = SystemInformation.GetCellaIntestazione('QUANTITA TOTALE');
+    
+    var ListaTitoli  = [];
+    for(let j = 0;j < CumulativoTitoli.length;j ++)
+    {
+        TitoloGiaInserito = ListaTitoli.findIndex(function(ATitolo){return(ATitolo.Chiave == CumulativoTitoli[j].Chiave)})
+        if(TitoloGiaInserito == -1)
+            ListaTitoli.push(CumulativoTitoli[j])
+        else ListaTitoli[TitoloGiaInserito].Quantita += CumulativoTitoli[j].Quantita
+    }
+    var CasaEditrice = '-1';
+    for(let k = 0;k < ListaTitoli.length;k ++)
+    {
+        if(CasaEditrice != ListaTitoli[k].Editore)
+            BodySheet['A' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Editore);
+
+        BodySheet['B' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Codice);
+        BodySheet['C' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Titolo);
+        BodySheet['D' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Quantita.toString());
+
+        CasaEditrice = ListaTitoli[k].Editore;
+    }
+
+    BodySheet["!cols"] = [             
+                          {wpx: 250},
+                          {wpx: 250},
+                          {wpx: 250},
+                          {wpx: 250}
+                        ];
+    BodySheet['!ref'] = 'A1:D1' + parseInt(ListaTitoli.length + 1);
+    
+    WBook.SheetNames.push(SheetName);
+    WBook.Sheets[SheetName]    = BodySheet;
+
+    var Data           = new Date();
+    var DataAnno       = Data.getFullYear();
+    var DataMese       = Data.getMonth()+1; 
+    var DataGiorno     = Data.getDate();
+    var DataCumulativo = DataGiorno.toString() + '/' + DataMese.toString() +  '/' + DataAnno.toString();
+
+    var wbout = XLSX.write(WBook, {bookType:'xlsx', bookSST:true, type: 'binary'});
+    saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}), NomeDocumento + DataCumulativo + ".xlsx");
+  }
+
+  //STAMPA CUMULATIVO PRENOTATI
+
+  $scope.ApriCumulativoPrenotati = function(ev)
+  {    
+      $mdDialog.show({ 
+                       controller          : DialogControllerXlsPrenotati,
+                       templateUrl         : "template/documentBookedUpPopup.html",
+                       targetEvent         : ev,
+                       scope               : $scope,
+                       preserveScope       : true,
+                       clickOutsideToClose : true
+                     })
+      .then(function(answer) 
+      {
+      }, 
+      function() 
+      {
+      });
+  }
+
+  function DialogControllerXlsPrenotati($scope,$mdDialog)
+  {
+    $scope.DataRicercaAlPrnt    = new Date();
+    let TmpDatePrnt             = new Date($scope.DataRicercaAlPrnt);
+    TmpDatePrnt.setDate(TmpDatePrnt.getDate() - 7);
+    $scope.DataRicercaDalPrnt   = new Date(TmpDatePrnt);
+
+    $scope.hide = function() 
+    {
+      $mdDialog.hide();
+    };
+
+    $scope.AnnullaPopupPrenotati = function() 
+    {
+      $scope.DataRicercaAlPrnt    = new Date();
+      let TmpDatePrnt             = new Date($scope.DataRicercaAlPrnt);
+      TmpDatePrnt.setDate(TmpDatePrnt.getDate() - 7);
+      $scope.DataRicercaDalPrnt   = new Date(TmpDatePrnt);
+      $mdDialog.cancel();
+    };
+
+    $scope.CreaXlsPrenotati = function()
+    {
+      var CumulativoPrenotatiTmp = [];
+      var CumulativoPrenotati    = []
+
+      if($scope.DataRicercaDalPrnt == undefined || $scope.DataRicercaAlPrnt == undefined)
+         return;
+      let TmpDatePrnt = new Date($scope.DataRicercaAlPrnt);
+      TmpDatePrnt.setDate($scope.DataRicercaAlPrnt.getDate() + 1);
+      
+      var ParamPrenotati = {
+                              Dal : ZHTMLInputFromDate($scope.DataRicercaDalPrnt), 
+                              Al  : ZHTMLInputFromDate(TmpDatePrnt)
+                           };
+      SystemInformation.GetSQL('Delivery',ParamPrenotati,function(Results)
+      {
+        CumulativoPrenotatiTmp = SystemInformation.FindResults(Results,'BookedUpCumulative')
+        if (CumulativoPrenotatiTmp != undefined)
+        {
+            if(CumulativoPrenotatiTmp.length == 0)
+            alert('NESSUN TITOLO PRENOTATO NEL PERIODO INDICATO')
+            else
+            {
+              for(let i = 0;i < CumulativoPrenotatiTmp.length;i ++)
+              CumulativoPrenotatiTmp[i] = {
+                                            Editore  : CumulativoPrenotatiTmp[i].EDITORE_TITOLO == null ? 'EDITORE NON REGISTRATO' : CumulativoPrenotatiTmp[i].EDITORE_TITOLO,
+                                            Chiave   : CumulativoPrenotatiTmp[i].TITOLO,
+                                            Titolo   : CumulativoPrenotatiTmp[i].NOME_TITOLO == null ? 'NOME NON REGISTRATO' : CumulativoPrenotatiTmp[i].NOME_TITOLO,
+                                            Codice   : CumulativoPrenotatiTmp[i].CODICE_TITOLO,
+                                            Quantita : parseInt(CumulativoPrenotatiTmp[i].QUANTITA)
+                                          }
+              CumulativoPrenotati = CumulativoPrenotatiTmp
+              
+              CreaDocumentoCumulativo(CumulativoPrenotati,'CumulativoPrenotati')
+              $mdDialog.hide();
+            }
+        }
+        else SystemInformation.ApplyOnError('Modello cumulativo prenotati non conforme','')
+      },'SQLCumulativoPrenotati')
+    }
+  }
+
+  //STAMPA CUMULATIVO CONSEGNATI
+
+  $scope.ApriCumulativoConsegnati = function(ev)
+  {    
+      $mdDialog.show({ 
+                       controller          : DialogControllerXlsConsegnati,
+                       templateUrl         : "template/documentDeliveredPopup.html",
+                       targetEvent         : ev,
+                       scope               : $scope,
+                       preserveScope       : true,
+                       clickOutsideToClose : true
+                     })
+      .then(function(answer) 
+      {
+      }, 
+      function() 
+      {
+      });
+  }
+
+  function DialogControllerXlsConsegnati($scope,$mdDialog)
+  {
+    $scope.DataRicercaAlCnsg    = new Date();
+    let TmpDateCnsg             = new Date($scope.DataRicercaAlCnsg);
+    TmpDateCnsg.setDate(TmpDateCnsg.getDate() - 7);
+    $scope.DataRicercaDalCnsg   = new Date(TmpDateCnsg);
+
+    $scope.hide = function() 
+    {
+      $mdDialog.hide();
+    };
+
+    $scope.AnnullaPopupConsegnati = function() 
+    {
+      $scope.DataRicercaAlCnsg    = new Date();
+      let TmpDateCnsg             = new Date($scope.DataRicercaAlCnsg);
+      TmpDateCnsg.setDate(TmpDateCnsg.getDate() - 7);
+      $scope.DataRicercaDalCnsg   = new Date(TmpDateCnsg);
+      $mdDialog.cancel();
+    };
+
+    $scope.CreaXlsConsegnati = function()
+    {
+      var CumulativoConsegnatiTmp = [];
+      var CumulativoConsegnati    = [];
+
+      if($scope.DataRicercaDalCnsg == undefined || $scope.DataRicercaAlCnsg == undefined)
+         return;
+      let TmpDateCnsg = new Date($scope.DataRicercaAlCnsg);
+      TmpDateCnsg.setDate($scope.DataRicercaAlCnsg.getDate() + 1);
+      
+      var ParamConsegnati = {
+                              Dal : ZHTMLInputFromDate($scope.DataRicercaDalCnsg), 
+                              Al  : ZHTMLInputFromDate(TmpDateCnsg)
+                            };
+      SystemInformation.GetSQL('Delivery',ParamConsegnati,function(Results)
+      {
+        CumulativoConsegnatiTmp = SystemInformation.FindResults(Results,'DeliveredCumulative')
+        if (CumulativoConsegnatiTmp != undefined)
+        {
+            if(CumulativoConsegnatiTmp.length == 0)
+               alert('NESSUN TITOLO CONSEGNATO NEL PERIODO INDICATO')
+            else
+            {
+              for(let i = 0;i < CumulativoConsegnatiTmp.length;i ++)
+              CumulativoConsegnatiTmp[i] = {
+                                             Editore  : CumulativoConsegnatiTmp[i].EDITORE_TITOLO == null ? 'EDITORE NON REGISTRATO' : CumulativoConsegnatiTmp[i].EDITORE_TITOLO,
+                                             Chiave   : CumulativoConsegnatiTmp[i].TITOLO,
+                                             Titolo   : CumulativoConsegnatiTmp[i].NOME_TITOLO == null ? 'NOME NON REGISTRATO' : CumulativoConsegnatiTmp[i].NOME_TITOLO,
+                                             Codice   : CumulativoConsegnatiTmp[i].CODICE_TITOLO,
+                                             Quantita : parseInt(CumulativoConsegnatiTmp[i].QUANTITA)
+                                           }
+              CumulativoConsegnati = CumulativoConsegnatiTmp
+          
+              CreaDocumentoCumulativo(CumulativoConsegnati,'CumulativoConsegnati')
+              $mdDialog.hide();        
+            }              
+        }
+        else SystemInformation.ApplyOnError('Modello cumulativo consegnati non conforme','')
+      },'SQLCumulativoConsegnati')
+    }
   }
   
   $scope.GridOptions = {
@@ -655,9 +878,15 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
             WBook.SheetNames.push(SheetNameCum);
             WBook.Sheets[SheetName]    = BodySheet;
             WBook.Sheets[SheetNameCum] = BodySheetCum;
+
+            var Data           = new Date();
+            var DataAnno       = Data.getFullYear();
+            var DataMese       = Data.getMonth()+1; 
+            var DataGiorno     = Data.getDate();
+            var DataLista      = DataGiorno.toString() + '/' + DataMese.toString() +  '/' + DataAnno.toString();
             
             var wbout = XLSX.write(WBook, {bookType:'xlsx', bookSST:true, type: 'binary'});
-            saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}), "Spedizioni.xlsx")                            
+            saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}), "Spedizioni" + DataLista + ".xlsx")                            
          }
          else SystemInformation.ApplyOnError('Modello spedizioni di confronto per xls non conforme','')
        },'SQLPromotoreXls');        

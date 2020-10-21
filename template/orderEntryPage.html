@@ -46,10 +46,10 @@
         <tr ng-repeat="ordine in ListaOrdini | OrdineByFiltro : TitoloFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{ordine.Chiave}}>
           <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA ORDINE" ng-click="EliminaOrdine(ordine)"></td> 
           <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA ORDINE" ng-click="ModificaOrdine(ordine)"></td>        
-          <td class="off">{{ConvertiData(ordine)}}</td>
-          <td class="off">{{ordine.Codice}}</td>
-          <td class="off">{{ordine.Nome_Titolo}}</td>
-          <td class="off">{{ordine.Quantita}}</td>
+          <td>{{ConvertiData(ordine)}}</td>
+          <td>{{ordine.Codice}}</td>
+          <td>{{ordine.Nome_Titolo}}</td>
+          <td>{{ordine.Quantita}}</td>
         </tr>    
       </table>
       <md-table-pagination md-limit="GridOptions.query.limit" 

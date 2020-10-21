@@ -36,10 +36,10 @@
           <td><img src="img/printPDF.png" style="width:30px;height:auto;" title="LISTA DOCENTI" ng-click="CreaPdfListaDocenti(Istituto.Chiave,Istituto.Nome,Istituto.Codice,Istituto.ProvinciaNome)"></td>        
           <td ng-if="!(Istituto.Nascosto)"><img src="img/hide.png" style="width:30px;height:auto;" title="UNISCI E NASCONDI ISTITUTO" ng-click="UnisciIstituti(Istituto)"></td>        
           <td ng-if="Istituto.Nascosto"><img src="img/notHide.png" style="width:30px;height:auto;" title="RENDI VISIBILE ISTITUTO" ng-click="RendiVisibileIstituto(Istituto.Chiave,Istituto.Nome)"></td>        
-          <td class="off">{{Istituto.Codice}}</td>  
-          <td class="off">{{Istituto.Nome}}</td>
-          <td class="off">{{Istituto.ProvinciaNome}}</td>
-          <td class="off">{{(Istituto.Promotore || 'NESSUN PROMOTORE ASSEGNATO') | uppercase}}</td>        
+          <td>{{Istituto.Codice}}</td>  
+          <td>{{Istituto.Nome}}</td>
+          <td>{{Istituto.ProvinciaNome}}</td>
+          <td>{{(Istituto.Promotore || 'NESSUN PROMOTORE ASSEGNATO') | uppercase}}</td>        
         </tr>    
       </table>
       <md-table-pagination md-limit="GridOptions.query.limit" 

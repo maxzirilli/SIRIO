@@ -3,6 +3,7 @@
   <md-content class="page-container">
     <md-card class="page" style="width:50%;">
       <h1 style="text-align:center;">AGGIORNAMENTO MAIL DOCENTI</h1>
+      <p style="text-align:center;" ng-if="UltimaDataImportazione != ''">Data ultima importazione mail : {{UltimaDataImportazione}}</p>
       <label style="text-align:center;" for="progressBar">PROGRESSO UPLOAD:</label>
       <progress style="width:100%;" id="progressBar" value={{Contatore}} min="0" max={{FileLength}}></progress>
       <br>

@@ -7,10 +7,9 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   $scope.ListaPiattaforme                  = [{Sigla:PIATTA_HUBSCUOLA,Valore:"HubScuola"},{Sigla:PIATTA_BSMART,Valore:"BSmart"},{Sigla:PIATTA_NESSUNA,Valore:"Nessuna Piattaforma"}];
   $scope.GiorniSettimana                   = SystemInformation.GiorniSettimana;
   $scope.IstitutoDaAssociare               = -1;
-  $scope.NomeFiltro                        = '';
+  $scope.ANomeFiltro                       = '';
   $scope.IstitutoVisualizzato              = -1;
   $scope.ListaInsegnamenti                 = [];
-  $scope.NomeFiltro                        = '';
   $scope.TitoloFiltro                      = -1;
   $scope.AProvinciaFiltro                  = -1;
   $scope.IstitutoFiltrato                  = -1;
@@ -112,10 +111,25 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
        }
        $scope.ListaIstituti         = ListaIstitutiAssegnati;
        $scope.ListaIstitutiNoFilter = Array.from(ListaIstitutiAssegnati);       
-       $scope.ListaIstitutiPopup    = IstitutiInfoLista;
+       //$scope.ListaIstitutiPopup    = IstitutiInfoLista;
     }
     else SystemInformation.ApplyOnError('Modello istituti non conforme','');   
   });
+
+  SystemInformation.GetSQL('Institute', {}, function(Results)  
+  { 
+    IstitutiInfoListaP = SystemInformation.FindResults(Results,'InstituteInfoListOnlyVisibile');
+    if(IstitutiInfoListaP != undefined)
+    {      
+       for(let i = 0; i < IstitutiInfoListaP.length; i++)     
+           IstitutiInfoListaP[i] = { 
+                                    Chiave   : IstitutiInfoListaP[i].CHIAVE,
+                                    Istituto : IstitutiInfoListaP[i].NOME
+                                  }    
+       $scope.ListaIstitutiPopup = IstitutiInfoListaP;
+    }
+    else SystemInformation.ApplyOnError('Modello istituti non conforme','');   
+  },'SelectSQLOnlyVisible');
   
   SystemInformation.GetSQL('Accessories',{}, function(Results)
   {
@@ -146,7 +160,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   
   SystemInformation.GetSQL('Book', {}, function(Results)  
   {  
-    TitoliInfoLista = SystemInformation.FindResults(Results,'BookListFilter');
+    TitoliInfoLista = SystemInformation.FindResults(Results,'BookListNoFilter');
     if(TitoliInfoLista != undefined)
     { 
        for(let i = 0; i < TitoliInfoLista.length; i++)
@@ -159,7 +173,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
        $scope.ListaTitoli  = TitoliInfoLista;
     }
     else SystemInformation.ApplyOnError('Modello titoli non conforme','');   
-  },'SelectSQLFilter');
+  },'SelectSQLNoFilter');
   
   $scope.queryMateria = function(searchTextMat)
   {
@@ -377,6 +391,8 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   
   $scope.ModificaDocente = function(docente)
   {
+    $scope.ProvinciaOldFiltro                         = $scope.AProvinciaFiltro;
+    $scope.NomeOldFiltro                              = $scope.ANomeFiltro;
     $scope.EditingOn                                  = true;   
     $scope.DocenteInEditing                           = {};
     $scope.DocenteInEditing.ListaIstitutiDocEliminati = [];
@@ -488,6 +504,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
     
   $scope.NuovoDocente = function()
   { 
+    $scope.ProvinciaOldFiltro        = $scope.AProvinciaFiltro;
     $scope.EditingOn                 = true;
     $scope.IstitutoForNewDocente     = -1;
     $scope.IstitutoForNewDocenteNome = '';
@@ -578,6 +595,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   
   $scope.OnAnnullaDocenteClicked = function()
   {
+    $scope.AProvinciaFiltro = $scope.ProvinciaOldFiltro;
     $scope.EditingOn = false;
     $scope.RefreshListaDocenti();
     if($scope.IstitutoForNewDocente != -1)
@@ -845,7 +863,6 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                                       }
            }
            $scope.ListaIstituti      = ListaIstitutiAssegnati;                                  
-           $scope.ListaIstitutiPopup = IstitutiInfoLista;
            $scope.ListaIstitutiNoFilter = Array.from(ListaIstitutiAssegnati);       
         }
         else SystemInformation.ApplyOnError('Modello istituti non conforme','');   
@@ -893,6 +910,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
      SystemInformation.PostSQL('Teacher',$ObjQuery,function(Answer)
      {
        $scope.RefreshListaDocenti();
+       $scope.AProvinciaFiltro = $scope.ProvinciaOldFiltro;
      });  
    }
   }
@@ -1220,57 +1238,6 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
     }      
   }
   
-  $scope.SelezionaIstitutoFiltro = function(ev) 
-  { 
-    $mdDialog.show({ 
-                     controller          : DialogControllerIstitutoFiltro,
-                     templateUrl         : "template/associateInstituteTeacherPopup.html",
-                     targetEvent         : ev,
-                     scope               : $scope,
-                     preserveScope       : true,
-                     clickOutsideToClose : true
-                   })
-    .then(function(answer) 
-    {}, 
-    function() 
-    {});
-  };
-  
-  function DialogControllerIstitutoFiltro($scope,$mdDialog)  
-  {    
-    $scope.hide = function() 
-    {
-      $mdDialog.hide();
-    };
-
-    $scope.AnnullaPopup = function() 
-    { 
-      $scope.IstitutoDaAssociare = -1;
-      $mdDialog.cancel();
-    };
-
-    $scope.ConfermaPopup = function(istituto) 
-    {     
-      if(istituto == -1) 
-      { 
-        alert ('Nessun istituto selezionato!');      
-        return
-      }
-      else
-      { 
-        let IstitutoNome   = $scope.ListaIstitutiPopup.find(function(AIstituto) { return(AIstituto.Chiave == istituto);});
-
-          $scope.IstitutoFiltrato = {
-                                      "CHIAVE"  : istituto,
-                                      "NOME"    : IstitutoNome.Istituto
-                                    }                            
-          $scope.IstitutoDaAssociare = -1;         
-          $mdDialog.hide();
-      }
-              
-    };
-  }
-  
   $scope.NuovaSpedizione = function (ChiaveDocente)
   { 
     SystemInformation.DataBetweenController.ChiaveSpedizione = -1;
@@ -1448,20 +1415,20 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
 
 SIRIOApp.filter('DocenteByFiltro',function()
 {
-  return function(ListaDocenti,NomeFiltro,MateriaFiltro)
+  return function(ListaDocenti,ANomeFiltro,MateriaFiltro)
          {
-           if(NomeFiltro == '' && MateriaFiltro == -1) 
+           if(ANomeFiltro == '' && MateriaFiltro == -1) 
              return(ListaDocenti);
            var ListaFiltrata = [];
-           NomeFiltro = NomeFiltro.toUpperCase();
+           ANomeFiltro = ANomeFiltro.toUpperCase();
            MateriaFiltro = parseInt(MateriaFiltro);
            
            var DocenteOk = function(Docente)
            {  
               var Result = true;
               
-              if(NomeFiltro != '')
-                if(Docente.RagioneSociale.toUpperCase().indexOf(NomeFiltro) < 0)
+              if(ANomeFiltro != '')
+                if(Docente.RagioneSociale.toUpperCase().indexOf(ANomeFiltro) < 0)
                    Result = false;
                   
               if(MateriaFiltro != -1)
@@ -1479,4 +1446,32 @@ SIRIOApp.filter('DocenteByFiltro',function()
            return(ListaFiltrata);
            
          }
+});
+
+SIRIOApp.filter('IstitutoByNomeFiltro',function()
+{  
+  return function(ListaIstitutiPopup,NomeFiltro)
+         {  
+                    
+           if(NomeFiltro == '') return(ListaIstitutiPopup);
+           var ListaFiltrataI = [];
+           NomeFiltro = NomeFiltro.toUpperCase();
+           var IstitutoOK = function(istituto)
+           {  
+              var Result = true;
+              
+              if(NomeFiltro != '')
+                if(istituto.Istituto.toUpperCase().indexOf(NomeFiltro) < 0)
+                   Result = false;
+              return(Result);
+           }
+          
+           ListaIstitutiPopupDoc.forEach(function(istituto)
+           { 
+             if(IstitutoOK(istituto)) 
+                ListaFiltrataI.push(istituto)                       
+           });
+           
+           return(ListaFiltrataI);
+         }           
 });

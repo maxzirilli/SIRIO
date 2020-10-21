@@ -57,7 +57,8 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
                                     CodiceTitolo      : ListaTitoliAllTmp[i].CODICE_ISBN,
                                     NomeTitolo        : ListaTitoliAllTmp[i].TITOLO,
                                     QuantitaTitolo    : ListaTitoliAllTmp[i].QUANTITA_MGZN,
-                                    QuantitaTitoloVol : ListaTitoliAllTmp[i].QUANTITA_MGZN_VOL
+                                    QuantitaTitoloVol : ListaTitoliAllTmp[i].QUANTITA_MGZN_VOL,
+                                    Ubicazione        : ListaTitoliAllTmp[i].POS_MAGAZZINO == null ? 'N.D.' : ListaTitoliAllTmp[i].POS_MAGAZZINO
                                   }
             $scope.ListaTitoliAll = ListaTitoliAllTmp
     }
@@ -87,7 +88,7 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
     $scope.CodiceBippato = $scope.CodiceBippatoVisible;
     
     if($scope.CodiceFocused == undefined)
-       $scope.CodiceFocused = {Chiave : -1, Codice : -1, Nome : '', QuantitaMgzn : 0, QuantitaMgznVol : 0, ModificaAbilitata : false};
+       $scope.CodiceFocused = {Chiave : -1, Codice : -1, Nome : '', QuantitaMgzn : 0, QuantitaMgznVol : 0, UbicazioneMgzn : '', ModificaAbilitata : false};
 
     if(KeyPressed.keyCode == 13)
     {
@@ -125,6 +126,7 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
                  $scope.CodiceFocused.Nome            = TitoloTrovato.NomeTitolo;
                  $scope.CodiceFocused.QuantitaMgzn    = 1;
                  $scope.CodiceFocused.QuantitaMgznVol = 0;
+                 $scope.CodiceFocused.Ubicazione      = TitoloTrovato.UbicazioneMgzn
                  if($scope.CodiceBippato != -1)
                     $scope.ListaCodiciToHandle.push($scope.CodiceFocused);
                  $scope.CodiceBippato = $scope.CodiceFocused.Codice;
@@ -163,9 +165,10 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
      for(let i = 0;i < $scope.ListaCodiciToHandle.length;i ++)
      {
          ParametriInserimento = {
-                                  ChiaveTitolo          : $scope.ListaCodiciToHandle[i].Chiave,
-                                  QuantitaTitolo        : $scope.ListaCodiciToHandle[i].QuantitaMgzn,
-                                  QuantitaVolanteTitolo : $scope.ListaCodiciToHandle[i].QuantitaMgznVol
+                                  ChiaveTitolo             : $scope.ListaCodiciToHandle[i].Chiave,
+                                  QuantitaTitolo           : $scope.ListaCodiciToHandle[i].QuantitaMgzn,
+                                  QuantitaVolanteTitolo    : $scope.ListaCodiciToHandle[i].QuantitaMgznVol,
+                                  PosizioneMagazzinoTitolo : $scope.ListaCodiciToHandle[i].Ubicazione
                                 }
          $ObjQuery.Operazioni.push({
                                      Query     : "UpdateBookFromInventory",
@@ -200,6 +203,7 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
        BodySheet['B1'] = SystemInformation.GetCellaIntestazione('TITOLO');
        BodySheet['C1'] = SystemInformation.GetCellaIntestazione('QUANTITA MAGAZZINO');
        BodySheet['D1'] = SystemInformation.GetCellaIntestazione('QUANTITA MAGAZZINO VOLANTE');
+       BodySheet['E1'] = SystemInformation.GetCellaIntestazione('UBICAZIONE');
        
        for(let i = 0;i < $scope.ListaCodiciToHandle.length;i ++)
        {                
@@ -207,16 +211,18 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
            BodySheet['B' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',$scope.ListaCodiciToHandle[i].Nome);
            BodySheet['C' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',$scope.ListaCodiciToHandle[i].QuantitaMgzn.toString());
            BodySheet['D' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',$scope.ListaCodiciToHandle[i].QuantitaMgznVol.toString());
+           BodySheet['E' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',$scope.ListaCodiciToHandle[i].Ubicazione);
        }   
        
        BodySheet["!cols"] = [             
                              {wpx: 300},
                              {wpx: 300},
                              {wpx: 300},
+                             {wpx: 300},
                              {wpx: 300}
                            ];
        
-       BodySheet['!ref'] = 'A1:D1' + parseInt($scope.ListaCodiciToHandle.length + 1);
+       BodySheet['!ref'] = 'A1:E1' + parseInt($scope.ListaCodiciToHandle.length + 1);
        
        WBook.SheetNames.push(SheetName);
        WBook.Sheets[SheetName] = BodySheet;            
@@ -227,7 +233,6 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
        $scope.ListaCodiciToHandle = [];
        $scope.CodiceBippato       = '';
        $scope.CodiceFocused       = undefined;
-       //if(confirm('Il file XLS è stato salvato correttamente?'))
        $state.go("startPage")
      })
   }

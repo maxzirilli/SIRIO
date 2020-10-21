@@ -1,9 +1,23 @@
 SIRIOApp.controller("mailChimpUploadController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','$http',
 function($scope,SystemInformation,$state,$rootScope,$mdDialog,$http)
 {
+  $scope.Contatore             = 0;
+  $scope.FileLength            = 0;
+  $scope.UltimaDataImportazione = '';
+
   ScopeHeaderController.CheckButtons();
-  $scope.Contatore = 0;
-  $scope.FileLength = 0;  
+  
+  SystemInformation.GetSQL('Accessories',{},function(Results)
+  {
+    var TmpUltimaData = SystemInformation.FindResults(Results,'LastUpdateMailChimp')[0].ULTIMA_IMPORTAZIONE_MAIL;
+    if(TmpUltimaData != undefined)
+    {
+       if(TmpUltimaData != null)
+          $scope.UltimaDataImportazione = ZFormatDateTime('dd/mm/yyyy',ZDateFromHTMLInput(TmpUltimaData))
+       else $scope.UltimaDataImportazione = '';
+    }
+    else SystemInformation.ApplyOnError('Modello data importazione non conforme')
+  },'SelectDataImpSQL');
   
   $scope.CaricaMailChimp = function()
   {
@@ -128,8 +142,13 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$http)
                     SystemInformation.PostSQL('Accessories',$ObjQuery,function(Answer)
                     {
                       $scope.Contatore = 0;
-                      $ObjQuery = {Operazioni : []};
-                      alert ('UPLOAD ESEGUITO!');  
+                      $ObjQuery        = {Operazioni : []};
+                      var Data         = new Date();
+                      var DataAnno     = Data.getFullYear();
+                      var DataMese     = Data.getMonth()+1; 
+                      var DataGiorno   = Data.getDate();
+                      scope.UltimaDataImportazione = DataGiorno.toString() + '/' + DataMese.toString() + '/' + DataAnno.toString();
+                      alert ('UPLOAD ESEGUITO!')  
                     },false,true)                                                             
                   },false,true)  
                 }

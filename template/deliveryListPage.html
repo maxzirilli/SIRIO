@@ -73,9 +73,12 @@
     </div>
     <br>
     <div style="text-align:right;">
-      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="NuovaSpedizioneCasaEditrice()">NUOVA SPEDIZIONE CASA EDITRICE</md-button>
-      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="CreaXlsSpedizioni()">CREA XLS SPEDIZIONI</md-button>
-      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="GestioneAvanzataSpedizioni()">GESTIONE AVANZATA SPEDIZIONI</md-button>
+      <md-button class="md-raised md-accent" style="float:left;font-weight:bold;" ng-click="ApriCumulativoPrenotati()">XLS CUMULATIVO PRENOTATI</md-button>
+      <md-button class="md-raised md-accent" style="float:left;font-weight:bold;" ng-click="ApriCumulativoConsegnati()">XLS CUMULATIVO CONSEGNATI</md-button>
+      <md-button class="md-raised md-accent" style="float:left;font-weight:bold;" ng-click="CreaXlsSpedizioni()">XLS SPEDIZIONI GENERICO</md-button>
+
+      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaSpedizioneCasaEditrice()">NUOVA SPEDIZIONE CASA EDITRICE</md-button>
+      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="GestioneAvanzataSpedizioni()">GESTIONE SPEDIZIONI DISPONIBILI</md-button>
     </div>
 
   <p ng-if="ListaSpedizioni.length == 0" style="font-weight:bold;font-style:italic;float:center;">NESSUNA SPEDIZIONE PRESENTE</p>  
@@ -97,7 +100,7 @@
       <td ng-if="Spedizione.NrPrenotate == 0"></td>      
       <td>{{ConvertiData(Spedizione)}}</td>
       <td>{{Spedizione.Docente == -1 ? Spedizione.Presso : Spedizione.DocenteNome}}</td>
-      <td style="text-align:left;" class="off" ng-bind-html="GetTitoliSpedizione(Spedizione)"></td>   
+      <td style="text-align:left;" ng-bind-html="GetTitoliSpedizione(Spedizione)"></td>   
     </tr>
     </table>
     <md-table-pagination md-limit="GridOptions.query.limit" 

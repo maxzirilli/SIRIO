@@ -1,0 +1,31 @@
+<md-dialog>
+  <form ng-cloak name="PopupCumulativoConsegnatiForm">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2 style="font-weight:bold;color:white;">XLS CUMULATIVO CONSEGNATI</h2>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content >
+      <div class="md-dialog-content">
+        <div layout="row">        
+          <md-input-container style="float:left;">
+            <label>DAL</label><input ng-model="DataRicercaDalCnsg" type="date" name="DataRicercaDalCnsg">
+          </md-input-container>
+          <md-input-container style="float:left;margin-left:20px;">  
+            <label>AL</label><input ng-model="DataRicercaAlCnsg" type="date" name="DataRicercaAlCnsg">
+          </md-input-container>
+        </div>   
+       </div>
+       <div style="text-align:center;">
+        <md-button ng-click="CreaXlsConsegnati()" title="GENERA XLS CONSEGNATI"><img src="img/printXLS.png" style="width:100px;height:auto;"></md-button>
+      </div> 
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="AnnullaPopupConsegnati()">
+       CHIUDI
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>
