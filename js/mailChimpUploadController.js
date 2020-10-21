@@ -15,7 +15,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$http)
         UltimaData = (UltimaData[0] == undefined ? null : UltimaData[0].ULTIMA_IMPORTAZIONE_MAIL);
         if(UltimaData == null)
         {
-          $http.get('http://www.pagina43.it/ZMSoftware/MailChimpRetrieveValues.php?Passwd=ZMaxMailChimpVegeta75')
+          $http.get('https://www.pagina43.it/ZMSoftware/MailChimpRetrieveValues.php?Passwd=ZMaxMailChimpVegeta75')
           .then(function(Answer) 
           {
             if(SystemInformation.CheckAnswerHTTP(Answer.data))
@@ -80,7 +80,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$http)
         }
         else
         {
-          var UrlConData = 'http://www.pagina43.it/ZMSoftware/MailChimpRetrieveValues.php?Passwd=ZMaxMailChimpVegeta75&FromData=' + UltimaData.toString();
+          var UrlConData = 'https://www.pagina43.it/ZMSoftware/MailChimpRetrieveValues.php?Passwd=ZMaxMailChimpVegeta75&FromData=' + UltimaData.toString();
           $http.get(UrlConData)
           .then(function(Answer) 
           {
