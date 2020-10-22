@@ -10,7 +10,20 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
   $scope.IstitutoDaAssociare  = -1;
   $scope.IstitutoFiltrato     = -1;
   $scope.SelectVolumiTitolo   = ['UNICO'];
+  $scope.CheckOldIstituto     = false;
   
+  $scope.ResetFiltri = function()
+  {
+    $scope.MateriaFiltro      = -1
+    $scope.NomeFiltro         = '';
+    $scope.CodiceFiltro       = '';
+    $scope.IstitutoFiltrato   = -1;
+    $scope.searchTextIstituto = '';
+    $scope.OldIstitutoFiltro  = -1;
+    $scope.OldIstitutoNome    = '';
+
+    $scope.RefreshListaTitoli();
+  }
   
   for(let i = 1;i < VOLUME_MASSIMO;i ++)
   {
@@ -101,7 +114,13 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
   $scope.selectedItemChangeIstituto = function(itemIstituto)
   {
     if(itemIstituto != undefined)
-       $scope.IstitutoFiltrato = itemIstituto.Chiave;
+    {
+      $scope.IstitutoFiltrato     = itemIstituto.Chiave;
+      $scope.OldIstitutoFiltro    = itemIstituto.Chiave;
+      $scope.OldIstitutoNome      = itemIstituto.Istituto;
+      $scope.CheckOldIstituto     = true;
+    }
+       
     else $scope.IstitutoFiltrato = -1;
     $scope.RefreshListaTitoli();
   } 
@@ -310,6 +329,11 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
   $scope.OnAnnullaTitoloClicked = function()
   {
     $scope.EditingOn = false;
+    if($scope.CheckOldIstituto)
+    {
+       $scope.IstitutoFiltro     = $scope.OldIstitutoFiltro;
+       $scope.searchTextIstituto = $scope.OldIstitutoNome;
+    }
     $scope.RefreshListaTitoli();
   }
   
@@ -474,6 +498,11 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
     {
       $scope.TitoloInEditing.ListaIstitutiTit = [];
       $scope.EditingOn = false;
+      if($scope.CheckOldIstituto)
+      {
+         $scope.IstitutoFiltro     = $scope.OldIstitutoFiltro;
+         $scope.searchTextIstituto = $scope.OldIstitutoNome;
+      }
       $scope.RefreshListaTitoli();
     });    
   }

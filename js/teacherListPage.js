@@ -19,6 +19,11 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   $scope.GiorniSettimanaD                  = SystemInformation.GiorniSettimana;
   $scope.DisponibilitaInEditing            = [];
   SystemInformation.DataBetweenController  = [];
+  $scope.NomeFiltro                        = ''
+
+  $scope.CheckOldMateria  = false;
+  $scope.CheckOldTitolo   = false;
+  $scope.CheckOldIstituto = false;
 
   ScopeHeaderController.CheckButtons();
 
@@ -187,7 +192,12 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   $scope.selectedItemChangeMateria = function(itemMat)
   {
     if(itemMat != undefined)
-       $scope.MateriaFiltro = itemMat.Chiave
+    {
+       $scope.MateriaFiltro        = itemMat.Chiave
+       $scope.OldMateriaFiltro     = itemMat.Chiave
+       $scope.OldMateriaNome       = itemMat.Nome;
+       $scope.CheckOldMateria      = true;
+    }
     else $scope.MateriaFiltro = -1;
   }
 
@@ -203,7 +213,12 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   $scope.selectedItemChangeTitolo = function(itemTit)
   {
     if(itemTit != undefined)
-      $scope.TitoloFiltro = itemTit.Chiave;
+    {
+      $scope.TitoloFiltro        = itemTit.Chiave;
+      $scope.OldTitoloFiltro     = itemTit.Chiave;
+      $scope.OldTitoloNome       = itemTit.Nome
+      $scope.CheckOldTitolo      = true
+    }
     else
     {
       $scope.TitoloFiltro  = -1;
@@ -227,6 +242,9 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
     {
       $scope.IstitutoFiltrato     = itemIstituto.Chiave;
       $scope.IstitutoFiltratoNome = itemIstituto.Istituto;
+      $scope.OldIstitutoFiltro    = itemIstituto.Chiave;
+      $scope.OldIstitutoNome      = itemIstituto.Istituto;
+      $scope.CheckOldIstituto     = true;
     }
     else $scope.IstitutoFiltrato = -1;
     $scope.RefreshListaDocenti();
@@ -251,13 +269,25 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   $scope.ResetFiltri = function()
   {
     $scope.NomeFiltro         = '';
-    $scope.TitoloFiltro       = -1;
+    
     $scope.AProvinciaFiltro   = -1;
-    $scope.IstitutoFiltrato   = -1;
+    $scope.ProvinciaOldFiltro = -1; 
+    
     $scope.MateriaFiltro      = -1;
+    $scope.OldMateriaFiltro   = -1;
+    $scope.OldMateriaNome     = '';
     $scope.searchTextMat      = '';
+    
+    $scope.TitoloFiltro       = -1;
+    $scope.OldTitoloFiltro    = -1;
+    $scope.OldTitoloNome      = '';
     $scope.searchTextTit      = '';
+
+    $scope.IstitutoFiltrato   = -1;
+    $scope.OldIstitutoFiltro  = -1;
+    $scope.OldIstitutoNome    = '';
     $scope.searchTextIstituto = '';
+
 
     $scope.RefreshListaDocenti();
   }
@@ -399,13 +429,13 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
     $scope.DocenteInEditing.ListaOrariEliminati       = [];
     $scope.ListaMaterieDoc                            = [];
     $scope.IstitutoVisualizzato      = -1;
-    $scope.IstitutoForNewDocente     = -1;
+    /*$scope.IstitutoForNewDocente     = -1;
     $scope.IstitutoForNewDocenteNome = '';
     if($scope.IstitutoFiltrato != -1)
     {
        $scope.IstitutoForNewDocente     = $scope.IstitutoFiltrato;
        $scope.IstitutoForNewDocenteNome = $scope.IstitutoFiltratoNome;
-    }   
+    }*/   
     SystemInformation.GetSQL('Teacher', {CHIAVE : docente.Chiave}, function(Results)
     {
       DocenteDettaglio    = SystemInformation.FindResults(Results,'TeacherDettaglio');
@@ -506,8 +536,8 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   { 
     $scope.ProvinciaOldFiltro        = $scope.AProvinciaFiltro;
     $scope.EditingOn                 = true;
-    $scope.IstitutoForNewDocente     = -1;
-    $scope.IstitutoForNewDocenteNome = '';
+    //$scope.IstitutoForNewDocente     = -1;
+    //$scope.IstitutoForNewDocenteNome = '';
     $scope.DocenteInEditing = {
                                 Chiave           : -1,
                                 RagioneSociale   : '',
@@ -528,11 +558,11 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                                 ListaIstitutiDoc : []
                               };
     $scope.DisponibilitaInEditing = GetArrayDisponibilitaVuoto();
-    if($scope.IstitutoFiltrato != -1)
+    /*if($scope.IstitutoFiltrato != -1)
     {
        $scope.IstitutoForNewDocente     = $scope.IstitutoFiltrato;
        $scope.IstitutoForNewDocenteNome = $scope.IstitutoFiltratoNome;
-    }
+    }*/
     
     SystemInformation.GetSQL('Teacher',{},function(Results)
     {
@@ -564,16 +594,16 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
         {
           if(itemDoc != undefined)
           {
-            if($scope.IstitutoForNewDocente != -1)
+            if($scope.OldIstitutoFiltro != -1)
             {
-              if(confirm("QUESTO DOCENTE E' ASSEGNATO AI SEGUENTI ISTITUTI: " + itemDoc.ListaIstDoc.toString() + ".\nVUOI ASSEGNARLO ALL'ISTITUTO >> " + $scope.IstitutoForNewDocenteNome + " << ?"))
+              if(confirm("QUESTO DOCENTE E' ASSEGNATO AI SEGUENTI ISTITUTI: " + itemDoc.ListaIstDoc.toString() + ".\nVUOI ASSEGNARLO ALL'ISTITUTO >> " + $scope.OldIstitutoNome + " << ?")) //$scope.IstitutoForNewDocenteNome
               {
                  $ObjQuery = {Operazioni : []};
                  $ObjQuery.Operazioni.push({
                                              Query     : "InsertInstituteTeacher",
                                              Parametri : {
                                                            DOCENTE  : itemDoc.ChiaveDoc,
-                                                           ISTITUTO : $scope.IstitutoForNewDocente
+                                                           ISTITUTO : $scope.OldIstitutoFiltro
                                                          }
                                             })
                  SystemInformation.PostSQL('Teacher',$ObjQuery,function(Answer)
@@ -581,7 +611,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                     alert("DOCENTE ASSOCIATO CORRETTAMENTE ALL'ISTITUTO DESIDERATO")
                     $ObjQuery = {};
                     $scope.searchTextDoc = '';
-                    $scope.DocenteInEditing.RagioneSociale = undefined
+                    $scope.DocenteInEditing.RagioneSociale = ''
                  })
               }
               else $scope.DocenteInEditing.RagioneSociale = itemDoc.NomeDoc
@@ -596,10 +626,26 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   $scope.OnAnnullaDocenteClicked = function()
   {
     $scope.AProvinciaFiltro = $scope.ProvinciaOldFiltro;
+    
+    if($scope.CheckOldMateria)
+    {
+       $scope.MateriaFiltro = $scope.OldMateriaFiltro;
+       $scope.searchTextMat = $scope.OldMateriaNome;
+    }
+    if($scope.CheckOldTitolo)
+    {
+       $scope.TitoloFiltro  = $scope.OldTitoloFiltro;
+       $scope.searchTextTit = $scope.OldTitoloNome;
+    }
+    if($scope.CheckOldIstituto)
+    {
+       $scope.IstitutoFiltro     = $scope.OldIstitutoFiltro;
+       $scope.searchTextIstituto = $scope.OldIstitutoNome;
+    }
     $scope.EditingOn = false;
     $scope.RefreshListaDocenti();
-    if($scope.IstitutoForNewDocente != -1)
-       $scope.searchTextIstituto = $scope.IstitutoForNewDocenteNome;
+    //if($scope.IstitutoForNewDocente != -1)
+       //$scope.searchTextIstituto = $scope.IstitutoForNewDocenteNome;
   }
   
   $scope.SetAsIndirizzoDocente = function (ChiaveIst)
@@ -625,6 +671,11 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   
   $scope.ConfermaDocente = function()
   {
+    if($scope.DocenteInEditing.RagioneSociale == '')
+    {
+       alert('Nome del docente mancante!');
+       return;
+    }
     var $ObjQuery    = { Operazioni : [] }; 
     $scope.DocenteInEditing.RagioneSociale = $scope.DocenteInEditing.RagioneSociale.toUpperCase(); 
     var ParamDocente = {
@@ -841,8 +892,23 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
       $scope.DisponibilitaInEditing            = []; 
 
       $scope.RefreshListaDocenti();
-      if($scope.IstitutoForNewDocente != -1)
-         $scope.searchTextIstituto = $scope.IstitutoForNewDocenteNome;
+      if($scope.CheckOldMateria)
+      {
+         $scope.MateriaFiltro    = $scope.OldMateriaFiltro;
+         $scope.searchTextMat    = $scope.OldMateriaNome;
+      }
+      if($scope.CheckOldTitolo)
+      {
+         $scope.TitoloFiltro  = $scope.OldTitoloFiltro;
+         $scope.searchTextTit = $scope.OldTitoloNome;
+      }
+      if($scope.CheckOldIstituto)
+      {
+         $scope.IstitutoFiltro     = $scope.OldIstitutoFiltro;
+         $scope.searchTextIstituto = $scope.OldIstitutoNome;
+      }
+      //if($scope.IstitutoForNewDocente != -1)
+         //$scope.searchTextIstituto = $scope.IstitutoForNewDocenteNome;
       SystemInformation.GetSQL('Institute', {}, function(Results)  
       { 
         var ListaIstitutiAssegnati = [];  
@@ -941,6 +1007,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
     $scope.AnnullaPopup = function() 
     { 
       $scope.IstitutoDaAssociare = -1;
+      $scope.NomeFiltro = '';      
       $mdDialog.cancel();
     };
 
@@ -1466,7 +1533,7 @@ SIRIOApp.filter('IstitutoByNomeFiltro',function()
               return(Result);
            }
           
-           ListaIstitutiPopupDoc.forEach(function(istituto)
+           ListaIstitutiPopup.forEach(function(istituto)
            { 
              if(IstitutoOK(istituto)) 
                 ListaFiltrataI.push(istituto)                       

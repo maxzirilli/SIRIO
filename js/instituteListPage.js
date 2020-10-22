@@ -4,8 +4,7 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
   $scope.IstitutoInEditing  = {};
   $scope.ListaIstituti      = [];  
   $scope.ListaProvince      = [];
-  $scope.ListaPromotori     = [];    
-  
+  $scope.ListaPromotori     = [];  
   $scope.SezioneMax         = -1;
   $scope.ListaSezioni       = ['A','B','C','D','E','F','G','H','I','L','M','N','O','P','Q','R','S','T','U','V','Z'];    
   $scope.Anno               = [1,2,3,4,5];
@@ -13,8 +12,7 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
   //$scope.ArrayClassiGlobale = [];
   $scope.ArrayClassiFinale  = [];
   $scope.ClasseCliccata     = [];
-  $scope.IstitutiNascosti   = false;
-  
+  $scope.IstitutiNascosti   = false;  
   $scope.ProvinciaFiltro    = -1;
   $scope.NomeFiltro         = ''; 
   $scope.NomeFiltroUnione   = '';
@@ -156,11 +154,6 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                                     }
          
             $scope.ListaIstituti = IstitutiInfoLista
-            if(SystemInformation.DataBetweenController.ProvinciaF != undefined)
-            {
-               $scope.ProvinciaFiltro = SystemInformation.DataBetweenController.ProvinciaF;
-               SystemInformation.DataBetweenController = {};
-            }
       }
       else SystemInformation.ApplyOnError('Modello istituti non conforme','');   
     });   
