@@ -1,5 +1,5 @@
-SIRIOApp.controller("startPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','$sce','$http',
-function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http)
+SIRIOApp.controller("startPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','$sce','$http','$mdDialog','ZConfirm',
+function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http,$mdDialog,ZConfirm)
 {
   ScopeHeaderController.CheckButtons();
   $scope.MostraListaSpedizioni = false;  
@@ -92,7 +92,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http)
   $scope.IsAdministrator = function ()
   {
     return SystemInformation.UserInformation.Ruolo == RUOLO_AMMINISTRATORE;
-  } 
+  }
 
   $scope.NuovaSpedizioneCasaEditrice = function ()
   {
@@ -129,7 +129,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http)
 
   $scope.PassaADaSpedireDisponibili = function (ChiaveSped)
   {
-    if(confirm('Passare tutti i titoli della spedizione da PRENOTATI(DISPONIBILI) a DA SPEDIRE?'))
+    var SpedDisp = function()
     {
        SystemInformation.GetSQL('Delivery',{CHIAVE : ChiaveSped},function(Results)
        {
@@ -175,11 +175,11 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http)
             SystemInformation.PostSQL('Delivery',$ObjQuery,function(Results)
             {                            
               if(TitoliNonDisponibili.length != 0 && TitoliDaSpedire.length == 0)               
-                 alert('I seguenti titoli non sono disponibili per essere spediti:  ' + TitoliNonDisponibili)
+                 ZCustomAlert($mdDialog,'AVVISO','I SEGUENTI TITOLI NON SONO DISPONIBILI PER ESSERE SPEDITI:  ' + TitoliNonDisponibili)
               else if (TitoliNonDisponibili.length == 0 && TitoliDaSpedire.length != 0)
-                 alert('I seguenti titoli sono stati segnati come DA SPEDIRE : ' + TitoliDaSpedire)
+                 ZCustomAlert($mdDialog,'AVVISO','I SEGUENTI TITOLI SONO STATI SEGNATI COME DA SPEDIRE: ' + TitoliDaSpedire)
               else if (TitoliNonDisponibili.length != 0 && TitoliDaSpedire.length != 0)
-                 alert('I seguenti titoli sono stati segnati come DA SPEDIRE : ' + TitoliDaSpedire + '\n' + '\n' + 'I seguenti titoli non sono disponibili per essere spediti:  ' + TitoliNonDisponibili);              
+                 ZCustomAlert($mdDialog,'AVVISO','I SEGUENTI TITOLI SONO STATI SEGNATI COME DA SPEDIRE: ' + TitoliDaSpedire + '\n' + '\n' + 'I SEGUENTI TITOLI NON SONO DISPONIBILI PER ESSERE SPEDITI:  ' + TitoliNonDisponibili);              
               $scope.UltimeVentiSpedizioni = [];
               $scope.RefreshListaUltimeSpedizioni(); 
             })                       
@@ -187,6 +187,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http)
          else SystemInformation.ApplyOnError('Modello dettaglio spedizione non conforme','');
        },'SQLDettaglioSpedizioneGenerico');
     }
+    ZConfirm.GetConfirmBox('AVVISO','Passare tutti i titoli della spedizione da PRENOTATI(DISPONIBILI) a DA SPEDIRE?',SpedDisp,function(){});
+
   }  
   
   $scope.RefreshListaUltimeSpedizioni = function ()
@@ -339,7 +341,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http)
 
   $scope.EliminaSpedizione = function (Spedizione)
   {
-    if (confirm('Eliminare la spedizione del ' + Spedizione.Data + ' presso ' + Spedizione.Presso + ' ?'))
+    var EliminaSped = function()
     {
       var $ObjQuery       = { Operazioni : [] };
       var ParamSpedizione = { CHIAVE : Spedizione.Chiave };
@@ -360,6 +362,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http)
         $ObjQuery.Operazioni = [];
       });
     }
+    ZConfirm.GetConfirmBox('AVVISO','Eliminare la spedizione del ' + Spedizione.Data + ' presso ' + Spedizione.Presso + ' ?',EliminaSped,function(){});
   }  
   
   $scope.RefreshListaUltimeSpedizioni();

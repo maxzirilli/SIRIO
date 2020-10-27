@@ -1,0 +1,24 @@
+<md-dialog style="padding:5px;">
+  <form ng-cloak style="border:10px;border-color:orange">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2 style="font-weight:bold;color:white;">{{TitoloConfirm}}</h2>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content style="width:500px;">
+      <div class="md-dialog-content">
+        <p style="font-weight:bold;width:400px;">{{TestoConfirm}}</p>
+      </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row" layout-align="end center">
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="GoOnConfirm()">
+        SI
+      </md-button>
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="AnnullaConfirm()">
+        NO
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

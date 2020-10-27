@@ -81,7 +81,6 @@
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="GestioneAvanzataSpedizioni()">GESTIONE SPEDIZIONI DISPONIBILI</md-button>
     </div>
 
-  <p ng-if="ListaSpedizioni.length == 0" style="font-weight:bold;font-style:italic;float:center;">NESSUNA SPEDIZIONE PRESENTE</p>  
   <div ng-if="ListaSpedizioni.length != 0">
     <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
     <tr>
@@ -110,5 +109,10 @@
                        md-page-select="GridOptions.pageSelect" 
                        md-boundary-links="GridOptions.boundaryLinks" 
                        md-on-paginate="logPagination"></md-table-pagination>
+  </div>
+  <br>
+  <br>
+  <div>
+    <p ng-if="ListaSpedizioni.length == 0" style="font-weight:bold;font-style:italic;text-align:center;">NESSUNA SPEDIZIONE PRESENTE</p>  
   </div>
 </div>

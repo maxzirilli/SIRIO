@@ -1,5 +1,4 @@
 <div ng-controller="startPageController" ng-cloak md-theme="{{ActualTheme}}" style="height:75%">
-  <div>
   <md-toolbar class="md-menu-toolbar">
     <div layout="row">
       <div>
@@ -21,11 +20,11 @@
         </md-button>
         <md-button name="OrdiniInIngresso" class="MainButton" ng-click="ApriListaOrdiniIngresso()">
         <img src="img/order.png" class="invert MainIcon" style="width:15px;height:auto;">
-          CARICHI MAGAZZINO
+          CARICHI
         </md-button>
         <md-button name="Configurazioni" class="MainButton" ng-if="IsAdministrator()" ng-click="ApriListaConfigurazioni()">
         <img src="img/config.png" class="invert MainIcon">
-          CONFIGURAZIONI
+          CONFIG
         </md-button>
         <md-button name="RicercaSpedizioni" class="MainButton" ng-click="ApriListaSpedizioni()">
         <img src="img/deliveryStart.png" class="invert MainIcon" style="width:30px;height:auto;">
@@ -36,8 +35,8 @@
   </md-toolbar>
 
   <md-content>
-    <div class="md-padding">
-        <md-card style="text-align: center;overflow-y:scroll;height:500px;"> <!--overflow-x:scroll-->
+    <div>
+        <md-card span=100 style="text-align:center;overflow-y:scroll;height:500px;"> <!--overflow-x:scroll-->
           <md-card-title>
             <md-card-title-text style="text-align:center;">
               <span class="md-headline" style="font-weight:bold;">SPEDIZIONI</span>
@@ -68,8 +67,8 @@
         </md-card>
     </div>
     
-    <div layout="row">
-      <md-card flex=40>
+    <!--<div layout="row">
+      <md-card>
         <md-card-title>
           <md-card-title-text style="text-align:center;">
             <span class="md-headline" style="font-weight:bold;">STAMPE</span>
@@ -79,18 +78,18 @@
           <div layout="row">
             <div>
               <md-button ng-click="ApriPaginaEtichette()" style="float:left;"><img src="img/label.png" style="width:55px;height:auto;margin-right:10px"></md-button>
-              <p style="font-weight:bold;float:rigth;padding:0px;">ETICHETTE</p>
-              <p style="font-style:italic;float:rigth;padding:0px;margin-left:100px;">Etichette per spedizioni</p>              
+              <p style="font-weight:bold;padding:0px;">ETICHETTE</p>
+              <p style="font-style:italic;padding:0px;margin-left:100px;">Etichette per spedizioni</p>              
             </div>       
             <div>
               <md-button ng-click="ApriLogMagazzini()" style="float:left;"><img src="img/storageLog.png" style="width:55px;height:auto;margin-right:10px"></md-button>
-              <p style="font-weight:bold;float:rigth;padding:0px;">LOG MAGAZZINI / INVENTARIO</p>
-              <p style="font-style:italic;float:rigth;padding:0px;margin-left:100px;">Log magazzini e inventario</p>              
+              <p style="font-weight:bold;padding:0px;">LOG MAGAZZINI / INVENTARIO</p>
+              <p style="font-style:italic;padding:0px;margin-left:100px;">Log magazzini e inventario</p>              
             </div>       
           </div>
         </md-card-content>
       </md-card>
-      <md-card flex=60>
+      <md-card style="overflow-y:scroll;">
         <md-card-title>
           <md-card-title-text style="text-align:center;">
             <span class="md-headline" style="font-weight:bold;">VARIE</span>
@@ -100,29 +99,78 @@
           <div layout="row">
             <div ng-if="IsAdministrator()">
               <md-button ng-click="ApriGestioneInventario()" style="float:left;"><img src="img/inventory.png" style="width:55px;height:auto;margin-right:10px"></md-button>
-              <p style="font-weight:bold;float:rigth;padding:0px;">INVENTARIO</p>
-              <p style="font-style:italic;float:rigth;padding:0px;margin-left:100px;">Gestione inventario</p>              
+              <p style="font-weight:bold;padding:0px;">INVENTARIO</p>
+              <p style="font-style:italic;padding:0px;margin-left:100px;">Gestione inventario</p>
             </div>
             <div>
               <md-button ng-click="ApriMagazzinoVolante()" style="float:left;"><img src="img/flyingStorage.png" style="width:55px;height:auto;margin-right:10px"></md-button>
-              <p style="font-weight:bold;float:rigth;padding:0px;">MAGAZZINO VOLANTE</p>
-              <p style="font-style:italic;float:rigth;padding:0px;margin-left:100px;">Gestione magazzino volante</p>              
+              <p style="font-weight:bold;padding:0px;">MAGAZZINO VOLANTE</p>
+              <p style="font-style:italic;padding:0px;margin-left:100px;">Gestione magazzino volante</p>              
             </div>
             <div>
               <md-button ng-click="NuovaSpedizioneCasaEditrice()" style="float:left;"><img src="img/delivery.png" style="width:55px;height:auto;margin-right:10px"></md-button>
-              <p style="font-weight:bold;float:rigth;padding:0px;">SPEDIZIONE</p>
-              <p style="font-style:italic;float:rigth;padding:0px;margin-left:100px;">Nuova spedizione generica</p>              
+              <p style="font-weight:bold;padding:0px;">SPEDIZIONE</p>
+              <p style="font-style:italic;padding:0px;margin-left:100px;">Nuova spedizione generica</p>              
+            </div>              
+          </div>
+        </md-card-content>
+      </md-card>
+    </div>-->
+
+    <div layout="row" style="text-align:center;">
+      <md-card style="width:100%;">
+        <md-card-title>
+          <md-card-title-text style="text-align:center;">
+            <span class="md-headline" style="font-weight:bold;">VARIE</span>
+          </md-card-title-text>
+        </md-card-title>
+        <md-card-content>
+          <div layout="row">
+            <div style="margin-left:5px;margin-right:5px;" flex=20>
+              <md-button ng-click="ApriPaginaEtichette()"><img src="img/label.png" style="width:60px;height:auto;"></md-button>
+              <br>
+              <p style="font-weight:bold;padding:0px;">ETICHETTE</p>
+              <br>
+              <!--<p style="font-style:italic;padding:0px;">Etichette per spedizioni</p>-->            
+            </div>       
+            <div style="margin-left:5px;margin-right:5px;"  flex=20>
+              <md-button ng-click="ApriLogMagazzini()"><img src="img/storageLog.png" style="width:60px;height:auto;"></md-button>
+              <br>
+              <p style="font-weight:bold;padding:0px;">LOG MAGAZZINI & INVENTARIO</p>
+              <br>
+              <!--<p style="font-style:italic;padding:0px;">Log magazzini e inventario</p>-->              
+            </div>       
+            <div ng-if="IsAdministrator()" style="margin-left:5px;margin-right:5px;"  flex=20>
+              <md-button ng-click="ApriGestioneInventario()"><img src="img/inventory.png" style="width:60px;height:auto;"></md-button>
+              <br>
+              <p style="font-weight:bold;padding:0px;">INVENTARIO</p>
+              <br>
+              <!--<p style="font-style:italic;padding:0px;">Gestione inventario</p>-->
+            </div>
+            <div style="margin-left:5px;margin-right:5px;"  flex=20>
+              <md-button ng-click="ApriMagazzinoVolante()"><img src="img/flyingStorage.png" style="width:60px;height:auto;"></md-button>
+              <br>
+              <p style="font-weight:bold;padding:0px;">MAGAZZINO VOLANTE</p>
+              <br>
+              <!--<p style="font-style:italic;padding:0px;">Gestione magazzino volante</p>-->              
+            </div>
+            <div style="margin-left:5px;margin-right:5px;"  flex=20>
+              <md-button ng-click="NuovaSpedizioneCasaEditrice()"><img src="img/delivery.png" style="width:60px;height:auto;"></md-button>
+              <br>
+              <p style="font-weight:bold;padding:0px;">SPEDIZIONE GENERICA</p>
+              <br>
+              <!--<p style="font-style:italic;padding:0px;">Nuova spedizione generica</p>-->             
             </div>              
           </div>
         </md-card-content>
       </md-card>
     </div>    
       
-    <div layout="row" ng-if="IsAdministrator()"> 
-      <md-card>
+    <!--<div layout="row" ng-if="IsAdministrator()"> 
+      <md-card style="text-align:center;overflow-y:scroll;">
         <md-card-title>
           <md-card-title-text style="text-align:center;">
-            <span class="md-headline" style="font-weight:bold;">IMPORTAZIONI DATI</span>
+            <span class="md-headline" style="font-weight:bold;">IMPORTAZIONI E AGGIORNAMENTI</span>
           </md-card-title-text>
         </md-card-title>
         <md-card-content>
@@ -152,10 +200,65 @@
               <p style="font-weight:bold;;padding:0px;">FILE CSV CATALOGHI</p>
               <p style="font-style:italic;padding:0px;margin-left:100px;">Aggiornamento cataloghi DeAgostini</p>
             </div>
-            <div>
+            <div style="padding-right:50px;">
               <md-button ng-click="ApriMailChimpUpload()" style="float:left;"><img src="img/download.png" style="width:50px;height:auto;margin-right:10px"></md-button>
               <p style="font-weight:bold;;padding:0px;">DATI MAIL DOCENTI</p>
               <p style="font-style:italic;padding:0px;margin-left:100px;">Aggiornamento mail docenti da MailChimp</p>
+            </div>             
+          </div>          
+        </md-card-content>
+      </md-card>  
+    </div>-->
+    <div layout="row" ng-if="IsAdministrator()" style="text-align:center;"> 
+      <md-card style="width:100%;">
+        <md-card-title>
+          <md-card-title-text style="text-align:center;">
+            <span class="md-headline" style="font-weight:bold;">IMPORTAZIONI E AGGIORNAMENTI</span>
+          </md-card-title-text>
+        </md-card-title>
+        <md-card-content>
+          <div layout="row">
+            <div style="margin-left:5px;margin-right:5px;" flex=20>        
+              <md-button ng-click="ApriCsvIstitutiUpload()"><img src="img/download.png" style="width:60px;height:auto;"></md-button>
+              <br>
+              <p style="font-weight:bold;padding:0px;">CSV ISTITUTI</p>
+              <br>
+              <p style="font-style:italic;margin:0px;">Importazione istituti da sito ministero dell'istruzione</p>
+            </div>
+            <div style="margin-left:5px;margin-right:5px;" flex=20>
+              <md-button ng-click="ApriCsvTitoliUpload()"><img src="img/download.png" style="width:60px;height:auto;"></md-button>
+              <br>
+              <p style="font-weight:bold;padding:0px;">CSV TITOLI</p>
+              <br>
+              <p style="font-style:italic;margin:0px;">Importazione titoli e adozioni da sito ministero dell'istruzione</p>
+            </div>
+            <div style="margin-left:5px;margin-right:5px;" flex=20>
+              <md-button ng-click="ApriCsvDocentiUpload()"><img src="img/download.png" style="width:60px;height:auto;"></md-button>
+              <br>
+              <p style="font-weight:bold;padding:0px;">CSV DOCENTI</p>
+              <br>
+              <p style="font-style:italic;margin:0px;">Importazione docenti da database applicazione LYBRO</p>
+            </div>
+            <div style="margin-left:5px;margin-right:5px;" flex=20>
+              <md-button ng-click="ApriCsvCataloghiMondadoriUpload()"><img src="img/download.png" style="width:60px;height:auto;"></md-button>
+              <br>
+              <p style="font-weight:bold;padding:0px;">CSV MONDADORI</p>
+              <br>
+              <p style="font-style:italic;margin:0px;">Aggiornamento cataloghi Mondadori</p>
+            </div>
+            <div style="margin-left:5px;margin-right:5px;" flex=20>
+              <md-button ng-click="ApriCsvCataloghiDeAgostiniUpload()"><img src="img/download.png" style="width:60px;height:auto;"></md-button>
+              <br>
+              <p style="font-weight:bold;padding:0px;">CSV DE AGOSTINI</p>
+              <br>
+              <p style="font-style:italic;margin:0px;">Aggiornamento cataloghi DeAgostini</p>
+            </div>
+            <div style="margin-left:5px;margin-right:5px;" flex=20>
+              <md-button ng-click="ApriMailChimpUpload()"><img src="img/download.png" style="width:60px;height:auto;"></md-button>
+              <br>
+              <p style="font-weight:bold;padding:0px;">EMAIL DOCENTI</p>
+              <br>
+              <p style="font-style:italic;margin:0px;">Aggiornamento mail docenti da MailChimp</p>
             </div>             
           </div>          
         </md-card-content>

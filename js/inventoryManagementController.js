@@ -1,4 +1,4 @@
-SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation','$state',function($scope,SystemInformation,$state)
+SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation','$state','$mdDialog','ZConfirm',function($scope,SystemInformation,$state,$mdDialog,ZConfirm)
 {
  
   $scope.ListaTitoliAll      = [];
@@ -30,20 +30,24 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
 
   $scope.ResetInventario = function()
   {
-    if(confirm('Questa operazione eseguirà il reset di tutte le quantità dei titoli nel magazzino e nel magazzino volante. Confermi?'))
-      if(confirm("SEI SICURO DI ESEGUIRE IL RESET DELL'INVENTARIO? L'OPERAZIONE E' IRREVERSIBILE!"))
+    var PrimaConferma = function()
+    {
+      ZConfirm.GetConfirmBox('AVVISO',"SEI SICURO DI ESEGUIRE IL RESET DELL'INVENTARIO? L'OPERAZIONE E' IRREVERSIBILE!",SecondaConferma,function(){});      
+    }
+    var SecondaConferma = function()
+    {      
+      $ObjQuery = { Operazioni : [] };
+      $ObjQuery.Operazioni.push({
+                                  Query     : 'ResetAllInventory',
+                                  Parametri : {}
+                                })
+      SystemInformation.PostSQL('Book',$ObjQuery,function(Answer)
       {
-          $ObjQuery = { Operazioni : [] };
-          $ObjQuery.Operazioni.push({
-                                      Query     : 'ResetAllInventory',
-                                      Parametri : {}
-                                    })
-          SystemInformation.PostSQL('Book',$ObjQuery,function(Answer)
-          {
-            alert("I MAGAZZINI SONO STATI STATO RESETTATI CON SUCCESSO")
-            $ObjQuery = {};
-          })
-      }
+        ZCustomAlert($mdDialog,'AVVISO','I MAGAZZINI SONO STATI STATO RESETTATI CON SUCCESSO!');
+        $ObjQuery = {};
+      })   
+    }
+    ZConfirm.GetConfirmBox('AVVISO','Questa operazione eseguirà il reset di tutte le quantità dei titoli nel magazzino e nel magazzino volante. Confermi?',PrimaConferma,function(){});      
   } 
 
   SystemInformation.GetSQL('Book',{},function(Results)
@@ -106,7 +110,7 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
            var TitoloTrovato = $scope.ListaTitoliAll.find(function(ACodice){return(ACodice.CodiceTitolo == $scope.CodiceBippato);});
            if(TitoloTrovato == undefined)
            {
-             alert("NESSUN TITOLO IN MAGAZZINO ASSOCIATO A QUESTO TITOLO! SI CONSIGLIA DI CONTROLLARE IL DATABASE O DI VERIFICARE L'INSERIMENTO DEL CODICE")
+            ZCustomAlert($mdDialog,'ATTENZIONE',"NESSUN TITOLO IN MAGAZZINO ASSOCIATO A QUESTO TITOLO! SI CONSIGLIA DI CONTROLLARE IL DATABASE O DI VERIFICARE L'INSERIMENTO DEL CODICE!")
              $scope.CodiceBippato = '';
              return
            }
@@ -147,15 +151,19 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
         $state.go("startPage")
     }
     else
-    {
-        if(confirm("SEI SICURO DI VOLER ANNULLARE TUTTI GLI INSERIMENTI ESEGUITI?"))
-           if(confirm("CONFERMI?"))
-           {
-             $scope.ListaCodiciToHandle = [];
-             $scope.CodiceBippato       = '';
-             $scope.CodiceFocused = undefined;
-             $state.go("startPage");
-           }
+    { 
+        var Procedi = function()
+        {
+          ZConfirm.GetConfirmBox('AVVISO',"CONFERMI?",ProcediFinale,function(){});
+        }
+        var ProcediFinale = function()
+        {
+          $scope.ListaCodiciToHandle = [];
+          $scope.CodiceBippato       = '';
+          $scope.CodiceFocused = undefined;
+          $state.go("startPage");
+        }
+        ZConfirm.GetConfirmBox('AVVISO',"SEI SICURO DI VOLER ANNULLARE TUTTI GLI INSERIMENTI ESEGUITI?",Procedi,function(){});
     }
   }
 
@@ -177,7 +185,7 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
      }
      SystemInformation.PostSQL('Book',$ObjQuery,function(Answer)
      {
-       alert('AGGIORNAMENTO DEL MAGAZZINO COMPLETATO CON SUCCESSO')
+       ZCustomAlert($mdDialog,'AVVISO','AGGIORNAMENTO DEL MAGAZZINO COMPLETATO CON SUCCESSO!')
       
        $scope.ListaCodiciToHandle.sort(function(a,b)
        {

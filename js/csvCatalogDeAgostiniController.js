@@ -58,7 +58,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
              SystemInformation.PostSQL('Book',$ObjQuery,function() 
              { 
                $scope.Contatore = 0;
-               alert ('UPLOAD ESEGUITO!');                                                               
+               ZCustomAlert($mdDialog,'OK','UPLOAD ESEGUITO')                                                                
              },false,true)                                                                 
         }
         SendDieciTitoli();            

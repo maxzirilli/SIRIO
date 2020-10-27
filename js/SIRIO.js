@@ -1,5 +1,5 @@
 // Inizializzazioni
-const VERSIONE_ATTUALE = '1.8.8';
+const VERSIONE_ATTUALE = '1.9.9';
 
 SIRIOApp.config(['$qProvider', function ($qProvider)
 {
@@ -16,7 +16,7 @@ SIRIOApp.config(['$mdThemingProvider', function($mdThemingProvider)
 }]);
   
 
-SIRIOApp.config(['$stateProvider','$urlRouterProvider','$mdAriaProvider',function ($stateProvider, $urlRouterProvider,  $mdAriaProvider)
+SIRIOApp.config(['$stateProvider','$urlRouterProvider','$mdAriaProvider',function ($stateProvider, $urlRouterProvider,$mdAriaProvider)
 {
 
     $mdAriaProvider.disableWarnings();

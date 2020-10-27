@@ -71,7 +71,8 @@
           <div layout="column" ng-if="!SpedizioneAIstituto">
             <p style="font-weight:bold;">SPEDIZIONE PER I SEGUENTI DOCENTI :</p>
             <table style="width:100%;text-align:center;" md-row-select="GridOptions2.rowSelection" multiple="{{GridOptions2.multiSelect}}">  
-               <tr>                      
+               <tr>
+                 <th></th>                      
                  <th>DOCENTE</th>
                  <th>INDIRIZZO</th>
                  <th>COMUNE</th>
@@ -79,6 +80,7 @@
                  <th>PROVINCIA</th>
                </tr>  
                <tr ng-repeat="Docente in ListaDocentiSpedizione | limitTo : GridOptions2.query.limit : (GridOptions2.query.page - 1) * GridOptions2.query.limit">
+                 <td><img src="img/delete.png" style="width:30px;height:auto;" title="RIMUOVI DOCENTE" ng-click="RimuoviDocenteTabella(Docente)"></td>
                  <td>{{Docente.NomeDocente}}</td>
                  <td>{{Docente.IndirizzoDocente}}</td> 
                  <td>{{Docente.ComuneDocente}}</td>
@@ -97,14 +99,16 @@
           <div layout="column" ng-if="ListaDocentiEsclusi.length != 0 && !SpedizioneAIstituto">
             <p style="font-weight:bold;">IMPOSSIBILE SPEDIRE AI SEGUENTI DOCENTI - DATI INDIRIZZO DI SPEDIZIONE MANCANTI</p>
             <ul>
-              <li ng-repeat="DocenteEscluso in ListaDocentiEsclusi">{{DocenteEscluso.NomeDocente}}</li>
+              <li ng-repeat="DocenteEscluso in ListaDocentiEsclusi">{{DocenteEscluso.NomeDocente}}<img src="img/deleteCross.png" style="width:20px;height:auto;margin-left:10px;" title="RIMUOVI DOCENTE" ng-click="RimuoviDocenteEscluso(DocenteEscluso)"></li>
             </ul>            
           </div>
           <div layout="column" ng-if="SpedizioneAIstituto">
             <p style="font-weight:bold;">SPEDIZIONE PER I SEGUENTI DOCENTI ALL'INDIRIZZO SELEZIONATO:</p>
             <ul>
-              <li ng-repeat="Docente in ListaDocentiSpedizione">{{Docente.NomeDocente}}</li>              
-              <li ng-repeat="DocenteEscluso in ListaDocentiEsclusi">{{DocenteEscluso.NomeDocente}}</li>            
+              <li ng-repeat="Docente in ListaDocentiSpedizione">{{Docente.NomeDocente}}<img src="img/deleteCross.png" style="width:20px;height:auto;margin-left:10px;" title="RIMUOVI DOCENTE" ng-click="RimuoviDocenteIncluso(Docente)"></li>
+                            
+              <li ng-repeat="DocenteEscluso in ListaDocentiEsclusi">{{DocenteEscluso.NomeDocente}}<img src="img/deleteCross.png" style="width:20px;height:auto;margin-left:10px;" title="RIMUOVI DOCENTE" ng-click="RimuoviDocenteEscluso(DocenteEscluso)"></li>
+                          
             </ul>
           </div>           
       </md-tab>

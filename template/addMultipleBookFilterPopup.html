@@ -21,7 +21,7 @@
   
         <p ng-if="ListaTitoliPopup.length == 0" style="font-weight:bold;font-style:italic;float:center;">NESSUN TITOLO TROVATO</p>  
         <div ng-if="ListaTitoliPopup.length != 0">
-          <table style="width:800px;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
+          <table style="width:1000px;text-align:center;" md-row-select="GridOptions_3.rowSelection" multiple="{{GridOptions_3.multiSelect}}">  
           <tr>
             <th></th>
             <th></th>
@@ -29,7 +29,7 @@
             <th>TITOLO</th>
             <th>QUANTITA</th>
           </tr>
-          <tr ng-repeat="Titolo in ListaTitoliPopup | TitoliMultipliPopupByFiltro : NomeFiltro : CodiceFiltro | limitTo : 30" id={{Titolo.Chiave}}> <!--GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit-->
+          <tr ng-repeat="Titolo in ListaTitoliPopup | TitoliMultipliPopupByFiltro : NomeFiltro : CodiceFiltro | limitTo : GridOptions_3.query.limit : (GridOptions_3.query.page - 1) * GridOptions_3.query.limit" id={{Titolo.Chiave}}>
             <td><input type="checkbox" ng-model="Titolo.DaAggiungere"></td>
             <td ng-if="Titolo.Quantita <= 0"><img src="img/notAvailable.png" style="width:15px;height:auto;" title="NON IN MAGAZZINO"></td>
             <td ng-if="Titolo.Quantita > 0"><img src="img/available.png" style="width:15px;height:auto;" title="IN MAGAZZINO"></td>

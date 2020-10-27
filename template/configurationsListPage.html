@@ -95,7 +95,7 @@
   <div ng-if="ConfigurazioneSelezionata==3">
       <div>
         <h2 style="float:left;">MATERIE</h2>
-        <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaMateria()">NUOVA MATERIA</md-button>
+        <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaMateria($event)">NUOVA MATERIA</md-button>
       </div>
       <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
         <tr>
@@ -105,7 +105,7 @@
         </tr>  
         <tr ng-repeat="materia in ListaMaterie | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{materia.Chiave}}>
           <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA MATERIA" ng-click="EliminaMateria(materia)"></td> 
-          <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA MATERIA" ng-click="ModificaMateria(materia)"></td>        
+          <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA MATERIA" ng-click="ModificaMateria($event,materia)"></td>        
           <td>{{materia.Descrizione | uppercase}}</td>
         </tr>    
       </table>

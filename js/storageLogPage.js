@@ -1,4 +1,4 @@
-SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog', function($scope,SystemInformation,$state,$rootScope,$mdDialog)
+SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','ZConfirm', function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
 {
   $scope.DataRicercaAl     = new Date();
   let TmpDate              = new Date($scope.DataRicercaAl);
@@ -20,7 +20,7 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
       {
           if(ListaTitoliTmp.length == 0)
           {
-            alert('IL MAGAZZINO E IL MAGAZZINO VOLANTE NON CONTENGONO TITOLI!')
+            ZCustomAlert($mdDialog,'AVVISO','IL MAGAZZINO E IL MAGAZZINO VOLANTE NON CONTENGONO TITOLI!')
             return
           }
           else
@@ -109,7 +109,7 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
       {
           if(ListaTitoliTmp.length == 0)
           {
-            alert('IL MAGAZZINO E IL MAGAZZINO VOLANTE NON CONTENGONO TITOLI!')
+            ZCustomAlert($mdDialog,'AVVISO','IL MAGAZZINO E IL MAGAZZINO VOLANTE NON CONTENGONO TITOLI!')
             return
           }
           else
@@ -226,7 +226,7 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
   $scope.RicercaLog = function ()
   {
     if((($scope.DataRicercaDal == undefined || $scope.DataRicercaAl == undefined) || ($scope.DataRicercaDal == '' || $scope.DataRicercaAl == '')) || ($scope.DataRicercaDal == undefined && $scope.DataRicercaAl == undefined && $scope.TitoloFiltro == undefined) || ($scope.DataRicercaDal > $scope.DataRicercaAl))
-       alert('Dati ricerca non validi')
+         ZCustomAlert($mdDialog,'ATTENZIONE','DATI RICERCA NON VALIDI')
     else
     { 
           

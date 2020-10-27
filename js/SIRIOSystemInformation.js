@@ -252,7 +252,7 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
          }
          else 
          {
-            if(alertMessages) alert(Self.HTTPError  + (Self.SubHTTPError != '' ? "\n" + Self.SubHTTPError : ''));
+            if(alertMessages) ZCustomAlert($mdDialog,'ATTENZIONE',Self.HTTPError  + (Self.SubHTTPError != '' ? "\n" + Self.SubHTTPError : '')); //ATTENZIONE QUI ALL ALERT
             else Self.ApplyOnError(Self.HTTPError,Self.SubHTTPError); 
          }
       })

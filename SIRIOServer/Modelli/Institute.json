@@ -49,7 +49,7 @@
   "GetAdozioniClasse" : [
                           {
                             "Name" : "GetAdoptionClass",
-                            "SQL"  : "SELECT COUNT(*) AS COUNT_ADOZIONI FROM adozioni_titolo WHERE CLASSE IN (SELECT CHIAVE FROM classi WHERE ISTITUTO = :Istituto AND ANNO = :Anno AND SEZIONE = #Sezione AND COMBINAZIONE = :COMBINAZIONE)"
+                            "SQL"  : "SELECT COUNT(*) AS COUNT_ADOZIONI FROM adozioni_titolo WHERE CLASSE IN (SELECT CHIAVE FROM classi WHERE ISTITUTO = :Istituto AND ANNO = :Anno AND SEZIONE = #Sezione AND COMBINAZIONE = :Combinazione)"
                           }
                         ],
 

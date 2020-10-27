@@ -77,13 +77,13 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$http)
                     {
                       $scope.Contatore = 0;
                       $ObjQuery = {Operazioni : []};
-                      alert ('UPLOAD ESEGUITO!');  
+                      ZCustomAlert($mdDialog,'AVVISO','UPLOAD ESEGUITO!');  
                     },false,true)                                                                
                   },false,true)  
                 }
                 SendDieciMail()
                }
-               else alert('Nessun aggiornamento disponibile')
+               else ZCustomAlert($mdDialog,'ATTENZIONE','NESSUN AGGIORNAMENTO DISPONIBILE!')
             }
             else SystemInformation.ApplyOnError('Errore di chiamata http a Pagina43 per lista mailchimp','');
           })
@@ -148,13 +148,13 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$http)
                       var DataMese     = Data.getMonth()+1; 
                       var DataGiorno   = Data.getDate();
                       scope.UltimaDataImportazione = DataGiorno.toString() + '/' + DataMese.toString() + '/' + DataAnno.toString();
-                      alert ('UPLOAD ESEGUITO!')  
+                      ZCustomAlert($mdDialog,'AVVISO','UPLOAD ESEGUITO!'); 
                     },false,true)                                                             
                   },false,true)  
                 }
               SendDieciMail()
               }
-              else alert('Nessun aggiornamento disponibile')
+              else ZCustomAlert($mdDialog,'ATTENZIONE','NESSUN AGGIORNAMENTO DISPONIBILE!')
             }
             else SystemInformation.ApplyOnError('Errore di chiamata http a Pagina43 per lista mailchimp','');
           })

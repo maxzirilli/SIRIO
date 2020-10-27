@@ -70,7 +70,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
              SystemInformation.PostSQL('Institute',$ObjQuery,function() 
              { 
                $scope.Contatore = 0;
-               alert ('UPLOAD ESEGUITO!');                                                               
+               ZCustomAlert($mdDialog,'OK','UPLOAD ESEGUITO')                                                                
              },false,true)                                                                 
         } 
         SystemInformation.GetSQL('Accessories',{}, function(Results)

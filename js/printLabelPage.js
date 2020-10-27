@@ -1,5 +1,5 @@
-SIRIOApp.controller("printLabelPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','$sce','$filter',
-function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
+SIRIOApp.controller("printLabelPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','$sce','$filter','$mdDialog','ZConfirm',
+function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDialog,ZConfirm)
 {
   $scope.ProvinciaFiltro  = -1;
   $scope.PromotoreFiltro  = -1;
@@ -249,6 +249,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
                 
                 Spedizione = {
                                "PRESSO"         : ListaDaSpedireTmp[i].PRESSO == undefined ? 'N.D.' : ListaDaSpedireTmp[i].PRESSO,
+                               "ISTITUTO"       : ListaDaSpedireTmp[i].ISTITUTO == undefined ? 'N.D.' : ListaDaSpedireTmp[i].ISTITUTO,
+                               "NOME_ISTITUTO"  : ListaDaSpedireTmp[i].NOME_ISTITUTO == undefined ? 'N.D.' : ListaDaSpedireTmp[i].NOME_ISTITUTO,
                                "DOCENTE"        : ListaDaSpedireTmp[i].DOCENTE == undefined ? 'N.D.' : ListaDaSpedireTmp[i].DOCENTE,
                                "NOME_DOCENTE"   : ListaDaSpedireTmp[i].NOME_DOCENTE == undefined ? 'N.D.' : ListaDaSpedireTmp[i].NOME_DOCENTE,
                                "TITOLO_DOCENTE" : ListaDaSpedireTmp[i].TITOLO_DOCENTE == undefined ? 'N.D.' : ListaDaSpedireTmp[i].TITOLO_DOCENTE,
@@ -387,13 +389,13 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
                {
                    doc.text(50,CoordY + 40,ListaSpedizioniToPrint[i].TITOLO_DOCENTE);
                    doc.text(50,CoordY + 45,ListaSpedizioniToPrint[i].NOME_DOCENTE);
-                   doc.text(50,CoordY + 55,'C/O :' + ListaSpedizioniToPrint[i].PRESSO);
+                   doc.text(50,CoordY + 55,'C/O :' + (ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D' ? ListaSpedizioniToPrint[i].NOME_ISTITUTO : ListaSpedizioniToPrint[i].PRESSO));
                    doc.text(50,CoordY + 60,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].PROVINCIA);
                    doc.setFontType('italic');
                }
                else
                {
-                   doc.text(50,CoordY + 40,'C/O :' + ListaSpedizioniToPrint[i].PRESSO);
+                   doc.text(50,CoordY + 40,'C/O :' + (ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D' ? ListaSpedizioniToPrint[i].NOME_ISTITUTO : ListaSpedizioniToPrint[i].PRESSO));
                    doc.text(50,CoordY + 45,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].PROVINCIA);
                    doc.setFontType('italic');
                }
@@ -412,12 +414,12 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
                {
                    doc.text(10,CoordY + 40,ListaSpedizioniToPrint[i].TITOLO_DOCENTE);
                    doc.text(10,CoordY + 45,ListaSpedizioniToPrint[i].NOME_DOCENTE);
-                   doc.text(10,CoordY + 55,'C/O :' + ListaSpedizioniToPrint[i].PRESSO);
+                   doc.text(10,CoordY + 55,'C/O :' + (ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D' ? ListaSpedizioniToPrint[i].NOME_ISTITUTO : ListaSpedizioniToPrint[i].PRESSO));
                    doc.text(10,CoordY + 60,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].PROVINCIA)      
                }
                else
                {
-                   doc.text(10,CoordY + 40,'C/O :' + ListaSpedizioniToPrint[i].PRESSO);
+                   doc.text(10,CoordY + 40,'C/O :' + (ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D' ? ListaSpedizioniToPrint[i].NOME_ISTITUTO : ListaSpedizioniToPrint[i].PRESSO));
                    doc.text(10,CoordY + 45,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].PROVINCIA)
                }
                CoordY = 80;
@@ -508,21 +510,21 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
                                                 ChiaveSpedizione : ListaSpedizioniTmp[i].CHIAVE,
                                                 Tipo             : 0, 
                                                 Data             : ListaSpedizioniTmp[i].DATA,
-                                                Presso           : ListaSpedizioniTmp[i].PRESSO == null ? '' : ListaSpedizioniTmp[i].PRESSO,
-                                                DocenteNome      : ListaSpedizioniTmp[i].NOME_DOCENTE == null ? 'N.D.' : ListaSpedizioniTmp[i].NOME_DOCENTE,
+                                                Presso           : ListaSpedizioniTmp[i].PRESSO == undefined ? '' : ListaSpedizioniTmp[i].PRESSO,
+                                                DocenteNome      : ListaSpedizioniTmp[i].NOME_DOCENTE == undefined ? 'N.D.' : ListaSpedizioniTmp[i].NOME_DOCENTE,
                                                 Provincia        : ListaSpedizioniTmp[i].PROVINCIA,
                                                 Promotore        : ListaSpedizioniTmp[i].PROMOTORE,
                                                 Istituto         : ListaSpedizioniTmp[i].ISTITUTO,
-                                                NomeIstituto     : ListaSpedizioniTmp[i].NOME_ISTITUTO == null ? '' : ListaSpedizioniTmp[i].NOME_ISTITUTO
+                                                NomeIstituto     : ListaSpedizioniTmp[i].NOME_ISTITUTO == undefined ? '' : ListaSpedizioniTmp[i].NOME_ISTITUTO
                                               })
                 }
                 $scope.ListaSpedizioni.push({ 
                                               ChiaveDettaglio : ListaSpedizioniTmp[i].CHIAVE_DETTAGLIO,
                                               Tipo            : 1, 
-                                              Codice          : ListaSpedizioniTmp[i].CODICE_TITOLO == null ? 'N.D.' : ListaSpedizioniTmp[i].CODICE_TITOLO,
-                                              TitoloNome      : ListaSpedizioniTmp[i].NOME_TITOLO == null ? 'N.D.' : ListaSpedizioniTmp[i].NOME_TITOLO,
+                                              Codice          : ListaSpedizioniTmp[i].CODICE_TITOLO == undefined ? 'N.D.' : ListaSpedizioniTmp[i].CODICE_TITOLO,
+                                              TitoloNome      : ListaSpedizioniTmp[i].NOME_TITOLO == undefined ? 'N.D.' : ListaSpedizioniTmp[i].NOME_TITOLO,
                                               Titolo          : ListaSpedizioniTmp[i].TITOLO,
-                                              Quantita        : ListaSpedizioniTmp[i].QUANTITA == null ? 'N.D.' : ListaSpedizioniTmp[i].QUANTITA,
+                                              Quantita        : ListaSpedizioniTmp[i].QUANTITA == undefined ? 'N.D.' : ListaSpedizioniTmp[i].QUANTITA,
                                               QuantitaMgzn    : ListaSpedizioniTmp[i].QUANTITA_DISP,
                                               Selezionato     : false
                                             });
@@ -563,24 +565,24 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
                                                 ChiaveSpedizione : ListaSpedizioniTmp[i].CHIAVE,
                                                 Tipo             : 0, 
                                                 Data             : ListaSpedizioniTmp[i].DATA,
-                                                Presso           : ListaSpedizioniTmp[i].PRESSO == null ? '' : ListaSpedizioniTmp[i].PRESSO,
-                                                DocenteNome      : ListaSpedizioniTmp[i].NOME_DOCENTE == null ? 'N.D.' : ListaSpedizioniTmp[i].NOME_DOCENTE,
+                                                Presso           : ListaSpedizioniTmp[i].PRESSO == undefined ? '' : ListaSpedizioniTmp[i].PRESSO,
+                                                DocenteNome      : ListaSpedizioniTmp[i].NOME_DOCENTE == undefined ? 'N.D.' : ListaSpedizioniTmp[i].NOME_DOCENTE,
                                                 Provincia        : ListaSpedizioniTmp[i].PROVINCIA,
                                                 Promotore        : ListaSpedizioniTmp[i].PROMOTORE,
                                                 PromotoreNome    : ListaSpedizioniTmp[i].NOME_PROMOTORE,
                                                 Istituto         : ListaSpedizioniTmp[i].ISTITUTO,
-                                                NomeIstituto     : ListaSpedizioniTmp[i].NOME_ISTITUTO == null ? '' : ListaSpedizioniTmp[i].NOME_ISTITUTO
+                                                NomeIstituto     : ListaSpedizioniTmp[i].NOME_ISTITUTO == undefined ? '' : ListaSpedizioniTmp[i].NOME_ISTITUTO
     
                                               })
                 }
                 $scope.ListaSpedizioni.push({ 
                                               ChiaveDettaglio : ListaSpedizioniTmp[i].CHIAVE_DETTAGLIO,
                                               Tipo            : 1, 
-                                              Codice          : ListaSpedizioniTmp[i].CODICE_TITOLO == null ? 'N.D.' : ListaSpedizioniTmp[i].CODICE_TITOLO,
-                                              TitoloNome      : ListaSpedizioniTmp[i].NOME_TITOLO == null ? 'N.D.' : ListaSpedizioniTmp[i].NOME_TITOLO,
+                                              Codice          : ListaSpedizioniTmp[i].CODICE_TITOLO == undefined ? 'N.D.' : ListaSpedizioniTmp[i].CODICE_TITOLO,
+                                              TitoloNome      : ListaSpedizioniTmp[i].NOME_TITOLO == undefined ? 'N.D.' : ListaSpedizioniTmp[i].NOME_TITOLO,
                                               Titolo          : ListaSpedizioniTmp[i].TITOLO,
-                                              Quantita        : ListaSpedizioniTmp[i].QUANTITA == null ? 'N.D.' : ListaSpedizioniTmp[i].QUANTITA,
-                                              Posizione       : ListaSpedizioniTmp[i].POS_MGZN == null ? 'N.D.' : ListaSpedizioniTmp[i].POS_MGZN,
+                                              Quantita        : ListaSpedizioniTmp[i].QUANTITA == undefined ? 'N.D.' : ListaSpedizioniTmp[i].QUANTITA,
+                                              Posizione       : ListaSpedizioniTmp[i].POS_MGZN == undefined ? 'N.D.' : ListaSpedizioniTmp[i].POS_MGZN,
                                               Selezionato     : false
                                             });
                 if(!$scope.RicercaPerTitolo)
@@ -682,7 +684,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
           }
       if(ContatoreTitoli == 0 && ContatoreDoppi == 0)
       {
-         alert('Nessun titolo selezionato!');
+         ZCustomAlert($mdDialog,'ATTENZIONE','NESSUN TITOLO SELEZIONATO!');
          return
       }
       else
@@ -690,7 +692,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
          for(let j = 0;j < $scope.ListaTitoliFiltroTmp.length;j ++)
                 $scope.ListaTitoliFiltro.push($scope.ListaTitoliFiltroTmp[j]);
          if(ContatoreDoppi != 0)
-            alert('Alcuni titoli erano già stati inseriti nel filtro!');          
+            ZCustomAlert($mdDialog,'AVVISO',"ALCUNI TITOLI ERANO GIA' PRESENTI IN RICERCA!");          
          $scope.ListaTitoliFiltroTmp = [];
          $scope.NomeFiltro   = '';
          $scope.CodiceFiltro = '';
@@ -725,7 +727,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
      }
      if(ContatoreEtichette == 0)
      {
-       alert('Non è stata selezionata nessuna etichetta da stampare!');
+       ZCustomAlert($mdDialog,'ATTENZIONE',"NON E' STATA TROVATA NESSUNA ETICHETTA DA STAMPARE!");
        return
      }
      else
@@ -749,6 +751,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
                    Spedizione = {
                                   "PRESSO"         : ListaDaSpedireTmp[i].PRESSO == undefined ? 'N.D.' : ListaDaSpedireTmp[i].PRESSO,
                                   "DOCENTE"        : ListaDaSpedireTmp[i].DOCENTE == undefined ? 'N.D.' : ListaDaSpedireTmp[i].DOCENTE,
+                                  "ISTITUTO"       : ListaDaSpedireTmp[i].ISTITUTO == undefined ? 'N.D.' : ListaDaSpedireTmp[i].ISTITUTO,
+                                  "NOME_ISTITUTO"  : ListaDaSpedireTmp[i].NOME_ISTITUTO == undefined ? 'N.D.' : ListaDaSpedireTmp[i].NOME_ISTITUTO,
                                   "NOME_DOCENTE"   : ListaDaSpedireTmp[i].NOME_DOCENTE == undefined ? 'N.D.' : ListaDaSpedireTmp[i].NOME_DOCENTE,
                                   "TITOLO_DOCENTE" : ListaDaSpedireTmp[i].TITOLO_DOCENTE == undefined ? 'N.D.' : ListaDaSpedireTmp[i].TITOLO_DOCENTE,
                                   "INDIRIZZO"      : ListaDaSpedireTmp[i].INDIRIZZO == undefined ? 'N.D.' : ListaDaSpedireTmp[i].INDIRIZZO,
@@ -888,13 +892,13 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
                   {
                       doc.text(50,CoordY + 40,ListaSpedizioniToPrint[i].TITOLO_DOCENTE);
                       doc.text(50,CoordY + 45,ListaSpedizioniToPrint[i].NOME_DOCENTE);
-                      doc.text(50,CoordY + 55,'C/O :' + ListaSpedizioniToPrint[i].PRESSO);
+                      doc.text(50,CoordY + 55,'C/O :' + (ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D' ? ListaSpedizioniToPrint[i].NOME_ISTITUTO : ListaSpedizioniToPrint[i].PRESSO));
                       doc.text(50,CoordY + 60,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].PROVINCIA);
                       doc.setFontType('italic');
                   }
                   else
                   {
-                      doc.text(50,CoordY + 40,'C/O :' + ListaSpedizioniToPrint[i].PRESSO);
+                      doc.text(50,CoordY + 40,'C/O :' + (ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D' ? ListaSpedizioniToPrint[i].NOME_ISTITUTO : ListaSpedizioniToPrint[i].PRESSO));
                       doc.text(50,CoordY + 45,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].PROVINCIA);
                       doc.setFontType('italic');
                   }
@@ -913,12 +917,12 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
                   {
                       doc.text(10,CoordY + 40,ListaSpedizioniToPrint[i].TITOLO_DOCENTE);
                       doc.text(10,CoordY + 45,ListaSpedizioniToPrint[i].NOME_DOCENTE);
-                      doc.text(10,CoordY + 55,'C/O :' + ListaSpedizioniToPrint[i].PRESSO);
+                      doc.text(10,CoordY + 55,'C/O :' + (ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D' ? ListaSpedizioniToPrint[i].NOME_ISTITUTO : ListaSpedizioniToPrint[i].PRESSO));
                       doc.text(10,CoordY + 60,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].PROVINCIA)      
                   }
                   else
                   {
-                      doc.text(10,CoordY + 40,'C/O :' + ListaSpedizioniToPrint[i].PRESSO);
+                      doc.text(10,CoordY + 40,'C/O :' + (ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D' ? ListaSpedizioniToPrint[i].NOME_ISTITUTO : ListaSpedizioniToPrint[i].PRESSO));
                       doc.text(10,CoordY + 45,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].PROVINCIA)
                   }
                   CoordY = 80;
@@ -958,7 +962,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
 
 $scope.ConfermaStampa = function ()
 {
-  if (confirm('Tutte le etichette sono state stampate correttamente?'))
+  var ConfermaStampaSped = function()
   {   
       var $ObjQuery = { Operazioni : [] };
       
@@ -981,6 +985,7 @@ $scope.ConfermaStampa = function ()
         $state.go("startPage");
       });
   }
+  ZConfirm.GetConfirmBox('AVVISO','Tutte le etichette sono state stampate correttamente?',ConfermaStampaSped,function(){});
 }
 
 }]);

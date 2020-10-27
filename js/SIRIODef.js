@@ -14,4 +14,4 @@ const HTTP_ERROR_ACCESS_DENIED     = 9;
 const STATE_LOGGED     = 'L';
 const STATE_NOT_LOGGED = 'N';
 
-var SIRIOApp = angular.module("SIRIOApp",["ngMaterial","ui.router","ngMessages",'md.data.table']);
+var SIRIOApp = angular.module("SIRIOApp",["ngMaterial","ui.router","ngMessages",'md.data.table','ZDialogs']);

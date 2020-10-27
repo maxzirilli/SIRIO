@@ -511,7 +511,7 @@ $scope.GridOptions_2 = {
           }
       if(ContatoreTitoli == 0 && ContatoreDoppi == 0)
       {
-         alert('Nessun titolo selezionato!');
+         ZCustomAlert($mdDialog,'ATTENZIONE','NESSUN TITOLO SELEZIONATO!') 
          return
       }
       else
@@ -519,7 +519,7 @@ $scope.GridOptions_2 = {
          for(let j = 0;j < $scope.ListaTitoliFiltroTmp.length;j ++)
                 $scope.ListaTitoliFiltro.push($scope.ListaTitoliFiltroTmp[j]);
          if(ContatoreDoppi != 0)
-            alert('Alcuni titoli erano già stati inseriti nel filtro!');          
+            ZCustomAlert($mdDialog,'AVVISO',"ALCUNI TITOLI ERANO GIA' STATI INSERITI NELLA RICERCA!")
          $scope.ListaTitoliFiltroTmp = [];
          $scope.NomeFiltro   = '';
          $scope.CodiceFiltro = '';

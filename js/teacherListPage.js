@@ -1,4 +1,4 @@
-SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','$sce','$filter', function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
+SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','$sce','$filter','ZConfirm', function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConfirm)
 {
   $scope.ListaDocenti                      = [];
   $scope.EditingOn                         = false;
@@ -376,6 +376,13 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   {
     var ListaFiltrata = $filter('DocenteByFiltro')($scope.ListaDocenti,Nome,$scope.MateriaFiltro);
     SystemInformation.DataBetweenController  = { ListaDocSped : []};
+
+    if(ListaFiltrata.length == 0)
+    {
+      ZCustomAlert($mdDialog,'ATTENZIONE',"NESSUN DOCENTE SELEZIONATO PER LA SPEDIZIONE")
+      return
+    }
+       
     
     for(let i = 0; i < ListaFiltrata.length; i ++)
     {
@@ -596,7 +603,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
           {
             if($scope.OldIstitutoFiltro != -1)
             {
-              if(confirm("QUESTO DOCENTE E' ASSEGNATO AI SEGUENTI ISTITUTI: " + itemDoc.ListaIstDoc.toString() + ".\nVUOI ASSEGNARLO ALL'ISTITUTO >> " + $scope.OldIstitutoNome + " << ?")) //$scope.IstitutoForNewDocenteNome
+              var AssociaAnotherDoc = function()
               {
                  $ObjQuery = {Operazioni : []};
                  $ObjQuery.Operazioni.push({
@@ -608,13 +615,17 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                                             })
                  SystemInformation.PostSQL('Teacher',$ObjQuery,function(Answer)
                  {
-                    alert("DOCENTE ASSOCIATO CORRETTAMENTE ALL'ISTITUTO DESIDERATO")
+                    ZCustomAlert($mdDialog,'OK',"DOCENTE ASSOCIATO CORRETTAMENTE ALL'ISTITUTO DESIDERATO")
                     $ObjQuery = {};
                     $scope.searchTextDoc = '';
                     $scope.DocenteInEditing.RagioneSociale = ''
                  })
               }
-              else $scope.DocenteInEditing.RagioneSociale = itemDoc.NomeDoc
+              var NonAssociarlo = function()
+              {
+                $scope.DocenteInEditing.RagioneSociale = itemDoc.NomeDoc
+              }
+              ZConfirm.GetConfirmBox('AVVISO',"QUESTO DOCENTE E' ASSEGNATO AI SEGUENTI ISTITUTI: " + itemDoc.ListaIstDoc.toString() + ".\nVUOI ASSEGNARLO ALL'ISTITUTO >> " + $scope.OldIstitutoNome + " << ?",AssociaAnotherDoc,NonAssociarlo);      
             }            
           }
         }  
@@ -651,11 +662,11 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   $scope.SetAsIndirizzoDocente = function (ChiaveIst)
   {
     DatiIstituto = $scope.DocenteInEditing.ListaIstitutiDoc.find(function(AIstituto){return(AIstituto.CHIAVE == ChiaveIst);});
-    if(confirm("Impostare l'indirizzo dell'istituto " + DatiIstituto.ISTITUTO + " come indirizzo del docente?"))
+    var ImpostaIndirizzo = function()
     {
        if(DatiIstituto.INDIRIZZO == '' || DatiIstituto.COMUNE == '' || DatiIstituto.CAP == '' || DatiIstituto.PROVINCIA_LISTA_ALL == -1 || DatiIstituto.PROVINCIA_LISTA_ALL == undefined)
        {   
-          alert('Dati istituto mancanti, impossibile impostare come indirizzo del docente');
+          ZCustomAlert($mdDialog,'ATTENZIONE','DATI ISTITUTO MANCANTI, IMPOSSIBILE IMPOSTARE COME INDIRIZZO PREDEFINITO DEL DOCENTE!');
           return
        }
        else
@@ -667,6 +678,8 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
           DatiIstituto = {};
        }
     }
+    ZConfirm.GetConfirmBox('AVVISO',"Impostare l'indirizzo dell'istituto " + DatiIstituto.ISTITUTO + " come indirizzo del docente?",ImpostaIndirizzo,function(){});      
+
   }
   
   $scope.ConfermaDocente = function()
@@ -938,7 +951,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   
  $scope.EliminaDocente = function(Docente)
  {
-   if(confirm('Eliminare il docente: ' + Docente.RagioneSociale + ' ?'))
+   var EliminaDoc = function()
    {
      var $ObjQuery    = { Operazioni : [] };
      var ParamDocente = { CHIAVE : Docente.Chiave };     
@@ -979,6 +992,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
        $scope.AProvinciaFiltro = $scope.ProvinciaOldFiltro;
      });  
    }
+   ZConfirm.GetConfirmBox('AVVISO',"Eliminare il docente: " + Docente.RagioneSociale + " ?",EliminaDoc,function(){});      
   }
   
   $scope.AggiungiIstituto = function(ev) 
@@ -1015,14 +1029,14 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
     {     
       if(istituto == -1) 
       { 
-        alert ('Nessun istituto selezionato!');      
+        ZCustomAlert($mdDialog,'ATTENZIONE','NESSUN ISTITUTO SELEZIONATO!');      
         return
       }
       else
       { 
         let IstitutoExist  = $scope.DocenteInEditing.ListaIstitutiDoc.find(function(AIstituto) { return(AIstituto.CHIAVE == istituto);});
         let IstitutoNome   = $scope.ListaIstitutiPopup.find(function(AIstituto) { return(AIstituto.Chiave == istituto);});
-        if (IstitutoExist != undefined) alert ('Istituto già associato al docente attuale!')
+        if (IstitutoExist != undefined) ZCustomAlert($mdDialog,'AVVISO',"ISTITUTO GIA' ASSOCIATO AL DOCENTE ATTUALE!")
         else
         { 
           NuovoIstituto = {
@@ -1055,11 +1069,11 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   $scope.DissociaIstituto = function (Istituto)
   { 
     if ($scope.DocenteInEditing.ListaIstitutiDoc.length == 0) 
-        alert('Nessun istituto selezionato da dissociare!')       
+        ZCustomAlert($mdDialog,'ATTENZIONE','NESSUN ISTITUTO SELEZIONATO DA DISSOCIARE!')       
     else
     {
       IstitutoCorrispondente = $scope.DocenteInEditing.ListaIstitutiDoc.find(function(AIstituto) { return(AIstituto.CHIAVE == Istituto);});
-      if(confirm('Dissociare l\'istituto: ' + IstitutoCorrispondente.ISTITUTO + ' dal docente?'))
+      var DissocIstDoc = function()
       {
          for(let j = 0; j < $scope.DocenteInEditing.ListaIstitutiDoc.length; j++)
          {
@@ -1081,6 +1095,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
            }
          }   
       }
+      ZConfirm.GetConfirmBox('AVVISO','Dissociare l\'istituto: ' + IstitutoCorrispondente.ISTITUTO + ' dal docente?',DissocIstDoc,function(){});      
     }
   }  
   
@@ -1088,7 +1103,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   { 
     if(Istituto == -1)
     {  
-      alert("Impossibile aggiungere orario, nessun istituto selezionato!")       
+      ZCustomAlert($mdDialog,'ATTENZIONE',"IMPOSSIBILE AGGIUNGERE ORARIO, NESSUN ISTITUTO SELEZIONATO!")       
     }
     else
     {     
@@ -1156,7 +1171,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
       //devo mettere controllo incrociato per non sovrapporre orari 
       if($scope.OrarioInEditing.MATERIA == -1 || $scope.OrarioInEditing.CLASSE == -1 || $scope.OrarioInEditing.GIORNO == -1 || $scope.OrarioInEditing.ORARIO == '')
       {
-        alert ('Dati orario mancanti!');
+        ZCustomAlert($mdDialog,'ATTENZIONE','DATI ORARIO MANCANTI!');
         return
       }
       else
@@ -1290,7 +1305,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   
   $scope.EliminaOrario = function(Orario)
   {
-    if(confirm('Eliminare l\'orario di ' + Orario.MateriaNome + ' del giorno ' + Orario.GiornoNome.toUpperCase() + ' ?'))
+    var EliminaOrDoc = function()
     {
       IstCorrispondente = $scope.DocenteInEditing.ListaIstitutiDoc.findIndex(function(AIstituto){return (AIstituto.CHIAVE == Orario.ISTITUTO);});   
       OrarioCorrispondente = $scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari.findIndex(function(AOrario){return(AOrario.MATERIA == Orario.MATERIA && AOrario.ORA == Orario.ORA && AOrario.GIORNO == Orario.GIORNO && AOrario.CLASSE == Orario.CLASSE);});     
@@ -1302,7 +1317,9 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
         $scope.DocenteInEditing.ListaOrariEliminati[$scope.DocenteInEditing.ListaOrariEliminati.length-1].Eliminato = true;
         $scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari.splice(OrarioCorrispondente,1);
       }       
-    }      
+    }
+    ZConfirm.GetConfirmBox('AVVISO','Eliminare l\'orario di ' + Orario.MateriaNome + ' del giorno ' + Orario.GiornoNome.toUpperCase() + ' ?',EliminaOrDoc,function(){});      
+     
   }
   
   $scope.NuovaSpedizione = function (ChiaveDocente)
@@ -1440,7 +1457,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
     
     $scope.EliminaSpedizione = function (Spedizione)
     {
-      if(confirm('Eliminare la spedizione della data ' + Spedizione.DATA + ' presso ' + Spedizione.PRESSO + ' ?'))
+      var EliminaSpedDoc = function()
       {
         var $ObjQuery       = { Operazioni : [] };
         var ParamSpedizione = { CHIAVE : Spedizione.CHIAVE };
@@ -1460,7 +1477,8 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
           $ObjQuery.Operazioni = [];
           $scope.RefreshListaSpedizioni();
         }); 
-      }        
+      }
+      ZConfirm.GetConfirmBox('AVVISO','Eliminare la spedizione della data ' + Spedizione.DATA + ' presso ' + Spedizione.PRESSO + ' ?',EliminaSpedDoc,function(){});              
     } 
     
     $scope.hide = function() 
@@ -1494,7 +1512,7 @@ SIRIOApp.filter('DocenteByFiltro',function()
            {  
               var Result = true;
               
-              if(ANomeFiltro != '')
+              //if(ANomeFiltro != '')
                 if(Docente.RagioneSociale.toUpperCase().indexOf(ANomeFiltro) < 0)
                    Result = false;
                   

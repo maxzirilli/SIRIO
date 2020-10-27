@@ -1,4 +1,4 @@
-SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','$filter','$sce', function($scope,SystemInformation,$state,$rootScope,$mdDialog,$filter,$sce)
+SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','$filter','$sce','ZConfirm', function($scope,SystemInformation,$state,$rootScope,$mdDialog,$filter,$sce,ZConfirm)
 {
   $scope.EditingOn          = false;
   $scope.IstitutoInEditing  = {};
@@ -232,10 +232,10 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                                            if(ContoAdozioni != undefined)
                                            {
                                               ContoAdozioni = ContoAdozioni[0].COUNT_ADOZIONI;
-                                              var VaiAvanti = true;
-                                              if(ContoAdozioni != 0)
-                                                 VaiAvanti = confirm('Sono presenti adozioni associate. Eliminare?');
-                                              if(VaiAvanti)
+                                              //var VaiAvanti = true;
+                                              
+                                                 
+                                              var VaiAvanti = function()
                                               {
                                                  if ($scope.IstitutoInEditing.ArrayClassiGlobale[$scope.CombinazioneFocusedIndex].ArrayClassiFinale[i].Nuovo)                                                          
                                                      $scope.IstitutoInEditing.ArrayClassiGlobale[$scope.CombinazioneFocusedIndex].ArrayClassiFinale.splice(i,1)
@@ -245,7 +245,12 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                                                      $scope.IstitutoInEditing.ArrayClassiGlobale[$scope.CombinazioneFocusedIndex].ArrayClassiFinale[i].Eliminato = true;
                                                  }
                                               }
-                                              else $scope.ClasseCliccata[$scope.IstitutoInEditing.ArrayClassiGlobale[$scope.CombinazioneFocusedIndex].ArrayClassiFinale[i].Sezione + $scope.IstitutoInEditing.ArrayClassiGlobale[$scope.CombinazioneFocusedIndex].ArrayClassiFinale[i].Anno] = true;
+                                              var Fermati = function() 
+                                              {
+                                                $scope.ClasseCliccata[$scope.IstitutoInEditing.ArrayClassiGlobale[$scope.CombinazioneFocusedIndex].ArrayClassiFinale[i].Sezione + $scope.IstitutoInEditing.ArrayClassiGlobale[$scope.CombinazioneFocusedIndex].ArrayClassiFinale[i].Anno] = true;
+                                              }
+                                              if(ContoAdozioni != 0)
+                                                 ZConfirm.GetConfirmBox('AVVISO',"Sono presenti adozioni associate. Eliminare?",VaiAvanti,Fermati);
                                            }
                                            else SystemInformation.ApplyOnError('Modello adozioni per classe non conforme','');                  
                                          },'GetAdozioniClasse');               
@@ -474,7 +479,9 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
           $scope.SezioneMax = GetCodeSezione($scope.IstitutoInEditing.ArrayClassiGlobale[0].ArrayClassiFinale[$scope.IstitutoInEditing.ArrayClassiGlobale[0].ArrayClassiFinale.length-1].Sezione);
           $scope.CreaListaSelezione($scope.SezioneMax);
           CaricaClassi($scope.IstitutoInEditing.ArrayClassiGlobale[0].CombinazioneChiave);
-          $scope.CombinazioneSelected = $scope.IstitutoInEditing.ArrayClassiGlobale[0].CombinazioneChiave;
+          $scope.CombinazioneSelected     = $scope.IstitutoInEditing.ArrayClassiGlobale[0].CombinazioneChiave;
+          $scope.CombinazioneFocusedIndex = 0;
+
         }
       }       
       else SystemInformation.ApplyOnError('Modello istituto non conforme',''); 
@@ -629,7 +636,7 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
   
   $scope.EliminaIstituto = function(Istituto)
   {
-    if(confirm('Eliminare l\'istituto: ' + Istituto.Nome + ' ?'))
+    var EliminaIst = function()
     {
       var $ObjQuery           = { Operazioni : [] };
       var ParamIstituto       = { CHIAVE     : Istituto.Chiave };
@@ -652,11 +659,12 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
         $scope.RefreshListaIstituti();
       });  
     }
+    ZConfirm.GetConfirmBox('AVVISO',"Eliminare l\'istituto: " + Istituto.Nome + ' ?',EliminaIst,function(){});
   }
 
   $scope.RendiVisibileIstituto = function (ChiaveIstituto,NomeIstituto)
   {
-    if(confirm("Rendere visibile nuovamente l'istituto " + NomeIstituto + " ?"))
+    var ConfermaVisibilita = function()
     {
        var $ObjQuery     = { Operazioni : [] };         
        $ObjQuery.Operazioni.push({
@@ -669,6 +677,7 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
          $scope.RefreshListaIstituti(); 
        });
     }
+    ZConfirm.GetConfirmBox('AVVISO',"Rendere visibile nuovamente l'istituto " + NomeIstituto + " ?",ConfermaVisibilita,function(){});
   }
   
   $scope.UnisciIstituti = function(IstitutoOld) 
@@ -723,13 +732,13 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
          {     
            if(Istituto == -1) 
            { 
-             alert ('Nessun istituto selezionato!');      
+             ZCustomAlert($mdDialog,'ATTENZIONE','NESSUN ISTITUTO SELEZIONATO!');      
              return
            }
            else
            {
-             IstitutoCorrisp = $scope.ListaIstitutiPopupUnione.find(function(AIstituto){return(AIstituto.Chiave == $scope.IstitutoDaUnire);});            
-             if(confirm("Cliccando CONFERMA tutti i docenti verranno passati dall'istituto " + IstitutoOld.Nome + " all'istituto " + IstitutoCorrisp.Nome + ".Confermi?"))
+             IstitutoCorrisp = $scope.ListaIstitutiPopupUnione.find(function(AIstituto){return(AIstituto.Chiave == $scope.IstitutoDaUnire);});
+             var ConfermaPassaggio = function()          
              {
                 var $ObjQuery = {Operazioni:[]}
                 ParametriUnione = {
@@ -746,7 +755,8 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                   $mdDialog.hide();
                   $scope.RefreshListaIstituti();                 
                 });
-             }              
+             }
+             ZConfirm.GetConfirmBox('AVVISO',"Cliccando CONFERMA tutti i docenti verranno passati dall'istituto " + IstitutoOld.Nome + " all'istituto " + IstitutoCorrisp.Nome + ".Confermi?",ConfermaPassaggio,function(){});              
            }
                    
          };

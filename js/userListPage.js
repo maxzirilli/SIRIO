@@ -1,4 +1,4 @@
-SIRIOApp.controller("userListPageController",['$scope','SystemInformation','$state','$rootScope', function($scope,SystemInformation,$state,$rootScope)
+SIRIOApp.controller("userListPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','ZConfirm', function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
 { 
 
   $scope.ListaUtenti     = [];
@@ -119,12 +119,12 @@ SIRIOApp.controller("userListPageController",['$scope','SystemInformation','$sta
   {
     if (Utente.Chiave == $scope.MyKey[0].CHIAVE)
     {
-        alert('IMPOSSIBILE ELIMINARE IL PROPRIO ACCOUNT DA QUESTA POSIZIONE');
+        ZCustomAlert($mdDialog,'ATTENZIONE','IMPOSSIBILE ELIMINARE IL PROPRIO ACCOUNT DA QUESTA POSIZIONE');
         return
     }
     else
     {
-        if(confirm('Eliminare l\'utente: ' + Utente.Username + ' ?'))
+        var EliminaUser = function()
         {
           var $ObjQuery = { Operazioni : [] };
           var ParamUtente = { CHIAVE : Utente.Chiave };
@@ -139,6 +139,7 @@ SIRIOApp.controller("userListPageController",['$scope','SystemInformation','$sta
             $scope.RefreshListaUtenti();
           });  
         }
+        ZConfirm.GetConfirmBox('AVVISO','Eliminare l\'utente: ' + Utente.Username + ' ?',EliminaUser,function(){});
     }
   }
   

@@ -1,4 +1,4 @@
-SIRIOApp.controller("flyingStoragePageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog',function($scope,SystemInformation,$state,$rootScope,$mdDialog)
+SIRIOApp.controller("flyingStoragePageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','ZConfirm',function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
 {  
   $scope.ListaVolante = [];
   $scope.EditingOn    = false;
@@ -90,27 +90,28 @@ $scope.GridOptions_2 = {
   
   $scope.EliminaMovimento = function (Movimento) 
   {
-   if(confirm('Eliminare il movimento della data ' + Movimento.DATA + ' ?'))
-   {
-     var $ObjQuery       = { Operazioni : [] };
-     var ParamMovimento  = { CHIAVE : Movimento.CHIAVE };
-     
-     $ObjQuery.Operazioni.push({
-                                 Query     : 'DeleteMovementBookAll',
-                                 Parametri : ParamMovimento
-                               });  
+    var EliminaMov = function()
+    {
+      var $ObjQuery       = { Operazioni : [] };
+      var ParamMovimento  = { CHIAVE : Movimento.CHIAVE };
+      
+      $ObjQuery.Operazioni.push({
+                                  Query     : 'DeleteMovementBookAll',
+                                  Parametri : ParamMovimento
+                                });  
 
-     $ObjQuery.Operazioni.push({
-                                 Query     : 'DeleteMovement',
-                                 Parametri : ParamMovimento
-                               });
-     
-     SystemInformation.PostSQL('FlyingStorage',$ObjQuery,function(Answer)
-     {
-       $scope.RefreshListaMovimenti();
-       $ObjQuery.Operazioni = [];
-     });
+      $ObjQuery.Operazioni.push({
+                                  Query     : 'DeleteMovement',
+                                  Parametri : ParamMovimento
+                                });
+      
+      SystemInformation.PostSQL('FlyingStorage',$ObjQuery,function(Answer)
+      {
+        $scope.RefreshListaMovimenti();
+        $ObjQuery.Operazioni = [];
+      });
    }
+   ZConfirm.GetConfirmBox('AVVISO',"Eliminare il movimento della data " + Movimento.DATA + " ?",EliminaMov,function(){});
   }
   
   $scope.ModificaMovimento = function (Movimento) //DA GESTIRE
@@ -227,7 +228,7 @@ $scope.GridOptions_2 = {
     { 
       if($scope.Titolo.TITOLO == -1 || $scope.Titolo.QUANTITA == 0)
       {
-        alert ('Dati titolo mancanti!');
+        ZCustomAlert($mdDialog,'ATTENZIONE','DATI TITOLO MANCANTI!');
         return
       }
       else
@@ -313,7 +314,7 @@ $scope.GridOptions_2 = {
       TitoloCorrispondente = $scope.ListaCarico.findIndex(function(ATitolo){return (ATitolo.CHIAVE == Titolo.CHIAVE);});
       if($scope.Titolo.TITOLO == -1 || $scope.Titolo.QUANTITA == 0)
       {
-         alert ('Dati titolo mancanti!');
+         ZCustomAlert($mdDialog,'ATTENZIONE','DATI TITOLO MANCANTI!');
          return
       }
       else
@@ -334,7 +335,7 @@ $scope.GridOptions_2 = {
   
   $scope.EliminaTitolo = function(Titolo)
   {
-    if(confirm('Eliminare il titolo ' + Titolo.NOME_TITOLO + ' dal carico?'))
+    var EliminaTit = function()
     {
       TitoloCorrispondente = $scope.ListaCarico.findIndex(function(ATitolo){return(ATitolo.CHIAVE == Titolo.CHIAVE);});     
       if ($scope.ListaCarico[TitoloCorrispondente].Nuovo)
@@ -345,7 +346,8 @@ $scope.GridOptions_2 = {
         $scope.ListaCaricoEliminati[$scope.ListaCaricoEliminati.length-1].Eliminato = true;
         $scope.ListaCarico.splice(TitoloCorrispondente,1);
       }       
-    }      
+    }
+    ZConfirm.GetConfirmBox('AVVISO',"Eliminare il titolo  >>" + Titolo.NOME_TITOLO + "<< dal carico?",EliminaTit,function(){});      
   }
   
   $scope.OnAnnullaMovimento = function()
@@ -358,7 +360,7 @@ $scope.GridOptions_2 = {
   {
     if ($scope.MovimentoInEditing.DATA == '' || $scope.MovimentoInEditing.DATA == undefined)
     {    
-        alert ('DATA MOVIMENTO NON CORRETTA');
+        ZCustomAlert($mdDialog,'ATTENZIONE','DATA MOVIMENTO NON CORRETTA!');
         return         
     }
     else

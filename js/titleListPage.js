@@ -1,4 +1,4 @@
-SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog', function($scope,SystemInformation,$state,$rootScope,$mdDialog)
+SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','ZConfirm',function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
 {
   $scope.EditingOn            = false;
   $scope.StampaOn             = false;
@@ -143,10 +143,11 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
                                   Chiave             : TitoliInfoLista[i].CHIAVE,
                                   Codice             : TitoliInfoLista[i].CODICE_ISBN,
                                   Titolo             : TitoliInfoLista[i].TITOLO,
-                                  Materia            : TitoliInfoLista[i].MATERIA == null ? 'N.D.' : TitoliInfoLista[i].MATERIA,
-                                  NomeMateria        : TitoliInfoLista[i].NOME_MATERIA == null ? 'N.D.' : TitoliInfoLista[i].NOME_MATERIA ,
-                                  Pos_Magazzino      : TitoliInfoLista[i].POS_MAGAZZINO == null ? 'N.D.' : TitoliInfoLista[i].POS_MAGAZZINO,
-                                  Autori             : TitoliInfoLista[i].AUTORI == null ? 'N.D' : TitoliInfoLista[i].AUTORI,
+                                  Editore            : TitoliInfoLista[i].EDITORE == undefined ? 'N.D.' : TitoliInfoLista[i].EDITORE,
+                                  Materia            : TitoliInfoLista[i].MATERIA == undefined ? 'N.D.' : TitoliInfoLista[i].MATERIA,
+                                  NomeMateria        : TitoliInfoLista[i].NOME_MATERIA == undefined ? 'N.D.' : TitoliInfoLista[i].NOME_MATERIA ,
+                                  Pos_Magazzino      : TitoliInfoLista[i].POS_MAGAZZINO == undefined ? 'N.D.' : TitoliInfoLista[i].POS_MAGAZZINO,
+                                  Autori             : TitoliInfoLista[i].AUTORI == undefined ? 'N.D' : TitoliInfoLista[i].AUTORI,
                                   Q_Magazzino        : TitoliInfoLista[i].QUANTITA_MGZN == undefined ? 0 : TitoliInfoLista[i].QUANTITA_MGZN,
                                   Q_MagazzinoVolante : TitoliInfoLista[i].QUANTITA_MGZN_VOL == undefined ? 0 : TitoliInfoLista[i].QUANTITA_MGZN_VOL
                                 };
@@ -509,7 +510,7 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
   
   $scope.EliminaTitolo = function(Titolo)
   {
-    if(confirm('Eliminare il titolo: ' + Titolo.Titolo + ' ?'))
+    var EliminaTit = function()
     {
       var $ObjQuery           = { Operazioni : [] };
       var ParamTitolo         = { CHIAVE     : Titolo.Chiave };
@@ -534,6 +535,7 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
         $scope.RefreshListaTitoli();
       });  
     }
+    ZConfirm.GetConfirmBox('AVVISO','Eliminare il titolo: ' + Titolo.Titolo + ' ?',EliminaTit,function(){});
   }
   
   $scope.AggiungiIstituto = function(ev) 
@@ -573,14 +575,14 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
     {     
       if(istituto == -1) 
       { 
-        alert ('Nessun istituto selezionato!');      
+        ZCustomAlert($mdDialog,'ATTENZIONE','NESSUN ISTITUTO SELEZIONATO!');      
         return
       }
       else
       { 
         let IstitutoExist  = $scope.TitoloInEditing.ListaIstitutiTit.find(function(AIstituto) { return(AIstituto.CHIAVE == istituto);});
         let IstitutoNome   = $scope.ListaIstitutiPopup.find(function(AIstituto) { return(AIstituto.Chiave == istituto);});
-        if (IstitutoExist != undefined) alert ('Istituto già associato al titolo attuale!')
+        if (IstitutoExist != undefined) ZCustomAlert($mdDialog,'ATTENZIONE',"ISTITUTO GIA' ASSOCIATO AL TITOLO ATTUALE!")
         else
         { 
           NuovoIstituto = {
@@ -611,11 +613,11 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
   $scope.DissociaIstituto = function (Istituto)
   { 
     if ($scope.TitoloInEditing.ListaIstitutiTit.length == 0) 
-        alert('Nessun istituto selezionato da dissociare!')       
+        ZCustomAlert($mdDialog,'ATTENZIONE','NESSUN ISTITUTO SELEZIONATO DA DISSOCIARE!')       
     else
     {
       IstitutoCorrispondente = $scope.TitoloInEditing.ListaIstitutiTit.find(function(AIstituto) { return(AIstituto.CHIAVE == Istituto);});
-      if(confirm('Dissociare l\'istituto: ' + IstitutoCorrispondente.ISTITUTO + ' dal titolo?'))
+      var DissocIst = function()
       {
          for(let j = 0; j < $scope.TitoloInEditing.ListaIstitutiTit.length; j++)
          {
@@ -637,6 +639,7 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
            }
          }   
       }
+      ZConfirm.GetConfirmBox('AVVISO','Dissociare l\'istituto: ' + IstitutoCorrispondente.ISTITUTO + ' dal titolo?',DissocIst,function(){});
     }
   }
     
@@ -644,7 +647,7 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
   { 
     if(Istituto == -1)
     {  
-      alert("Impossibile aggiungere adozione, nessun istituto selezionato!")       
+      ZCustomAlert($mdDialog,'ATTENZIONE',"IMPOSSIBILE AGGIUNGERE ADOZIONE, NESSUN ISTITUTO SELEZIONATO!")       
     }
     else
     {     
@@ -714,7 +717,7 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
     { 
       if($scope.AdozioneInEditing.CLASSE == -1)
       {
-        alert ('Deve essere inserita una classe!');
+        ZCustomAlert($mdDialog,'ATTENZIONE','DEVE ESSERE INSERITA UNA CLASSE!');
         return
       }
       else
@@ -724,7 +727,7 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
         
         if(AdozCorrispondente != -1 && $scope.TitoloInEditing.ListaIstitutiTit[IstCorrispondente].Adozioni[AdozCorrispondente].CLASSE == adozione.CLASSE)
         {
-          alert('Titolo già assegnato a questa classe!');
+          ZCustomAlert($mdDialog,'ATTENZIONE',"IL TITOLO E' GIA' ASSEGNATO A QUESTA CLASSE!");
           return
         }
         else
@@ -816,7 +819,7 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
       AdozExist          = $scope.TitoloInEditing.ListaIstitutiTit[IstCorrispondente].Adozioni.find(function(AAdozione){return (AAdozione.CLASSE == Adozione.CLASSE);});
       if(AdozExist != undefined)
       {
-        alert ('Il titolo è gia associato a questa classe!');
+        ZCustomAlert($mdDialog,'ATTENZIONE',"IL TITOLO E' GIA' ASSOCIATO A QUESTA CLASSE!");
         return
       }      
       /*else if($scope.AdozioneInEditing.CLASSE == Adozione.CLASSE)
@@ -856,7 +859,7 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
 
   $scope.EliminaAdozione = function(Adozione)
   {
-    if(confirm('Eliminare l\'adozione di \"' + $scope.TitoloInEditing.Titolo + '\" dalla classe ' + Adozione.ANNO + Adozione.SEZIONE + ' ?'))
+    var EliminaAdoz = function()
     { 
       IstCorrispondente      = $scope.TitoloInEditing.ListaIstitutiTit.findIndex(function(AIstituto){return(AIstituto.CHIAVE == Adozione.ISTITUTO);});   
       AdozioneCorrispondente = $scope.TitoloInEditing.ListaIstitutiTit[IstCorrispondente].Adozioni.findIndex(function(AAdozione){return(AAdozione.CLASSE == Adozione.CLASSE);});         
@@ -868,7 +871,8 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
         $scope.TitoloInEditing.ListaAdozioniEliminate[$scope.TitoloInEditing.ListaAdozioniEliminate.length-1].Eliminato = true;
         $scope.TitoloInEditing.ListaIstitutiTit[IstCorrispondente].Adozioni.splice(AdozioneCorrispondente,1);
       }      
-    }  
+    }
+    ZConfirm.GetConfirmBox('AVVISO','Eliminare l\'adozione di \"' + $scope.TitoloInEditing.Titolo + '\" dalla classe ' + Adozione.ANNO + Adozione.SEZIONE + ' ?',EliminaAdoz,function(){}); 
   }
   
   $scope.RefreshListaTitoli();

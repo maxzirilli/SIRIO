@@ -1,4 +1,4 @@
-SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$state','$rootScope','$filter', function($scope,SystemInformation,$state,$rootScope,$filter)
+SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$state','$rootScope','$filter','$mdDialog','ZConfirm',function($scope,SystemInformation,$state,$rootScope,$filter,$mdDialog,ZConfirm)
 {
 
   $scope.EditingOn             = false;
@@ -90,7 +90,7 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
             let TitoloCorrisp = $scope.ListaTitoli.find(function(ATitolo) {return(ATitolo.Codice == RecordOrdine[0]);});
             if (TitoloCorrisp == undefined)
             {
-              alert('Impossibile eseguire il carico,il titolo con CODICE ISBN >> ' + RecordOrdine[0] + ' << non è di un editore gestito!');
+              ZCustomAlert($mdDialog,'ATTENZIONE',"IMPOSSIBILE ESEGUIRE IL CARICO,IL TITOLO CON CODICE ISBN >> ' + RecordOrdine[0] + ' << NON E' DI UN EDITORE GESTITO");
               return
             }
             else            
@@ -123,7 +123,7 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
           if($ObjQuery.Operazioni.length != 0)
              SystemInformation.PostSQL('OrderEntry',$ObjQuery,function() 
              { 
-                alert ('UPLOAD ESEGUITO!');
+                ZCustomAlert($mdDialog,'AVVISO','CARICO ESEGUITO!');
                                        
                 var Data           = new Date();
                 var DataAnno       = Data.getFullYear();
@@ -281,7 +281,7 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
   $scope.ConfermaOrdine = function()
   {  
      if ($scope.OrdineInEditing.Titolo == -1 && $scope.OrdineInEditing.Quantita == -1)
-         alert('DATI MANCANTI');      
+         ZCustomAlert($mdDialog,'ATTENZIONE','DATI MANCANTI');      
      var $ObjQuery   = { Operazioni : [] };          
      var ParamOrdine = {
                          CHIAVE   : $scope.OrdineInEditing.Chiave,
@@ -316,7 +316,7 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
   
   $scope.EliminaOrdine = function(Ordine)
   {
-    if(confirm('Eliminare l\'ordine di ' + Ordine.Quantita + ' "' + Ordine.Nome_Titolo + '" ?'))
+    var EliminaOrd = function()
     {
       var $ObjQuery   = { Operazioni : [] };
       var ParamOrdine = { CHIAVE     : Ordine.Chiave };
@@ -331,6 +331,7 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
         $scope.RefreshListaOrdini();
       });  
     }
+    ZConfirm.GetConfirmBox('AVVISO',"Eliminare l\'ordine di " + Ordine.Quantita + " " + Ordine.Nome_Titolo + " ?",EliminaOrd,function(){});
   }  
   
   $scope.RefreshListaOrdini();

@@ -2,13 +2,13 @@
   <h2>LOG MAGAZZINI</h2>
   <div>
     <div layout="row">
-      <md-input-container style="margin-left:20px;">
+      <md-input-container style="margin-left:5px;">
         <label>DAL</label><input ng-model="DataRicercaDal" type="date" name="DataRicercaDal">
       </md-input-container>
-      <md-input-container style="margin-left:20px;">  
+      <md-input-container style="margin-left:5px;">  
         <label>AL</label><input ng-model="DataRicercaAl" type="date" name="DataRicercaAl">
       </md-input-container>
-      <md-radio-group ng-model="Magazzino" style=margin-left:20px;">
+      <md-radio-group ng-model="Magazzino" style="margin-left:20px;">
         <md-radio-button value="G">MAGAZZINO PRINCIPALE</md-radio-button>
         <md-radio-button value="V">MAGAZZINO VOLANTE</md-radio-button>
       </md-radio-group>    
@@ -32,13 +32,13 @@
           <span md-highlight-text="searchText">ISBN : {{item.Codice}} - {{item.Nome}}</span>
         </md-item-template>
       </md-input-container>
-      <md-button style="width:50px;height:auto;margin-right:300px;margin-top:0px;" ng-click="RicercaLog()" title="RICERCA LOG">  
+      <md-button style="width:30px;height:auto;margin-right:300px;margin-top:0px;" ng-click="RicercaLog()" title="RICERCA LOG">  
         <img src="img/searchLog.png" style="width:80px;height:auto;">
       </md-button>
-      <md-button style="width:50px;height:auto;float:right;" ng-click="InventarioMagazzinoXls()" title="INVENTARIO MAGAZZINO XLS">  
+      <md-button style="width:30px;height:auto;float:right;" ng-click="InventarioMagazzinoXls()" title="INVENTARIO MAGAZZINO XLS">  
         <img src="img/printXLS.png" style="width:80px;height:auto;">
       </md-button>
-      <md-button style="width:50px;height:auto;float:right;" ng-click="InventarioMagazzinoPdf()" title="INVENTARIO MAGAZZINO PDF">  
+      <md-button style="width:30px;height:auto;float:right;" ng-click="InventarioMagazzinoPdf()" title="INVENTARIO MAGAZZINO PDF">  
         <img src="img/printPDF.png" style="width:80px;height:auto;">
       </md-button>
     </div>      

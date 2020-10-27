@@ -1,7 +1,7 @@
 <div ng-controller="orderEntryPageController">
   <div ng-if="!EditingOn && !StampaOn">
     <div>
-      <h2>CARICO IN MAGAZZINO</h2>
+      <h2>CARICHI</h2>
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoOrdine()">NUOVO CARICO</md-button>
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoOrdineCsv()">CARICO DA CSV</md-button>
       <input id="fileLoadCVSDocument" accept=".csv" name="file" type="file" class="ng-hide" onchange="angular.element(this).scope().CVSLoaded(this)">      

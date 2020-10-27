@@ -1,4 +1,4 @@
-SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformation','$state','$rootScope', function($scope,SystemInformation,$state,$rootScope)
+SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','ZConfirm','ZPrompt', function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm,ZPrompt)
 { 
   $scope.ListaConfigurazioni        = ['COMBINAZIONI CLASSI','CASE EDITRICI GESTITE','DATI PAGINA 43','MATERIE','TIPOLOGIE GESTITE','TIPOLOGIE ESCLUSE','PROVINCE GESTITE'];
   $scope.ConfigurazioneSelezionata  = 0;
@@ -252,40 +252,48 @@ $scope.GridOptions_6 = {
   }
  
   //MATERIE  
- 
-  $scope.ModificaMateria = function (Materia)
-  {
-    var MateriaInEditing = prompt ("Modifica materia:",Materia.Descrizione);
-    if (MateriaInEditing === null) $scope.RefreshListaMaterie()
-    else 
-    {   
-      var ParamMateria = {
-                           CHIAVE      : Materia.Chiave,
-                           DESCRIZIONE : MateriaInEditing.toUpperCase()
-                         }
-      $scope.ConfermaMateria(ParamMateria);
-    }    
-  }
-  
-  $scope.NuovaMateria = function ()
-  { 
-    var MateriaInEditing = prompt ("Nuova materia:","");
-    if (MateriaInEditing === null) $scope.RefreshListaMaterie()
-    else 
-    {       
-      var ParamMateria = {
-                           CHIAVE      : -1,
-                           DESCRIZIONE : MateriaInEditing.toUpperCase()
-                         }
-      $scope.ConfermaMateria(ParamMateria);
+
+  $scope.ModificaMateria = function (ev,Materia) 
+  {    
+    ModificaMat = function(Answer)
+    {
+      MateriaInEditing = Answer;
+      if (MateriaInEditing === '') $scope.RefreshListaMaterie()
+      else 
+      {       
+        var ParamMateria = {
+                            CHIAVE      : Materia.Chiave,
+                            DESCRIZIONE : MateriaInEditing.toUpperCase()
+                          }
+        $scope.ConfermaMateria(ParamMateria);
+      }
     }
-  }
+    ZPrompt.GetPromptBox('MODIFICA INSERIMENTO','MODIFICA MATERIA: ',Materia.Descrizione,ModificaMat,function(){});  
+  };
+
+  $scope.NuovaMateria = function (ev) 
+  {
+    var CreaMat = function(Answer)
+    {
+      MateriaInEditing = Answer;
+      if (MateriaInEditing === '') $scope.RefreshListaMaterie()
+      else 
+      {       
+        var ParamMateria = {
+                            CHIAVE      : -1,
+                            DESCRIZIONE : MateriaInEditing.toUpperCase()
+                          }
+        $scope.ConfermaMateria(ParamMateria);
+      }   
+    }
+    ZPrompt.GetPromptBox('NUOVO INSERIMENTO','NUOVA MATERIA: ',"",CreaMat,function(){});  
+  };
   
   $scope.ConfermaMateria = function (param)
   { 
     MateriaExist = $scope.ListaMaterie.find(function(AMateria){return (AMateria.Descrizione == param.DESCRIZIONE);});
     if(MateriaExist)
-       alert('Materia già esistente!')
+       ZCustomAlert($mdDialog,'ATTENZIONE','Materia già esistente!')
     else
     {
        var $ObjQuery     = { Operazioni : [] };     
@@ -316,7 +324,7 @@ $scope.GridOptions_6 = {
   
   $scope.EliminaMateria = function(Materia)
   {
-    if(confirm('Eliminare la materia: ' + Materia.Descrizione + ' ?'))
+    var EliminaMat = function()
     {
       var $ObjQuery = { Operazioni : [] };
       var ParamMateria = { CHIAVE : Materia.Chiave };
@@ -346,43 +354,52 @@ $scope.GridOptions_6 = {
         $scope.RefreshListaMaterie();
       });  
     }
+    ZConfirm.GetConfirmBox('AVVISO','ELIMINARE LA MATERIA: ' + Materia.Descrizione + ' ?',EliminaMat,function(){});      
   }
   
   //TIPOLOGIE  
   
   $scope.ModificaTipologia = function (Tipologia)
   {
-    var TipologiaInEditing = prompt ("Modifica tipologia:",Tipologia.Descrizione);
-    if (TipologiaInEditing === null) $scope.RefreshListaTipologie()
-    else 
-    {   
-      var ParamTipologia = {
-                             CHIAVE      : Tipologia.Chiave,
-                             DESCRIZIONE : TipologiaInEditing.toUpperCase()
-                           }
-      $scope.ConfermaTipologia(ParamTipologia);
-    }    
+    var ModificaTip = function(Answer)
+    {
+      TipologiaInEditing = Answer;
+      if (TipologiaInEditing === "") $scope.RefreshListaTipologie()
+      else 
+      {   
+        var ParamTipologia = {
+                               CHIAVE      : Tipologia.Chiave,
+                               DESCRIZIONE : TipologiaInEditing.toUpperCase()
+                             }
+        $scope.ConfermaTipologia(ParamTipologia);
+      }    
+    } 
+    ZPrompt.GetPromptBox('MODIFICA INSERIMENTO','MODIFICA TIPOLOGIA ISTITUTO: ',Tipologia.Descrizione,ModificaTip,function(){});   
   }
   
   $scope.NuovaTipologia = function ()
   { 
-    var TipologiaInEditing = prompt ("Nuova tipologia:","");
-    if (TipologiaInEditing === null) $scope.RefreshListaTipologie()
-    else 
-    {       
-      var ParamTipologia = {
-                             CHIAVE      : -1,
-                             DESCRIZIONE : TipologiaInEditing.toUpperCase()
-                           }
-      $scope.ConfermaTipologia(ParamTipologia);
-    }
+    var CreaTip = function(Answer)
+    {
+      TipologiaInEditing = Answer;
+      if (TipologiaInEditing === "") $scope.RefreshListaTipologie()
+      else 
+      {       
+        var ParamTipologia = {
+                               CHIAVE      : -1,
+                               DESCRIZIONE : TipologiaInEditing.toUpperCase()
+                             }
+        $scope.ConfermaTipologia(ParamTipologia);
+      }
+    }  
+    ZPrompt.GetPromptBox('NUOVO INSERIMENTO','NUOVA TIPOLOGIA ISTITUTO: ',"",CreaTip,function(){});  
   }
   
   $scope.ConfermaTipologia = function (param)
   { 
     TipologiaExist = $scope.ListaTipologie.find(function(ATipologia){return (ATipologia.Descrizione == param.DESCRIZIONE);});
     if(TipologiaExist)
-       alert('Tipologia già esistente!')
+    ZCustomAlert($mdDialog,'ATTENZIONE','Tipologia già esistente!')
     else
     {     
        var $ObjQuery      = { Operazioni : [] };     
@@ -413,7 +430,7 @@ $scope.GridOptions_6 = {
   
   $scope.EliminaTipologia = function(Tipologia)
   {
-    if(confirm('Eliminare la tipologia: ' + Tipologia.Descrizione + ' ?'))
+    var EliminaTip = function()
     {
       var $ObjQuery      = { Operazioni : [] };
       var ParamTipologia = { CHIAVE : Tipologia.Chiave };
@@ -433,43 +450,52 @@ $scope.GridOptions_6 = {
         $scope.RefreshListaTipologie();
       });  
     }
+    ZConfirm.GetConfirmBox('AVVISO','ELIMINARE LA TIPOLOGIA: ' + Tipologia.Descrizione + ' ?',EliminaTip,function(){});      
   }
   
   //TIPOLOGIE ESCLUSE  
   
   $scope.ModificaTipologiaEsclusa = function (TipologiaEsclusa)
-  {
-    var TipologiaEsclusaInEditing = prompt ("Modifica tipologia esclusa:",TipologiaEsclusa.Descrizione);
-    if (TipologiaEsclusaInEditing === null) $scope.RefreshListaTipologieEscluse()
-    else 
-    {   
-      var ParamTipologiaEsclusa = {
-                                    CHIAVE      : TipologiaEsclusa.Chiave,
-                                    DESCRIZIONE : TipologiaEsclusaInEditing.toUpperCase()
-                                  }
-      $scope.ConfermaTipologiaEsclusa(ParamTipologiaEsclusa);
-    }    
+  {    
+    var ModificaTipExcl = function(Answer)
+    {
+      var TipologiaEsclusaInEditing = Answer;
+      if (TipologiaEsclusaInEditing === null) $scope.RefreshListaTipologieEscluse()
+      else 
+      {   
+        var ParamTipologiaEsclusa = {
+                                      CHIAVE      : TipologiaEsclusa.Chiave,
+                                      DESCRIZIONE : TipologiaEsclusaInEditing.toUpperCase()
+                                    }
+        $scope.ConfermaTipologiaEsclusa(ParamTipologiaEsclusa);
+      }    
+    }
+    ZPrompt.GetPromptBox('MODIFICA INSERIMENTO','MODIFICA TIPOLOGIA ESCLUSA ISTITUTO: ',TipologiaEsclusa.Descrizione,ModificaTipExcl,function(){});      
   }
   
   $scope.NuovaTipologiaEsclusa = function ()
-  { 
-    var TipologiaEsclusaInEditing = prompt ("Nuova tipologia esclusa:","");
-    if (TipologiaEsclusaInEditing === null) $scope.RefreshListaTipologieEscluse()
-    else 
-    {       
-      var ParamTipologiaEsclusa = {
-                                    CHIAVE      : -1,
-                                    DESCRIZIONE : TipologiaEsclusaInEditing.toUpperCase()
-                                  }
-      $scope.ConfermaTipologiaEsclusa(ParamTipologiaEsclusa);
-    }
+  {
+    var CreaTipExcl = function(Answer)
+    {
+      var TipologiaEsclusaInEditing = Answer;
+      if (TipologiaEsclusaInEditing === null) $scope.RefreshListaTipologieEscluse()
+      else 
+      {       
+        var ParamTipologiaEsclusa = {
+                                      CHIAVE      : -1,
+                                      DESCRIZIONE : TipologiaEsclusaInEditing.toUpperCase()
+                                    }
+        $scope.ConfermaTipologiaEsclusa(ParamTipologiaEsclusa);
+      }
+    }    
+    ZPrompt.GetPromptBox('NUOVO INSERIMENTO','NUOVA TIPOLOGIA ISTITUTO ESCLUSA: ',"",CreaTipExcl,function(){});      
   }
   
   $scope.ConfermaTipologiaEsclusa = function (param)
   { 
     TipologiaExclExist = $scope.ListaTipologieEscluse.find(function(ATipologiaExcl){return (ATipologiaExcl.Descrizione == param.DESCRIZIONE);});
     if(TipologiaExclExist)
-       alert('Tipologia esclusa già esistente!')
+       ZCustomAlert($mdDialog,'ATTENZIONE','Tipologia esclusa già esistente!')
     else
     {   
        var $ObjQuery             = { Operazioni : [] };     
@@ -500,7 +526,7 @@ $scope.GridOptions_6 = {
   
   $scope.EliminaTipologiaEsclusa = function(TipologiaEsclusa)
   {
-    if(confirm('Eliminare la tipologia esclusa: ' + TipologiaEsclusa.Descrizione + ' ?'))
+    var EliminaTipExcl = function()
     {
       var $ObjQuery             = { Operazioni : [] };
       var ParamTipologiaEsclusa = { CHIAVE : TipologiaEsclusa.Chiave };
@@ -515,43 +541,52 @@ $scope.GridOptions_6 = {
         $scope.RefreshListaTipologieEscluse();
       });  
     }
+    ZConfirm.GetConfirmBox('AVVISO','ELIMINARE LA TIPOLOGIA ESCLUSA: ' + TipologiaEsclusa.Descrizione + ' ?',EliminaTipExcl,function(){});      
   }
 
   //PROVINCE
   
   $scope.ModificaProvincia = function (Provincia)
   {
-    var ProvinciaInEditing = prompt ("Modifica provincia:",Provincia.Nome);
-    if (ProvinciaInEditing === null) $scope.RefreshListaProvince()
-    else 
-    {   
-      var ParamProvincia = {
-                             CHIAVE : Provincia.Chiave,
-                             NOME   : ProvinciaInEditing.toUpperCase()
-                           }
-      $scope.ConfermaProvincia(ParamProvincia);
-    }    
+    var ModificaProv = function(Answer)
+    {
+      ProvinciaInEditing = Answer;
+      if (ProvinciaInEditing === null) $scope.RefreshListaProvince()
+      else 
+      {   
+        var ParamProvincia = {
+                              CHIAVE : Provincia.Chiave,
+                              NOME   : ProvinciaInEditing.toUpperCase()
+                            }
+        $scope.ConfermaProvincia(ParamProvincia);
+      }    
+    }
+    ZPrompt.GetPromptBox('MODIFICA INSERIMENTO','MODIFICA PROVINCIA GESTITA: ',Provincia.Descrizione,ModificaProv,function(){});      
   }
   
   $scope.NuovaProvincia = function ()
   { 
-    var ProvinciaInEditing = prompt ("Nuova provincia:","");
-    if (ProvinciaInEditing === null) $scope.RefreshListaProvince()
-    else 
-    {       
-      var ParamProvincia = {
-                             CHIAVE : -1,
-                             NOME   : ProvinciaInEditing.toUpperCase()
-                           }
-      $scope.ConfermaProvincia(ParamProvincia);
+    var CreaProv = function(Answer)
+    {
+      ProvinciaInEditing = Answer;
+      if (ProvinciaInEditing === null) $scope.RefreshListaProvince()
+      else 
+      {       
+        var ParamProvincia = {
+                              CHIAVE : -1,
+                              NOME   : ProvinciaInEditing.toUpperCase()
+                            }
+        $scope.ConfermaProvincia(ParamProvincia);
+      }
     }
+    ZPrompt.GetPromptBox('NUOVO INSERIMENTO','NUOVA PROVINCIA GESTITA: ',"",CreaProv,function(){});      
   }
   
   $scope.ConfermaProvincia = function (param)
   { 
     ProvinciaExist = $scope.ListaProvince.find(function(AProvincia){return (AProvincia.Nome == param.NOME);});
     if(ProvinciaExist)
-       alert('Provincia gestita già esistente!')
+       ZCustomAlert($mdDialog,'ATTENZIONE','Provincia gestita già esistente!')
     else
     {   
        var $ObjQuery       = { Operazioni : [] };     
@@ -582,7 +617,7 @@ $scope.GridOptions_6 = {
   
   $scope.EliminaProvincia = function(Provincia)
   {
-    if(confirm('Eliminare la provincia: ' + Provincia.Nome + ' ?'))
+    var EliminaProv = function()
     {
       var $ObjQuery      = { Operazioni : [] };
       var ParamProvincia = { CHIAVE : Provincia.Chiave };
@@ -597,43 +632,52 @@ $scope.GridOptions_6 = {
         $scope.RefreshListaProvince();
       });  
     }
+    ZConfirm.GetConfirmBox('AVVISO','ELIMINARE LA PROVINCIA: ' + Provincia.Descrizione + ' ?',EliminaProv,function(){});          
   }
 
   //COMBINAZIONI  
  
   $scope.ModificaCombinazione = function (Combinazione)
   {
-    var CombinazioneInEditing = prompt ("Modifica combinazione:",Combinazione.Descrizione);
-    if (CombinazioneInEditing === null) $scope.RefreshListaCombinazioni()
-    else 
-    {   
-      var ParamCombinazione = {
-                                CHIAVE      : Combinazione.Chiave,
-                                DESCRIZIONE : CombinazioneInEditing.toUpperCase()
-                              }
-      $scope.ConfermaCombinazione(ParamCombinazione);
+    var ModificaComb = function(Answer)
+    {
+      CombinazioneInEditing = Answer;
+      if (CombinazioneInEditing === "") $scope.RefreshListaCombinazioni()
+      else 
+      {   
+        var ParamCombinazione = {
+                                  CHIAVE      : Combinazione.Chiave,
+                                  DESCRIZIONE : CombinazioneInEditing.toUpperCase()
+                                }
+        $scope.ConfermaCombinazione(ParamCombinazione);
+      }
     }    
+    ZPrompt.GetPromptBox('MODIFICA INSERIMENTO','MODIFICA COMBINAZIONE: ',Combinazione.Descrizione,ModificaComb,function(){});         
   }
   
   $scope.NuovaCombinazione = function ()
   { 
-    var CombinazioneInEditing = prompt ("Nuova combinazione:","");
-    if (CombinazioneInEditing === null) $scope.RefreshListaCombinazioni()
-    else 
-    {       
-      var ParamCombinazione = {
-                                CHIAVE      : -1,
-                                DESCRIZIONE : CombinazioneInEditing.toUpperCase()
-                              }
-      $scope.ConfermaCombinazione(ParamCombinazione);
-    }
+    var CreaComb = function(Answer)
+    {
+      CombinazioneInEditing = Answer;
+      if (CombinazioneInEditing === "") $scope.RefreshListaCombinazioni()
+      else 
+      {       
+        var ParamCombinazione = {
+                                  CHIAVE      : -1,
+                                  DESCRIZIONE : CombinazioneInEditing.toUpperCase()
+                                }
+        $scope.ConfermaCombinazione(ParamCombinazione);
+      }
+    }    
+    ZPrompt.GetPromptBox('NUOVO INSERIMENTO','NUOVA COMBINAZIONE: ',"",CreaComb,function(){});      
   }
   
   $scope.ConfermaCombinazione = function (param)
   { 
     CombinazioneExist = $scope.ListaCombinazioni.find(function(ACombinazione){return (ACombinazione.Descrizione == param.DESCRIZIONE);});
     if(CombinazioneExist)
-       alert('Combinazione già esistente!')
+       ZCustomAlert($mdDialog,'ATTENZIONE','Combinazione già esistente!')
     else
     {
        var $ObjQuery         = { Operazioni : [] };     
@@ -664,7 +708,7 @@ $scope.GridOptions_6 = {
   
   $scope.EliminaCombinazione = function(Combinazione)
   {
-    if(confirm('Eliminare la combinazione: ' + Combinazione.Descrizione + ' ?'))
+    var EliminaComb = function()
     {
       var $ObjQuery         = { Operazioni : [] };
       var ParamCombinazione = { CHIAVE : Combinazione.Chiave };
@@ -679,43 +723,52 @@ $scope.GridOptions_6 = {
         $scope.RefreshListaCombinazioni();
       });  
     }
+    ZConfirm.GetConfirmBox('AVVISO','ELIMINARE LA COMBINAZIONE: ' + Combinazione.Descrizione + ' ?',EliminaComb,function(){});          
   }
 
   //CASE EDITRICI  
  
   $scope.ModificaCasa = function (Casa)
   {
-    var CasaInEditing = prompt ("Modifica combinazione:",Casa.Descrizione);
-    if (CasaInEditing === null) $scope.RefreshListaCase()
-    else 
-    {   
-      var ParamCasa = {
-                        CHIAVE      : Casa.Chiave,
-                        DESCRIZIONE : Casa.toUpperCase()
-                      }
-      $scope.ConfermaCasa(ParamCasa);
-    }    
+    var ModificaCsEd = function(Answer)
+    {
+      CasaInEditing = Answer;
+      if (CasaInEditing === "") $scope.RefreshListaCase()
+      else 
+      {   
+        var ParamCasa = {
+                          CHIAVE      : Casa.Chiave,
+                          DESCRIZIONE : CasaInEditing.toUpperCase()
+                        }
+        $scope.ConfermaCasa(ParamCasa);
+      }
+    }   
+    ZPrompt.GetPromptBox('MODIFICA INSERIMENTO','MODIFICA CASA EDITRICE: ',Casa.Descrizione,ModificaCsEd,function(){});         
   }
   
   $scope.NuovaCasa = function ()
   { 
-    var CasaInEditing = prompt ("Nuova casa editrice:","");
-    if (CasaInEditing === null) $scope.RefreshListaCase()
-    else 
-    {       
-      var ParamCasa = {
-                        CHIAVE      : -1,
-                        DESCRIZIONE : CasaInEditing.toUpperCase()
-                      }
-      $scope.ConfermaCasa(ParamCasa);
+    var CreaCsEd = function(Answer)
+    {
+      CasaInEditing = Answer;
+      if (CasaInEditing === null) $scope.RefreshListaCase()
+      else 
+      {       
+        var ParamCasa = {
+                          CHIAVE      : -1,
+                          DESCRIZIONE : CasaInEditing.toUpperCase()
+                        }
+        $scope.ConfermaCasa(ParamCasa);
+      }
     }
+    ZPrompt.GetPromptBox('NUOVO INSERIMENTO','NUOVA CASA EDITRICE: ',"",CreaCsEd,function(){});         
   }
   
   $scope.ConfermaCasa = function (param)
   { 
     CasaExist = $scope.ListaCase.find(function(ACasa){return (ACasa.Descrizione == param.DESCRIZIONE);});
     if(CasaExist)
-       alert('Casa editrice già esistente!')
+       ZCustomAlert($mdDialog,'ATTENZIONE','Casa editrice gestita già esistente!')
     else
     {
        var $ObjQuery         = { Operazioni : [] };     
@@ -746,7 +799,7 @@ $scope.GridOptions_6 = {
   
   $scope.EliminaCasa = function(Casa)
   {
-    if(confirm('Eliminare la casa editrice: ' + Casa.Descrizione + ' ?'))
+    var EliminaCasEd = function()
     {
       var $ObjQuery = { Operazioni : [] };
       var ParamCasa = { CHIAVE : Casa.Chiave };
@@ -761,6 +814,8 @@ $scope.GridOptions_6 = {
         $scope.RefreshListaCase();
       });  
     }
+    ZConfirm.GetConfirmBox('AVVISO','ELIMINARE LA CASA EDITRICE: ' + Casa.Descrizione + ' ?',EliminaCasEd,function(){});          
+
   }
   
   //DATI DITTA
