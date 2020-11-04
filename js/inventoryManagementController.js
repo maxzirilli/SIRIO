@@ -28,6 +28,47 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
     return SystemInformation.UserInformation.Ruolo == RUOLO_AMMINISTRATORE;
   }
 
+  $scope.GetInventarioSalvato = function()
+  {
+    var InventarioTmp = [];
+    SystemInformation.GetSQL('Book',{},function(Results)
+    {
+      InventarioTmp = SystemInformation.FindResults(Results,'SelectInventoryTemp');
+      if(InventarioTmp != undefined)
+      {
+        if(InventarioTmp.length != 0)
+        {
+           for(let i = 0; i < InventarioTmp.length;i ++)
+               InventarioTmp[i] = {
+                                    Chiave          : InventarioTmp[i].CHIAVE_TITOLO,
+                                    Codice          : InventarioTmp[i].CODICE,
+                                    Nome            : InventarioTmp[i].NOME_TITOLO,
+                                    QuantitaMgzn    : parseInt(InventarioTmp[i].QUANTITA_MGZN),
+                                    QuantitaMgznVol : parseInt(InventarioTmp[i].QUANTITA_MGZN_VOL),
+                                    Ubicazione      : InventarioTmp[i].UBICAZIONE == null ? 'N.D.' : InventarioTmp[i].UBICAZIONE
+                                  }
+          $scope.ListaCodiciToHandle = InventarioTmp; 
+        }
+        else $scope.ListaCodiciToHandle = []
+      }
+      else SystemInformation.ApplyOnError('Modello inventario temporaneo non conforme','')
+    },'SelectInventarioTemporaneo')
+  }
+
+  $scope.SaveModifica = function(Titolo)
+  {
+    $ObjQuery = {Operazioni : []};
+    
+    $ObjQuery.Operazioni.push({
+                                Query     : "UpdateInventoryTemp",
+                                Parametri : {CodiceTit : Titolo.Codice,QTit : Titolo.QuantitaMgzn, QVolTit : Titolo.QuantitaMgznVol, UbcznTit : Titolo.Ubicazione == undefined ? '' : Titolo.Ubicazione}
+                              })
+
+    SystemInformation.PostSQL('Book',$ObjQuery,function(Answer)
+    {      
+    })
+  }
+
   $scope.ResetInventario = function()
   {
     var PrimaConferma = function()
@@ -71,21 +112,43 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
 
   $scope.EliminaInserimento = function(Inserimento)
   {
-    InserimentoTrovato = $scope.ListaCodiciToHandle.findIndex(function(ACodice){return(ACodice.Codice == Inserimento.Codice);});
-    $scope.ListaCodiciToHandle.splice(InserimentoTrovato,1);
-    if($scope.CodiceBippato == Inserimento.Codice)
+    InserimentoTrovatoIndex = $scope.ListaCodiciToHandle.findIndex(function(ACodice){return(ACodice.Codice == Inserimento.Codice);});
+    InserimentoTrovato = $scope.ListaCodiciToHandle.find(function(ACodice){return(ACodice.Codice == Inserimento.Codice);});    
+    $ObjQuery = {Operazioni : []};
+    $ObjQuery.Operazioni.push({
+                                Query     : "DeleteInventoryTempBook",
+                                Parametri : {CODICE_CORRISP : InserimentoTrovato.Codice}
+                              })
+
+    SystemInformation.PostSQL('Book',$ObjQuery,function(Answer)
+    {      
+        $scope.ListaCodiciToHandle.splice(InserimentoTrovatoIndex,1);
+        if($scope.CodiceBippato == Inserimento.Codice)
+        {
+          $scope.CodiceBippato = '';
+          $scope.CodiceFocused = undefined;
+        }
+    })  
+  }
+
+  $scope.SvuotaInventarioTemporaneo = function()
+  {
+    $ObjQuery = {Operazioni : []};
+    $ObjQuery.Operazioni.push({
+                                Query     : "ResetInventoryTempAll",
+                                Parametri : {}
+                               })
+    SystemInformation.PostSQL('Book',$ObjQuery,function(Answer)
     {
-       $scope.CodiceBippato = '';
-       $scope.CodiceFocused = undefined;
-    }   
+
+    })
   }
 
   $scope.ResetIsbnInput = function()
   {
     $scope.CodiceBippatoVisible = '';
     //$scope.CodiceFocused = undefined;
-  }
-  
+  }  
 
   $scope.AggiungiInserimento = function(KeyPressed)
   {
@@ -102,6 +165,7 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
          if(TitoloInLista != undefined)
          {
             $scope.ListaCodiciToHandle[TitoloInLista].QuantitaMgzn += 1;
+            $scope.SaveModifica($scope.ListaCodiciToHandle[TitoloInLista]);
          }
          $scope.CodiceBippato = $scope.CodiceFocused.Codice;
       }
@@ -120,6 +184,7 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
               if(TitoloInLista != -1)
               {
                  $scope.ListaCodiciToHandle[TitoloInLista].QuantitaMgzn += 1;
+                 $scope.SaveModifica($scope.ListaCodiciToHandle[TitoloInLista]);
                  $scope.CodiceBippato = $scope.ListaCodiciToHandle[TitoloInLista].Codice;
               }
               else
@@ -130,9 +195,13 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
                  $scope.CodiceFocused.Nome            = TitoloTrovato.NomeTitolo;
                  $scope.CodiceFocused.QuantitaMgzn    = 1;
                  $scope.CodiceFocused.QuantitaMgznVol = 0;
-                 $scope.CodiceFocused.Ubicazione      = TitoloTrovato.UbicazioneMgzn
+                 $scope.CodiceFocused.Ubicazione      = TitoloTrovato.UbicazioneMgzn;
                  if($scope.CodiceBippato != -1)
-                    $scope.ListaCodiciToHandle.push($scope.CodiceFocused);
+                 {
+                   $scope.ListaCodiciToHandle.push($scope.CodiceFocused);
+                   LastTitoloToSave = $scope.ListaCodiciToHandle.find(function(ACodice){return(ACodice.Codice == $scope.CodiceBippato);})                 
+                   $scope.SaveModifica(LastTitoloToSave);
+                 }
                  $scope.CodiceBippato = $scope.CodiceFocused.Codice;
               }
             }
@@ -157,7 +226,8 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
           ZConfirm.GetConfirmBox('AVVISO',"CONFERMI?",ProcediFinale,function(){});
         }
         var ProcediFinale = function()
-        {
+        {  
+          $scope.SvuotaInventarioTemporaneo();
           $scope.ListaCodiciToHandle = [];
           $scope.CodiceBippato       = '';
           $scope.CodiceFocused = undefined;
@@ -238,11 +308,14 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
        var wbout = XLSX.write(WBook, {bookType:'xlsx', bookSST:true, type: 'binary'});
        saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}),"InventarioDaCodiceXLS" + DataInventario + ".xlsx");            
        
+       $scope.SvuotaInventarioTemporaneo();
        $scope.ListaCodiciToHandle = [];
        $scope.CodiceBippato       = '';
        $scope.CodiceFocused       = undefined;
        $state.go("startPage")
      })
   }
+
+  $scope.GetInventarioSalvato();
 
 }]);

@@ -6,6 +6,13 @@
                             }
                           ],
 
+  "SelectInventarioTemporaneo"  : [
+                                    {
+                                      "Name" : "SelectInventoryTemp",
+                                      "SQL"  : "SELECT *,(SELECT CHIAVE FROM titoli WHERE CODICE_ISBN = inventario_temporaneo.CODICE) AS CHIAVE_TITOLO,(SELECT TITOLO FROM titoli WHERE CODICE_ISBN = inventario_temporaneo.CODICE) AS NOME_TITOLO FROM inventario_temporaneo ORDER BY NOME_TITOLO"                                     
+                                    }
+                                  ],
+
   "SelectAllTitoliInventario" : [
                                   {
                                     "Name" : "BookListInventoryAll",
@@ -125,6 +132,18 @@
                             {
                               "Name" : "UpdateBookFromInventory",
                               "SQL"  : "CALL UPDATE_TITOLI_FROM_INVENTARIO(:ChiaveTitolo,:QuantitaTitolo,:QuantitaVolanteTitolo,#PosizioneMagazzinoTitolo)"
+                            },
+                            {
+                              "Name" : "UpdateInventoryTemp",
+                              "SQL"  : "CALL UPDATE_INVENTARIO_TEMP(#CodiceTit,:QTit,:QVolTit,#UbcznTit)"
+                            },
+                            {
+                              "Name" : "DeleteInventoryTempBook",
+                              "SQL"  : "DELETE FROM inventario_temporaneo WHERE CODICE=#CODICE_CORRISP"
+                            },
+                            {
+                              "Name" : "ResetInventoryTempAll",
+                              "SQL"  : "DELETE FROM inventario_temporaneo"
                             }
                           ]
 }       

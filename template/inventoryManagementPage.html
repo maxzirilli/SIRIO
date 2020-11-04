@@ -26,9 +26,9 @@
          <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA INSERIMENTO" ng-click="EliminaInserimento(Titolo)"></td> 
          <td>{{Titolo.Codice}}</td>
          <td>{{Titolo.Nome}}</td>
-         <td><input type=number ng-model="Titolo.QuantitaMgzn"></td>
-         <td><input type=number ng-model="Titolo.QuantitaMgznVol"></td>
-         <td><input type=text ng-model="Titolo.Ubicazione"></td>
+         <td><input type=number ng-model="Titolo.QuantitaMgzn" ng-change="SaveModifica(Titolo)"></td>
+         <td><input type=number ng-model="Titolo.QuantitaMgznVol" ng-change="SaveModifica(Titolo)"></td>
+         <td><input type=text ng-model="Titolo.Ubicazione" ng-change="SaveModifica(Titolo)"></td>
         </tr>    
      </table>
      <md-table-pagination md-limit="GridOptions.query.limit" 
