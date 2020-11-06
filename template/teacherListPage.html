@@ -1,10 +1,10 @@
 <div ng-controller="teacherListPageController">
-  <div ng-if="!EditingOn">
+  <div ng-show="!EditingOn">
     <div>
       <h2>DOCENTI</h2>
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoDocente()">NUOVO DOCENTE</md-button>
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaSpedizioneMultipla(ANomeFiltro)">SPEDIZIONE MULTIPLA</md-button>
-      <md-button ng-click="ResetFiltri()" title="RESET FILTRI" style="color:red;font-weight:bold;font-size:30;float:right;margin-bottom:10px;"><img src="img/resetGeneric.png" style="width:40px;height:auto;margin-right:10px"></md-button>
+      <!--<md-button ng-click="ResetFiltri()" title="RESET FILTRI" style="color:red;font-weight:bold;font-size:30;float:right;margin-bottom:10px;"><img src="img/resetGeneric.png" style="width:40px;height:auto;margin-right:10px"></md-button>-->
     </div>
     
     <div layout="row" style="padding-bottom:0px;">
@@ -13,7 +13,7 @@
       </md-input-container>
        
       <md-input-container class="containerSelect" style="width:33%;"><label>PROVINCIA</label>
-        <md-select ng-model="$parent.AProvinciaFiltro" ng-change="RefreshListaDocenti()" class="mdb-select">
+        <md-select ng-model="AProvinciaFiltro" ng-change="RefreshListaDocenti()" class="mdb-select">
            <md-optgroup label="-">
              <md-option ng-value="-1">QUALSIASI</md-option>  
              <md-option ng-repeat="provincia in ListaProvinceF" ng-value="provincia.Chiave">{{provincia.Nome}}</md-option>
@@ -100,7 +100,8 @@
           <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA DOCENTE" ng-click="EliminaDocente(Docente)"></td> 
           <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA DOCENTE" ng-click="ModificaDocente(Docente)"></td>
           <td><img src="img/delivery.png" style="width:30px;height:auto;" title="NUOVA SPEDIZIONE" ng-click="NuovaSpedizione(Docente.Chiave)"></td>
-          <td><img src="img/deliveryList.png" style="width:30px;height:auto;" title="LISTA SPEDIZIONI" ng-click="ListaSpedizioni(Docente)"></td>
+          <td ng-if="Docente.SpedizioniAssegnate != 0"><img src="img/deliveryList.png" style="width:30px;height:auto;" title="LISTA SPEDIZIONI" ng-click="ListaSpedizioni(Docente)"></td>
+          <td ng-if="Docente.SpedizioniAssegnate == 0"><img src="img/deliveryList.png" style="width:30px;height:auto;filter:grayscale(100%);" title="NESSUNA SPEDIZIONE ASSOCIATA"></td>
           <td ng-if="Docente.Email != 'Non disponibile'"><img src="img/email.png" style="width:30px;height:auto;" title="INVIA MAIL"  ng-click="InvioMail(Docente)"></td>
           <td ng-if="Docente.Email == 'Non disponibile'"><img src="img/email.png" style="width:30px;height:auto;filter:grayscale(100%);" title="MAIL NON DISPONIBILE"></td>       
           <td>{{Docente.RagioneSociale}}</td>
@@ -118,7 +119,7 @@
     <p ng-if="ListaDocenti.length == 0" style="font-weight:bold;font-style:italic;text-align:center;">NESSUN DOCENTE PRESENTE</p>
   </div>
     
-  <div ng-if="EditingOn">
+  <div ng-show="EditingOn">
       <form name="docenteEditForm" layout="column" style="width:100%" ng-submit="ConfermaDocente()">
            <div layout="row">
              <h2>DOCENTE</h2>
@@ -255,7 +256,7 @@
                      </md-button>                     
                      
                      <md-tabs style="width:100%;" md-selected="selectedOrariAndDisponibilita" md-border-bottom md-autoselect md-dynamic-height md-swipe-content>                                               
-                       <md-tab label="Orari">
+                       <md-tab label="Materia / Classe">
                          <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="NuovoOrario($event,IstitutoVisualizzato,DocenteInEditing.Chiave)">INSERISCI NUOVO ORARIO</md-button>                                      
                          <table style="width:100%;text-align:center;" md-row-select="GridOptions2.rowSelection" multiple="{{GridOptions2.multiSelect}}">  
                            <tr>
@@ -263,16 +264,12 @@
                              <th></th> 
                              <th>MATERIA</th>
                              <th>CLASSE</th>
-                             <th>GIORNO</th>
-                             <th>ORA</th>
                            </tr>  
                            <tr ng-repeat="Orario in GetOrariSelected(IstitutoVisualizzato) | limitTo : GridOptions2.query.limit : (GridOptions2.query.page - 1) * GridOptions2.query.limit" id={{Orario.CHIAVE}}> <!-- | OrarioByIstituto : IstitutoVisualizzato -->
                              <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA ORARIO" ng-click="EliminaOrario(Orario)"></td> 
                              <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA ORARIO"ng-click="ModificaOrario(Orario)"></td>        
                              <td>{{Orario.MateriaNome == -1 ? '-' : Orario.MateriaNome | uppercase}}</td> 
-                             <td>{{Orario.ClasseNome == -1 ? '-' : Orario.ClasseNome | uppercase}}</td>  
-                             <td>{{Orario.GiornoNome == -1 ? '-' : Orario.GiornoNome | uppercase}}</td>  
-                             <td>{{Orario.ORARIO == '' ? '-' : Orario.ORARIO | uppercase}}</td>                           
+                             <td>{{Orario.ClasseNome == -1 ? '-' : Orario.ClasseNome | uppercase}}</td>                            
                            </tr>    
                          </table>
                          <md-table-pagination md-limit="GridOptions2.query.limit" 
@@ -283,7 +280,7 @@
                                               md-boundary-links="GridOptions2.boundaryLinks" 
                                               md-on-paginate="logPagination"></md-table-pagination>
                        </md-tab>
-                       <md-tab label="Disponibilità">
+                       <md-tab label="Ore di lezione">
                          <table style="width:100%;text-align:center;" md-row-select="GridOptions3.rowSelection" multiple="{{GridOptions3.multiSelect}}">  
                            <thead>
                              <tr style="font-weight:bold;">

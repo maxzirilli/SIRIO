@@ -1,5 +1,5 @@
 <div ng-controller="instituteListPageController">
-  <div ng-if="!EditingOn && !StampaOn">
+  <div ng-show="!EditingOn && !StampaOn">
     <div>
       <h2 style="margin-right:50px;">ISTITUTI</h2>
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoIstituto()">NUOVO ISTITUTO</md-button>      
@@ -53,7 +53,7 @@
     <p ng-if="ListaIstituti.length == 0" style="font-weight:bold;font-style:italic;">NESSUN ISTITUTO PRESENTE</p>
   </div>
                          
-  <div ng-if="EditingOn && !StampaOn">
+  <div ng-show="EditingOn && !StampaOn">
     <form name="istitutoEditForm" layout="column" style="width:100%" ng-submit="ConfermaIstituto()">
          <div layout="row">
            <h2>ISTITUTO</h2>
@@ -232,7 +232,7 @@
             <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">
               <tr>
                 <th>CLASSE</th>
-                <th>TITOLI</th>
+                <th>CODICE - TITOLO - EDITORE</th>
               </tr>
               <tr ng-repeat="classe in IstitutoInEditing.ListaAdozioniIstituto | limitTo : GridOptions_2.query.limit : (GridOptions_2.query.page - 1) * GridOptions_2.query.limit">
                 <td>{{classe.NomeClasse}} {{classe.CombinazioneClasse}}</td>
@@ -251,7 +251,8 @@
     </form>        
   </div>
 
-  <div ng-if="!EditingOn && StampaOn">
+  <div ng-show="!EditingOn && StampaOn">
+    <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="TornaAIstituti()">PAGINA ISTITUTI</md-button>      
     <iframe style="background:white;" id="teacherListPdf" title="Lista docenti istituto" height=100% width=100% ></iframe>
   <div>  
 </div> 

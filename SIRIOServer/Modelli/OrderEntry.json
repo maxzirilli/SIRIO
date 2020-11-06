@@ -9,11 +9,11 @@
   "EditSQL"      : [
                      {
                        "Name" : "InsertOrderEntry", 
-                       "SQL"  : "INSERT INTO ordini_ingresso (CHIAVE,DATA,TITOLO,QUANTITA) VALUES (:NewKey1,#DATA,:TITOLO,:QUANTITA)"                      
+                       "SQL"  : "INSERT INTO ordini_ingresso (CHIAVE,DATA,TITOLO,QUANTITA,UBICAZIONE) VALUES (:NewKey1,#DATA,:TITOLO,:QUANTITA,#UBICAZIONE)"                      
                      },
                      {
                        "Name" : "UpdateOrderEntry",
-                       "SQL"  : "UPDATE ordini_ingresso SET DATA=#DATA,TITOLO=:TITOLO,QUANTITA=:QUANTITA WHERE CHIAVE=:CHIAVE"
+                       "SQL"  : "UPDATE ordini_ingresso SET DATA=#DATA,TITOLO=:TITOLO,QUANTITA=:QUANTITA,UBICAZIONE=#UBICAZIONE WHERE CHIAVE=:CHIAVE"
                      },
                      {
                        "Name" : "DeleteOrderEntry",

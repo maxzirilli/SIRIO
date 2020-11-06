@@ -12,18 +12,18 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
   $scope.SelectVolumiTitolo   = ['UNICO'];
   $scope.CheckOldIstituto     = false;
   
-  $scope.ResetFiltri = function()
+  /*$scope.ResetFiltri = function()
   {
     $scope.MateriaFiltro      = -1
     $scope.NomeFiltro         = '';
     $scope.CodiceFiltro       = '';
     $scope.IstitutoFiltrato   = -1;
     $scope.searchTextIstituto = '';
-    $scope.OldIstitutoFiltro  = -1;
-    $scope.OldIstitutoNome    = '';
+    //$scope.OldIstitutoFiltro  = -1;
+    //$scope.OldIstitutoNome    = '';
 
     $scope.RefreshListaTitoli();
-  }
+  }*/
   
   for(let i = 1;i < VOLUME_MASSIMO;i ++)
   {
@@ -32,6 +32,12 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
   }  
   
   ScopeHeaderController.CheckButtons();
+
+  $scope.TornaATitoli = function()
+  {
+    $scope.EditingOn = false;
+    $scope.StampaOn  = false;
+  }
 
   $scope.IsAdministrator = function ()
   {
@@ -116,8 +122,8 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
     if(itemIstituto != undefined)
     {
       $scope.IstitutoFiltrato     = itemIstituto.Chiave;
-      $scope.OldIstitutoFiltro    = itemIstituto.Chiave;
-      $scope.OldIstitutoNome      = itemIstituto.Istituto;
+      //$scope.OldIstitutoFiltro    = itemIstituto.Chiave;
+      //$scope.OldIstitutoNome      = itemIstituto.Istituto;
       $scope.CheckOldIstituto     = true;
     }
        
@@ -330,11 +336,11 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
   $scope.OnAnnullaTitoloClicked = function()
   {
     $scope.EditingOn = false;
-    if($scope.CheckOldIstituto)
+    /*if($scope.CheckOldIstituto)
     {
        $scope.IstitutoFiltro     = $scope.OldIstitutoFiltro;
        $scope.searchTextIstituto = $scope.OldIstitutoNome;
-    }
+    }*/
     $scope.RefreshListaTitoli();
   }
   
@@ -499,11 +505,11 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
     {
       $scope.TitoloInEditing.ListaIstitutiTit = [];
       $scope.EditingOn = false;
-      if($scope.CheckOldIstituto)
+      /*if($scope.CheckOldIstituto)
       {
          $scope.IstitutoFiltro     = $scope.OldIstitutoFiltro;
          $scope.searchTextIstituto = $scope.OldIstitutoNome;
-      }
+      }*/
       $scope.RefreshListaTitoli();
     });    
   }

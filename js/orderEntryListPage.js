@@ -24,13 +24,30 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
                                   Chiave    : TitoliInfoLista[i].CHIAVE,
                                   Nome      : TitoliInfoLista[i].TITOLO,
                                   Codice    : TitoliInfoLista[i].CODICE_ISBN,
-                                  Posizione : TitoliInfoLista[i].POS_MAGAZZINO
+                                  Posizione : TitoliInfoLista[i].POS_MAGAZZINO == null ? '' : TitoliInfoLista[i].POS_MAGAZZINO
                                 }
        $scope.ListaTitoli  = TitoliInfoLista;
        $scope.ListaTitoliF = TitoliInfoLista;
     }
     else SystemInformation.ApplyOnError('Modello titoli non conforme','');   
   },'SelectSQLFilter');
+
+  SystemInformation.GetSQL('Book', {}, function(Results)  
+  {  
+    TitoliInfoListaNF = SystemInformation.FindResults(Results,'BookListNoFilter');
+    if(TitoliInfoListaNF != undefined)
+    { 
+       for(let i = 0; i < TitoliInfoListaNF.length; i++)
+           TitoliInfoListaNF[i] = { 
+                                  Chiave    : TitoliInfoListaNF[i].CHIAVE,
+                                  Nome      : TitoliInfoListaNF[i].TITOLO,
+                                  Codice    : TitoliInfoListaNF[i].CODICE_ISBN,
+                                  Editore   : TitoliInfoListaNF[i].EDITORE
+                                }
+       $scope.ListaTitoliNoFilter = TitoliInfoListaNF
+    }
+    else SystemInformation.ApplyOnError('Modello titoli non filtrati non conforme','');   
+  },'SelectSQLNoFilter');
     
   var TroncaTitolo = function(str, n)
   {
@@ -68,6 +85,9 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
     
   $scope.CVSLoaded = function(fileInfo)
   { 
+    var ListaCodiciEsclusi = [];
+    var ListaTitoliEsclusi = [];
+    var ListaTitoliErrati  = [];
     var file = fileInfo.files[0];
     if(file) 
     {
@@ -86,12 +106,19 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
           {
             let RecordOrdine  = CsvSplitted[i++].split(";");
             RecordOrdine[0]   = RecordOrdine[0].trim();
-            RecordOrdine[1]   = RecordOrdine[1].trim();            
+            RecordOrdine[1]   = RecordOrdine[1].trim();
+            RecordOrdine[2]   = RecordOrdine[2].trim(); //AGGIUNTA PRIMO CSV PER UBICAZIONI (PRIMA NON PRESENTE)          
             let TitoloCorrisp = $scope.ListaTitoli.find(function(ATitolo) {return(ATitolo.Codice == RecordOrdine[0]);});
             if (TitoloCorrisp == undefined)
             {
-              ZCustomAlert($mdDialog,'ATTENZIONE',"IMPOSSIBILE ESEGUIRE IL CARICO,IL TITOLO CON CODICE ISBN >> ' + RecordOrdine[0] + ' << NON E' DI UN EDITORE GESTITO");
-              return
+              //ZCustomAlert($mdDialog,'ATTENZIONE',"IMPOSSIBILE ESEGUIRE IL CARICO,IL TITOLO CON CODICE ISBN >> " + RecordOrdine[0] + " << NON E' DI UN EDITORE GESTITO");
+              //return
+              //
+              ListaCodiciEsclusi.push({
+                                        Codice     : RecordOrdine[0],
+                                        Quantita   : RecordOrdine[1],
+                                        Ubicazione : RecordOrdine[2]
+                                      })
             }
             else            
             { 
@@ -101,7 +128,8 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
                                                         CHIAVE    : -1,
                                                         DATA      : new Date(),                                        
                                                         TITOLO    : TitoloCorrisp.Chiave,
-                                                        QUANTITA  : RecordOrdine[1]                                                                                                                
+                                                        QUANTITA  : RecordOrdine[1],
+                                                        UBICAZIONE : RecordOrdine[2]  //AGGIUNTA PRIMO CSV PER UBICAZIONI (PRIMA NON PRESENTE)                                                                                                         
                                                       },
                                           ResetKeys :[1]
                                         });
@@ -110,7 +138,8 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
                                  Quantita   : RecordOrdine[1],
                                  Codice     : RecordOrdine[0],
                                  Nome       : TitoloCorrisp.Nome,
-                                 Posizione  : TitoloCorrisp.Posizione == null ? 'N.D.' : TitoloCorrisp.Posizione                               
+                                 //Posizione  : TitoloCorrisp.Posizione == null ? 'N.D.' : TitoloCorrisp.Posizione (VECCHIO METODO)
+                                 Posizione  :  RecordOrdine[2] //AGGIUNTA PRIMO CSV PER UBICAZIONI (PRIMA NON PRESENTE)                               
                                })                                        
             }                                              
             /*if($ObjQuery.Operazioni.length == 10)
@@ -123,7 +152,9 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
           if($ObjQuery.Operazioni.length != 0)
              SystemInformation.PostSQL('OrderEntry',$ObjQuery,function() 
              { 
-                ZCustomAlert($mdDialog,'AVVISO','CARICO ESEGUITO!');
+                if(ListaCodiciEsclusi.length == 0) 
+                   ZCustomAlert($mdDialog,'OK','CARICO ESEGUITO!')
+                else ZCustomAlert($mdDialog,'AVVISO','CARICO ESEGUITO, MA ALCUNI TITOLI NON SONO STATI CARICATI CORRETTAMENTE, CONTROLLARE REPORT')
                                        
                 var Data           = new Date();
                 var DataAnno       = Data.getFullYear();
@@ -174,6 +205,133 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
                         doc.text(10,290,SystemInformation.VDocCarico);
                         doc.setFontSize(7);
                 }
+
+                if(ListaCodiciEsclusi.length != 0)
+                {
+                   for(let i = 0;i < ListaCodiciEsclusi.length;i ++)
+                   {
+                       TitoloTrovato = $scope.ListaTitoliNoFilter.find(function(ATitolo){return(ATitolo.Codice == ListaCodiciEsclusi[i].Codice);});
+                       if(TitoloTrovato != undefined)
+                       {
+                          ListaTitoliEsclusi.push({
+                                                    Codice     : TitoloTrovato.Codice,
+                                                    Quantita   : ListaCodiciEsclusi[i].Quantita,
+                                                    Ubicazione : ListaCodiciEsclusi[i].Ubicazione,
+                                                    Nome       : TitoloTrovato.Nome,
+                                                    Editore    : TitoloTrovato.Editore                                                 
+                                                  })
+                       }
+                       else ListaTitoliErrati.push({
+                                                     Codice     : ListaCodiciEsclusi[i].Codice,
+                                                     Quantita   : ListaCodiciEsclusi[i].Quantita,
+                                                     Ubicazione : ListaCodiciEsclusi[i].Ubicazione,                                               
+                                                   })                        
+                   }
+
+                   if(ListaTitoliEsclusi.length != 0)
+                   {
+                      doc.addPage();
+                      doc.setFontSize(10); 
+                      doc.setFontType('bold');
+                      doc.text(10,20,'TITOLI ESCLUSI DAL CARICO');                   
+                      doc.text(10,30,'PRESENTI IN ANAGRAFICA - EDITORE NON GESTITO');
+                      CoordY = 35;
+                      doc.setFontSize(7);
+                      doc.text(10,CoordY,'QNT');
+                      doc.text(25,CoordY,'ISBN');
+                      doc.text(45,CoordY,'TITOLO');
+                      doc.text(120,CoordY,'EDITORE');
+                      doc.text(180,CoordY,'UBICAZIONE');
+                      doc.setFontType('normal');
+                      CoordY += 5;
+                        
+                      for(let i = 0;i < ListaTitoliEsclusi.length;i ++)
+                      {
+                        if (CoordY >= 280) 
+                          {
+                            doc.addPage();
+                            var CoordY = 20;
+                            doc.setFontSize(7);
+                            doc.text(10,CoordY,'QNT');
+                            doc.text(25,CoordY,'ISBN');
+                            doc.text(45,CoordY,'TITOLO');
+                            doc.text(120,CoordY,'EDITORE');
+                            doc.text(180,CoordY,'UBICAZIONE');
+                            doc.setFontType('normal');
+                            CoordY += 5;
+                          }
+                          doc.setFontType('normal');
+                          Q  = doc.getTextWidth('QNT');
+                          Qt = doc.getTextWidth(ListaTitoliEsclusi[i].Quantita);
+                          doc.text(10 + Q + 1 - Qt,CoordY,ListaTitoliEsclusi[i].Quantita);
+                          doc.text(25,CoordY,ListaTitoliEsclusi[i].Codice);
+                          doc.text(45,CoordY,TroncaTitolo(ListaTitoliEsclusi[i].Nome,50));
+                          doc.text(120,CoordY,ListaTitoliEsclusi[i].Editore);
+                          doc.text(180,CoordY,ListaTitoliEsclusi[i].Ubicazione);
+                          CoordY += 5;
+                          doc.setFontSize(6);
+                          doc.setFontType('normal');
+                          doc.text(10,290,SystemInformation.VDocCarico);
+                          doc.setFontSize(7);
+                      }
+                   }
+
+                   if(ListaTitoliErrati.length != 0)
+                   {
+                      if(CoordY >= 250)
+                      {
+                        doc.addPage();
+                        doc.setFontSize(10); 
+                        doc.setFontType('bold');
+                        doc.text(10,25,'NON PRESENTI IN ANAGRAFICA O CODICE ERRATO');
+                        CoordY = 30;
+                        doc.setFontSize(7);
+                        doc.text(10,CoordY,'QNT');
+                        doc.text(25,CoordY,'ISBN');
+                        doc.text(60,CoordY,'UBICAZIONE');
+                        doc.setFontType('normal');
+                        CoordY += 5
+                      }
+                      else
+                      {
+                        doc.setFontSize(10); 
+                        doc.setFontType('bold');
+                        doc.text(10,CoordY + 10,'NON PRESENTI IN ANAGRAFICA / CODICE ERRATO');
+                        doc.setFontSize(7);
+                        doc.text(10,CoordY + 15,'QNT');
+                        doc.text(25,CoordY + 15,'ISBN');
+                        doc.text(60,CoordY + 15,'UBICAZIONE');
+                        doc.setFontType('normal');
+                        CoordY += 20
+                      }
+    
+                      for(let i = 0;i < ListaTitoliErrati.length;i ++)
+                      {
+                          if (CoordY >= 280) 
+                          {
+                            doc.addPage();
+                            CoordY = 20;
+                            doc.setFontSize(7);
+                            doc.text(10,CoordY,'QNT');
+                            doc.text(25,CoordY,'ISBN');
+                            doc.text(60,CoordY,'UBICAZIONE');
+                            doc.setFontType('normal');
+                            CoordY += 5;
+                          }
+                          doc.setFontType('normal');
+                          Q  = doc.getTextWidth('QNT');
+                          Qt = doc.getTextWidth(ListaTitoliErrati[i].Quantita);
+                          doc.text(10 + Q + 1 - Qt,CoordY,ListaTitoliErrati[i].Quantita);
+                          doc.text(25,CoordY,ListaTitoliErrati[i].Codice);
+                          doc.text(60,CoordY,ListaTitoliErrati[i].Ubicazione);
+                          CoordY += 5;
+                          doc.setFontSize(6);
+                          doc.setFontType('normal');
+                          doc.text(10,290,SystemInformation.VDocCarico);
+                          doc.setFontSize(7);
+                      }                      
+                   }             
+                }
                 doc.save("CaricoPDF" + DataCarico + ".pdf",{});
                 $scope.RefreshListaOrdini()
              },false,true)                                                                 
@@ -208,6 +366,7 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
                                     Titolo      : OrdiniInfoLista[i].TITOLO, 
                                     Nome_Titolo : OrdiniInfoLista[i].NOME_TITOLO,                                   
                                     Quantita    : OrdiniInfoLista[i].QUANTITA,
+                                    Ubicazione  : OrdiniInfoLista[i].UBICAZIONE,
                                     Codice      : OrdiniInfoLista[i].CODICE                                     
                                   }         
          $scope.ListaOrdini = OrdiniInfoLista;
@@ -229,7 +388,8 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
   $scope.selectedItemChangeTitolo = function(itemTit)
   {
     if(itemTit != undefined)
-       $scope.OrdineInEditing.Titolo = itemTit.Chiave;      
+       $scope.OrdineInEditing.Titolo = itemTit.Chiave;
+       $scope.OrdineInEditing.Ubicazione = itemTit.Posizione;     
   }
   
   $scope.queryTitoloMain = function(searchTextTitMain)
@@ -255,6 +415,7 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
     $scope.OrdineInEditing.Chiave      = Ordine.Chiave;
     $scope.OrdineInEditing.Data        = new Date(Ordine.Data);     
     $scope.OrdineInEditing.Titolo      = Ordine.Titolo;
+    $scope.OrdineInEditing.Ubicazione  = Ordine.Ubicazione;
     $scope.OrdineInEditing.Nome_Titolo = Ordine.Nome_Titolo;
     $scope.OrdineInEditing.Quantita    = parseInt(Ordine.Quantita);    
     $scope.TitoloVisualizzato          = $scope.ListaTitoli.find(function(Ordine) {return(Ordine.Chiave == $scope.OrdineInEditing.Titolo);});
@@ -264,10 +425,11 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
   { 
     $scope.EditingOn = true; 
     $scope.OrdineInEditing = {
-                               Chiave   : -1,
-                               Data     : new Date(),
-                               Titolo   : -1,
-                               Quantita : 0                       
+                               Chiave     : -1,
+                               Data       : new Date(),
+                               Titolo     : -1,
+                               Quantita   : 0,
+                               Ubicazione : ''                       
                              };
     $scope.TitoloVisualizzato = undefined;
   }
@@ -284,10 +446,11 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
          ZCustomAlert($mdDialog,'ATTENZIONE','DATI MANCANTI');      
      var $ObjQuery   = { Operazioni : [] };          
      var ParamOrdine = {
-                         CHIAVE   : $scope.OrdineInEditing.Chiave,
-                         DATA     : $scope.OrdineInEditing.Data,
-                         TITOLO   : $scope.OrdineInEditing.Titolo,
-                         QUANTITA : $scope.OrdineInEditing.Quantita 
+                         CHIAVE     : $scope.OrdineInEditing.Chiave,
+                         DATA       : $scope.OrdineInEditing.Data,
+                         TITOLO     : $scope.OrdineInEditing.Titolo,
+                         QUANTITA   : $scope.OrdineInEditing.Quantita,
+                         UBICAZIONE : $scope.OrdineInEditing.Ubicazione 
                        }
                      
      var NuovoOrdine = ($scope.OrdineInEditing.Chiave == -1);

@@ -1,10 +1,12 @@
 {
  "Version": {
   "Major": 1,
-  "Minor": 8,
+  "Minor": 9,
   "Release": 5
  },
  "Storia": [
+  "Versione 1.9.5    06 Novembre 2020",
+  "                  - NEW: Aggiunto campo ubicazione nella tabella ordini in ingresso",
   "Versione 1.8.5    04 Novembre 2020",
   "                  - NEW: Aggiunta tabella dell'inventario temporaneo",
   "                  - NEW: Aggiunte store procedure per il salvataggio istantaneo dei dati durante procedura di inventario",
@@ -878,6 +880,15 @@
      "Commento": "",
      "DefaultValue": null,
      "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "UBICAZIONE",
+     "IsNullable": true,
+     "DataType": "varchar(255)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
     }
    ],
    "PrimaryKey": {
@@ -899,13 +910,13 @@
     {
      "Nome": "ordini_ingresso_after_insert",
      "Event": "INSERT",
-     "Body": "BEGIN\r\n  \r\n  UPDATE titoli SET QUANTITA_MGZN=(QUANTITA_MGZN + NEW.QUANTITA) \r\n   WHERE CHIAVE = NEW.TITOLO;\r\n  INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),NEW.TITOLO,NEW.QUANTITA,'Nuovo ingresso titolo');\r\n\r\nEND",
+     "Body": "BEGIN\r\n\r\n  UPDATE titoli SET QUANTITA_MGZN=(QUANTITA_MGZN + NEW.QUANTITA),POS_MAGAZZINO=NEW.UBICAZIONE \r\n   WHERE CHIAVE = NEW.TITOLO;\r\n  INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),NEW.TITOLO,NEW.QUANTITA,'Nuovo ingresso titolo');\r\n\r\nEND",
      "Timing": "AFTER"
     },
     {
      "Nome": "ordini_ingresso_after_update",
      "Event": "UPDATE",
-     "Body": "BEGIN\r\n   \r\n\tIF NEW.TITOLO <> OLD.TITOLO THEN\r\n      UPDATE titoli SET QUANTITA_MGZN = (QUANTITA_MGZN - OLD.QUANTITA) \r\n\t  \t WHERE CHIAVE = OLD.TITOLO;\r\n      UPDATE titoli SET QUANTITA_MGZN = (QUANTITA_MGZN + NEW.QUANTITA) \r\n\t\t WHERE CHIAVE = NEW.TITOLO;\r\n      INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),NEW.TITOLO,NEW.QUANTITA,'Nuovo ingresso titolo');\r\n      INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,(-1)*OLD.QUANTITA,'Modifica ingresso titolo');\r\n      \r\n   ELSE\r\n\t   IF NEW.QUANTITA <> OLD.QUANTITA THEN  \r\n         UPDATE titoli SET QUANTITA_MGZN = (QUANTITA_MGZN + (NEW.QUANTITA - OLD.QUANTITA)) WHERE CHIAVE = OLD.TITOLO;\r\n         INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,NEW.QUANTITA,'Modifica ingresso titolo');\r\n      END IF;  \r\n   END IF;\r\n\r\nEND",
+     "Body": "BEGIN\r\n  \r\n\tIF NEW.TITOLO <> OLD.TITOLO THEN\r\n      UPDATE titoli SET QUANTITA_MGZN = (QUANTITA_MGZN - OLD.QUANTITA) \r\n\t  \t WHERE CHIAVE = OLD.TITOLO;\r\n      UPDATE titoli SET QUANTITA_MGZN = (QUANTITA_MGZN + NEW.QUANTITA), POS_MAGAZZINO=NEW.UBICAZIONE \r\n\t\t WHERE CHIAVE = NEW.TITOLO;\r\n      INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),NEW.TITOLO,NEW.QUANTITA,'Nuovo ingresso titolo');\r\n      INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,(-1)*OLD.QUANTITA,'Modifica ingresso titolo');     \r\n   ELSE\r\n\t   IF (NEW.QUANTITA <> OLD.QUANTITA) OR (NEW.UBICAZIONE <> OLD.UBICAZIONE) THEN  \r\n         UPDATE titoli SET POS_MAGAZZINO = NEW.UBICAZIONE,\r\n\t\t\t                  QUANTITA_MGZN = (QUANTITA_MGZN + (NEW.QUANTITA - OLD.QUANTITA)) \r\n\t\t\t WHERE CHIAVE = NEW.TITOLO;\r\n         INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE)VALUES(NOW(),OLD.TITOLO,NEW.QUANTITA,'Modifica ingresso titolo');\r\n      END IF;  \r\n   END IF;\r\n\r\nEND",
      "Timing": "AFTER"
     },
     {
@@ -2053,7 +2064,7 @@
     },
     {
      "Nome": "DA",
-     "IsNullable": true,
+     "IsNullable": false,
      "DataType": "time",
      "AutoIncrement": false,
      "Commento": "",
@@ -2062,7 +2073,7 @@
     },
     {
      "Nome": "A",
-     "IsNullable": true,
+     "IsNullable": false,
      "DataType": "time",
      "AutoIncrement": false,
      "Commento": "",
@@ -2080,13 +2091,13 @@
    },
    "ForeignKeys": [
     {
-     "Nome": "FK_DOCENTI_DISBONBILITA_DOCENTI",
+     "Nome": "FK_docenti_disponibilita_docenti",
      "Campo": "DOCENTE",
      "RefTable": "docenti",
      "RefField": "CHIAVE"
     },
     {
-     "Nome": "FK_DOCENTI_DISPONIBILITA_ISTITUTI",
+     "Nome": "FK_docenti_disponibilita_istituti",
      "Campo": "ISTITUTO",
      "RefTable": "istituti",
      "RefField": "CHIAVE"

@@ -28,6 +28,183 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
     return SystemInformation.UserInformation.Ruolo == RUOLO_AMMINISTRATORE;
   }
 
+  $scope.InventarioMagazzinoXls = function()
+  { 
+    SystemInformation.GetSQL('Accessories',{},function(Results)
+    {
+      var ListaTitoli    = [];
+      var ListaTitoliTmp = [];
+      var ListaTitoliTmp = SystemInformation.FindResults(Results,'BookListInventory');
+      if (ListaTitoliTmp != undefined)
+      {
+          if(ListaTitoliTmp.length == 0)
+          {
+            ZCustomAlert($mdDialog,'AVVISO','IL MAGAZZINO E IL MAGAZZINO VOLANTE NON CONTENGONO TITOLI!')
+            return
+          }
+          else
+          {
+            for(let i = 0; i < ListaTitoliTmp.length; i++)
+            ListaTitoliTmp[i] = {
+                                  CODICE     : ListaTitoliTmp[i].CODICE_ISBN == undefined ? 'N.D.' : ListaTitoliTmp[i].CODICE_ISBN,
+                                  TITOLO     : ListaTitoliTmp[i].TITOLO == undefined ? 'N.D.' : ListaTitoliTmp[i].TITOLO,
+                                  POS_MGZN   : ListaTitoliTmp[i].POS_MAGAZZINO == undefined ? 'N.D.' : ListaTitoliTmp[i].POS_MAGAZZINO,
+                                  Q_MGZN     : ListaTitoliTmp[i].QUANTITA_MGZN  == undefined ? 'N.D.' : ListaTitoliTmp[i].QUANTITA_MGZN,
+                                  Q_MGZN_VOL : ListaTitoliTmp[i].QUANTITA_MGZN_VOL  == undefined ? 'N.D.' : ListaTitoliTmp[i].QUANTITA_MGZN_VOL                         
+                                }
+            ListaTitoli  = ListaTitoliTmp;
+
+            var Data           = new Date();
+            var DataAnno       = Data.getFullYear();
+            var DataMese       = Data.getMonth()+1; 
+            var DataGiorno     = Data.getDate();
+            var DataInventario = DataGiorno.toString() + '/' + DataMese.toString() +  '/' + DataAnno.toString();
+
+            var WBook = {
+                          SheetNames : [],
+                          Sheets     : {}
+                        };
+                          
+            var SheetName   = 'INVENTARIO MAGAZZINO - ' + DataInventario;
+            var BodySheet   = {};               
+            BodySheet       = {};
+            BodySheet['A1'] = SystemInformation.GetCellaIntestazione('ISBN');
+            BodySheet['B1'] = SystemInformation.GetCellaIntestazione('TITOLO');
+            BodySheet['C1'] = SystemInformation.GetCellaIntestazione('QUANTITA MAGAZZINO');
+            BodySheet['D1'] = SystemInformation.GetCellaIntestazione('QUANTITA MAGAZZINO VOLANTE');
+            BodySheet['E1'] = SystemInformation.GetCellaIntestazione('POSIZIONE MAGAZZINO');
+            
+            for(let j = 0;j < ListaTitoli.length;j ++)
+            {                
+                BodySheet['A' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[j].CODICE);
+                BodySheet['B' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[j].TITOLO);
+                BodySheet['C' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[j].Q_MGZN);
+                BodySheet['D' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[j].Q_MGZN_VOL);
+                BodySheet['E' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[j].POS_MGZN);
+            }   
+            
+            BodySheet["!cols"] = [             
+                                  {wpx: 150},
+                                  {wpx: 150},
+                                  {wpx: 150},
+                                  {wpx: 150},
+                                  {wpx: 150}
+                                ];
+            
+            BodySheet['!ref'] = 'A1:E1' + parseInt(ListaTitoli.length + 1);
+            
+            WBook.SheetNames.push(SheetName);
+            WBook.Sheets[SheetName] = BodySheet;            
+            
+            var wbout = XLSX.write(WBook, {bookType:'xlsx', bookSST:true, type: 'binary'});
+            saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}),"InventarioXLS" + DataInventario + ".xlsx") 
+          }      
+      }
+      else SystemInformation.ApplyOnError('Modello titoli magazzino non conforme','');
+    },'SelectTitoliInventarioSQL')  
+  }    
+
+
+  $scope.InventarioMagazzinoPdf = function()
+  {
+    var ListaTitoli = [];
+    var Data           = new Date();
+    var DataAnno       = Data.getFullYear();
+    var DataMese       = Data.getMonth()+1; 
+    var DataGiorno     = Data.getDate();
+    var DataSpedizione = DataGiorno.toString() + '/' + DataMese.toString() +  '/' + DataAnno.toString();
+    
+    var TroncaTitolo = function(str, n)
+    {
+      return (str.length > n) ? str.substr(0, n-1) + '(...)' : str;
+    };
+    
+    SystemInformation.GetSQL('Accessories',{},function(Results)
+    {
+      var ListaTitoli    = [];
+      var ListaTitoliTmp = [];
+      var ListaTitoliTmp = SystemInformation.FindResults(Results,'BookListInventory');
+      if (ListaTitoliTmp != undefined)
+      {
+          if(ListaTitoliTmp.length == 0)
+          {
+            ZCustomAlert($mdDialog,'AVVISO','IL MAGAZZINO E IL MAGAZZINO VOLANTE NON CONTENGONO TITOLI!')
+            return
+          }
+          else
+          {
+            for(let i = 0; i < ListaTitoliTmp.length; i++)
+            ListaTitoliTmp[i] = {
+                                  CODICE     : ListaTitoliTmp[i].CODICE_ISBN == undefined ? 'N.D.' : ListaTitoliTmp[i].CODICE_ISBN,
+                                  TITOLO     : ListaTitoliTmp[i].TITOLO  == undefined ? 'N.D.' : ListaTitoliTmp[i].TITOLO,
+                                  POS_MGZN   : ListaTitoliTmp[i].POS_MAGAZZINO == undefined ? 'N.D.' : ListaTitoliTmp[i].POS_MAGAZZINO,
+                                  Q_MGZN     : ListaTitoliTmp[i].QUANTITA_MGZN  == undefined ? 'N.D.' : ListaTitoliTmp[i].QUANTITA_MGZN,
+                                  Q_MGZN_VOL : ListaTitoliTmp[i].QUANTITA_MGZN_VOL  == undefined ? 'N.D.' : ListaTitoliTmp[i].QUANTITA_MGZN_VOL                         
+                                }
+            ListaTitoli  = ListaTitoliTmp;
+
+            var Data           = new Date();
+            var DataAnno       = Data.getFullYear();
+            var DataMese       = Data.getMonth()+1; 
+            var DataGiorno     = Data.getDate();
+            var DataInventario = DataGiorno.toString() + '/' + DataMese.toString() +  '/' + DataAnno.toString();
+
+            var doc = new jsPDF();
+            doc.setProperties({title: 'INVENTARIO MAGAZZINO - ' + DataInventario});
+            doc.setFontSize(10); 
+            doc.setFontType('bold');
+            doc.text(10,20,'INVENTARIO - IN DATA ' + DataSpedizione);
+            doc.setFontSize(7);
+            
+            var CoordY = 30;
+            doc.setFontSize(7);
+            doc.text(10,CoordY,'Q.MGZN');
+            doc.text(25,CoordY,'Q.MGZN VOL');
+            doc.text(50,CoordY,'ISBN');
+            doc.text(70,CoordY,'TITOLO');
+            doc.text(180,CoordY,'UBICAZIONE');
+            doc.setFontType('normal');
+            CoordY += 5;              
+
+            
+            for(let i = 0;i < ListaTitoli.length;i ++)
+            {
+                if(CoordY >= 280) 
+                {
+                  doc.addPage();
+                  CoordY = 20;
+                  doc.setFontType('bold');
+                  doc.setFontSize(7);
+                  doc.text(10,CoordY,'Q.MGZN');
+                  doc.text(25,CoordY,'Q.MGZN VOL');
+                  doc.text(50,CoordY,'ISBN');
+                  doc.text(70,CoordY,'TITOLO');
+                  doc.text(180,CoordY,'UBICAZIONE');
+                  CoordY += 5;              
+                }
+                doc.setFontType('normal');
+                var Q   = doc.getTextWidth('Q.MGZN');
+                var Qt  = doc.getTextWidth(ListaTitoli[i].Q_MGZN);
+                var QV  = doc.getTextWidth('Q.MGZN VOL');
+                var QtV = doc.getTextWidth(ListaTitoli[i].Q_MGZN_VOL);
+                doc.text(10 + Q + 1 - Qt,CoordY,ListaTitoli[i].Q_MGZN);
+                doc.text(25 + QV + 1 - QtV,CoordY,ListaTitoli[i].Q_MGZN_VOL);
+                doc.text(50,CoordY,ListaTitoli[i].CODICE);
+                doc.text(70,CoordY,TroncaTitolo(ListaTitoli[i].TITOLO,75));
+                doc.text(180,CoordY,ListaTitoli[i].POS_MGZN);
+                CoordY += 5;
+                doc.setFontSize(6);
+                doc.setFontType('normal');
+                doc.text(10,290,SystemInformation.VDocInventory);
+                doc.setFontSize(7);            
+            }
+            doc.save("InventarioPDF" + DataInventario + ".pdf",{});  
+          }      
+      }
+      else SystemInformation.ApplyOnError('Modello titoli magazzino non conforme','');
+    },'SelectTitoliInventarioSQL')  
+  }
+
   $scope.GetInventarioSalvato = function()
   {
     var InventarioTmp = [];

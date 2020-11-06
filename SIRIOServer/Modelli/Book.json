@@ -23,7 +23,7 @@
   "SelectSQLNoFilter"         : [
                                   {
                                     "Name" : "BookListNoFilter",
-                                    "SQL"  : "SELECT titoli.CHIAVE,titoli.TITOLO,titoli.CODICE_ISBN FROM titoli ORDER BY TITOLO"
+                                    "SQL"  : "SELECT titoli.CHIAVE,titoli.TITOLO,titoli.CODICE_ISBN,titoli.EDITORE FROM titoli ORDER BY TITOLO"
                                   }
                                 ], 
                           

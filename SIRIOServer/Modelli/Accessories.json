@@ -40,7 +40,7 @@
   "SelectTitoliInventarioSQL" : [
                                   {
                                     "Name" : "BookListInventory",
-                                    "SQL"  : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL,titoli.POS_MAGAZZINO FROM titoli WHERE QUANTITA_MGZN <> 0 OR QUANTITA_MGZN_VOL <> 0 AND EDITORE IN (SELECT DESCRIZIONE FROM case_editrici WHERE DESCRIZIONE=titoli.EDITORE) BY TITOLO ASC"
+                                    "SQL"  : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL,titoli.POS_MAGAZZINO FROM titoli WHERE QUANTITA_MGZN <> 0 OR QUANTITA_MGZN_VOL <> 0 AND EDITORE IN (SELECT DESCRIZIONE FROM case_editrici WHERE DESCRIZIONE=titoli.EDITORE) ORDER BY TITOLO ASC"
                                   }
                                 ],
                       

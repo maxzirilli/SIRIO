@@ -42,6 +42,7 @@
           <th>ISBN</th>
           <th>TITOLO</th>
           <th>QUANTITA'</th>
+          <th>UBICAZIONE</th>
         </tr>      
         <tr ng-repeat="ordine in ListaOrdini | OrdineByFiltro : TitoloFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{ordine.Chiave}}>
           <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA ORDINE" ng-click="EliminaOrdine(ordine)"></td> 
@@ -50,6 +51,7 @@
           <td>{{ordine.Codice}}</td>
           <td>{{ordine.Nome_Titolo}}</td>
           <td>{{ordine.Quantita}}</td>
+          <td>{{ordine.Ubicazione}}</td>
         </tr>    
       </table>
       <md-table-pagination md-limit="GridOptions.query.limit" 
@@ -83,7 +85,10 @@
           <div ng-messages="ordineIngressoEditForm.Data.$error" multiple md-auto-hide="true">
             <div ng-message="required">Inserire la data del carico</div>
           </div>
-        </md-input-container> 
+        </md-input-container>
+        <md-input-container>
+          <label>UBICAZIONE</label><input ng-model="OrdineInEditing.Ubicazione" type="text" name="Ubicazione">
+        </md-input-container>  
         <div layout="row">      
           <md-input-container flex=10>
             <label>QUANTITA'</label><input ng-model="OrdineInEditing.Quantita" type="number" min=1 name="Quantita" required>

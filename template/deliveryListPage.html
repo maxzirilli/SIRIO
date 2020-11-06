@@ -70,6 +70,25 @@
            NESSUNA CORRISPONDENZA
          </md-not-found>
       </md-input-container>
+      <md-input-container class="containerSelect" style="width:40%;margin-right:10px;">
+        <label>TITOLO</label>
+        <md-autocomplete
+                    md-input-name="Titolo"
+                    md-autofocus="true"
+                    md-no-cache="true"
+                    md-selected-item-change = "selectedItemChangeTitolo(item)"
+                    md-search-text="searchTextTit"
+                    md-items="item in queryTitolo(searchTextTit)"
+                    md-item-text="item.Nome"
+                    md-require-match="true"
+                    md-clear-button="true">
+        <md-item-template>
+          <span md-highlight-text="searchText">ISBN : {{item.Codice}} - {{item.Nome}}</span>
+        </md-item-template>
+        <md-not-found>
+          Nessuna corrispondenza
+        </md-not-found>
+      </md-input-container>
     </div>
     <br>
     <div style="text-align:right;">
@@ -91,7 +110,7 @@
       <th>PRESSO</th>
       <th>ISBN / TITOLO / STATO</th>
     </tr>
-    <tr ng-repeat="Spedizione in ListaSpedizioni | SpedizioneByFiltro : ProvinciaFiltro : PrenotataFiltro : DaSpedireFiltro : ConsegnataFiltro : $parent.PromotoreFiltro : IstitutoFiltro : DocenteFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Spedizione.Chiave}}>
+    <tr ng-repeat="Spedizione in ListaSpedizioni | SpedizioneByFiltro : ProvinciaFiltro : PrenotataFiltro : DaSpedireFiltro : ConsegnataFiltro : $parent.PromotoreFiltro : IstitutoFiltro : DocenteFiltro : TitoloFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Spedizione.Chiave}}>
       <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA SPEDIZIONE" ng-click="EliminaSpedizione(Spedizione)"></td> 
       <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA SPEDIZIONE" ng-click="ModificaSpedizione(Spedizione.Chiave,Spedizione.Docente)"></td>
       <td ng-if="Spedizione.Spedibile && Spedizione.NrPrenotate > 0"><img src="img/toSend.png" style="width:30px;height:auto;" title="SPEDIRE TITOLI DISPONIBILI" ng-click="PassaADaSpedireDisponibili(Spedizione.Chiave)"></td>

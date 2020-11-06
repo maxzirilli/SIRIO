@@ -9,7 +9,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
   $scope.IstitutoFiltro   = -1;
   $scope.DocenteFiltro    = -1;
   ListaSpedizioni         = [];
-  //$scope.TitoloFiltro     = -1;
+  $scope.TitoloFiltro     = -1;
   $scope.DataRicercaAl    = new Date();
   let TmpDate             = new Date($scope.DataRicercaAl);
   TmpDate.setDate(TmpDate.getDate() - 7);
@@ -322,6 +322,22 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
        else SystemInformation.ApplyOnError('Modello docenti non conforme','');    
      },'SelectSQLDocSpedPromotore');
   }
+
+  SystemInformation.GetSQL('Book', {}, function(Results)  
+  {  
+    TitoliInfoLista = SystemInformation.FindResults(Results,'BookListFilter');
+    if(TitoliInfoLista != undefined)
+    { 
+       for(let i = 0; i < TitoliInfoLista.length; i++)
+           TitoliInfoLista[i] = { 
+                                  Chiave         : TitoliInfoLista[i].CHIAVE,
+                                  Nome           : TitoliInfoLista[i].TITOLO,
+                                  Codice         : TitoliInfoLista[i].CODICE_ISBN,                              
+                                }
+       $scope.ListaTitoliFilter = TitoliInfoLista;
+    }
+    else SystemInformation.ApplyOnError('Modello titoli non conforme','');   
+  },'SelectSQLFilter');
   
   SystemInformation.GetSQL('Institute',{}, function(Results)
   {
@@ -361,6 +377,22 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
        return(Elemento.Nome.toUpperCase().indexOf(searchTextDocente) != -1);
      }));
   }
+
+  $scope.queryTitolo = function(searchTextTit)
+  {
+     searchTextTit = searchTextTit.toUpperCase();
+     return($scope.ListaTitoliFilter.grep(function(Elemento) 
+     { 
+       return(Elemento.Nome.toUpperCase().indexOf(searchTextTit) != -1 || Elemento.Codice.indexOf(searchTextTit) != -1);
+     }));
+  }
+  
+  $scope.selectedItemChangeTitolo = function(itemTit)
+  {
+    if(itemTit != undefined)
+       $scope.TitoloFiltro = itemTit.Chiave;
+    else $scope.TitoloFiltro  = -1;
+  }  
   
   $scope.selectedItemChangeDocente = function(itemDocente)
   {
@@ -561,7 +593,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
                                                            $scope.ConsegnataFiltro,
                                                            $scope.PromotoreFiltro,
                                                            $scope.IstitutoFiltro,
-                                                           $scope.DocenteFiltro);
+                                                           $scope.DocenteFiltro,
+                                                           $scope.TitoloFiltro);
     if($scope.IsAdministrator())
     {
        BodySheet       = {};
@@ -1004,17 +1037,20 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
 
 SIRIOApp.filter('SpedizioneByFiltro',function()
 {
-  return function(ListaSpedizioni,ProvinciaFiltro,PrenotataFiltro,DaSpedireFiltro,ConsegnataFiltro,PromotoreFiltro,IstitutoFiltro,DocenteFiltro)
+  return function(ListaSpedizioni,ProvinciaFiltro,PrenotataFiltro,DaSpedireFiltro,ConsegnataFiltro,PromotoreFiltro,IstitutoFiltro,DocenteFiltro,TitoloFiltro)
          {
            if (ListaSpedizioni != undefined)
            {  
-             if(ProvinciaFiltro == -1 && !PrenotataFiltro && !DaSpedireFiltro && !ConsegnataFiltro && PromotoreFiltro == -1 && IstitutoFiltro == -1 && DocenteFiltro == -1) 
+             if(ProvinciaFiltro == -1 && !PrenotataFiltro && !DaSpedireFiltro && !ConsegnataFiltro && PromotoreFiltro == -1 && IstitutoFiltro == -1 && DocenteFiltro == -1 && TitoloFiltro == -1) 
                 return(ListaSpedizioni);
              var ListaFiltrata = [];
              ProvinciaFiltro = parseInt(ProvinciaFiltro);
+
+             
              
              var SpedizioneOk = function(Spedizione)
-             {  
+             { 
+                var TitoliTrovati = 0; 
                 var Result = true;
                 if(ProvinciaFiltro != -1)
                    if(Spedizione.Provincia != ProvinciaFiltro)
@@ -1031,6 +1067,15 @@ SIRIOApp.filter('SpedizioneByFiltro',function()
                 if(PromotoreFiltro != -1)
                     if(Spedizione.Promotore != PromotoreFiltro)
                        Result = false;
+
+                if(TitoloFiltro != -1)
+                {
+                  for(let i = 0;i < Spedizione.DettagliTitoli.length;i ++)
+                    if(Spedizione.DettagliTitoli[i].Titolo == TitoloFiltro)
+                       TitoliTrovati++
+                  if (TitoliTrovati == 0) 
+                      Result = false;
+                }
                 
                 if(Result)
                    Result = (Spedizione.NrPrenotate  != 0 && PrenotataFiltro) ||

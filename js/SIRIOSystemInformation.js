@@ -18,10 +18,10 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
   this.DataBetweenController = {};
   this.VDocDelivery          = 'VERSIONE DOCUMENTO 2.1 DEL 21/10/2020';
   this.VDocAdoption          = 'VERSIONE DOCUMENTO 1.1 DEL 16/10/2020';
-  this.VDocLogStorage        = 'VERSIONE DOCUMENTO 1.0 DEL 8/9/2020';
+  this.VDocLogStorage        = 'VERSIONE DOCUMENTO 1.0 DEL 08/09/2020';
   this.VDocInventory         = 'VERSIONE DOCUMENTO 1.1 DEL 13/10/2020';
-  this.VDocCarico            = 'VERSIONE DOCUMENTO 1.1 DEL 21/10/2020';
-  this.VDocListaDocIst       = 'VERSIONE DOCUMENTO 1.0 DEL 8/9/2020';
+  this.VDocCarico            = 'VERSIONE DOCUMENTO 2.1 DEL 05/11/2020';
+  this.VDocListaDocIst       = 'VERSIONE DOCUMENTO 2.0 DEL 06/11/2020';
 
   this.s2ab = function(s)
   {

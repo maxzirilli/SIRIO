@@ -1,6 +1,13 @@
 <div ng-controller="inventoryManagementController" ng-cloak md-theme="{{ActualTheme}}" style="height:75%">
   <h2>GESTIONE INVENTARIO</h2>
   <md-button ng-click="ResetInventario()" title="RESET INVENTARIO" ng-if="IsAdministrator()" style="color:red;font-weight:bold;font-size:30;float:right;margin-bottom:10px;"><img src="img/deleteInventory.png" style="width:60px;height:auto;margin-right:10px"></md-button>
+  <md-button style="width:30px;height:auto;float:right;" ng-click="InventarioMagazzinoXls()" title="INVENTARIO MAGAZZINO XLS">  
+    <img src="img/printXLS.png" style="width:60px;height:auto;">
+  </md-button>
+  <md-button style="width:30px;height:auto;float:right;" ng-click="InventarioMagazzinoPdf()" title="INVENTARIO MAGAZZINO PDF">  
+    <img src="img/printPDF.png" style="width:60px;height:auto;">
+  </md-button>
+
   <div layout="row" style="padding-bottom:0px;">
    <md-input-container class="containerSelect" style="width:33%;height:20px;"><label>CODICE ISBN DEL TITOLO</label>
      <input ng-model="CodiceBippatoVisible" ng-keyup="AggiungiInserimento($event)">

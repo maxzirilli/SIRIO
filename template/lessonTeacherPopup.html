@@ -1,7 +1,7 @@
 <md-dialog>
     <md-toolbar>
       <div class="md-toolbar-tools">
-        <h2 style="font-weight:bold;color:white;">ORARIO</h2>
+        <h2 style="font-weight:bold;color:white;">ASSOCIAZIONE MATERIA/CLASSE</h2>
       </div>
     </md-toolbar>
 
@@ -20,16 +20,6 @@
             <md-option ng-repeat="classe in ListaClassiIstituto" ng-value="classe.Chiave">{{classe.Anno}}{{classe.Sezione}} - {{classe.Combinazione}}</md-option>
           </md-optgroup>
           </md-select>
-        </md-input-container> 
-        <md-input-container class="containerSelect" style="width:200px"><label>GIORNO</label>
-          <md-select ng-model="OrarioInEditing.GIORNO" class="mdb-select" type="text" name="OrarioGiorno">
-          <md-optgroup label="-">
-            <md-option ng-repeat="giorno in GiorniSettimana" ng-value="$index+1">{{giorno}}</md-option>
-          </md-optgroup>
-          </md-select>
-        </md-input-container>
-        <md-input-container class="containerSelect" style="width:200px"><label>ORARIO</label>         
-          <input ng-model="OrarioInEditing.ORARIO" type="text" name="OrarioOrario">                           
         </md-input-container> 
       </div>
     </md-dialog-content>
