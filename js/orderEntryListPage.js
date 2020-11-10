@@ -102,12 +102,12 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
         
         var CreaOrdine = function()
         {
-          while (i < CsvSplitted.length - 1)          
+          while (i < CsvSplitted.length)          
           {
             let RecordOrdine  = CsvSplitted[i++].split(";");
             RecordOrdine[0]   = RecordOrdine[0].trim();
             RecordOrdine[1]   = RecordOrdine[1].trim();
-            RecordOrdine[2]   = RecordOrdine[2].trim(); //AGGIUNTA PRIMO CSV PER UBICAZIONI (PRIMA NON PRESENTE)          
+            //RecordOrdine[2]   = RecordOrdine[2].trim(); //AGGIUNTA PRIMO CSV PER UBICAZIONI (PRIMA NON PRESENTE)          
             let TitoloCorrisp = $scope.ListaTitoli.find(function(ATitolo) {return(ATitolo.Codice == RecordOrdine[0]);});
             if (TitoloCorrisp == undefined)
             {
@@ -116,8 +116,8 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
               //
               ListaCodiciEsclusi.push({
                                         Codice     : RecordOrdine[0],
-                                        Quantita   : RecordOrdine[1],
-                                        Ubicazione : RecordOrdine[2]
+                                        Quantita   : RecordOrdine[1]//,
+                                        //Ubicazione : RecordOrdine[2]
                                       })
             }
             else            
@@ -128,8 +128,8 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
                                                         CHIAVE    : -1,
                                                         DATA      : new Date(),                                        
                                                         TITOLO    : TitoloCorrisp.Chiave,
-                                                        QUANTITA  : RecordOrdine[1],
-                                                        UBICAZIONE : RecordOrdine[2]  //AGGIUNTA PRIMO CSV PER UBICAZIONI (PRIMA NON PRESENTE)                                                                                                         
+                                                        QUANTITA  : RecordOrdine[1]//,
+                                                        //UBICAZIONE : RecordOrdine[2]  //AGGIUNTA PRIMO CSV PER UBICAZIONI (PRIMA NON PRESENTE)                                                                                                         
                                                       },
                                           ResetKeys :[1]
                                         });
@@ -138,8 +138,8 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
                                  Quantita   : RecordOrdine[1],
                                  Codice     : RecordOrdine[0],
                                  Nome       : TitoloCorrisp.Nome,
-                                 //Posizione  : TitoloCorrisp.Posizione == null ? 'N.D.' : TitoloCorrisp.Posizione (VECCHIO METODO)
-                                 Posizione  :  RecordOrdine[2] //AGGIUNTA PRIMO CSV PER UBICAZIONI (PRIMA NON PRESENTE)                               
+                                 Posizione  : TitoloCorrisp.Posizione == null ? 'N.D.' : TitoloCorrisp.Posizione
+                                 //Posizione  :  RecordOrdine[2] //AGGIUNTA PRIMO CSV PER UBICAZIONI (PRIMA NON PRESENTE)                               
                                })                                        
             }                                              
             /*if($ObjQuery.Operazioni.length == 10)
@@ -366,8 +366,8 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
                                     Titolo      : OrdiniInfoLista[i].TITOLO, 
                                     Nome_Titolo : OrdiniInfoLista[i].NOME_TITOLO,                                   
                                     Quantita    : OrdiniInfoLista[i].QUANTITA,
-                                    Ubicazione  : OrdiniInfoLista[i].UBICAZIONE,
-                                    Codice      : OrdiniInfoLista[i].CODICE                                     
+                                    Ubicazione  : OrdiniInfoLista[i].UBICAZIONE == null ? OrdiniInfoLista[i].OLD_UBICAZIONE : OrdiniInfoLista[i].UBICAZIONE,
+                                    Codice      : OrdiniInfoLista[i].CODICE                                    
                                   }         
          $scope.ListaOrdini = OrdiniInfoLista;
          $scope.ConvertiData($scope.ListaOrdini);

@@ -390,13 +390,13 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                    doc.text(50,CoordY + 40,ListaSpedizioniToPrint[i].TITOLO_DOCENTE);
                    doc.text(50,CoordY + 45,ListaSpedizioniToPrint[i].NOME_DOCENTE);
                    doc.text(50,CoordY + 55,'C/O :' + (ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D' ? ListaSpedizioniToPrint[i].NOME_ISTITUTO : ListaSpedizioniToPrint[i].PRESSO));
-                   doc.text(50,CoordY + 60,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].PROVINCIA);
+                   doc.text(50,CoordY + 60,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].NOME_PROVINCIA);
                    doc.setFontType('italic');
                }
                else
                {
                    doc.text(50,CoordY + 40,'C/O :' + (ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D' ? ListaSpedizioniToPrint[i].NOME_ISTITUTO : ListaSpedizioniToPrint[i].PRESSO));
-                   doc.text(50,CoordY + 45,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].PROVINCIA);
+                   doc.text(50,CoordY + 45,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].NOME_PROVINCIA);
                    doc.setFontType('italic');
                }
                
@@ -415,12 +415,12 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                    doc.text(10,CoordY + 40,ListaSpedizioniToPrint[i].TITOLO_DOCENTE);
                    doc.text(10,CoordY + 45,ListaSpedizioniToPrint[i].NOME_DOCENTE);
                    doc.text(10,CoordY + 55,'C/O :' + (ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D' ? ListaSpedizioniToPrint[i].NOME_ISTITUTO : ListaSpedizioniToPrint[i].PRESSO));
-                   doc.text(10,CoordY + 60,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].PROVINCIA)      
+                   doc.text(10,CoordY + 60,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].NOME_PROVINCIA)      
                }
                else
                {
                    doc.text(10,CoordY + 40,'C/O :' + (ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D' ? ListaSpedizioniToPrint[i].NOME_ISTITUTO : ListaSpedizioniToPrint[i].PRESSO));
-                   doc.text(10,CoordY + 45,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].PROVINCIA)
+                   doc.text(10,CoordY + 45,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].NOME_PROVINCIA)
                }
                CoordY = 80;
                doc.setFontType('bold');
@@ -893,13 +893,13 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                       doc.text(50,CoordY + 40,ListaSpedizioniToPrint[i].TITOLO_DOCENTE);
                       doc.text(50,CoordY + 45,ListaSpedizioniToPrint[i].NOME_DOCENTE);
                       doc.text(50,CoordY + 55,'C/O :' + (ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D' ? ListaSpedizioniToPrint[i].NOME_ISTITUTO : ListaSpedizioniToPrint[i].PRESSO));
-                      doc.text(50,CoordY + 60,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].PROVINCIA);
+                      doc.text(50,CoordY + 60,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].NOME_PROVINCIA);
                       doc.setFontType('italic');
                   }
                   else
                   {
                       doc.text(50,CoordY + 40,'C/O :' + (ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D' ? ListaSpedizioniToPrint[i].NOME_ISTITUTO : ListaSpedizioniToPrint[i].PRESSO));
-                      doc.text(50,CoordY + 45,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].PROVINCIA);
+                      doc.text(50,CoordY + 45,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].NOME_PROVINCIA);
                       doc.setFontType('italic');
                   }
                   
@@ -918,12 +918,12 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                       doc.text(10,CoordY + 40,ListaSpedizioniToPrint[i].TITOLO_DOCENTE);
                       doc.text(10,CoordY + 45,ListaSpedizioniToPrint[i].NOME_DOCENTE);
                       doc.text(10,CoordY + 55,'C/O :' + (ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D' ? ListaSpedizioniToPrint[i].NOME_ISTITUTO : ListaSpedizioniToPrint[i].PRESSO));
-                      doc.text(10,CoordY + 60,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].PROVINCIA)      
+                      doc.text(10,CoordY + 60,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].NOME_PROVINCIA)      
                   }
                   else
                   {
                       doc.text(10,CoordY + 40,'C/O :' + (ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D' ? ListaSpedizioniToPrint[i].NOME_ISTITUTO : ListaSpedizioniToPrint[i].PRESSO));
-                      doc.text(10,CoordY + 45,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].PROVINCIA)
+                      doc.text(10,CoordY + 45,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].NOME_PROVINCIA)
                   }
                   CoordY = 80;
                   doc.setFontType('bold');

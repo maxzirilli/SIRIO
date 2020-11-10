@@ -375,7 +375,7 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
                  $scope.CodiceFocused.Ubicazione      = TitoloTrovato.UbicazioneMgzn;
                  if($scope.CodiceBippato != -1)
                  {
-                   $scope.ListaCodiciToHandle.push($scope.CodiceFocused);
+                   $scope.ListaCodiciToHandle.unshift($scope.CodiceFocused); //PUSH
                    LastTitoloToSave = $scope.ListaCodiciToHandle.find(function(ACodice){return(ACodice.Codice == $scope.CodiceBippato);})                 
                    $scope.SaveModifica(LastTitoloToSave);
                  }
@@ -434,12 +434,12 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
      {
        ZCustomAlert($mdDialog,'AVVISO','AGGIORNAMENTO DEL MAGAZZINO COMPLETATO CON SUCCESSO!')
       
-       $scope.ListaCodiciToHandle.sort(function(a,b)
+       /*$scope.ListaCodiciToHandle.sort(function(a,b)
        {
          let TitoloA = a.Nome;
          let TitoloB = b.Nome;
          return (TitoloA < TitoloB) ? -1 : (TitoloA > TitoloB) ? 1 : 0;
-       });        
+       });*/       
 
        var Data           = new Date();
        var DataAnno       = Data.getFullYear();
