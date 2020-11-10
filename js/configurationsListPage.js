@@ -298,6 +298,7 @@ $scope.GridOptions_6 = {
     {
        var $ObjQuery     = { Operazioni : [] };     
        var NuovaMateria = (param.CHIAVE == -1);
+       param.DESCRIZIONE = param.DESCRIZIONE.xSQL();
        if(NuovaMateria)     
        {           
          $ObjQuery.Operazioni.push({
@@ -404,6 +405,7 @@ $scope.GridOptions_6 = {
     {     
        var $ObjQuery      = { Operazioni : [] };     
        var NuovaTipologia = (param.CHIAVE == -1);
+       param.DESCRIZIONE = param.DESCRIZIONE.xSQL();
        if(NuovaTipologia)     
        {           
          $ObjQuery.Operazioni.push({
@@ -500,6 +502,7 @@ $scope.GridOptions_6 = {
     {   
        var $ObjQuery             = { Operazioni : [] };     
        var NuovaTipologiaEsclusa = (param.CHIAVE == -1);
+       param.DESCRIZIONE = param.DESCRIZIONE.xSQL();
        if(NuovaTipologiaEsclusa)     
        {           
          $ObjQuery.Operazioni.push({
@@ -682,6 +685,7 @@ $scope.GridOptions_6 = {
     {
        var $ObjQuery         = { Operazioni : [] };     
        var NuovaCombinazione = (param.CHIAVE == -1);
+       param.DESCRIZIONE = param.DESCRIZIONE.xSQL();
        if(NuovaCombinazione)     
        {           
          $ObjQuery.Operazioni.push({
@@ -773,6 +777,7 @@ $scope.GridOptions_6 = {
     {
        var $ObjQuery         = { Operazioni : [] };     
        var NuovaCasa = (param.CHIAVE == -1);
+       param.DESCRIZIONE = param.DESCRIZIONE.xSQL();
        if(NuovaCasa)     
        {           
          $ObjQuery.Operazioni.push({
