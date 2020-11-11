@@ -102,7 +102,7 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
         
         var CreaOrdine = function()
         {
-          while (i < CsvSplitted.length)          
+          while (i < CsvSplitted.length - 1)          
           {
             let RecordOrdine  = CsvSplitted[i++].split(";");
             RecordOrdine[0]   = RecordOrdine[0].trim();
@@ -216,7 +216,7 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
                           ListaTitoliEsclusi.push({
                                                     Codice     : TitoloTrovato.Codice,
                                                     Quantita   : ListaCodiciEsclusi[i].Quantita,
-                                                    Ubicazione : ListaCodiciEsclusi[i].Ubicazione,
+                                                    //Ubicazione : ListaCodiciEsclusi[i].Ubicazione == undefined ? '' : ListaCodiciEsclusi[i].Ubicazione,
                                                     Nome       : TitoloTrovato.Nome,
                                                     Editore    : TitoloTrovato.Editore                                                 
                                                   })
@@ -224,7 +224,7 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
                        else ListaTitoliErrati.push({
                                                      Codice     : ListaCodiciEsclusi[i].Codice,
                                                      Quantita   : ListaCodiciEsclusi[i].Quantita,
-                                                     Ubicazione : ListaCodiciEsclusi[i].Ubicazione,                                               
+                                                     //Ubicazione : ListaCodiciEsclusi[i].Ubicazione,                                               
                                                    })                        
                    }
 
@@ -241,7 +241,7 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
                       doc.text(25,CoordY,'ISBN');
                       doc.text(45,CoordY,'TITOLO');
                       doc.text(120,CoordY,'EDITORE');
-                      doc.text(180,CoordY,'UBICAZIONE');
+                      //doc.text(180,CoordY,'UBICAZIONE');
                       doc.setFontType('normal');
                       CoordY += 5;
                         
@@ -256,7 +256,7 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
                             doc.text(25,CoordY,'ISBN');
                             doc.text(45,CoordY,'TITOLO');
                             doc.text(120,CoordY,'EDITORE');
-                            doc.text(180,CoordY,'UBICAZIONE');
+                            //doc.text(180,CoordY,'UBICAZIONE');
                             doc.setFontType('normal');
                             CoordY += 5;
                           }
@@ -265,9 +265,9 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
                           Qt = doc.getTextWidth(ListaTitoliEsclusi[i].Quantita);
                           doc.text(10 + Q + 1 - Qt,CoordY,ListaTitoliEsclusi[i].Quantita);
                           doc.text(25,CoordY,ListaTitoliEsclusi[i].Codice);
-                          doc.text(45,CoordY,TroncaTitolo(ListaTitoliEsclusi[i].Nome,50));
+                          doc.text(45,CoordY,TroncaTitolo(ListaTitoliEsclusi[i].Nome,35));
                           doc.text(120,CoordY,ListaTitoliEsclusi[i].Editore);
-                          doc.text(180,CoordY,ListaTitoliEsclusi[i].Ubicazione);
+                          //doc.text(180,CoordY,ListaTitoliEsclusi[i].Ubicazione);
                           CoordY += 5;
                           doc.setFontSize(6);
                           doc.setFontType('normal');
@@ -288,7 +288,7 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
                         doc.setFontSize(7);
                         doc.text(10,CoordY,'QNT');
                         doc.text(25,CoordY,'ISBN');
-                        doc.text(60,CoordY,'UBICAZIONE');
+                        //doc.text(60,CoordY,'UBICAZIONE');
                         doc.setFontType('normal');
                         CoordY += 5
                       }
@@ -300,7 +300,7 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
                         doc.setFontSize(7);
                         doc.text(10,CoordY + 15,'QNT');
                         doc.text(25,CoordY + 15,'ISBN');
-                        doc.text(60,CoordY + 15,'UBICAZIONE');
+                        //doc.text(60,CoordY + 15,'UBICAZIONE');
                         doc.setFontType('normal');
                         CoordY += 20
                       }
@@ -314,7 +314,7 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
                             doc.setFontSize(7);
                             doc.text(10,CoordY,'QNT');
                             doc.text(25,CoordY,'ISBN');
-                            doc.text(60,CoordY,'UBICAZIONE');
+                            //doc.text(60,CoordY,'UBICAZIONE');
                             doc.setFontType('normal');
                             CoordY += 5;
                           }
@@ -323,7 +323,7 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
                           Qt = doc.getTextWidth(ListaTitoliErrati[i].Quantita);
                           doc.text(10 + Q + 1 - Qt,CoordY,ListaTitoliErrati[i].Quantita);
                           doc.text(25,CoordY,ListaTitoliErrati[i].Codice);
-                          doc.text(60,CoordY,ListaTitoliErrati[i].Ubicazione);
+                          //doc.text(60,CoordY,ListaTitoliErrati[i].Ubicazione);
                           CoordY += 5;
                           doc.setFontSize(6);
                           doc.setFontType('normal');
