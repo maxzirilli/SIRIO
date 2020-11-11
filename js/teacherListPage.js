@@ -577,10 +577,13 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
       {
         for(let i = 0;i < ListaDocentiForTransfer.length;i ++)
         {
-            ListaDocentiForTransfer[i] = {ChiaveDoc : ListaDocentiForTransfer[i].CHIAVE, NomeDoc : ListaDocentiForTransfer[i].RAGIONE_SOCIALE, ListaIstDoc : []}
+            ListaDocentiForTransfer[i] = {ChiaveDoc : ListaDocentiForTransfer[i].CHIAVE, NomeDoc : ListaDocentiForTransfer[i].RAGIONE_SOCIALE, ListaIstDoc : [],ListaIstDocChiavi : []}
             for(let j = 0;j < ListaIstitutiForTransfer.length;j ++)
                 if(ListaIstitutiForTransfer[j].DOCENTE == ListaDocentiForTransfer[i].ChiaveDoc)
-                   ListaDocentiForTransfer[i].ListaIstDoc.push(ListaIstitutiForTransfer[j].NOME_ISTITUTO)     //({ChiaveIst : ListaIstitutiForTransfer[j].ISTITUTO, NomeIst : ListaIstitutiForTransfer[j].NOME_ISTITUTO})
+                {
+                   ListaDocentiForTransfer[i].ListaIstDoc.push(ListaIstitutiForTransfer[j].NOME_ISTITUTO);
+                   ListaDocentiForTransfer[i].ListaIstDocChiavi.push(ListaIstitutiForTransfer[j].ISTITUTO);   //({ChiaveIst : ListaIstitutiForTransfer[j].ISTITUTO, NomeIst : ListaIstitutiForTransfer[j].NOME_ISTITUTO})
+                }                       
             $scope.ListaDocToTransfer.push(ListaDocentiForTransfer[i])              
         }
                 
@@ -602,27 +605,41 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
             {
               var AssociaAnotherDoc = function()
               {
-                 $ObjQuery = {Operazioni : []};
-                 $ObjQuery.Operazioni.push({
-                                             Query     : "InsertInstituteTeacher",
-                                             Parametri : {
-                                                           DOCENTE  : itemDoc.ChiaveDoc,
-                                                           ISTITUTO : $scope.OldIstitutoFiltro
-                                                         }
-                                            })
-                 SystemInformation.PostSQL('Teacher',$ObjQuery,function(Answer)
-                 {
-                    ZCustomAlert($mdDialog,'OK',"DOCENTE ASSOCIATO CORRETTAMENTE ALL'ISTITUTO DESIDERATO")
-                    $ObjQuery = {};
-                    $scope.searchTextDoc = '';
-                    $scope.DocenteInEditing.RagioneSociale = ''
-                 })
-              }
-              var NonAssociarlo = function()
-              {
-                $scope.DocenteInEditing.RagioneSociale = itemDoc.NomeDoc
-              }
-              ZConfirm.GetConfirmBox('AVVISO',"QUESTO DOCENTE E' ASSEGNATO AI SEGUENTI ISTITUTI: " + itemDoc.ListaIstDoc.toString() + ".\nVUOI ASSEGNARLO ALL'ISTITUTO >> " + $scope.OldIstitutoNome + " << ?",AssociaAnotherDoc,NonAssociarlo);      
+                 var GiaAssociato = false;
+                 for(let i = 0;i < itemDoc.ListaIstDocChiavi.length;i ++)
+                 {   
+                     if(itemDoc.ListaIstDocChiavi[i] == $scope.OldIstitutoFiltro)
+                     {
+                        GiaAssociato = true;
+                        ZCustomAlert($mdDialog,'ATTENZIONE!',"DOCENTE GIA' ASSOCIATO ALL'INDIRIZZO SELEZIONATO!")
+                     }
+                  }
+                  
+                  if(!GiaAssociato)
+                  {
+                    $ObjQuery = {Operazioni : []};
+                    $ObjQuery.Operazioni.push({
+                                                Query     : "InsertInstituteTeacher",
+                                                Parametri : {
+                                                              DOCENTE  : itemDoc.ChiaveDoc,
+                                                              ISTITUTO : $scope.OldIstitutoFiltro
+                                                            }
+                                              })
+                    SystemInformation.PostSQL('Teacher',$ObjQuery,function(Answer)
+                    {
+                      ZCustomAlert($mdDialog,'OK',"DOCENTE ASSOCIATO CORRETTAMENTE ALL'ISTITUTO DESIDERATO")
+                      $ObjQuery = {};
+                      $scope.searchTextDoc = '';
+                      $scope.DocenteInEditing.RagioneSociale = ''
+                    })
+                  }  
+                }
+              
+                var NonAssociarlo = function()
+                {
+                  $scope.DocenteInEditing.RagioneSociale = itemDoc.NomeDoc
+                }
+                ZConfirm.GetConfirmBox('AVVISO',"QUESTO DOCENTE E' ASSEGNATO AI SEGUENTI ISTITUTI: " + itemDoc.ListaIstDoc.toString() + ".\nVUOI ASSEGNARLO ALL'ISTITUTO >> " + $scope.OldIstitutoNome + " << ?",AssociaAnotherDoc,NonAssociarlo);      
             }            
           }
         }  
