@@ -294,6 +294,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   
   $scope.RefreshListaDocenti = function ()
   {
+    $scope.GridOptions.query.page = 1;
     var RicercaPerTitolo = false;
     var ObjParametri     = {};
 
@@ -474,6 +475,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
         
         for (let i = 0; i < $scope.DocenteInEditing.ListaIstitutiDoc.length;i ++)
         {
+          $scope.DocenteInEditing.ListaIstitutiDoc[i].PROVINCIA_LISTA_ALL == undefined ? -1 : $scope.DocenteInEditing.ListaIstitutiDoc[i].PROVINCIA_LISTA_ALL;
           for (let j = 0; j < OrariAll.length;j ++)
           {
                if (OrariAll[j].ISTITUTO == $scope.DocenteInEditing.ListaIstitutiDoc[i].CHIAVE)
@@ -679,8 +681,21 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
     var ImpostaIndirizzo = function()
     {
        if(DatiIstituto.INDIRIZZO == '' || DatiIstituto.COMUNE == '' || DatiIstituto.CAP == '' || DatiIstituto.PROVINCIA_LISTA_ALL == -1 || DatiIstituto.PROVINCIA_LISTA_ALL == undefined)
-       {   
-          ZCustomAlert($mdDialog,'ATTENZIONE','DATI ISTITUTO MANCANTI, IMPOSSIBILE IMPOSTARE COME INDIRIZZO PREDEFINITO DEL DOCENTE!');
+       { 
+          StringaDatiMancanti = '';
+
+          if(DatiIstituto.INDIRIZZO == '')
+             StringaDatiMancanti += 'INDIRIZZO,'
+          if(DatiIstituto.COMUNE == '')
+          StringaDatiMancanti += 'COMUNE,'  
+          if(DatiIstituto.CAP == '')
+          StringaDatiMancanti += 'CAP,'  
+          if(DatiIstituto.PROVINCIA_LISTA_ALL == -1)
+          StringaDatiMancanti += 'PROVINCIA,' 
+          
+          StringaDatiMancanti = StringaDatiMancanti.substring(0, StringaDatiMancanti.length - 1);
+        
+          ZCustomAlert($mdDialog,'ATTENZIONE','DATI ISTITUTO MANCANTI (' + StringaDatiMancanti + ') IMPOSSIBILE IMPOSTARE COME INDIRIZZO PREDEFINITO DEL DOCENTE!');
           return
        }
        else

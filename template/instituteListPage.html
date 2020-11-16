@@ -12,6 +12,9 @@
           </md-optgroup>
           </md-select>
         </md-input-container>
+        <md-input-container class="containerSelect" style="width:20%;margin-right:10px;"><label>COMUNE</label>
+          <input ng-model="ComuneFiltro" type="search">
+        </md-input-container>
         <md-input-container class="containerSelect" style="width:20%;"><label>NOME</label>
           <input ng-model="NomeFiltro" type="search">
         </md-input-container>
@@ -27,18 +30,20 @@
           <th></th>          
           <th>CODICE</th>  
           <th>NOME</th>
-          <th>PROVINCIA</th> 
+          <th>PROVINCIA</th>
+          <th>COMUNE</th>  
           <th>PROMOTORE ASSEGNATO</th>      
         </tr>  
-        <tr ng-repeat="Istituto in ListaIstituti | IstitutoByFiltro : ProvinciaFiltro : NomeFiltro : NascostoFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Istituto.Chiave}}>
+        <tr ng-repeat="Istituto in ListaIstituti | IstitutoByFiltro : ProvinciaFiltro : NomeFiltro : NascostoFiltro : ComuneFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Istituto.Chiave}}>
           <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA ISTITUTO" ng-click="EliminaIstituto(Istituto)"></td> 
           <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA ISTITUTO" ng-click="ModificaIstituto(Istituto)"></td>        
           <td><img src="img/printPDF.png" style="width:30px;height:auto;" title="LISTA DOCENTI" ng-click="CreaPdfListaDocenti(Istituto.Chiave,Istituto.Nome,Istituto.Codice,Istituto.ProvinciaNome)"></td>        
           <td ng-if="!(Istituto.Nascosto)"><img src="img/hide.png" style="width:30px;height:auto;" title="UNISCI E NASCONDI ISTITUTO" ng-click="UnisciIstituti(Istituto)"></td>        
           <td ng-if="Istituto.Nascosto"><img src="img/notHide.png" style="width:30px;height:auto;" title="RENDI VISIBILE ISTITUTO" ng-click="RendiVisibileIstituto(Istituto.Chiave,Istituto.Nome)"></td>        
           <td>{{Istituto.Codice}}</td>  
-          <td>{{Istituto.Nome}}</td>
+          <td>{{Istituto.Nome}}<img ng-if="Istituto.NrDocenti > 0" src="img/smallTeacher.png" style="width:20px;height:auto;padding-left:10px;" title="DOCENTI PRESENTI"><img ng-if="Istituto.NrAdozioni > 0" src="img/smallAdoption.png" style="width:20px;height:auto;padding-left:10px;" title="ADOZIONI PRESENTI"></td>
           <td>{{Istituto.ProvinciaNome}}</td>
+          <td>{{Istituto.Comune == '' ? 'N.D.' : Istituto.Comune}}</td>
           <td>{{(Istituto.Promotore || 'NESSUN PROMOTORE ASSEGNATO') | uppercase}}</td>        
         </tr>    
       </table>
@@ -127,10 +132,10 @@
                            
                <div layout="row">
                  <md-input-container style="width:20%;">
-                   <label>EMAIL</label><input type="email" ng-model="IstitutoInEditing.Email" type="text" name="Email">
+                   <label>EMAIL</label><input type="text" ng-model="IstitutoInEditing.Email" type="text" name="Email">
                  </md-input-container>
                  <md-input-container style="width:20%;">
-                   <label>PEC</label><input type="email" ng-model="IstitutoInEditing.Pec" type="text" name="Pec">
+                   <label>PEC</label><input type="text" ng-model="IstitutoInEditing.Pec" type="text" name="Pec">
                  </md-input-container>
                  <md-input-container style="width:20%;">
                    <label>SITO WEB</label><input type="text" ng-model="IstitutoInEditing.SitoWeb" type="text" name="SitoWeb">
@@ -183,7 +188,7 @@
                  </md-input-container>
                </div>
                
-               <md-input-container class="containerSelect" style="width:20%;">             
+               <md-input-container class="containerSelect" style="width:20%;" ng-show="IsAdministrator()">             
                  <label>PROMOTORE ASSEGNATO</label>
                  <md-select ng-model="IstitutoInEditing.PromotoreAssegnato" class="mdb-select" type="text" name="PromotoreAssegnato" >
                  <md-optgroup label="-">
@@ -228,15 +233,15 @@
                  </tbody>
                </table>           
             </md-tab>
-          <md-tab label="Adozioni" ng-if="IstitutoInEditing.ListaAdozioniIstituto.length > 0">
+          <md-tab label="Adozioni" ng-show="IstitutoInEditing.ListaAdozioniIstituto.length > 0">
             <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">
               <tr>
                 <th>CLASSE</th>
-                <th>CODICE - TITOLO - EDITORE</th>
+                <th>CODICE - TITOLO - EDITORE - PREZZO</th>
               </tr>
               <tr ng-repeat="classe in IstitutoInEditing.ListaAdozioniIstituto | limitTo : GridOptions_2.query.limit : (GridOptions_2.query.page - 1) * GridOptions_2.query.limit">
                 <td>{{classe.NomeClasse}} {{classe.CombinazioneClasse}}</td>
-                <td style="text-align:left;" ng-bind-html="GetTitoliClasse(classe)"></td>
+                <td style="text-align:center;" ng-bind-html="GetTitoliClasse(classe)"></td>
               </tr>
             </table>
             <md-table-pagination  md-limit="GridOptions_2.query.limit" 

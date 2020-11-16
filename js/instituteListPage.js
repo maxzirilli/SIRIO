@@ -16,6 +16,7 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
   $scope.ProvinciaFiltro    = -1;
   $scope.NomeFiltro         = ''; 
   $scope.NomeFiltroUnione   = '';
+  $scope.ComuneFiltro       = '';
   //$scope.IstitutoDaUnire    = -1;
   $scope.CheckOldProvincia = false;
 
@@ -151,6 +152,7 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
   
   $scope.RefreshListaIstituti = function()
   {
+    $scope.GridOptions.query.page = 1;
     if ($scope.IsAdministrator())
     {
         SystemInformation.GetSQL('Institute', {}, function(Results)  
@@ -167,7 +169,10 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                                           Promotore     : IstitutiInfoLista[i].PROMOTORE,
                                           Provincia     : IstitutiInfoLista[i].PROVINCIA, 
                                           ProvinciaNome : IstitutiInfoLista[i].NOME_PROVINCIA,
-                                          Nascosto      : (IstitutiInfoLista[i].NASCOSTO == null || IstitutiInfoLista[i].NASCOSTO == 0) ? false : true                        
+                                          Nascosto      : (IstitutiInfoLista[i].NASCOSTO == null || IstitutiInfoLista[i].NASCOSTO == 0) ? false : true,
+                                          NrDocenti     : parseInt(IstitutiInfoLista[i].NR_DOCENTI),
+                                          NrAdozioni    : parseInt(IstitutiInfoLista[i].NR_ADOZIONI),
+                                          Comune        : IstitutiInfoLista[i].COMUNE == undefined ? '' : IstitutiInfoLista[i].COMUNE                       
                                         }
             
                 $scope.ListaIstituti = IstitutiInfoLista
@@ -191,7 +196,10 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                                           Promotore     : IstitutiInfoLista[i].PROMOTORE,
                                           Provincia     : IstitutiInfoLista[i].PROVINCIA, 
                                           ProvinciaNome : IstitutiInfoLista[i].NOME_PROVINCIA,
-                                          Nascosto      : (IstitutiInfoLista[i].NASCOSTO == null || IstitutiInfoLista[i].NASCOSTO == 0) ? false : true                        
+                                          Nascosto      : (IstitutiInfoLista[i].NASCOSTO == null || IstitutiInfoLista[i].NASCOSTO == 0) ? false : true,
+                                          NrDocenti     : parseInt(IstitutiInfoLista[i].NR_DOCENTI),
+                                          NrAdozioni    : parseInt(IstitutiInfoLista[i].NR_ADOZIONI),
+                                          Comune        : IstitutiInfoLista[i].COMUNE == undefined ? '' : IstitutiInfoLista[i].COMUNE                            
                                         }
             
                 $scope.ListaIstituti = IstitutiInfoLista
@@ -490,9 +498,11 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                                                                    }) 
             }
             $scope.IstitutoInEditing.ListaAdozioniIstituto[$scope.IstitutoInEditing.ListaAdozioniIstituto.length-1].ListaTitoliClasse.push({
-                                                                                                                                             Titolo : IstitutoListaAdozioni[i].NOME_TITOLO,
-                                                                                                                                             Codice : IstitutoListaAdozioni[i].CODICE_TITOLO,
-                                                                                                                                             Editore : IstitutoListaAdozioni[i].EDITORE_TITOLO == undefined ? '' : IstitutoListaAdozioni[i].EDITORE_TITOLO
+                                                                                                                                             Titolo         : IstitutoListaAdozioni[i].NOME_TITOLO,
+                                                                                                                                             Codice         : IstitutoListaAdozioni[i].CODICE_TITOLO,
+                                                                                                                                             Editore        : IstitutoListaAdozioni[i].EDITORE_TITOLO == undefined ? 'N.D.' : IstitutoListaAdozioni[i].EDITORE_TITOLO,
+                                                                                                                                             Prezzo         : (IstitutoListaAdozioni[i].PREZZO_TITOLO == '' || IstitutoListaAdozioni[i].PREZZO_TITOLO == null) ? 'N.D.' : IstitutoListaAdozioni[i].PREZZO_TITOLO + '€',
+                                                                                                                                             EditoreGestito :  IstitutoListaAdozioni[i].CHIAVE_EDITORE == null ? 'NON GESTITO' : 'GESTITO' 
                                                                                                                                            })
             ClassKey =  IstitutoListaAdozioni[i].CLASSE;                                                                                          
         }
@@ -540,7 +550,10 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
     {
        for(let i = 0;i < Classe.ListaTitoliClasse.length;i ++)
        {
-         Result += 'ISBN: ' + Classe.ListaTitoliClasse[i].Codice + ' - ' + Classe.ListaTitoliClasse[i].Titolo + ' - ' + Classe.ListaTitoliClasse[i].Editore + '</br>'
+         if(Classe.ListaTitoliClasse[i].EditoreGestito == 'GESTITO')
+            Result += '<p style="Background-color:FF77E8;">' + Classe.ListaTitoliClasse[i].Codice + ' - ' + Classe.ListaTitoliClasse[i].Titolo + ' - ' + Classe.ListaTitoliClasse[i].Editore + ' - ' + Classe.ListaTitoliClasse[i].Prezzo + '</p>'
+         else Result += '<p>' + Classe.ListaTitoliClasse[i].Codice + ' - ' + Classe.ListaTitoliClasse[i].Titolo + ' - ' + Classe.ListaTitoliClasse[i].Editore + ' - ' + Classe.ListaTitoliClasse[i].Prezzo + '</p>'
+
        }
     }
     return($sce.trustAsHtml(Result.substr(0,Result.length)));
@@ -1208,11 +1221,12 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
 
 SIRIOApp.filter('IstitutoByFiltro',function()
 {
-  return function(ListaIstituti,ProvinciaFiltro,NomeFiltro,NascostoFiltro)
+  return function(ListaIstituti,ProvinciaFiltro,NomeFiltro,NascostoFiltro,ComuneFiltro)
          {
-           if(ProvinciaFiltro == -1 && NomeFiltro == '' && NascostoFiltro == true) return(ListaIstituti);
+           if(ProvinciaFiltro == -1 && NomeFiltro == '' && NascostoFiltro == true && ComuneFiltro == '') return(ListaIstituti);
            var ListaFiltrata = [];
            NomeFiltro = NomeFiltro.toUpperCase();
+           ComuneFiltro = ComuneFiltro.toUpperCase();
            
            var IstitutoOK = function(Istituto)
            {  
@@ -1221,6 +1235,10 @@ SIRIOApp.filter('IstitutoByFiltro',function()
               if(NomeFiltro != '')
                 if(Istituto.Nome.toUpperCase().indexOf(NomeFiltro) < 0)
                    Result = false;
+
+              if(ComuneFiltro != '')
+                 if(Istituto.Comune.toUpperCase().indexOf(ComuneFiltro) < 0)
+                    Result = false;
                   
               if(ProvinciaFiltro != -1)
                  if(ProvinciaFiltro != Istituto.Provincia)

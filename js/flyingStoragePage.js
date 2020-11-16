@@ -43,6 +43,7 @@ $scope.GridOptions_2 = {
   
   $scope.RefreshListaMovimenti = function ()
   {
+    $scope.GridOptions.query.page = 1;
     SystemInformation.GetSQL('FlyingStorage',{},function(Results)
     {
       ListaVolanteTmp = SystemInformation.FindResults(Results,'FlyingInfoList');

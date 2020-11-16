@@ -12,19 +12,6 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
   $scope.SelectVolumiTitolo   = ['UNICO'];
   $scope.CheckOldIstituto     = false;
   
-  /*$scope.ResetFiltri = function()
-  {
-    $scope.MateriaFiltro      = -1
-    $scope.NomeFiltro         = '';
-    $scope.CodiceFiltro       = '';
-    $scope.IstitutoFiltrato   = -1;
-    $scope.searchTextIstituto = '';
-    //$scope.OldIstitutoFiltro  = -1;
-    //$scope.OldIstitutoNome    = '';
-
-    $scope.RefreshListaTitoli();
-  }*/
-  
   for(let i = 1;i < VOLUME_MASSIMO;i ++)
   {
       i = i.toString();
@@ -133,6 +120,7 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
   
   $scope.RefreshListaTitoli = function()
   {
+    $scope.GridOptions.query.page = 1;
     var ObjParametri = {};
 
     if($scope.IstitutoFiltrato != -1)

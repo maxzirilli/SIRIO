@@ -7,7 +7,8 @@
       <label style="text-align:center;" for="progressBar">PROGRESSO UPLOAD:</label>
       <progress style="width:100%;" id="progressBar" value={{Contatore}} min="0" max={{FileLength}}></progress>
       <br>
-      <md-button class="md-raised md-accent" style="width:100%;font-weight:bold;" ng-click="CaricaMailChimp()">Carica mail...</md-button>
+      <md-button class="md-raised md-accent" style="width:100%;font-weight:bold;" ng-click="CaricaDocumento()">Carica mail...</md-button>
+      <input id="fileLoadCSVDocument" accept=".csv" name="file" type="file" class="ng-hide" onchange="angular.element(this).scope().CSVLoaded(this)">
     </md-card>
   </md-content>
   </div>

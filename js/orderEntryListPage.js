@@ -349,6 +349,7 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
   
   $scope.RefreshListaOrdini = function()
   {
+    $scope.GridOptions.query.page = 1;
     if($scope.Data.DataRicercaDal == undefined || $scope.Data.DataRicercaAl == undefined)
        return;
     let TmpDate = new Date($scope.Data.DataRicercaAl);

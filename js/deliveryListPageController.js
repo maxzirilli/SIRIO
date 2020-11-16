@@ -418,7 +418,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
   }    
   
   $scope.RefreshListaSpedizioniAll = function ()
-  { 
+  {
+    $scope.GridOptions.query.page = 1; 
     if($scope.DataRicercaDal == undefined || $scope.DataRicercaAl == undefined)
        return;
     let TmpDate = new Date($scope.DataRicercaAl);

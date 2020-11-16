@@ -7,17 +7,17 @@
     </md-toolbar>
 
     <md-dialog-content>
-      <div class="md-dialog-content" ng-repeat="titolo in ListaTitoliToHandle">
-        <p style="font-weight:bold;width:800px">{{titolo.NOME_TITOLO}} - ISBN : {{titolo.CODICE}}</p>
+      <div class="md-dialog-content" ng-repeat="titolo in ListaTitoliToHandle" style="width:1000px;">
+        <p style="font-weight:bold;">{{titolo.NOME_TITOLO}} - ISBN : {{titolo.CODICE}}</p>
         <md-input-container class="containerSelect"><label>QUANTITA</label>         
           <input ng-model="titolo.QUANTITA" type="number" min=1 name="Quantita">                           
-        </md-input-container>
-        <md-radio-group ng-model="titolo.STATO" layout="row" style="width:800px;text-align:center;" >
+        </md-input-container>       
+        <md-radio-group ng-model="titolo.STATO" layout="row" style="text-align:center;" >
           <md-radio-button value="P">PRENOTATO</md-radio-button>
           <md-radio-button value="S" ng-if="(titolo.QUANTITA <= titolo.QUANTITA_DISP) && !Multipla">DA SPEDIRE</md-radio-button>
           <md-radio-button value="S" ng-if="((titolo.QUANTITA * NumeroDocenti) <= titolo.QUANTITA_DISP) && Multipla">DA SPEDIRE</md-radio-button> 
           <md-radio-button value="C" ng-if="(!SpedizioneMultipla && ChiaveSpedizione == -1 && ChiaveDocente != -1 && titolo.QUANTITA <= titolo.QUANTITA_MGZN_VOL)||(!SpedizioneMultipla && ChiaveSpedizione != -1 && titolo.QUANTITA <= titolo.QUANTITA_DISP)">CONSEGNATO</md-radio-button>
-        </md-radio-group> 
+        </md-radio-group>
       </div>
     </md-dialog-content>
 

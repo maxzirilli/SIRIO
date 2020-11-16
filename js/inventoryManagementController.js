@@ -332,7 +332,7 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
     $scope.CodiceBippato = $scope.CodiceBippatoVisible;
     
     if($scope.CodiceFocused == undefined)
-       $scope.CodiceFocused = {Chiave : -1, Codice : -1, Nome : '', QuantitaMgzn : 0, QuantitaMgznVol : 0, UbicazioneMgzn : '', ModificaAbilitata : false};
+       $scope.CodiceFocused = {Chiave : -1, Codice : -1, Nome : '', QuantitaMgzn : 0, QuantitaMgznVol : 0, Ubicazione : '', ModificaAbilitata : false};
 
     if(KeyPressed.keyCode == 13)
     {
@@ -372,7 +372,7 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
                  $scope.CodiceFocused.Nome            = TitoloTrovato.NomeTitolo;
                  $scope.CodiceFocused.QuantitaMgzn    = 1;
                  $scope.CodiceFocused.QuantitaMgznVol = 0;
-                 $scope.CodiceFocused.Ubicazione      = TitoloTrovato.UbicazioneMgzn;
+                 $scope.CodiceFocused.Ubicazione      = TitoloTrovato.Ubicazione;
                  if($scope.CodiceBippato != -1)
                  {
                    $scope.ListaCodiciToHandle.unshift($scope.CodiceFocused); //PUSH

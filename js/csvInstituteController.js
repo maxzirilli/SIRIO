@@ -41,6 +41,11 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
               RecordIstituto[7] = RecordIstituto[7].trim();
               RecordIstituto[13] = RecordIstituto[13].trim();
               RecordIstituto[3] = Provincia.CHIAVE;
+              if(RecordIstituto[16].includes('@') == false)
+                 RecordIstituto[16] = ''; 
+              if(RecordIstituto[17].includes('@') == false)
+                 RecordIstituto[17] = ''; 
+
               $ObjQuery.Operazioni.push({ 
                                           Query     : 'UpdateDatabaseInstitute',
                                           Parametri : {                                                      

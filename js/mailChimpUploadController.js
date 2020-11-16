@@ -6,7 +6,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$http)
   $scope.UltimaDataImportazione = '';
 
   ScopeHeaderController.CheckButtons();
-  
+
   SystemInformation.GetSQL('Accessories',{},function(Results)
   {
     var TmpUltimaData = SystemInformation.FindResults(Results,'LastUpdateMailChimp')[0].ULTIMA_IMPORTAZIONE_MAIL;
@@ -18,154 +18,83 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$http)
     }
     else SystemInformation.ApplyOnError('Modello data importazione non conforme')
   },'SelectDataImpSQL');
-  
-  $scope.CaricaMailChimp = function()
+
+  function Base64DecodeUnicode(str) 
   {
-    SystemInformation.GetSQL('Accessories',{},function(Results)
+    percentEncodedStr = atob(str);
+    return decodeURIComponent(percentEncodedStr);
+  } 
+
+  $scope.CSVLoaded = function (fileInfo) 
+  {   
+    var file = fileInfo.files[0];
+    if(file) 
     {
-      var UltimaData = SystemInformation.FindResults(Results,'LastUpdateMailChimp');
-      if(UltimaData != undefined)
-      {
-        UltimaData = (UltimaData[0] == undefined ? null : UltimaData[0].ULTIMA_IMPORTAZIONE_MAIL);
-        if(UltimaData == null)
+      var reader = new FileReader();
+      reader.onloadend = function(evt)
+      {       
+        var Csv           = reader.result.split(",");         
+        var CsvSplitted   = (Base64DecodeUnicode(Csv[1])).split("\n");
+        var $ObjQuery     = { Operazioni : [] };          
+        $scope.FileLength = CsvSplitted.length -1;
+        var $ObjQuery = { Operazioni : [] };
+        $scope.Contatore  = 0;
+        var i = 1;
+
+        var SendDieciMail = function()
         {
-          $http.get('https://www.pagina43.it/ZMSoftware/MailChimpRetrieveValues.php?Passwd=ZMaxMailChimpVegeta75')
-          .then(function(Answer) 
+          while(i < CsvSplitted.length)
           {
-            if(SystemInformation.CheckAnswerHTTP(Answer.data))
+            let RecordTitolo = CsvSplitted[i++].SplitCSVWithDoublequotes(';');
+            RecordTitolo[0]  = RecordTitolo[0].trim();
+            RecordTitolo[1]  = RecordTitolo[1].trim();
+            RecordTitolo[2]  = RecordTitolo[2].trim(); 
+
+            RecordTitolo[0] == '' ? RecordTitolo[0] = 'ND' : RecordTitolo[0]
+            RecordTitolo[2] == '' ? RecordTitolo[2] = 'ND' : RecordTitolo[2]
+            RecordTitolo[1] == '' ? RecordTitolo[1] = 'ND' : RecordTitolo[1]
+            
+            $ObjQuery.Operazioni.push({
+                                        Query     : 'UpdateTeacherMailFromMailChimp',
+                                        Parametri : {
+                                                      MailDocente : RecordTitolo[0].xSQL(),
+                                                      NomeDocente : RecordTitolo[2].xSQL() + ' ' + RecordTitolo[1].xSQL()
+                                                    }
+                                      });
+            $scope.Contatore++;
+            i++;
+            if($ObjQuery.Operazioni.length == 20)
             {
-              if(Answer.data.Contacts.length > 0)
-              {
-                $scope.FileLength  = Answer.data.Contacts.length;
-                $scope.Contatore = 0;
-                var $ObjQuery = { Operazioni : [] };
-                var i = 0;
-        
-                var SendDieciMail = function()
-                {
-                  while(i < Answer.data.Contacts.length)
-                  {
-                    Answer.data.Contacts[i].Email   == undefined ? (Answer.data.Contacts[i].Email = 'ND') : (Answer.data.Contacts[i].Email = Answer.data.Contacts[i].Email.trim())
-                    Answer.data.Contacts[i].Cognome == undefined ? (Answer.data.Contacts[i].Cognome = 'ND') : (Answer.data.Contacts[i].Cognome = Answer.data.Contacts[i].Cognome.trim())
-                    Answer.data.Contacts[i].Nome    == undefined ? (Answer.data.Contacts[i].Nome = 'ND') : (Answer.data.Contacts[i].Nome = Answer.data.Contacts[i].Nome.trim())
-                    
-                    $ObjQuery.Operazioni.push({
-                                                Query     : 'UpdateTeacherMailFromMailChimp',
-                                                Parametri : {
-                                                              MailDocente : Answer.data.Contacts[i].Email,
-                                                              NomeDocente : Answer.data.Contacts[i].Cognome + ' ' + Answer.data.Contacts[i].Nome
-                                                            }
-                                              });
-                    $scope.Contatore++;
-                    i++;
-                    if($ObjQuery.Operazioni.length == 20)
-                    {
-                      SystemInformation.PostSQL('Teacher',$ObjQuery,SendDieciMail,false,true);  
-                      $ObjQuery.Operazioni = [];
-                      return;
-                    }
-                  }
-                  if($ObjQuery.Operazioni.length != 0 && $ObjQuery.Operazioni.length < 20)
-                  SystemInformation.PostSQL('Teacher',$ObjQuery,function() 
-                  {
-                    $ObjQuery = {Operazioni : []};
-                    $ObjQuery.Operazioni.push({
-                                                Query     : 'UpdateDataImpMailchimp',
-                                                Parametri : {}
-                                               });
-                    SystemInformation.PostSQL('Accessories',$ObjQuery,function(Answer)
-                    {
-                      $scope.Contatore = 0;
-                      $ObjQuery = {Operazioni : []};
-                      ZCustomAlert($mdDialog,'AVVISO','UPLOAD ESEGUITO!');  
-                    },false,true)                                                                
-                  },false,true)  
-                }
-                SendDieciMail()
-               }
-               else ZCustomAlert($mdDialog,'ATTENZIONE','NESSUN AGGIORNAMENTO DISPONIBILE!')
+              SystemInformation.PostSQL('Teacher',$ObjQuery,SendDieciMail,false,true);  
+              $ObjQuery.Operazioni = [];
+              return;
             }
-            else SystemInformation.ApplyOnError('Errore di chiamata http a Pagina43 per lista mailchimp','');
-          })
-          .catch(function(Error) 
+          }
+          if($ObjQuery.Operazioni.length != 0 && $ObjQuery.Operazioni.length < 20)
+          SystemInformation.PostSQL('Teacher',$ObjQuery,function() 
           {
-            SystemInformation.ApplyOnError('Errore di chiamata http a Pagina43 per lista mailchimp','');
-          });
+            $ObjQuery = {Operazioni : []};
+            $ObjQuery.Operazioni.push({
+                                        Query     : 'UpdateDataImpMailchimp',
+                                        Parametri : {}
+                                        });
+            SystemInformation.PostSQL('Accessories',$ObjQuery,function(Answer)
+            {
+              $scope.Contatore = 0;
+              $ObjQuery = {Operazioni : []};
+              ZCustomAlert($mdDialog,'AVVISO','UPLOAD ESEGUITO!');  
+            },false,true)
+          },false,true) 
         }
-        else
-        {
-          var UrlConData = 'https://www.pagina43.it/ZMSoftware/MailChimpRetrieveValues.php?Passwd=ZMaxMailChimpVegeta75&FromData=' + UltimaData.toString();
-          $http.get(UrlConData)
-          .then(function(Answer) 
-          {
-            if(SystemInformation.CheckAnswerHTTP(Answer.data))
-            {
-             if(Answer.data.Contacts.length > 0)
-             {
-                $scope.FileLength  = Answer.data.Contacts.length;
-                $scope.Contatore = 0;
-                var $ObjQuery = { Operazioni : [] };
-                var i = 0;
-        
-                var SendDieciMail = function()
-                {
-                  while(i < Answer.data.Contacts.length)
-                  {
-                    Answer.data.Contacts[i].Email   == undefined ? (Answer.data.Contacts[i].Email = 'ND') : (Answer.data.Contacts[i].Email = Answer.data.Contacts[i].Email.trim())
-                    Answer.data.Contacts[i].Cognome == undefined ? (Answer.data.Contacts[i].Cognome = 'ND') : (Answer.data.Contacts[i].Cognome = Answer.data.Contacts[i].Cognome.trim())
-                    Answer.data.Contacts[i].Nome    == undefined ? (Answer.data.Contacts[i].Nome = 'ND') : (Answer.data.Contacts[i].Nome = Answer.data.Contacts[i].Nome.trim())
-                    
-                    $ObjQuery.Operazioni.push({
-                                                Query     : 'UpdateTeacherMailFromMailChimp',
-                                                Parametri : {
-                                                              MailDocente : Answer.data.Contacts[i].Email,
-                                                              NomeDocente : Answer.data.Contacts[i].Cognome + ' ' + Answer.data.Contacts[i].Nome
-                                                            }
-                                              });
-                    $scope.Contatore++;
-                    i++;
-                    if($ObjQuery.Operazioni.length == 20)
-                    {
-                      SystemInformation.PostSQL('Teacher',$ObjQuery,SendDieciMail,false,true);  
-                      $ObjQuery.Operazioni = [];
-                      return;
-                    }
-                  }
-                  if($ObjQuery.Operazioni.length != 0 && $ObjQuery.Operazioni.length < 20)
-                  SystemInformation.PostSQL('Teacher',$ObjQuery,function() 
-                  { 
-                    $ObjQuery = {Operazioni : []};
-                    $ObjQuery.Operazioni.push({
-                                                Query     : 'UpdateDataImpMailchimp',
-                                                Parametri : {}
-                                               });
-                    SystemInformation.PostSQL('Accessories',$ObjQuery,function(Answer)
-                    {
-                      $scope.Contatore = 0;
-                      $ObjQuery        = {Operazioni : []};
-                      var Data         = new Date();
-                      var DataAnno     = Data.getFullYear();
-                      var DataMese     = Data.getMonth()+1; 
-                      var DataGiorno   = Data.getDate();
-                      scope.UltimaDataImportazione = DataGiorno.toString() + '/' + DataMese.toString() + '/' + DataAnno.toString();
-                      ZCustomAlert($mdDialog,'AVVISO','UPLOAD ESEGUITO!'); 
-                    },false,true)                                                             
-                  },false,true)  
-                }
-              SendDieciMail()
-              }
-              else ZCustomAlert($mdDialog,'ATTENZIONE','NESSUN AGGIORNAMENTO DISPONIBILE!')
-            }
-            else SystemInformation.ApplyOnError('Errore di chiamata http a Pagina43 per lista mailchimp','');
-          })
-          .catch(function(Error) 
-          {
-            SystemInformation.ApplyOnError('Errore di chiamata http a Pagina43 per lista mailchimp','');
-          });
-        }    
-      }
-      else SystemInformation.ApplyOnError('Modello data importazione non conforme','')    
-    },'SelectDataImpSQL')
+        SendDieciMail();           
+      }                        
+    }
+    reader.readAsDataURL(file);  
   }
+    
+  $scope.CaricaDocumento = function()
+  { 
+    document.getElementById('fileLoadCSVDocument').click();    
+  }    
   
 }]);
