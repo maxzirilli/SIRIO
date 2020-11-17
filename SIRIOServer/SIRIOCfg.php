@@ -6,14 +6,14 @@
     define('MYSQLPASSWORD', '');
     
     // Impostazioni mail
-    define('SMTP_HOST','tls://smtp.gmail.com');
+    define('SMTP_HOST','pro.eu.turbo-smtp.com');
     define('SMTP_PORT',587);
-    define('SMTP_SECURE','tls');
+    define('SMTP_SECURE',false);
     define('SMTP_AUTH',true);
-    define('SMTP_USER','massimiliano.zirilli@gmail.com');
-    define('SMTP_PASSWORD','ShakaVsPhoenix75');
-    define('SMTP_FROM_MAIL','noreply@genovadanza.com');
-    define('SMTP_FROM_NAME','ZMSoftware');
+    define('SMTP_USER','info@pagina43.it');
+    define('SMTP_PASSWORD','7nvLBk46');
+    define('SMTP_FROM_MAIL','noreply@pagina43.it');
+    define('SMTP_FROM_NAME','Pagina43');
 
     // Path librerie
     define('PATH_LIBRERIE',"d:\\GoogleDrive\\Lavoro\\Librerie\\PHP\\");
