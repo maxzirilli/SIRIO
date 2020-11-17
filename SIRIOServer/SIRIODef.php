@@ -16,5 +16,7 @@
     define('GEN_CHIAVI','gen_key'); 
     define('FIELD_GEN_CHIAVI','CHIAVE');
     define('FIELD_UTENTI_CAMPO_ELIMINATO','ELIMINATO');
+    define('PAR_MAIL_BODY','Testo');
+    define('PAR_MAIL_SUBJECT','Oggetto');
     
 ?>    
