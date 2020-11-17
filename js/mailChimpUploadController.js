@@ -43,7 +43,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$http)
 
         var SendDieciMail = function()
         {
-          while(i < CsvSplitted.length)
+          while(i < CsvSplitted.length - 1)
           {
             let RecordTitolo = CsvSplitted[i++].SplitCSVWithDoublequotes(';');
             RecordTitolo[0]  = RecordTitolo[0].trim();
@@ -62,7 +62,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$http)
                                                     }
                                       });
             $scope.Contatore++;
-            i++;
+            //i++;
             if($ObjQuery.Operazioni.length == 20)
             {
               SystemInformation.PostSQL('Teacher',$ObjQuery,SendDieciMail,false,true);  
@@ -71,20 +71,20 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$http)
             }
           }
           if($ObjQuery.Operazioni.length != 0 && $ObjQuery.Operazioni.length < 20)
-          SystemInformation.PostSQL('Teacher',$ObjQuery,function() 
-          {
-            $ObjQuery = {Operazioni : []};
-            $ObjQuery.Operazioni.push({
-                                        Query     : 'UpdateDataImpMailchimp',
-                                        Parametri : {}
-                                        });
-            SystemInformation.PostSQL('Accessories',$ObjQuery,function(Answer)
-            {
-              $scope.Contatore = 0;
-              $ObjQuery = {Operazioni : []};
-              ZCustomAlert($mdDialog,'AVVISO','UPLOAD ESEGUITO!');  
-            },false,true)
-          },false,true) 
+             SystemInformation.PostSQL('Teacher',$ObjQuery,function() 
+             {
+               $ObjQuery = {Operazioni : []};
+               $ObjQuery.Operazioni.push({
+                                           Query     : 'UpdateDataImpMailchimp',
+                                           Parametri : {}
+                                         });
+               SystemInformation.PostSQL('Accessories',$ObjQuery,function(Answer)
+               {
+                 $scope.Contatore = 0;
+                 $ObjQuery = {Operazioni : []};
+                 ZCustomAlert($mdDialog,'AVVISO','UPLOAD ESEGUITO!');  
+               })
+             },false,true) 
         }
         SendDieciMail();           
       }                        
