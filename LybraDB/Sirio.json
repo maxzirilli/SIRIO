@@ -1,10 +1,12 @@
 {
  "Version": {
   "Major": 1,
-  "Minor": 9,
+  "Minor": 10,
   "Release": 6
  },
  "Storia": [
+  "Versione 1.10.6   17 Novembre 2020",
+  "                  - NEW: Aggiunto campo email secondaria nella tabella dei docenti",
   "Versione 1.9.6    10 Novembre 2020",
   "                  - CHG: Modificati trigger dei carichi per la gestione dell'ubicazione ",
   "Versione 1.9.5    06 Novembre 2020",
@@ -528,6 +530,15 @@
     },
     {
      "Nome": "EMAIL",
+     "IsNullable": true,
+     "DataType": "varchar(255)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "EMAIL_2",
      "IsNullable": true,
      "DataType": "varchar(255)",
      "AutoIncrement": false,

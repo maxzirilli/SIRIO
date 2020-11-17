@@ -4,7 +4,7 @@
       <h2>DOCENTI</h2>
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoDocente()">NUOVO DOCENTE</md-button>
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaSpedizioneMultipla(ANomeFiltro)">SPEDIZIONE MULTIPLA</md-button>
-      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="InvioMultiploMail(ANomeFiltro)">INVIO MULTIPLO MAIL</md-button>
+      <!--<md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="InvioMultiploMail(ANomeFiltro)">INVIO MULTIPLO MAIL</md-button>-->
     </div>
     
     <div layout="row" style="padding-bottom:0px;">
@@ -189,8 +189,11 @@
                          </md-select>
                        </md-input-container>
                        <md-input-container style="width:20%;">
-                         <label>EMAIL</label><input type="text" ng-model="DocenteInEditing.Email" type="text" name="Email">
-                       </md-input-container> 
+                         <label>EMAIL PRINCIPALE</label><input type="text" ng-model="DocenteInEditing.Email" type="text" name="Email">
+                       </md-input-container>
+                       <md-input-container style="width:20%;">
+                        <label>EMAIL SECONDARIA</label><input type="text" ng-model="DocenteInEditing.EmailSecondaria" type="text" name="EmailSecondaria">
+                      </md-input-container>  
                      </div>
                      
                      <div layout="row">

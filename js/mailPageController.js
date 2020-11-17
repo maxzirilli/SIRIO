@@ -51,7 +51,7 @@ SIRIOApp.controller("mailPageController",['$scope','SystemInformation','$state',
         SystemInformation.PostSQL('MailTeacher',{
                                                   Oggetto      : $scope.MailInEditing.Oggetto.xSQL(),
                                                   Testo        : $scope.MailInEditing.Testo.xSQL(), 
-                                                  Destinatario : $scope.ListaDocentiMailMultipla[i]
+                                                  Destinatario : $scope.ListaDocentiMailMultipla[i].xSQL()
                                                 },
         function()
         {       
@@ -65,8 +65,7 @@ SIRIOApp.controller("mailPageController",['$scope','SystemInformation','$state',
         },InvioMail = true,alertMessages = false)                  
       }
       $scope.InvioInCorso  = false;     
-    }
-   
+    }   
   }
   
   $scope.OnAnnullaMailClicked = function()

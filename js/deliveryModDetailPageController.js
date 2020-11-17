@@ -87,6 +87,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                                       QuantitaVol  : parseInt(TitoliInfoLista[i].QUANTITA_MGZN_VOL),
                                       QuantitaDisp : parseInt(TitoliInfoLista[i].QUANTITA_DISP),
                                       Codice       : TitoliInfoLista[i].CODICE_ISBN == null ? 'N.D.' : TitoliInfoLista[i].CODICE_ISBN,
+                                      Autore       : TitoliInfoLista[i].AUTORI == null ? '' : TitoliInfoLista[i].AUTORI,
                                       DaAggiungere : false
                                     }
            $scope.ListaTitoli      = TitoliInfoLista;
@@ -783,7 +784,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
     function DialogControllerTitoliMultipli()
     {
       $scope.NomeFiltro        = '';
-      $scope.CodiceFiltro      = '';              
+      $scope.CodiceFiltro      = '';
+      $scope.AutoreFiltro      = '';              
       $scope.ListaTitoliToAdd  = [];
 
       $scope.GridOptions_3 = {
@@ -1590,13 +1592,14 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
 
 SIRIOApp.filter('TitoliMultipliPopupByFiltro',function()
 {
-  return function(ListaTitoliPopup,NomeFiltro,CodiceFiltro)
+  return function(ListaTitoliPopup,NomeFiltro,CodiceFiltro,AutoreFiltro)
          {
-           if(NomeFiltro == '' && CodiceFiltro == '') 
+           if(NomeFiltro == '' && CodiceFiltro == '' && AutoreFiltro == '') 
              return(ListaTitoliPopup);
            var ListaFiltrata = [];
            NomeFiltro = NomeFiltro.toUpperCase();
            CodiceFiltro = CodiceFiltro.toUpperCase();
+           AutoreFiltro = AutoreFiltro.toUpperCase();
            
            var TitoloOk = function(Titolo)
            {  
@@ -1608,7 +1611,11 @@ SIRIOApp.filter('TitoliMultipliPopupByFiltro',function()
               
               if(CodiceFiltro != '')
                  if(Titolo.Codice.toUpperCase().indexOf(CodiceFiltro) < 0)
-                   Result = false;              
+                   Result = false; 
+                   
+              if(AutoreFiltro != '')
+                 if(Titolo.Autore.toUpperCase().indexOf(AutoreFiltro) < 0)
+                    Result = false; 
               
               return(Result);
            }

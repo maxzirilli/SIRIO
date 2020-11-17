@@ -478,6 +478,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
         $scope.DocenteInEditing.NumeroTelefono_2 = DocenteDettaglio[0].TEL_SECONDO;
         $scope.DocenteInEditing.NumeroTelefono_3 = DocenteDettaglio[0].TEL_TERZO;
         $scope.DocenteInEditing.Email            = DocenteDettaglio[0].EMAIL;
+        $scope.DocenteInEditing.EmailSecondaria  = DocenteDettaglio[0].EMAIL_2;
         $scope.DocenteInEditing.Materia_1        = DocenteDettaglio[0].MATERIA_1 == undefined ? -1 : DocenteDettaglio[0].MATERIA_1;
         $scope.DocenteInEditing.Materia_2        = DocenteDettaglio[0].MATERIA_2 == undefined ? -1 : DocenteDettaglio[0].MATERIA_2;
         $scope.DocenteInEditing.Materia_3        = DocenteDettaglio[0].MATERIA_3 == undefined ? -1 : DocenteDettaglio[0].MATERIA_3;
@@ -569,6 +570,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                                 NumeroTelefono_2 : '',
                                 NumeroTelefono_3 : '',
                                 Email            : '',
+                                EmailSecondaria  : '',
                                 Materia_1        : -1,
                                 Materia_2        : -1,
                                 Materia_3        : -1,
@@ -749,6 +751,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                          TEL_SECONDO     : $scope.DocenteInEditing.NumeroTelefono_2 == undefined ? '' : $scope.DocenteInEditing.NumeroTelefono_2.xSQL(),
                          TEL_TERZO       : $scope.DocenteInEditing.NumeroTelefono_3 == undefined ? '' : $scope.DocenteInEditing.NumeroTelefono_3.xSQL(),
                          EMAIL           : $scope.DocenteInEditing.Email == undefined ? '' : $scope.DocenteInEditing.Email.xSQL(),
+                         EMAIL_2         : $scope.DocenteInEditing.EmailSecondaria == undefined ? '' : $scope.DocenteInEditing.EmailSecondaria.xSQL(),
                          MATERIA_1       : $scope.DocenteInEditing.Materia_1 == -1 ? null : $scope.DocenteInEditing.Materia_1,
                          MATERIA_2       : $scope.DocenteInEditing.Materia_2 == -1 ? null : $scope.DocenteInEditing.Materia_2,
                          MATERIA_3       : $scope.DocenteInEditing.Materia_3 == -1 ? null : $scope.DocenteInEditing.Materia_3,
