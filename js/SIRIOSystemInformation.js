@@ -16,7 +16,7 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
   this.UploadRunning         = false;
   this.GiorniSettimana       = ['Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato','Domenica']; 
   this.DataBetweenController = {};
-  this.VDocDelivery          = 'VERSIONE DOCUMENTO 2.2 DEL 16/11/2020';
+  this.VDocDelivery          = 'VERSIONE DOCUMENTO 2.3 DEL 17/11/2020';
   this.VDocAdoption          = 'VERSIONE DOCUMENTO 1.1 DEL 16/10/2020';
   this.VDocLogStorage        = 'VERSIONE DOCUMENTO 1.0 DEL 08/09/2020';
   this.VDocInventory         = 'VERSIONE DOCUMENTO 1.1 DEL 13/10/2020';
@@ -107,17 +107,59 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
      else return undefined;
   };
    
-   
+  this.ForeignKeyError = false;
+  this.MessaggioErroreSQL = '';
+  
   this.CheckAnswerHTTP = function(Answer)
   {
     Self.HTTPResponse = Answer.Response;
+    this.ForeignKeyError = false;
+    var ForeignKeys = [{Name : 'FK_ADOZIONI_TITOLO_CLASSI', Messaggio : 'IMPOSSIBILE ELIMINARE! Classe associata ad adozione.'},
+                       {Name : 'FK_ADOZIONI_TITOLO_TITOLI', Messaggio : 'IMPOSSIBILE ELIMINARE! Titolo associato ad adozione'},
+                       {Name : 'FK_CLASSI_COMBINAZIONE', Messaggio : 'IMPOSSIBILE ELIMINARE! Classe associata a combinazione'},
+                       {Name : 'FK_CLASSI_ISTITUTO', Messaggio : 'IMPOSSIBILE ELIMINARE! Classe associata ad istituto'},
+                       {Name : 'FK__MAGAZZINO_VOLANTE', Messaggio : 'IMPOSSIBILE ELIMINARE! Chiave primaria magazzino volante'},
+                       {Name : 'FK__TITOLI', Messaggio : 'IMPOSSIBILE ELIMINARE! Chiave primaria titolo'},
+                       {Name : 'FK_DETTAGLIO_SPEDIZIONI', Messaggio : 'IMPOSSIBILE ELIMINARE! Chiave primaria dettaglio spedizione'},
+                       {Name : 'FK_DETTAGLIO_SPEDIZIONI_TITOLO', Messaggio : 'IMPOSSIBILE ELIMINARE! Titolo associato al dettaglio di una spedizione'},
+                       {Name : 'FK_DOCENTI_MATERIE_INSEGAMENTO_1', Messaggio : 'IMPOSSIBILE ELIMINARE! Materia insegnamento associata ad un docente'},
+                       {Name : 'FK_DOCENTI_MATERIE_INSEGAMENTO_2', Messaggio : 'IMPOSSIBILE ELIMINARE! Materia insegnamento associata ad un docente'},
+                       {Name : 'FK_DOCENTI_MATERIE_INSEGAMENTO_3', Messaggio : 'IMPOSSIBILE ELIMINARE! Materia insegnamento associata ad un docente'},
+                       {Name : 'FK_docenti_disponibilita_docenti', Messaggio : 'IMPOSSIBILE ELIMINARE! Docente associato a disponibilità oraria di un docente'},
+                       {Name : 'FK_docenti_disponibilita_istituti', Messaggio : 'IMPOSSIBILE ELIMINARE! Istituto associato a disponibilità oraria di un docente'},
+                       {Name : 'FK_INS_DOCENTI_CLASSE', Messaggio : 'IMPOSSIBILE ELIMINARE! Classe associata ad un insegnamento di un docente'},
+                       {Name : 'FK_INS_DOCENTI_MATERIA', Messaggio : 'IMPOSSIBILE ELIMINARE! Materia associata ad un insegnamento di un docente'},
+                       {Name : 'FK_ISTITUTI_PROVINCE', Messaggio : 'IMPOSSIBILE ELIMINARE! Provincia associata a un istituto'},
+                       {Name : 'FK_ISTITUTI_TIPOLOGIE_ISTITUTO', Messaggio : 'IMPOSSIBILE ELIMINARE! Istituto associato ad una tipologia'},
+                       {Name : 'FK_ISTITUTI_UTENTI', Messaggio : 'IMPOSSIBILE ELIMINARE! Utente assegnato ad un istituto'},
+                       {Name : 'FK__DOCENTI', Messaggio : 'IMPOSSIBILE ELIMINARE! Docente associato a un istituto'},
+                       {Name : 'FK__ISTITUTI', Messaggio : 'IMPOSSIBILE ELIMINARE! Istituto associato a un docente'},
+                       {Name : 'FK_ISTITUTI', Messaggio : 'IMPOSSIBILE ELIMINARE! Chiave primaria istituto'},
+                       {Name : 'FK_TITOLI', Messaggio : 'IMPOSSIBILE ELIMINARE! Chiave primaria titolo'},
+                       {Name : 'FK__UTENTI', Messaggio : 'IMPOSSIBILE ELIMINARE! Utente associato a movimento magazzino volante'},
+                       {Name : 'FK_MOVIMENTI_MAG_TITOLO', Messaggio : 'IMPOSSIBILE ELIMINARE! Titolo associato a movimento di magazzino'},
+                       {Name : 'FK_MOVIMENTI_MAG_VOL_TITOLO', Messaggio : 'IMPOSSIBILE ELIMINARE! Titolo associato a movimento di magazzino volante'},
+                       {Name : 'FK_ORDINI_INGRESSO_TITOLI', Messaggio : 'IMPOSSIBILE ELIMINARE! Titolo associato ad un carico'},
+                       {Name : 'FK_SPEDIZIONI_DOCENTI', Messaggio : 'IMPOSSIBILE ELIMINARE! Docente associato ad una spedizione'},
+                       {Name : 'FK_SPEDIZIONI_ISTITUTI', Messaggio : 'IMPOSSIBILE ELIMINARE! Istituto associato ad una spedizione'},
+                       {Name : 'FK_SPEDIZIONI_PROVINCE_ALL', Messaggio : 'IMPOSSIBILE ELIMINARE! Provincia associata ad una spedizione'},
+                       {Name : 'FK_SPEDIZIONI_UTENTI', Messaggio : 'IMPOSSIBILE ELIMINARE! Utente associato ad una spedizione'},
+                       {Name : 'FK_TITOLI_MATERIE_INSEGNAMENTO', Messaggio : 'IMPOSSIBILE ELIMINARE! Materia associata ad un titolo'}];
+   
     switch(Answer.Response)
     {
        case HTTP_OPERATION_OK           : Self.HTTPError = ''; break;
        case HTTP_ERROR_NOT_LOGGED       : Self.HTTPError = 'Utente non loggato'; break;
        case HTTP_ERROR_LOST_PARAMETER   : Self.HTTPError = 'Parametri mancanti'; break;
        case HTTP_ERROR_CONNECTION_SQL   : Self.HTTPError = 'Errore di connessione al server SQL'; break;
-       case HTTP_ERROR_SQL              : Self.HTTPError = 'Query error'; break;
+       case HTTP_ERROR_SQL              : Self.HTTPError = 'Query error'; 
+                                          for(let i = 0;i < ForeignKeys.length;i ++)
+                                              if((Answer.Error.toUpperCase().includes(ForeignKeys[i].Name.toUpperCase())))
+                                              {
+                                                 this.MessaggioErroreSQL = ForeignKeys[i].Messaggio;
+                                                 this.ForeignKeyError  = true;
+                                              }
+                                          break;
        case HTTP_ERROR_WRONG_PASSWORD   : Self.HTTPError = 'Password errata'; break;
        case HTTP_ERROR_WRONG_USER       : Self.HTTPError = 'Account errato'; break;
        case HTTP_ERROR_MODEL_LOAD       : Self.HTTPError = 'Errore di caricamento del modello'; break;
@@ -252,7 +294,8 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
          }
          else 
          {
-            if(alertMessages) ZCustomAlert($mdDialog,'ATTENZIONE',Self.HTTPError  + (Self.SubHTTPError != '' ? "\n" + Self.SubHTTPError : '')); //ATTENZIONE QUI ALL ALERT
+            if(alertMessages || Self.ForeignKeyError) 
+               ZCustomAlert($mdDialog,'ATTENZIONE!',Self.MessaggioErroreSQL);//Self.HTTPError  + (Self.SubHTTPError != '' ? "\n" + Self.SubHTTPError : '') 
             else Self.ApplyOnError(Self.HTTPError,Self.SubHTTPError); 
          }
       })

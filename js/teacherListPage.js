@@ -266,32 +266,6 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
      return($sce.trustAsHtml(Result.substr(0,Result.length)));
   }
   
-  /*$scope.ResetFiltri = function()
-  {
-    $scope.NomeFiltro         = '';
-    
-    $scope.AProvinciaFiltro   = -1;
-    $scope.ProvinciaOldFiltro = -1; 
-    
-    $scope.MateriaFiltro      = -1;
-    $scope.OldMateriaFiltro   = -1;
-    $scope.OldMateriaNome     = '';
-    $scope.searchTextMat      = '';
-    
-    $scope.TitoloFiltro       = -1;
-    $scope.OldTitoloFiltro    = -1;
-    $scope.OldTitoloNome      = '';
-    $scope.searchTextTit      = '';
-
-    $scope.IstitutoFiltrato   = -1;
-    $scope.OldIstitutoFiltro  = -1;
-    $scope.OldIstitutoNome    = '';
-    $scope.searchTextIstituto = '';
-
-
-    $scope.RefreshListaDocenti();
-  }*/
-  
   $scope.RefreshListaDocenti = function ()
   {
     $scope.GridOptions.query.page = 1;
@@ -372,6 +346,49 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   {
     SystemInformation.DataBetweenController.DocMail = Docente.Email;
     $state.go('mailPage');
+  }
+
+  $scope.InvioMultiploMail = function (Nome)
+  {
+    var ContatoreMailValide = 0;
+    var ListaMailFiltrata = $filter('DocenteByFiltro')($scope.ListaDocenti,Nome,$scope.MateriaFiltro);
+    SystemInformation.DataBetweenController  = { ListaDocMail : []};
+    
+    if(ListaMailFiltrata.length >= MAX_N_DESTINATARI_MAIL)
+    {
+       ZCustomAlert($mdDialog,'ATTENZIONE!',"IMPOSSIBILE SPEDIRE UNA MAIL MULTIPLA A PIU' DI " + MAX_N_DESTINATARI_MAIL.toString() + " DESTINATARI");
+       return
+    }
+
+    if(ListaMailFiltrata.length != 0)
+    {
+       for(let i = 0;i < ListaMailFiltrata.length; i ++)
+       {
+           if(ListaMailFiltrata[i].Email != 'Non disponibile')
+              if(ListaMailFiltrata[i].Email.includes('@'))
+              {
+                 SystemInformation.DataBetweenController.ListaDocMail.push(ListaMailFiltrata[i].Email);
+                 ContatoreMailValide ++; 
+              }
+       }
+       
+       if(ContatoreMailValide == 0)
+       {
+          ZCustomAlert($mdDialog,'ATTENZIONE',"NESSUN INDIRIZZO EMAIL TRA I DOCENTI SELEZIONATI PUO' ESSERE INCLUSO COME DESTINATARIO");
+          return
+       }
+       else
+       {
+          SystemInformation.DataBetweenController.MailMultipla = true;
+          SystemInformation.DataBetweenController.Provenienza  = 'TeacherPage';
+          $state.go("mailPage");
+       }
+     }
+     else
+     {
+       ZCustomAlert($mdDialog,'ATTENZIONE',"NESSUN DOCENTE SELEZIONATO PER L'INVIO DELLA MAIL");
+       return
+     }
   }
   
   $scope.NuovaSpedizioneMultipla = function (Nome)
@@ -690,13 +707,17 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
           StringaDatiMancanti += 'COMUNE,'  
           if(DatiIstituto.CAP == '')
           StringaDatiMancanti += 'CAP,'  
-          if(DatiIstituto.PROVINCIA_LISTA_ALL == -1)
+          if(DatiIstituto.PROVINCIA_LISTA_ALL == -1 || DatiIstituto.PROVINCIA_LISTA_ALL == undefined)
           StringaDatiMancanti += 'PROVINCIA,' 
           
           StringaDatiMancanti = StringaDatiMancanti.substring(0, StringaDatiMancanti.length - 1);
-        
-          ZCustomAlert($mdDialog,'ATTENZIONE','DATI ISTITUTO MANCANTI (' + StringaDatiMancanti + ') IMPOSSIBILE IMPOSTARE COME INDIRIZZO PREDEFINITO DEL DOCENTE!');
-          return
+          
+          if(StringaDatiMancanti != '')
+          {
+            ZCustomAlert($mdDialog,'ATTENZIONE','DATI ISTITUTO MANCANTI (' + StringaDatiMancanti + ') IMPOSSIBILE IMPOSTARE COME INDIRIZZO PREDEFINITO DEL DOCENTE!');
+            return
+          }
+          else ZCustomAlert($mdDialog,'OK',"INDIRIZZO DELL'ISTITUTO IMPOSTATO COME PREDEFINITO")
        }
        else
        {
@@ -1417,8 +1438,8 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
          SystemInformation.GetSQL('Delivery',{CHIAVE : Docente.Chiave},function(Results)
          {
            $scope.ListaSpedizioniDoc           = SystemInformation.FindResults(Results,'TeacherDeliveryListPrm');
-           $scope.ListaSpedizioniDocDettaglio  = SystemInformation.FindResults(Results,'TeacherDeliveryListPrmDettaglio');
-           if($scope.ListaSpedizioniDoc != undefined && $scope.ListaSpedizioniDocDettaglio != undefined)
+           ListaSpedizioniDocDettaglio  = SystemInformation.FindResults(Results,'TeacherDeliveryListPrmDettaglio');
+           if($scope.ListaSpedizioniDoc != undefined && ListaSpedizioniDocDettaglio != undefined)
            { 
               $scope.ListaSpedizioniDoc.forEach(function(Spedizione){Spedizione.DettagliTitoli = []});       
               for(let i = 0;i < $scope.ListaSpedizioniDoc.length;i ++)

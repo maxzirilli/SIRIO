@@ -394,8 +394,13 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                    doc.setFontType('bold');
                    doc.text(50,CoordY + 45,ListaSpedizioniToPrint[i].NOME_DOCENTE);
                    doc.setFontType('normal');
-                   if(ListaSpedizioniToPrint[i].PRESSO != ListaSpedizioniToPrint[i].NOME_DOCENTE) 
-                      doc.text(50,CoordY + 53,(ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D.' ? ListaSpedizioniToPrint[i].NOME_ISTITUTO : ListaSpedizioniToPrint[i].PRESSO));
+                   if(ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D.')
+                      doc.text(50,CoordY + 53,(ListaSpedizioniToPrint[i].NOME_ISTITUTO))
+                   else 
+                   {
+                     if(ListaSpedizioniToPrint[i].PRESSO != ListaSpedizioniToPrint[i].NOME_DOCENTE)
+                       doc.text(50,CoordY + 53,(ListaSpedizioniToPrint[i].PRESSO))        
+                   }
                    doc.text(50,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO);
                    doc.text(50,CoordY + 65,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].NOME_PROVINCIA);                   doc.setFontType('italic');
                }
@@ -409,11 +414,11 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                doc.setFontType('italic');
                doc.setFontSize(12);
 
-               doc.text(15,CoordY + 85, 'A cura di : ' + ListaSpedizioniToPrint[i].NOME_PROMOTORE.toUpperCase());
+               doc.text(5,CoordY + 85, 'A cura di : ' + ListaSpedizioniToPrint[i].NOME_PROMOTORE.toUpperCase());
                
                //if(BORDO_ETICHETTA)
-               doc.text(110,CoordY + 85, 'Peso Gr.................................');
-               doc.line(110,CoordY + 86,160,CoordY + 86);
+               doc.text(90,CoordY + 85, 'Peso Gr.........................');
+               doc.line(90,CoordY + 86,130,CoordY + 86);
 
                doc.setLineWidth(0.2);
                doc.line(10,120,200,120);
@@ -426,9 +431,14 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                if (ListaSpedizioniToPrint[i].DOCENTE != 'N.D.')
                {
                    doc.text(10,CoordY + 40,'DOCENTE:');
-                   doc.text(10,CoordY + 45,ListaSpedizioniToPrint[i].NOME_DOCENTE);
-                   if(ListaSpedizioniToPrint[i].PRESSO != ListaSpedizioniToPrint[i].NOME_DOCENTE) 
-                      doc.text(10,CoordY + 55,'PRESSO : ' + (ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D.' ? ListaSpedizioniToPrint[i].NOME_ISTITUTO : ListaSpedizioniToPrint[i].PRESSO));
+                   doc.text(10,CoordY + 45,ListaSpedizioniToPrint[i].NOME_DOCENTE);                      
+                   if(ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D.')
+                      doc.text(10,CoordY + 55,(ListaSpedizioniToPrint[i].NOME_ISTITUTO))
+                   else 
+                   {
+                     if(ListaSpedizioniToPrint[i].PRESSO != ListaSpedizioniToPrint[i].NOME_DOCENTE)
+                       doc.text(10,CoordY + 55,(ListaSpedizioniToPrint[i].PRESSO))        
+                   }                  
                    doc.text(10,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].CAP + ', ' +  ListaSpedizioniToPrint[i].NOME_PROVINCIA)      
                }
                else
@@ -910,8 +920,13 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                       doc.setFontType('bold');
                       doc.text(50,CoordY + 45,ListaSpedizioniToPrint[i].NOME_DOCENTE);
                       doc.setFontType('normal');
-                      if(ListaSpedizioniToPrint[i].PRESSO != ListaSpedizioniToPrint[i].NOME_DOCENTE) 
-                         doc.text(50,CoordY + 53,(ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D.' ? ListaSpedizioniToPrint[i].NOME_ISTITUTO : ListaSpedizioniToPrint[i].PRESSO));
+                      if(ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D.')
+                         doc.text(50,CoordY + 53,(ListaSpedizioniToPrint[i].NOME_ISTITUTO))
+                      else 
+                      {
+                        if(ListaSpedizioniToPrint[i].PRESSO != ListaSpedizioniToPrint[i].NOME_DOCENTE)
+                           doc.text(50,CoordY + 53,(ListaSpedizioniToPrint[i].PRESSO))        
+                      }
                       doc.text(50,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO);
                       doc.text(50,CoordY + 65,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].NOME_PROVINCIA);
                   }
@@ -924,11 +939,11 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                   
                   doc.setFontType('italic');
                   doc.setFontSize(12);
-                  doc.text(15,CoordY + 85, 'A cura di : ' + ListaSpedizioniToPrint[i].NOME_PROMOTORE.toUpperCase());
+                  doc.text(5,CoordY + 85, 'A cura di : ' + ListaSpedizioniToPrint[i].NOME_PROMOTORE.toUpperCase());
                   
                   //if(BORDO_ETICHETTA) 
-                  doc.text(110,CoordY + 85, 'Peso Gr.................................');
-                  doc.line(110,CoordY + 86,160,CoordY + 86);
+                  doc.text(90,CoordY + 85, 'Peso Gr.........................');
+                  doc.line(90,CoordY + 86,130,CoordY + 86);
 
                   doc.setLineWidth(0.2);
                   doc.line(10,120,200,120);
@@ -941,8 +956,13 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                   {
                       doc.text(10,CoordY + 40,'DOCENTE:');
                       doc.text(10,CoordY + 45,ListaSpedizioniToPrint[i].NOME_DOCENTE);
-                      if(ListaSpedizioniToPrint[i].PRESSO != ListaSpedizioniToPrint[i].NOME_DOCENTE) 
-                         doc.text(10,CoordY + 50,'PRESSO : ' + (ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D.' ? ListaSpedizioniToPrint[i].NOME_ISTITUTO : ListaSpedizioniToPrint[i].PRESSO));
+                      if(ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D.')
+                         doc.text(10,CoordY + 55,(ListaSpedizioniToPrint[i].NOME_ISTITUTO))
+                      else 
+                      {
+                        if(ListaSpedizioniToPrint[i].PRESSO != ListaSpedizioniToPrint[i].NOME_DOCENTE)
+                          doc.text(10,CoordY + 55,(ListaSpedizioniToPrint[i].PRESSO))        
+                      }  
                       doc.text(10,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].CAP + ', ' +  ListaSpedizioniToPrint[i].NOME_PROVINCIA)      
                   }
                   else
