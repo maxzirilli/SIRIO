@@ -4,7 +4,7 @@
       <h2>DOCENTI</h2>
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoDocente()">NUOVO DOCENTE</md-button>
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaSpedizioneMultipla(ANomeFiltro)">SPEDIZIONE MULTIPLA</md-button>
-      <!--<md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="InvioMultiploMail(ANomeFiltro)">INVIO MULTIPLO MAIL</md-button>-->
+      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-if="AbilitaInvioMultiplo()" ng-click="InvioMultiploMail(ANomeFiltro)">INVIO MULTIPLO MAIL</md-button>
     </div>
     
     <div layout="row" style="padding-bottom:0px;">

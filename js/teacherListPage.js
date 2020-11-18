@@ -21,6 +21,17 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   SystemInformation.DataBetweenController  = [];
   $scope.NomeFiltro                        = ''
 
+  $scope.AbilitaInvioMultiplo              = function()
+                                            {
+                                              let DocentiFiltrati = $filter('DocenteByFiltro')($scope.ListaDocenti,
+                                                                                               $scope.ANomeFiltro,
+                                                                                               $scope.MateriaFiltro);
+                                              return(DocentiFiltrati.length < MAX_N_DESTINATARI_MAIL &&
+                                                     DocentiFiltrati.length > 0);
+                                           };
+
+
+  this.Pippo = function() {alert('ciao')};
   /*$scope.CheckOldMateria  = false;
   $scope.CheckOldTitolo   = false;*/
   $scope.CheckOldIstituto = false;
@@ -1537,7 +1548,7 @@ SIRIOApp.filter('DocenteByFiltro',function()
   return function(ListaDocenti,ANomeFiltro,MateriaFiltro)
          {
            if(ANomeFiltro == '' && MateriaFiltro == -1) 
-             return(ListaDocenti);
+              return(ListaDocenti);
            var ListaFiltrata = [];
            ANomeFiltro = ANomeFiltro.toUpperCase();
            MateriaFiltro = parseInt(MateriaFiltro);
@@ -1561,7 +1572,6 @@ SIRIOApp.filter('DocenteByFiltro',function()
              if(DocenteOk(Docente)) 
                 ListaFiltrata.push(Docente)                       
            });
-           
            return(ListaFiltrata);
            
          }
@@ -1590,6 +1600,7 @@ SIRIOApp.filter('IstitutoByNomeFiltro',function()
              if(IstitutoOK(istituto)) 
                 ListaFiltrataI.push(istituto)                       
            });
+           
            
            return(ListaFiltrataI);
          }           

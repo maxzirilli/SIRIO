@@ -150,17 +150,17 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
         if (CumulativoPrenotatiTmp != undefined)
         {
             if(CumulativoPrenotatiTmp.length == 0)
-            ZCustomAlert($mdDialog,'AVVISO','NESSUN TITOLO PRENOTATO NEL PERIODO INDICATO')
+               ZCustomAlert($mdDialog,'AVVISO','NESSUN TITOLO PRENOTATO NEL PERIODO INDICATO')
             else
             {
               for(let i = 0;i < CumulativoPrenotatiTmp.length;i ++)
-              CumulativoPrenotatiTmp[i] = {
-                                            Editore  : CumulativoPrenotatiTmp[i].EDITORE_TITOLO == null ? 'EDITORE NON REGISTRATO' : CumulativoPrenotatiTmp[i].EDITORE_TITOLO,
-                                            Chiave   : CumulativoPrenotatiTmp[i].TITOLO,
-                                            Titolo   : CumulativoPrenotatiTmp[i].NOME_TITOLO == null ? 'NOME NON REGISTRATO' : CumulativoPrenotatiTmp[i].NOME_TITOLO,
-                                            Codice   : CumulativoPrenotatiTmp[i].CODICE_TITOLO,
-                                            Quantita : parseInt(CumulativoPrenotatiTmp[i].QUANTITA)
-                                          }
+                  CumulativoPrenotatiTmp[i] = {
+                                                Editore  : CumulativoPrenotatiTmp[i].EDITORE_TITOLO == null ? 'EDITORE NON REGISTRATO' : CumulativoPrenotatiTmp[i].EDITORE_TITOLO,
+                                                Chiave   : CumulativoPrenotatiTmp[i].TITOLO,
+                                                Titolo   : CumulativoPrenotatiTmp[i].NOME_TITOLO == null ? 'NOME NON REGISTRATO' : CumulativoPrenotatiTmp[i].NOME_TITOLO,
+                                                Codice   : CumulativoPrenotatiTmp[i].CODICE_TITOLO,
+                                                Quantita : parseInt(CumulativoPrenotatiTmp[i].QUANTITA)
+                                              }
               CumulativoPrenotati = CumulativoPrenotatiTmp
               
               CreaDocumentoCumulativo(CumulativoPrenotati,'CumulativoPrenotati')
