@@ -1,4 +1,4 @@
-SIRIOApp.controller("mailPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog', function($scope,SystemInformation,$state,$rootScope,$mdDialog)
+SIRIOApp.controller("mailPageController",['$scope','SystemInformation','$state','$mdDialog', function($scope,SystemInformation,$state,$mdDialog)
 {
   $scope.MailMultipla             = false;
   $scope.ListaDocentiMailMultipla = [];
@@ -25,9 +25,7 @@ SIRIOApp.controller("mailPageController",['$scope','SystemInformation','$state',
                          };
   
   if(!$scope.MailMultipla)
-  {
-    $scope.MailInEditing.Destinatario       = SystemInformation.DataBetweenController.DocMail;
-  }
+     $scope.MailInEditing.Destinatario = SystemInformation.DataBetweenController.DocMail;
   
   $scope.InviaMail = function()
   {
@@ -41,7 +39,7 @@ SIRIOApp.controller("mailPageController",['$scope','SystemInformation','$state',
       function()
       {       
         $scope.MailInEditing = {};
-        ZCustomAlert($mdDialog,'OK!','INVIO MAIL ESEGUITO');
+        ZCustomAlert($mdDialog,'OK','INVIO MAIL ESEGUITO');
         $state.go('teacherListPage');
       },InvioMail = true,alertMessages = false)
     }
@@ -63,12 +61,12 @@ SIRIOApp.controller("mailPageController",['$scope','SystemInformation','$state',
                                     if($scope.ContatoreInvio >= $scope.ListaDocentiMailMultipla.length)
                                     {
                                       $scope.InvioInCorso  = false;     
-                                      ZCustomAlert($mdDialog,'OK!','INVIO MAIL ESEGUITO');
-                                      $state.go('teacherListPage');
+                                      ZCustomAlert($mdDialog,'OK','INVIO MAIL ESEGUITO');
+                                      $state.go('teacherListPage')
                                     }
                                     else SendSingolaMail();
                                  },
-                                 InvioMail = true,
+                                 InvioMail     = true,
                                  alertMessages = false)                  
       }
       SendSingolaMail();

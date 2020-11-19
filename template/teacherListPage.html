@@ -88,7 +88,7 @@
       <p ng-if="ListaIstitutiTitolo.length != 0">{{ListaIstitutiTitolo}}</p>-->
       <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
         <tr>
-          <th></th>
+          <th ng-if="IsAdministrator()"></th>
           <th></th>
           <th></th>
           <th></th>
@@ -97,7 +97,7 @@
           <th>MATERIA</th>
         </tr>  
         <tr ng-repeat="Docente in ListaDocenti | DocenteByFiltro : ANomeFiltro : MateriaFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Docente.Chiave}}>
-          <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA DOCENTE" ng-click="EliminaDocente(Docente)"></td> 
+          <td ng-if="IsAdministrator()"><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA DOCENTE" ng-click="EliminaDocente(Docente)"></td> 
           <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA DOCENTE" ng-click="ModificaDocente(Docente)"></td>
           <td><img src="img/delivery.png" style="width:30px;height:auto;" title="NUOVA SPEDIZIONE" ng-click="NuovaSpedizione(Docente.Chiave)"></td>
           <td ng-if="Docente.SpedizioniAssegnate != 0"><img src="img/deliveryList.png" style="width:30px;height:auto;" title="LISTA SPEDIZIONI" ng-click="ListaSpedizioni(Docente)"></td>

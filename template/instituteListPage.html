@@ -24,7 +24,7 @@
     <div ng-if="ListaIstituti.length != 0">
       <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
         <tr>
-          <th></th>
+          <th ng-if="IsAdministrator()"></th>
           <th></th>
           <th></th>
           <th></th>          
@@ -35,7 +35,7 @@
           <th>PROMOTORE ASSEGNATO</th>      
         </tr>  
         <tr ng-repeat="Istituto in ListaIstituti | IstitutoByFiltro : ProvinciaFiltro : NomeFiltro : NascostoFiltro : ComuneFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Istituto.Chiave}}>
-          <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA ISTITUTO" ng-click="EliminaIstituto(Istituto)"></td> 
+          <td ng-if="IsAdministrator()"><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA ISTITUTO" ng-click="EliminaIstituto(Istituto)"></td> 
           <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA ISTITUTO" ng-click="ModificaIstituto(Istituto)"></td>        
           <td><img src="img/printPDF.png" style="width:30px;height:auto;" title="LISTA DOCENTI" ng-click="CreaPdfListaDocenti(Istituto.Chiave,Istituto.Nome,Istituto.Codice,Istituto.ProvinciaNome)"></td>        
           <td ng-if="!(Istituto.Nascosto)"><img src="img/hide.png" style="width:30px;height:auto;" title="UNISCI E NASCONDI ISTITUTO" ng-click="UnisciIstituti(Istituto)"></td>        

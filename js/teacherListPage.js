@@ -30,8 +30,6 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                                                      DocentiFiltrati.length > 0);
                                            };
 
-
-  this.Pippo = function() {alert('ciao')};
   /*$scope.CheckOldMateria  = false;
   $scope.CheckOldTitolo   = false;*/
   $scope.CheckOldIstituto = false;
