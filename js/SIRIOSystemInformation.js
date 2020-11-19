@@ -165,13 +165,15 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
        case HTTP_ERROR_MODEL_LOAD       : Self.HTTPError = 'Errore di caricamento del modello'; break;
        case HTTP_ERROR_PARAMETERS       : Self.HTTPError = 'Parametri errati'; break; 
        case HTTP_ERROR_ACCESS_DENIED    : Self.HTTPError = 'Accesso negato. Sospetto attacco DDoS'; break;
+       case HTTP_ERROR_SMTP_GENERIC     : Self.HTTPError = 'Errore invio email'; break;
        default                          : Self.HTTPError = 'Errore sconosciuto'; break;
     }
    Self.SubHTTPError = ''; 
    if(Answer.Response == HTTP_ERROR_CONNECTION_SQL ||
       Answer.Response == HTTP_ERROR_MODEL_LOAD ||
       Answer.Response == HTTP_ERROR_SQL ||
-      Answer.Response == HTTP_ERROR_PARAMETERS) 
+      Answer.Response == HTTP_ERROR_PARAMETERS ||
+      Answer.Response == HTTP_ERROR_SMTP_GENERIC) 
       if(Answer.Error != undefined)
          Self.SubHTTPError += '[' + Answer.Error + ']';
    return(Answer.Response == HTTP_OPERATION_OK)
