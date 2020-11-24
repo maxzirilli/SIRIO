@@ -1,10 +1,12 @@
 {
  "Version": {
   "Major": 1,
-  "Minor": 10,
+  "Minor": 11,
   "Release": 6
  },
  "Storia": [
+  "Versione 1.10.7   24 Novembre 2020",
+  "                  - NEW: Aggiunti tre campi in tabella docenti che indicano di quali materie il docente è coordinatore",
   "Versione 1.10.6   17 Novembre 2020",
   "                  - NEW: Aggiunto campo email secondaria nella tabella dei docenti",
   "Versione 1.9.6    10 Novembre 2020",
@@ -440,6 +442,33 @@
     },
     {
      "Nome": "MATERIA_3",
+     "IsNullable": true,
+     "DataType": "int(11)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "COORD_MATERIA_1",
+     "IsNullable": true,
+     "DataType": "int(11)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "COORD_MATERIA_2",
+     "IsNullable": true,
+     "DataType": "int(11)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "COORD_MATERIA_3",
      "IsNullable": true,
      "DataType": "int(11)",
      "AutoIncrement": false,
