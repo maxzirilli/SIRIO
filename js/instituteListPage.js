@@ -282,7 +282,7 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                                            ContoAdozioni = SystemInformation.FindResults(Results,'GetAdoptionClass');
                                            if(ContoAdozioni != undefined)
                                            {
-                                              ContoAdozioni = ContoAdozioni[0].COUNT_ADOZIONI;
+                                              ContoAdozioni = parseInt(ContoAdozioni[0].COUNT_ADOZIONI);
                                               //var VaiAvanti = true;
                                               
                                                  
@@ -301,7 +301,8 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                                                 $scope.ClasseCliccata[$scope.IstitutoInEditing.ArrayClassiGlobale[$scope.CombinazioneFocusedIndex].ArrayClassiFinale[i].Sezione + $scope.IstitutoInEditing.ArrayClassiGlobale[$scope.CombinazioneFocusedIndex].ArrayClassiFinale[i].Anno] = true;
                                               }
                                               if(ContoAdozioni != 0)
-                                                 ZConfirm.GetConfirmBox('AVVISO',"Sono presenti adozioni associate. Eliminare?",VaiAvanti,Fermati);
+                                                 ZConfirm.GetConfirmBox('AVVISO',"Sono presenti adozioni associate. Eliminare?",VaiAvanti,Fermati)
+                                              else VaiAvanti() 
                                            }
                                            else SystemInformation.ApplyOnError('Modello adozioni per classe non conforme','');                  
                                          },'GetAdozioniClasse');               
