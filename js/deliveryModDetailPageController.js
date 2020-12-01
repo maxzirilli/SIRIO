@@ -1018,6 +1018,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
               else if ($scope.SpedizioneMultipla && $scope.SpedizioneAIstituto)
               {
                       SystemInformation.DataBetweenController.ListaChiaviFromAdvanced = [];
+                      SystemInformation.DataBetweenController.Provenienza = 'NOT_ADVANCED';
 
                       for (let d = 0; d < $scope.ListaDocentiSpedizione.length;d ++)
                       {
@@ -1225,6 +1226,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                         {
                           NewChiaviToSend = SystemInformation.FindResults(Results,'SmallNewToSend');
                           SystemInformation.DataBetweenController.ListaChiaviFromAdvanced = [];
+                          SystemInformation.DataBetweenController.Provenienza = 'NOT_ADVANCED';
                           if(NewChiaviToSend != undefined)
                           {
                             for(let i = 0;i < NewChiaviToSend.length;i ++)
@@ -1250,6 +1252,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                             {
                               NewChiaviToSend = SystemInformation.FindResults(Results,'SmallNewToSend');
                               SystemInformation.DataBetweenController.ListaChiaviFromAdvanced = [];
+                              SystemInformation.DataBetweenController.Provenienza = 'NOT_ADVANCED';
                               if(NewChiaviToSend != undefined)
                               {
                                 for(let i = 0;i < NewChiaviToSend.length;i ++)
@@ -1265,6 +1268,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                           else
                           {
                             SystemInformation.DataBetweenController.ListaChiaviFromAdvanced = [];
+                            SystemInformation.DataBetweenController.Provenienza = 'NOT_ADVANCED';
                             if(DaSpedireEsistenti.length != 0)
                                for(let j = 0;j < DaSpedireEsistenti.length;j ++)
                                    SystemInformation.DataBetweenController.ListaChiaviFromAdvanced.push(DaSpedireEsistenti[j])

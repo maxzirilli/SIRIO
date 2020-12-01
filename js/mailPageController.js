@@ -5,8 +5,12 @@ SIRIOApp.controller("mailPageController",['$scope','SystemInformation','$state',
   $scope.NumeroDestinatari        = 0;
   $scope.ContatoreInvio           = 0;
   $scope.InvioInCorso             = false;
+  $scope.OldPagDocenti            = 0;
 
   ScopeHeaderController.CheckButtons();
+
+  if(SystemInformation.DataBetweenController.OldPaginaDocenti != 1)
+     $scope.OldPagDocenti = SystemInformation.DataBetweenController.OldPaginaDocenti;
 
   if(Array.isArray(SystemInformation.DataBetweenController.ListaDocMail) && 
      SystemInformation.DataBetweenController.ListaDocMail.length > 0 && 
@@ -62,6 +66,9 @@ SIRIOApp.controller("mailPageController",['$scope','SystemInformation','$state',
                                     {
                                       $scope.InvioInCorso  = false;     
                                       ZCustomAlert($mdDialog,'OK','INVIO MAIL ESEGUITO');
+                                      SystemInformation.DataBetweenController                  = {};
+                                      SystemInformation.DataBetweenController.OldPaginaDocenti = $scope.OldPagDocenti;
+                                      SystemInformation.DataBetweenController.Provenienza      = 'MailPage';
                                       $state.go('teacherListPage')
                                     }
                                     else SendSingolaMail();
@@ -76,6 +83,9 @@ SIRIOApp.controller("mailPageController",['$scope','SystemInformation','$state',
   $scope.OnAnnullaMailClicked = function()
   {
     $scope.MailInEditing = {};
+    SystemInformation.DataBetweenController                  = {};
+    SystemInformation.DataBetweenController.OldPaginaDocenti = $scope.OldPagDocenti;
+    SystemInformation.DataBetweenController.Provenienza      = 'MailPage';
     $state.go('teacherListPage');
   }
 }]);

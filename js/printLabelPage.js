@@ -229,7 +229,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
 
   if(Array.isArray(SystemInformation.DataBetweenController.ListaChiaviFromAdvanced) && SystemInformation.DataBetweenController.ListaChiaviFromAdvanced.length > 0)
   {
-    $scope.SpedizioneImmediata              = true;
+    $scope.SpedizioneImmediata              = SystemInformation.DataBetweenController.Provenienza == 'NOT_ADVANCED' ? true : false;
     ChiaviDaSpedireTmp                      = Array.from(SystemInformation.DataBetweenController.ListaChiaviFromAdvanced);
     SystemInformation.DataBetweenController = {};
     SystemInformation.GetSQL('PrintLabel',{ChiaviDaSpedire : ChiaviDaSpedireTmp},function(Results)
@@ -293,70 +293,76 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
        
          var doc = new jsPDF();
          doc.setProperties({title: 'STAMPA ETICHETTE ' + DataSpedizione});
-         /*doc.setFontSize(10); 
-         doc.setFontType('bold');
-         doc.text(10,20,'REPORT SPEDIZIONI - IN DATA ' + DataSpedizione);
-         doc.setFontSize(7);
-         var CoordY = 30;
-         //doc.text(10,280,'BORDO INFERIORE');
          
-         var ListaCumulativo = [];
-         
-         for(let i = 0;i < ListaSpedizioniToPrint.length;i ++)
+         if(!$scope.SpedizioneImmediata)
          {
-             for(let j = 0;j < ListaSpedizioniToPrint[i].ListaTitoli.length;j ++)
-             {
-                 TitoloCorrisp = ListaCumulativo.findIndex(function(ATitolo){return(ATitolo.Codice == ListaSpedizioniToPrint[i].ListaTitoli[j].CODICE_ISBN);});
-                 if(TitoloCorrisp == -1)
-                 {
-                     ListaCumulativo.push({
-                                           Codice     : ListaSpedizioniToPrint[i].ListaTitoli[j].CODICE_ISBN,
-                                           Nome       : ListaSpedizioniToPrint[i].ListaTitoli[j].NOME_TITOLO,
-                                           Quantita   : ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA,
-                                           Posizione  : ListaSpedizioniToPrint[i].ListaTitoli[j].POS_MGZN
-                                         })
-                 }
-                 else 
-                 {
-                     ListaCumulativo[TitoloCorrisp].Quantita = parseInt(ListaCumulativo[TitoloCorrisp].Quantita) + parseInt(ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA);   
-                     ListaCumulativo[TitoloCorrisp].Quantita = ListaCumulativo[TitoloCorrisp].Quantita.toString()
-                 } 
-             }
+            doc.setFontSize(10); 
+            doc.setFontType('bold');
+            doc.text(10,20,'REPORT SPEDIZIONI - IN DATA ' + DataSpedizione);
+            doc.setFontSize(7);
+            var CoordY = 20;
+            //doc.text(10,280,'BORDO INFERIORE');
+            
+            var ListaCumulativo = [];
+            
+            for(let i = 0;i < ListaSpedizioniToPrint.length;i ++)
+            {
+                for(let j = 0;j < ListaSpedizioniToPrint[i].ListaTitoli.length;j ++)
+                {
+                    TitoloCorrisp = ListaCumulativo.findIndex(function(ATitolo){return(ATitolo.Codice == ListaSpedizioniToPrint[i].ListaTitoli[j].CODICE_ISBN);});
+                    if(TitoloCorrisp == -1)
+                    {
+                        ListaCumulativo.push({
+                                              Codice     : ListaSpedizioniToPrint[i].ListaTitoli[j].CODICE_ISBN,
+                                              Nome       : ListaSpedizioniToPrint[i].ListaTitoli[j].NOME_TITOLO,
+                                              Quantita   : ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA,
+                                              Posizione  : ListaSpedizioniToPrint[i].ListaTitoli[j].POS_MGZN
+                                            })
+                    }
+                    else 
+                    {
+                        ListaCumulativo[TitoloCorrisp].Quantita = parseInt(ListaCumulativo[TitoloCorrisp].Quantita) + parseInt(ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA);   
+                        ListaCumulativo[TitoloCorrisp].Quantita = ListaCumulativo[TitoloCorrisp].Quantita.toString()
+                    } 
+                }
+            }
+            //CoordY = 20;
+            doc.setFontType('bold');
+            doc.setFontSize(8);
+            doc.text(10,CoordY+10,'QNT');
+            doc.text(20,CoordY+10,'ISBN');
+            doc.text(45,CoordY+10,'TITOLO');
+            doc.text(160,CoordY+10,'POS.MAGAZZINO');
+        
+            for(let k = 0;k < ListaCumulativo.length;k ++)
+            {
+                if (CoordY >= 280) 
+                {
+                  doc.addPage();
+                  CoordY = 20;
+                  doc.setFontType('bold');
+                  doc.setFontSize(8);
+                  doc.text(10,CoordY+10,'TOT');
+                  doc.text(20,CoordY+10,'ISBN');
+                  doc.text(45,CoordY+10,'TITOLO');
+                  doc.text(160,CoordY+10,'POS.MAGAZZINO');
+                  doc.setFontSize(6);
+                  doc.setFontType('normal');
+                  doc.text(10,290,SystemInformation.VDocDelivery)
+                }
+                
+                doc.setFontType('italic');
+                CoordY += 5;
+                var Q  = doc.getTextWidth('TOT');
+                var Qt = doc.getTextWidth(ListaCumulativo[k].Quantita);
+                doc.text(10 + Q + 1 - Qt,CoordY+10,ListaCumulativo[k].Quantita);
+                doc.text(20,CoordY+10,ListaCumulativo[k].Codice);
+                doc.text(45,CoordY+10,TroncaTitolo(ListaCumulativo[k].Nome,65));
+                doc.text(160,CoordY+10,ListaCumulativo[k].Posizione);            
+            }
+            doc.addPage();
          }
-         CoordY = 20;
-         doc.setFontType('bold');
-         doc.setFontSize(8);
-         doc.text(10,CoordY+10,'QNT');
-         doc.text(20,CoordY+10,'ISBN');
-         doc.text(45,CoordY+10,'TITOLO');
-         doc.text(160,CoordY+10,'POS.MAGAZZINO');
-     
-         for(let k = 0;k < ListaCumulativo.length;k ++)
-         {
-             if (CoordY >= 280) 
-             {
-               doc.addPage();
-               CoordY = 20;
-               doc.setFontType('bold');
-               doc.setFontSize(8);
-               doc.text(10,CoordY+10,'TOT');
-               doc.text(20,CoordY+10,'ISBN');
-               doc.text(45,CoordY+10,'TITOLO');
-               doc.text(160,CoordY+10,'POS.MAGAZZINO');
-               doc.setFontSize(6);
-               doc.setFontType('normal');
-               doc.text(10,290,SystemInformation.VDocDelivery)
-             }
-             
-             doc.setFontType('italic');
-             CoordY += 5;
-             var Q  = doc.getTextWidth('TOT');
-             var Qt = doc.getTextWidth(ListaCumulativo[k].Quantita);
-             doc.text(10 + Q + 1 - Qt,CoordY+10,ListaCumulativo[k].Quantita);
-             doc.text(20,CoordY+10,ListaCumulativo[k].Codice);
-             doc.text(45,CoordY+10,TroncaTitolo(ListaCumulativo[k].Nome,65));
-             doc.text(160,CoordY+10,ListaCumulativo[k].Posizione);            
-         }*/
+
          
          for (let i = 0;i < ListaSpedizioniToPrint.length;i ++)
          {

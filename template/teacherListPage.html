@@ -137,20 +137,21 @@
                        <md-input-container style="width:10%;">
                          <label>TITOLO</label><input ng-model="DocenteInEditing.Titolo" type="text" name="Titolo">
                        </md-input-container>        
-                       <md-input-container style="width:20%;" ng-show="DocenteInEditing.Chiave != -1 || (IstitutoForNewDocente == -1 && DocenteInEditing.Chiave == -1)">
+                       <md-input-container style="width:20%;" ng-show="DocenteInEditing.Chiave != -1 || (IstitutoForNewDocente == -1 && DocenteInEditing.Chiave == -1) || IstitutoFiltro == -1 || searchTextIstituto == ''">
                          <label>COGNOME NOME</label><input ng-model="DocenteInEditing.RagioneSociale" type="text" name="RagioneSociale" > <!--required
                          <div ng-messages="docenteEditForm.RagioneSociale.$error" multiple md-auto-hide="true">
                            <div ng-message="required">Inserire la ragione sociale del docente</div>
                          </div>-->
                        </md-input-container>
 
-                       <md-input-container class="containerSelect" style="margin-left:5px;width:30%;padding-top:0px;" ng-if="DocenteInEditing.Chiave == -1 && OldIstitutoFiltro != -1">
+                       <md-input-container class="containerSelect" style="margin-left:5px;width:30%;padding-top:0px;" ng-if="DocenteInEditing.Chiave == -1 && IstitutoFiltro != -1 && searchTextIstituto != ''">
                         <label>DOCENTE</label>
                         <md-autocomplete
                                     md-input-name="Docente"
                                     md-autofocus="true"
                                     md-no-cache="true"
-                                    md-selected-item-change = "selectedItemChangeDoc(item)"
+                                    md-selected-item="selectedItemDoc"
+                                    md-selected-item-change="selectedItemChangeDoc(item)"
                                     md-search-text="searchTextDoc"
                                     md-items="item in queryDoc(searchTextDoc)"
                                     md-item-text="item.NomeDoc"

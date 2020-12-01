@@ -11,6 +11,7 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
   $scope.IstitutoFiltrato     = -1;
   $scope.SelectVolumiTitolo   = ['UNICO'];
   $scope.CheckOldIstituto     = false;
+  $scope.OldPagina            = 0;
   
   for(let i = 1;i < VOLUME_MASSIMO;i ++)
   {
@@ -252,6 +253,7 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
 
   $scope.ModificaTitolo = function (titolo)
   {
+    $scope.OldPagina                                 = $scope.GridOptions.query.page;
     $scope.EditingOn                                 = true;
     $scope.TitoloInEditing                           = {};
     $scope.TitoloInEditing.ListaIstitutiTitEliminati = [];
@@ -330,6 +332,7 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
        $scope.searchTextIstituto = $scope.OldIstitutoNome;
     }*/
     $scope.RefreshListaTitoli();
+    $scope.GridOptions.query.page = $scope.OldPagina;
   }
   
   $scope.ConfermaTitolo = function ()
@@ -499,6 +502,7 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
          $scope.searchTextIstituto = $scope.OldIstitutoNome;
       }*/
       $scope.RefreshListaTitoli();
+      $scope.GridOptions.query.page = $scope.OldPagina;
     });    
   }
   

@@ -259,6 +259,7 @@ $scope.GridOptions_2 = {
     var $ObjQuery = {Operazioni:[]};
     var ParametriSpedizione = '';
     SystemInformation.DataBetweenController.ListaChiaviFromAdvanced = [];
+    SystemInformation.DataBetweenController.Provenienza = 'ADVANCED';
     for(let i = 0;i < $scope.ListaSpedizioni.length;i ++)
     {
         if($scope.ListaSpedizioni[i].Tipo == 1 && $scope.ListaSpedizioni[i].Selezionato)

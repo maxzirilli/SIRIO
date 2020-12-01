@@ -18,7 +18,8 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
   $scope.NomeFiltroUnione   = '';
   $scope.ComuneFiltro       = '';
   //$scope.IstitutoDaUnire    = -1;
-  $scope.CheckOldProvincia = false;
+  $scope.CheckOldProvincia  = false;
+  $scope.OldPagina          = 0;
 
   $scope.IsAdministrator = function ()
   {
@@ -450,6 +451,7 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
   
   $scope.ModificaIstituto = function(istituto)
   {
+    $scope.OldPagina = $scope.GridOptions.query.page;
     $scope.EditingOn = true;    
     SystemInformation.GetSQL('Institute', {CHIAVE : istituto.Chiave}, function(Results)
     {
@@ -597,6 +599,7 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
   {
     $scope.EditingOn = false;
     $scope.RefreshListaIstituti();
+    $scope.GridOptions.query.page = $scope.OldPagina;
   }
   
   $scope.ConfermaIstituto = function() 
@@ -689,6 +692,7 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
      {  
        $scope.EditingOn = false;
        $scope.RefreshListaIstituti();
+       $scope.GridOptions.query.page = $scope.OldPagina;
      });  
   }
   
