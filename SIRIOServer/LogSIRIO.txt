@@ -9,3 +9,7 @@
 [17-Nov-2020 12:47:11 Europe/Berlin] DELETE FROM istituti WHERE CHIAVE=6748
 [17-Nov-2020 12:52:03 Europe/Berlin] DELETE FROM istituti WHERE CHIAVE=131602
 [17-Nov-2020 16:07:41 Europe/Berlin] DELETE FROM istituti WHERE CHIAVE=6742
+[19-Nov-2020 13:33:07 Europe/Berlin] PHP Notice:  Undefined variable: ErroreMail in D:\GoogleDrive\Lavoro\Librerie\PHP\ZAdvQuery.php on line 393
+[19-Nov-2020 13:33:07 Europe/Berlin] PHP Stack trace:
+[19-Nov-2020 13:33:07 Europe/Berlin] PHP   1. {main}() D:\GoogleDrive\Lavoro\Progetti\Pagina43\Sirio\Software\Sirio\SIRIOServer\SIRIOSendMail.php:0
+[19-Nov-2020 13:33:07 Europe/Berlin] PHP   2. TAdvQuery->SendMail() D:\GoogleDrive\Lavoro\Progetti\Pagina43\Sirio\Software\Sirio\SIRIOServer\SIRIOSendMail.php:12

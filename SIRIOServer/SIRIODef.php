@@ -13,6 +13,7 @@
     define('PAR_SQL_QUERY','SIRIOSelectQuery');
     define('PAR_MODEL','SIRIOModel');
     define('PAR_PARAMETERS','SIRIOEditParams');
+    define('PAR_SMTP_DEBUGLEVEL',0);
     define('GEN_CHIAVI','gen_key'); 
     define('FIELD_GEN_CHIAVI','CHIAVE');
     define('FIELD_UTENTI_CAMPO_ELIMINATO','ELIMINATO');

@@ -11,7 +11,7 @@
     define('SMTP_SECURE',false);
     define('SMTP_AUTH',true);
     define('SMTP_USER','info@pagina43.it');
-    define('SMTP_PASSWORD','7nvLBk46');
+    define('SMTP_PASSWORD','7nvLBk46a');
     define('SMTP_FROM_MAIL','noreply@pagina43.it');
     define('SMTP_FROM_NAME','Pagina43');
 
