@@ -26,25 +26,27 @@
     </div>
     
     <div layout="row" style="margin-top:0px;">    
-      <md-input-container class="containerSelect" style="width:30%;">
-         <label>MATERIA</label>
-         <md-autocomplete 
-                     md-input-name="Materia"
-                     md-no-cache="true"
-                     md-selected-item-change="selectedItemChangeMateria(item)"
-                     md-search-text="searchTextMat"
-                     md-items="item in queryMateria(searchTextMat)"
-                     md-item-text="item.Nome"
-                     md-require-match="true"
-                     md-clear-button="true">
-         <md-item-template>
-           <span md-highlight-text="searchText">{{item.Nome}}</span>
-         </md-item-template>
-         <md-not-found>
-           Nessuna corrispondenza
-         </md-not-found>
-      </md-input-container>
-       
+
+      <md-input-container class="containerSelect" style="width:30%;margin-right:10px;">
+        <label>ISTITUTO</label>
+        <md-autocomplete
+                    md-input-name="Istituto"
+                    md-autofocus="true"
+                    md-no-cache="true"
+                    md-selected-item-change = "selectedItemChangeIstituto(item)"
+                    md-search-text="searchTextIstituto"
+                    md-items="item in queryIstituto(searchTextIstituto)"
+                    md-item-text="item.Istituto"
+                    md-require-match="true"
+                    md-clear-button="true">
+        <md-item-template>
+          <span md-highlight-text="searchText">{{item.Istituto}}</span>
+        </md-item-template>
+        <md-not-found>
+          Nessuna corrispondenza
+        </md-not-found>
+     </md-input-container>
+      
        <md-input-container class="containerSelect" style="width:40%;margin-right:10px;">
          <label>TITOLO</label>
          <md-autocomplete
@@ -65,25 +67,24 @@
          </md-not-found>
        </md-input-container>
        
-      <md-input-container class="containerSelect" style="width:30%;margin-right:10px;">
-         <label>ISTITUTO</label>
-         <md-autocomplete
-                     md-input-name="Istituto"
-                     md-autofocus="true"
-                     md-no-cache="true"
-                     md-selected-item-change = "selectedItemChangeIstituto(item)"
-                     md-search-text="searchTextIstituto"
-                     md-items="item in queryIstituto(searchTextIstituto)"
-                     md-item-text="item.Istituto"
-                     md-require-match="true"
-                     md-clear-button="true">
-         <md-item-template>
-           <span md-highlight-text="searchText">{{item.Istituto}}</span>
-         </md-item-template>
-         <md-not-found>
-           Nessuna corrispondenza
-         </md-not-found>
-      </md-input-container>
+      <md-input-container class="containerSelect" style="width:30%;">
+        <label>MATERIA</label>
+        <md-autocomplete 
+                    md-input-name="Materia"
+                    md-no-cache="true"
+                    md-selected-item-change="selectedItemChangeMateria(item)"
+                    md-search-text="searchTextMat"
+                    md-items="item in queryMateria(searchTextMat)"
+                    md-item-text="item.Nome"
+                    md-require-match="true"
+                    md-clear-button="true">
+        <md-item-template>
+          <span md-highlight-text="searchText">{{item.Nome}}</span>
+        </md-item-template>
+        <md-not-found>
+          Nessuna corrispondenza
+        </md-not-found>
+     </md-input-container>
     </div>    
     <div ng-if="ListaDocenti.length != 0">
       <!--<label style="font-weight:bold;" ng-if="ListaIstitutiTitolo.length != 0">TITOLO IN ADOZIONE PRESSO I SEGUENTI ISTITUTI:</label>
