@@ -978,15 +978,17 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
                                       "Titolo"          : SpedizioneDettaglio[i].TITOLO,
                                       "ChiaveDettaglio" : SpedizioneDettaglio[i].CHIAVE,
                                       "QuantitaMgzn"    : SpedizioneDettaglio[i].QUANTITA_MGZN,
-                                      "Quantita"        : SpedizioneDettaglio[i].QUANTITA
+                                      "Quantita"        : SpedizioneDettaglio[i].QUANTITA,
+                                      "Stato"           : SpedizioneDettaglio[i].STATO
                                     });
             }
             var $ObjQuery = { Operazioni : [] }; 
             var TitoliNonDisponibili = [];
-            var TitoliDaSpedire      = [];            
+            var TitoliDaSpedire      = [];
+            var TitoliAlreadyGestiti = [];              
             for(let j = 0;j < ListaTitoliSped.length;j ++)
             {
-              if(parseInt(ListaTitoliSped[j].Quantita) <= parseInt(ListaTitoliSped[j].QuantitaMgzn))
+              if(ListaTitoliSped[j].Stato == 'P' && (parseInt(ListaTitoliSped[j].Quantita) <= parseInt(ListaTitoliSped[j].QuantitaMgzn)))
               {
                 var ParamSpedizione = {
                                         "CHIAVE" : ListaTitoliSped[j].ChiaveDettaglio
@@ -1001,19 +1003,35 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
               }
               else
               {
-                var OggettoNd = '';
-                OggettoNd     = '\n' + 'Nr° : ' + ListaTitoliSped[j].Quantita.toString() + ' - ' + ListaTitoliSped[j].TitoloNome.toString();
-                TitoliNonDisponibili.push(OggettoNd);
+                if(ListaTitoliSped[j].Stato == 'C' || ListaTitoliSped[j].Stato == 'S')
+                {
+                  var OggettoNd = '';
+                  OggettoAg     = '\n' + 'Nr° : ' + ListaTitoliSped[j].Quantita.toString() + ' - ' + ListaTitoliSped[j].TitoloNome.toString();
+                  TitoliAlreadyGestiti.push(OggettoAg);
+                }
+                else
+                {
+                  var OggettoNd = '';
+                  OggettoNd     = '\n' + 'Nr° : ' + ListaTitoliSped[j].Quantita.toString() + ' - ' + ListaTitoliSped[j].TitoloNome.toString();
+                  TitoliNonDisponibili.push(OggettoNd);
+                } 
               }              
             }
             SystemInformation.PostSQL('Delivery',$ObjQuery,function(Results)
             {                            
-              if(TitoliNonDisponibili.length != 0 && TitoliDaSpedire.length == 0)               
+              if(TitoliNonDisponibili.length != 0 && TitoliDaSpedire.length == 0 && TitoliAlreadyGestiti.length == 0)               
                 ZCustomAlert($mdDialog,'AVVISO','I seguenti titoli non sono disponibili per essere spediti:  ' + TitoliNonDisponibili)
-              else if (TitoliNonDisponibili.length == 0 && TitoliDaSpedire.length != 0)
+              else if (TitoliNonDisponibili.length == 0 && TitoliDaSpedire.length != 0 && TitoliAlreadyGestiti.length == 0)
                 ZCustomAlert($mdDialog,'AVVISO','I seguenti titoli sono stati segnati come DA SPEDIRE : ' + TitoliDaSpedire)
-              else if (TitoliNonDisponibili.length != 0 && TitoliDaSpedire.length != 0)
-                ZCustomAlert($mdDialog,'AVVISO','I seguenti titoli sono stati segnati come DA SPEDIRE : ' + TitoliDaSpedire + '\n' + '\n' + 'I seguenti titoli non sono disponibili per essere spediti:  ' + TitoliNonDisponibili)
+              else if (TitoliNonDisponibili.length != 0 && TitoliDaSpedire.length != 0 && TitoliAlreadyGestiti.length == 0)
+                ZCustomAlert($mdDialog,'AVVISO','I seguenti titoli sono stati segnati come DA SPEDIRE : ' + TitoliDaSpedire + ' --- I seguenti titoli non sono disponibili per essere spediti:  ' + TitoliNonDisponibili)
+              else if (TitoliNonDisponibili.length != 0 && TitoliDaSpedire.length != 0 && TitoliAlreadyGestiti.length != 0)
+                ZCustomAlert($mdDialog,'AVVISO','I seguenti titoli sono stati segnati come DA SPEDIRE : ' + TitoliDaSpedire + ' --- I seguenti titoli non sono disponibili per essere spediti:  ' + TitoliNonDisponibili +  ' --- I seguenti titoli sono già stati gestiti:  ' + TitoliAlreadyGestiti)
+              else if (TitoliNonDisponibili.length == 0 && TitoliDaSpedire.length != 0 && TitoliAlreadyGestiti.length != 0)
+                ZCustomAlert($mdDialog,'AVVISO','I seguenti titoli sono stati segnati come DA SPEDIRE : ' + TitoliDaSpedire + ' --- I seguenti titoli sono già stati gestiti:  ' + TitoliAlreadyGestiti);
+              else (TitoliNonDisponibili.length != 0 && TitoliDaSpedire.length == 0 && TitoliAlreadyGestiti.length != 0)   
+                ZCustomAlert($mdDialog,'AVVISO','I seguenti titoli non sono disponibili per essere spediti:  ' + TitoliNonDisponibili + ' --- I seguenti titoli sono già stati gestiti:  ' + TitoliAlreadyGestiti)
+  
               $scope.ListaSpedizioni = [];
               $scope.RefreshListaSpedizioniAll();
             })                       
