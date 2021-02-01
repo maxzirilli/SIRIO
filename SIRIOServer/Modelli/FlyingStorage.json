@@ -33,7 +33,7 @@
                      },
                      {
                        "Name" : "UpdateMovementBook",
-                       "SQL"  : "UPDATE dettaglio_magazzino_volante SET TITOLO=:TITOLO,QUANTITA=#QUANTITA WHERE CHIAVE=CHIAVE"
+                       "SQL"  : "UPDATE dettaglio_magazzino_volante SET TITOLO=:TITOLO,QUANTITA=#QUANTITA WHERE CHIAVE=:CHIAVE"
                      },
                      {
                        "Name" : "DeleteMovement",
