@@ -427,7 +427,7 @@ $scope.GridOptions_2 = {
           if(!NuovoMovimento && $scope.ListaCarico[i].Nuovo)
           {
              var ParamTitolo  = {
-                                  "MOVIMENTO"  : $scope.MovimentoInEditing.CHIAVE,
+                                  "CHIAVE"     : $scope.MovimentoInEditing.CHIAVE,
                                   "TITOLO"     : $scope.ListaCarico[i].TITOLO,  
                                   "QUANTITA"   : $scope.ListaCarico[i].QUANTITA
                                 }
