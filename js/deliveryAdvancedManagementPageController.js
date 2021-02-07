@@ -571,9 +571,9 @@ $scope.GridOptions_2 = {
 
 SIRIOApp.filter('TitoloPopupByFiltro',function()
 {
-  return function(ListaTitoliPopup,NomeFiltro,CodiceFiltro)
+  return function(ListaTitoliPopup,NomeFiltro,CodiceFiltro,DisponibileFiltro)
          {
-           if(NomeFiltro == '' && CodiceFiltro == '') 
+           if(NomeFiltro == '' && CodiceFiltro == '' && !DisponibileFiltro) 
              return(ListaTitoliPopup);
            var ListaFiltrata = [];
            NomeFiltro = NomeFiltro.toUpperCase();
@@ -589,7 +589,11 @@ SIRIOApp.filter('TitoloPopupByFiltro',function()
               
               if(CodiceFiltro != '')
                  if(Titolo.Codice.toUpperCase().indexOf(CodiceFiltro) < 0)
-                   Result = false;              
+                   Result = false; 
+              
+              if(DisponibileFiltro)
+                 if(Titolo.Quantita <= 0)
+                    Result = false;             
               
               return(Result);
            }

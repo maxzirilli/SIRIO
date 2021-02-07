@@ -1,5 +1,6 @@
 SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','$sce','$filter','ZConfirm', function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConfirm)
 {
+  $scope.MailOn                            = false;
   $scope.ListaDocenti                      = [];
   $scope.EditingOn                         = false;
   $scope.DocenteInEditing                  = {};
@@ -358,8 +359,8 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   $scope.InvioMail = function (Docente)
   {
     SystemInformation.DataBetweenController.DocMail = Docente.Email;
-    SystemInformation.DataBetweenController.OldPaginaDocenti = $scope.GridOptions.query.page;
-    $state.go('mailPage');
+    $scope.MailOn = true;
+    $scope.InizializzaMailPage();
   }
 
   $scope.InvioMultiploMail = function (Nome)
@@ -394,8 +395,8 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
        else
        {
           SystemInformation.DataBetweenController.MailMultipla = true;
-          SystemInformation.DataBetweenController.Provenienza  = 'TeacherPage';
-          $state.go("mailPage");
+          $scope.MailOn = true;
+          $scope.InizializzaMailPage();
        }
      }
      else
@@ -1504,7 +1505,98 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
     $scope.RefreshListaSpedizioni();    
   }
   
-  $scope.RefreshListaDocenti(); 
+  $scope.RefreshListaDocenti();
+
+  /////////////////////////PAGINA MAIL
+
+  $scope.ResetMailPage = function()
+  {
+    $scope.MailMultipla             = false;
+    $scope.ListaDocentiMailMultipla = [];
+    $scope.NumeroDestinatari        = 0;
+    $scope.ContatoreInvio           = 0;
+    $scope.InvioInCorso             = false;
+    $scope.OldPagDocenti            = 0;
+  }
+
+  $scope.InizializzaMailPage = function()
+  {
+    $scope.ResetMailPage();
+    if(Array.isArray(SystemInformation.DataBetweenController.ListaDocMail) && 
+    SystemInformation.DataBetweenController.ListaDocMail.length > 0 && 
+    SystemInformation.DataBetweenController.MailMultipla)
+    {   
+        $scope.MailMultipla             = true;
+        $scope.ListaDocentiMailMultipla = Array.from(SystemInformation.DataBetweenController.ListaDocMail);
+        $scope.NumeroDestinatari = $scope.ListaDocentiMailMultipla.length;
+        SystemInformation.DataBetweenController = {};     
+    }
+
+    $scope.MailInEditing = {
+                              Destinatario : '',
+                              Oggetto      : '',
+                              Testo        : ''
+                            };
+    if(!$scope.MailMultipla)
+       $scope.MailInEditing.Destinatario = SystemInformation.DataBetweenController.DocMail;
+  }    
+  
+  $scope.InviaMail = function()
+  {
+    if(!$scope.MailMultipla)
+    {
+      SystemInformation.PostSQL('MailTeacher',{
+                                                Oggetto      : $scope.MailInEditing.Oggetto.xSQL(),
+                                                Testo        : $scope.MailInEditing.Testo.xSQL(), 
+                                                Destinatario : $scope.MailInEditing.Destinatario.xSQL()
+                                              },
+      function()
+      {       
+        $scope.MailInEditing = {};
+        ZCustomAlert($mdDialog,'OK','INVIO MAIL ESEGUITO');
+        $scope.ResetMailPage();
+        $scope.MailOn = false;
+      },InvioMail = true,alertMessages = false)
+    }
+    else
+    {
+      $scope.InvioInCorso = true;
+      $scope.ContatoreInvio = 0;
+      var SendSingolaMail = function()
+      {
+        SystemInformation.PostSQL('MailTeacher',
+                                 {
+                                   Oggetto      : $scope.MailInEditing.Oggetto.xSQL(),
+                                   Testo        : $scope.MailInEditing.Testo.xSQL(), 
+                                   Destinatario : $scope.ListaDocentiMailMultipla[$scope.ContatoreInvio].xSQL()
+                                 },
+                                 function()
+                                 {       
+                                    $scope.ContatoreInvio++;
+                                    if($scope.ContatoreInvio >= $scope.ListaDocentiMailMultipla.length)
+                                    {
+                                      $scope.InvioInCorso  = false;     
+                                      ZCustomAlert($mdDialog,'OK','INVIO MAIL ESEGUITO');
+                                      SystemInformation.DataBetweenController = {};
+                                      $scope.ResetMailPage();
+                                      $scope.MailOn = false;
+                                    }
+                                    else SendSingolaMail();
+                                 },
+                                 InvioMail     = true,
+                                 alertMessages = false)                  
+      }
+      SendSingolaMail();
+    }   
+  }
+  
+  $scope.OnAnnullaMailClicked = function()
+  {
+    $scope.MailInEditing = {};
+    SystemInformation.DataBetweenController = {};
+    $scope.ResetMailPage();
+    $scope.MailOn = false;
+  }
 
 }]);
 

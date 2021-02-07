@@ -119,13 +119,13 @@
                      <div ng-message="required">Inserire la materia del titolo</div>
                    </div>
                  </md-input-container>
-                 <md-input-container flex=10>
+                 <md-input-container flex=10 ng-show="IsAdministrator()">
                      <label>QT. MAGAZZINO</label><input ng-model="TitoloInEditing.Q_Mgzn" type="number" min=0 name="Q_Mgzn">
                  </md-input-container>
-                 <md-input-container flex=20>
+                 <md-input-container flex=20 ng-show="IsAdministrator()">
                      <label>POS. MAGAZZINO</label><input ng-model="TitoloInEditing.Pos_Magazzino" type="text" name="Pos_Magazzino">
                  </md-input-container>             
-                 <md-input-container flex=10>
+                 <md-input-container flex=10 ng-show="IsAdministrator()">
                      <label>QT. VOLANTE</label><input ng-model="TitoloInEditing.Q_Mgzn_Vol" type="number" min=0 name="Q_Mgzn_Vol">
                  </md-input-container>
                </div>

@@ -1,5 +1,5 @@
 <div ng-controller="teacherListPageController">
-  <div ng-show="!EditingOn">
+  <div ng-show="!EditingOn && !MailOn">
     <div>
       <h2>DOCENTI</h2>
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoDocente()">NUOVO DOCENTE</md-button>
@@ -123,7 +123,7 @@
     <p ng-if="ListaDocenti.length == 0" style="font-weight:bold;font-style:italic;text-align:center;">NESSUN DOCENTE PRESENTE</p>
   </div>
     
-  <div ng-show="EditingOn">
+  <div ng-show="EditingOn && !MailOn">
       <form name="docenteEditForm" layout="column" style="width:100%" ng-submit="ConfermaDocente()">
            <div layout="row">
              <h2>DOCENTE</h2>
@@ -384,4 +384,27 @@
       </form>               
 
   </div> 
+
+  <div ng-show="!EditingOn && MailOn">
+    <form name="MailEditForm" style="width:100%" ng-submit="InviaMail()">
+      <h2>INVIO MAIL</h2>
+      <progress ng-show="InvioInCorso && MailMultipla" style="width:100%;" id="progressBar" value={{ContatoreInvio}} min="0" max={{ListaDocentiMailMultipla.length}}></progress>
+      <div layout="row" style="width:100%;" layout-align="end start">
+        <md-button class="md-raised md-accent" style="font-weight:bold;" type="submit">INVIA MAIL</md-button>
+        <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="OnAnnullaMailClicked()">ANNULLA</md-button>
+      </div>
+      <div layout="column">
+        <p style="font-weight: bold;" ng-if="MailMultipla">N° DESTINATARI : {{NumeroDestinatari}}</p>
+        <md-input-container ng-if="!MailMultipla">
+          <p style="font-weight: bold;">DESTINATARIO:</p><input type="email" ng-model="MailInEditing.Destinatario" flex=30>
+        </md-input-container>
+        <md-input-container>
+          <p style="font-weight: bold;">OGGETTO:</p><input ng-model="MailInEditing.Oggetto" flex=40>
+        </md-input-container>
+        <md-input-container>
+          <p style="font-weight: bold;">TESTO:</p><textarea ng-model="MailInEditing.Testo" rows="10" cols="10" flex=100></textarea>
+        </md-input-container>
+      </div>
+    </form>
+  </div>
 </div> 
