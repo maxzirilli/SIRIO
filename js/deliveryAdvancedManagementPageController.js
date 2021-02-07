@@ -254,7 +254,7 @@ $scope.GridOptions_2 = {
     }
   }
 
-  $scope.InviaCumulativo = function()
+  /*$scope.InviaCumulativo = function()
   {
     var $ObjQuery = {Operazioni:[]};
     var ParametriSpedizione = '';
@@ -272,6 +272,30 @@ $scope.GridOptions_2 = {
     $ObjQuery.Operazioni.push({
                                 Query     : 'ChangeDeliveryToSendAdvanced',
                                 Parametri : {ChiaveDettaglio : ParametriSpedizione}
+                              }); 
+    SystemInformation.PostSQL('Delivery',$ObjQuery,function(Answer)
+    {
+      $state.go('printLabelPage');
+    });
+  }*/
+  
+  $scope.InviaCumulativo = function()
+  {
+    var $ObjQuery = {Operazioni:[]};
+    var ParametriSpedizione = [];
+    SystemInformation.DataBetweenController.ListaChiaviFromAdvanced = [];
+    SystemInformation.DataBetweenController.Provenienza = 'ADVANCED';
+    for(let i = 0;i < $scope.ListaSpedizioni.length;i ++)
+    {
+        if($scope.ListaSpedizioni[i].Tipo == 1 && $scope.ListaSpedizioni[i].Selezionato)
+        {
+          SystemInformation.DataBetweenController.ListaChiaviFromAdvanced.push($scope.ListaSpedizioni[i].ChiaveDettaglio)
+          ParametriSpedizione.push($scope.ListaSpedizioni[i].ChiaveDettaglio);
+        }      
+    }
+    $ObjQuery.Operazioni.push({
+                                Query     : 'ChangeDeliveryToSendAdvanced',
+                                Parametri : {ChiaveDettaglio : ParametriSpedizione.toString()}
                               }); 
     SystemInformation.PostSQL('Delivery',$ObjQuery,function(Answer)
     {
