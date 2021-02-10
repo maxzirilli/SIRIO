@@ -1085,7 +1085,7 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
          
          if(ListaDocenti.length != 0)
          {
-            ListaDocenti.forEach(function(Docente){Docente.DISPONIBILITA = []});
+            /*ListaDocenti.forEach(function(Docente){Docente.DISPONIBILITA = []});
 
             for(let i = 0;i < ListaDocenti.length;i ++)
                 for(let j = 0;j < ListaDisponibilita.length;j ++)
@@ -1158,7 +1158,7 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                           ListaDocenti[i].DISPONIBILITA.SETTIMANA[parseInt(ListaDocenti[i].DISPONIBILITA[2].GIORNO)][j - 8] = true;
                    }
                 }
-            }
+            }*/
             doc.addPage();
             doc.setFontSize(8);
             var CoordY = 10;
@@ -1181,7 +1181,7 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                 doc.text(10,CoordY+5,'DOCENTE: ' + ListaDocenti[i].NOME_DOCENTE);
                 doc.text(10,CoordY+10,'MATERIE: ' + (ListaDocenti[i].NOME_MATERIA_1 == undefined ? '' : ListaDocenti[i].NOME_MATERIA_1) + ' - ' + (ListaDocenti[i].NOME_MATERIA_2 == undefined ? '' : ListaDocenti[i].NOME_MATERIA_2) + ' - ' + (ListaDocenti[i].NOME_MATERIA_3 == undefined ? '' : ListaDocenti[i].NOME_MATERIA_3));
                 CoordY += 15;
-                doc.setFontSize(7);
+                /*doc.setFontSize(7);
                 doc.setFontType('italic');
                 doc.text(10,CoordY,'LUNEDI');
                 doc.text(30,CoordY,'MARTEDI')
@@ -1210,7 +1210,7 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                 doc.text(90,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[4]);
                 doc.text(110,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[5]);
                 doc.text(130,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[6]);
-                CoordY += 10;
+                CoordY += 10;*/
             }            
          }
          document.getElementById('teacherListPdf').src = doc.output('datauristring');              

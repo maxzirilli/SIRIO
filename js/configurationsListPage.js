@@ -1,6 +1,6 @@
 SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','ZConfirm','ZPrompt', function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm,ZPrompt)
 { 
-  $scope.ListaConfigurazioni        = ['COMBINAZIONI CLASSI','CASE EDITRICI GESTITE','DATI PAGINA 43','MATERIE','TIPOLOGIE GESTITE','TIPOLOGIE ESCLUSE','PROVINCE GESTITE'];
+  $scope.ListaConfigurazioni        = ['COMBINAZIONI CLASSI','CASE EDITRICI GESTITE','DATI PAGINA 43','MATERIE','TIPOLOGIE GESTITE','TIPOLOGIE ESCLUSE','PROVINCE GESTITE',"LUOGHI DISPONIBILITA' DOCENTI"];
   $scope.ConfigurazioneSelezionata  = 0;
   
   $scope.ListaMaterie               = [];
@@ -26,6 +26,10 @@ SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformat
   $scope.ListaCase                  = [];
   $scope.CasaInEditing              = {};
   $scope.NuovaCasa                  = false;
+
+  $scope.ListaLuoghi               = [];
+  $scope.LuogoInEditing            = {};
+  $scope.NuovoLuogo                = false;
   
   ScopeHeaderController.CheckButtons(); 
   
@@ -110,6 +114,22 @@ SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformat
                         };
                         
 $scope.GridOptions_6 = {
+                          rowSelection    : false,
+                          multiSelect     : true,
+                          autoSelect      : true,
+                          decapitate      : false,
+                          largeEditDialog : false,
+                          boundaryLinks   : false,
+                          limitSelect     : true,
+                          pageSelect      : true,
+                          query           : {
+                                              limit: 10,
+                                              page: 1
+                                            },
+                          limitOptions    : [10, 20, 30]
+                        };
+
+$scope.GridOptions_7 = {
                           rowSelection    : false,
                           multiSelect     : true,
                           autoSelect      : true,
@@ -230,6 +250,24 @@ $scope.GridOptions_6 = {
          $scope.ListaCase = CaseInfoList
       } 
       else SystemInformation.ApplyOnError('Modello case editrici non conforme','');   
+    });
+  }
+
+  $scope.RefreshListaLuoghi = function ()
+  {
+    SystemInformation.GetSQL('Schedule', {}, function(Results)  
+    {
+      LuoghiInfoList = SystemInformation.FindResults(Results,'ScheduleInfoList');
+      if(LuoghiInfoList != undefined)
+      { 
+         for(let i = 0;i < LuoghiInfoList.length;i ++)
+         LuoghiInfoList[i] = {
+                             Chiave      : LuoghiInfoList[i].CHIAVE,
+                             Descrizione : LuoghiInfoList[i].DESCRIZIONE
+                           }
+         $scope.ListaLuoghi = LuoghiInfoList
+      } 
+      else SystemInformation.ApplyOnError('Modello luoghi disponibilità docenti non conforme','');   
     });
   }
   
@@ -822,7 +860,100 @@ $scope.GridOptions_6 = {
     ZConfirm.GetConfirmBox('AVVISO','ELIMINARE LA CASA EDITRICE: ' + Casa.Descrizione + ' ?',EliminaCasEd,function(){});          
 
   }
+
+  //LUOGHI DISPONIBILITA'
+ 
+  $scope.ModificaLuogo = function (Luogo)
+  {
+    var ModificaLuogo = function(Answer)
+    {
+      LuogoInEditing = Answer;
+      if (LuogoInEditing === "") $scope.RefreshListLuoghi()
+      else 
+      {   
+        var ParamLuogo = {
+                            CHIAVE      : Luogo.Chiave,
+                            DESCRIZIONE : LuogoInEditing.toUpperCase()
+                          }
+        $scope.ConfermaLuogo(ParamLuogo);
+      }
+    }   
+    ZPrompt.GetPromptBox('MODIFICA INSERIMENTO',"MODIFICA LUOGO DISPONIBILITA': ",Luogo.Descrizione,ModificaLuogo,function(){});         
+  }
   
+  $scope.NuovoLuogo = function ()
+  { 
+    var CreaLuogo = function(Answer)
+    {
+      LuogoInEditing = Answer;
+      if (LuogoInEditing === null) $scope.RefreshListaCase()
+      else 
+      {       
+        var ParamLuogo = {
+                          CHIAVE      : -1,
+                          DESCRIZIONE : LuogoInEditing.toUpperCase()
+                         }
+        $scope.ConfermaLuogo(ParamLuogo);
+      }
+    }
+    ZPrompt.GetPromptBox('NUOVO INSERIMENTO',"NUOVO LUOGO DISPONIBILITA': ","",CreaLuogo,function(){});         
+  }
+  
+  $scope.ConfermaLuogo = function (param)
+  { 
+    LuogoExist = $scope.ListaLuoghi.find(function(ALuogo){return (ALuogo.Descrizione == param.DESCRIZIONE);});
+    if(LuogoExist)
+        ZCustomAlert($mdDialog,'ATTENZIONE','Luogo disponibilità già esistente!')
+    else
+    {
+        var $ObjQuery         = { Operazioni : [] };     
+        var NuovoLuogo = (param.CHIAVE == -1);
+        param.DESCRIZIONE = param.DESCRIZIONE.xSQL();
+        if(NuovoLuogo)     
+        {           
+          $ObjQuery.Operazioni.push({
+                                      Query     : 'InsertSchedule',
+                                      Parametri : param
+                                    }); 
+        }
+        else
+        {
+          $ObjQuery.Operazioni.push({
+                                      Query     : 'UpdateSchedule',
+                                      Parametri : param
+                                    });
+        };
+    
+        SystemInformation.PostSQL('Schedule',$ObjQuery,function(Answer)
+        {
+          if(param.CHIAVE == -1)
+            param.CHIAVE = Answer.NewKey1;
+          $scope.RefreshListaLuoghi();
+        });
+    }    
+  }
+  
+  $scope.EliminaLuogo = function(Luogo)
+  {
+    var EliminaLuogo = function()
+    {
+      var $ObjQuery = { Operazioni : [] };
+      var ParamLuogo = { CHIAVE : Luogo.Chiave };
+        
+      $ObjQuery.Operazioni.push({
+                                  Query     : 'DeleteSchedule',
+                                  Parametri : ParamLuogo
+                                });
+                                                                
+      SystemInformation.PostSQL('Schedule',$ObjQuery,function(Answer)
+      {
+        $scope.RefreshListaLuoghi();
+      });  
+    }
+    ZConfirm.GetConfirmBox('AVVISO',"ELIMINARE LUOGO DISPONIBILITA': " + Luogo.Descrizione + ' ?',EliminaLuogo,function(){});          
+
+  }
+
   //DATI DITTA
   
   $scope.ConfermaDati = function ()
@@ -858,5 +989,6 @@ $scope.GridOptions_6 = {
   $scope.RefreshListaTipologie();
   $scope.RefreshListaTipologieEscluse();
   $scope.RefreshListaProvince();
+  $scope.RefreshListaLuoghi();
 
 }]);

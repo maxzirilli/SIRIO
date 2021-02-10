@@ -1,0 +1,23 @@
+{ 
+  "SelectSQL"  : [
+                   {
+                     "Name" : "ScheduleInfoList",
+                     "SQL"  : "SELECT * FROM luoghi_disponibilita ORDER BY DESCRIZIONE"
+                   }
+                 ],
+                
+  "EditSQL"   : [   
+                  {
+                    "Name" : "InsertSchedule",
+                    "SQL"  : "INSERT INTO luoghi_disponibilita (CHIAVE,DESCRIZIONE) VALUES (:NewKey1,#DESCRIZIONE)"
+                  }, 
+                  {
+                    "Name" : "UpdateSchedule",
+                    "SQL"  : "UPDATE luoghi_disponibilita SET DESCRIZIONE=#DESCRIZIONE WHERE CHIAVE=:CHIAVE"
+                  },
+                  {
+                    "Name" : "DeleteSchedule",
+                    "SQL"  : "DELETE FROM luoghi_disponibilita WHERE CHIAVE=:CHIAVE"
+                  }
+                ]        
+}

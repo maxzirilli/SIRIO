@@ -196,4 +196,30 @@
                            md-on-paginate="logPagination"></md-table-pagination>
     </div>
 
+    <div ng-if="ConfigurazioneSelezionata==7">
+      <div>
+        <h2 style="float:left;">LUOGHI DISPONIBILITA' DOCENTI</h2>
+        <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoLuogo()">NUOVO LUOGO DISPONIBILITA'</md-button>
+      </div>
+      <table style="width:100%;text-align:center;" md-row-select="GridOptions_7.rowSelection" multiple="{{GridOptions_7.multiSelect}}">  
+        <tr>
+          <th></th>
+          <th></th> 
+          <th style="font-weight:bold;">DESCRIZIONE</th>
+        </tr>  
+        <tr ng-repeat="luogo in ListaLuoghi| limitTo : GridOptions_7.query.limit : (GridOptions_7.query.page - 1) * GridOptions_7.query.limit" id={{luogo.Chiave}}>
+          <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA LUOGO DISPONIBILITA'" ng-click="EliminaLuogo(luogo)"></td> 
+          <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA LUOGO DISPONIBILITA'" ng-click="ModificaLuogo(luogo)"></td>        
+          <td>{{luogo.Descrizione}}</td>
+        </tr>    
+      </table>
+      <md-table-pagination md-limit="GridOptions_7.query.limit" 
+                           md-limit-options="GridOptions_7.limitOptions" 
+                           md-page="GridOptions_7.query.page" 
+                           md-total="{{ListaLuoghi.length}}" 
+                           md-page-select="GridOptions_7.pageSelect" 
+                           md-boundary-links="GridOptions_7.boundaryLinks" 
+                           md-on-paginate="logPagination"></md-table-pagination>
+    </div>
+
 </div>

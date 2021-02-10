@@ -48,7 +48,7 @@
                                    },
                                    {
                                      "Name" : "InstituteTeacherAvailability",
-                                     "SQL"  : "SELECT docenti_disponibilita.* FROM docenti_disponibilita WHERE ISTITUTO=:CHIAVE ORDER BY DOCENTE,POSIZIONE ASC,GIORNO ASC,DA DESC,A DESC"
+                                     "SQL"  : "SELECT docenti_disponibilita.* FROM docenti_disponibilita WHERE ISTITUTO=:CHIAVE ORDER BY DOCENTE,GIORNO ASC,LUOGO ASC,ORA ASC"
                                    }
                                  ],                           
                    

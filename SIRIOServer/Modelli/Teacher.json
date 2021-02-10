@@ -45,8 +45,8 @@
                      },
                      {
                        "Name" : "TeacherAvailability",
-                       "SQL"  : "SELECT * FROM docenti_disponibilita WHERE DOCENTE =:CHIAVE ORDER BY ISTITUTO DESC,GIORNO DESC"
-                     }                     
+                       "SQL"  : "SELECT * FROM docenti_disponibilita WHERE DOCENTE=:CHIAVE"
+                     }                   
                    ],
   
   "EditSQL"      : [  
@@ -80,16 +80,12 @@
                      },
                      {
                        "Name" : "InsertUpdateTeacherAvailability",
-                       "SQL"  : "CALL AGGIORNA_DOCENTI_DISPONIBILITA(:DocenteDisp,:IstitutoDisp,:GiornoDisp,#DaDisp,#ADisp,:PosDisp)"
+                       "SQL"  : "INSERT INTO docenti_disponibilita (DOCENTE,ISTITUTO,GIORNO,LUOGO,ORA)VALUES(:DocenteDisp,:IstitutoDisp,:GiornoDisp,:LuogoDisp,:OraDisp)"
                      },
                      {
-                       "Name" : "InsertUpdateTeacherAvailabilityAfterInsert",
-                       "SQL"  : "CALL AGGIORNA_DOCENTI_DISPONIBILITA(:NewKey1,:IstitutoDisp,:GiornoDisp,#DaDisp,#ADisp,:PosDisp)"
-                     },
-                     {
-                       "Name" : "InsertTeacherAvailabilityAfterInsert",
-                       "SQL"  : "CALL AGGIORNA_DOCENTI_DISPONIBILITA()"
-                     },                     
+                       "Name" : "InsertUpdateTeacherAvailabilityAfterInsert", 
+                       "SQL"  : "INSERT INTO docenti_disponibilita (DOCENTE,ISTITUTO,GIORNO,LUOGO,ORA)VALUES(:NewKey1,:IstitutoDisp,:GiornoDisp,:LuogoDisp,:OraDisp)"
+                     },                    
                      {
                        "Name" : "UpdateTeacher",
                        "SQL"  : "UPDATE docenti SET RAGIONE_SOCIALE=#RAGIONE_SOCIALE,TITOLO=#TITOLO,TEL_PRIMO=#TEL_PRIMO,TEL_SECONDO=#TEL_SECONDO,TEL_TERZO=#TEL_TERZO,EMAIL=#EMAIL,EMAIL_2=#EMAIL_2,MATERIA_1=:MATERIA_1,MATERIA_2=:MATERIA_2,MATERIA_3=:MATERIA_3,PIATTAFORMA=#PIATTAFORMA,INDIRIZZO=#INDIRIZZO,COMUNE=#COMUNE,CAP=#CAP,PROVINCIA=:PROVINCIA,NOTE=#NOTE,COORD_MATERIA_1=:COORD_MATERIA_1,COORD_MATERIA_2=:COORD_MATERIA_2,COORD_MATERIA_3=:COORD_MATERIA_3 WHERE CHIAVE=:CHIAVE"
@@ -112,7 +108,7 @@
                      },
                      {
                        "Name" : "DeleteTeacherAvailability",
-                       "SQL"  : "DELETE FROM docenti_disponibilita WHERE DOCENTE=:Docente AND POSIZIONE = :Posizione AND GIORNO =:Giorno AND ISTITUTO = :Istituto"
+                       "SQL"  : "DELETE FROM docenti_disponibilita WHERE DOCENTE=:DocenteDisp AND LUOGO=:LuogoDisp AND GIORNO=:GiornoDisp AND ISTITUTO=:IstitutoDisp AND ORA=:OraDisp"
                      },
                      {
                        "Name" : "DeleteTeacherAvailabilityAll",

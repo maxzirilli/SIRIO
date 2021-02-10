@@ -13,3 +13,10 @@
 [19-Nov-2020 13:33:07 Europe/Berlin] PHP Stack trace:
 [19-Nov-2020 13:33:07 Europe/Berlin] PHP   1. {main}() D:\GoogleDrive\Lavoro\Progetti\Pagina43\Sirio\Software\Sirio\SIRIOServer\SIRIOSendMail.php:0
 [19-Nov-2020 13:33:07 Europe/Berlin] PHP   2. TAdvQuery->SendMail() D:\GoogleDrive\Lavoro\Progetti\Pagina43\Sirio\Software\Sirio\SIRIOServer\SIRIOSendMail.php:12
+[09-Feb-2021 17:29:26 Europe/Berlin] 
+[09-Feb-2021 17:31:32 Europe/Berlin] 
+[09-Feb-2021 17:32:19 Europe/Berlin] 
+[10-Feb-2021 10:59:51 Europe/Berlin] INSERT INTO docenti_disponibilita (DOCENTE,ISTITUTO,GIORNO,LUOGO,ORA)VALUES(2,13216,0,278840,NULL)
+[10-Feb-2021 11:09:11 Europe/Berlin] INSERT INTO docenti_disponibilita (DOCENTE,ISTITUTO,GIORNO,LUOGO,ORA)VALUES(2,13216,0,278840,0)
+[10-Feb-2021 12:04:31 Europe/Berlin] DELETE FROM luoghi_disponibilita WHERE CHIAVE=278840
+[10-Feb-2021 12:06:24 Europe/Berlin] SELECT docenti_disponibilita.* FROM docenti_disponibilita WHERE ISTITUTO=6749 ORDER BY DOCENTE,POSIZIONE ASC,GIORNO ASC,DA DESC,A DESC
