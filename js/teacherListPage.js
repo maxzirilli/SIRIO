@@ -1130,24 +1130,41 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                             "Eliminato"     : false,
                             "CHIAVE"        : istituto,
                             "ISTITUTO"      : IstitutoNome.Istituto,
+                            "INDIRIZZO"     : '',
+                            "CAP"           : '',
+                            "COMUNE"        : '',
+                            "PROVINCIA_LISTA_ALL" : -1,
                             "Orari"         : [],
                             "Disponibilita" : []
                           }
 
-          NuovoIstituto.Disponibilita = GetArrayDisponibilitaVuoto();                          
-
-          $scope.DocenteInEditing.ListaIstitutiDoc.push(NuovoIstituto);
-          $scope.IstitutoDaAssociare = -1;
-          $scope.IstitutoVisualizzato = $scope.DocenteInEditing.ListaIstitutiDoc[$scope.DocenteInEditing.ListaIstitutiDoc.length-1].CHIAVE;
-          $scope.ImpostaDisponibilita($scope.IstitutoVisualizzato);         
-          $scope.DocenteInEditing.ListaIstitutiDoc.sort(function(a,b) 
+          NuovoIstituto.Disponibilita = GetArrayDisponibilitaVuoto(); 
+          
+          SystemInformation.GetSQL('Institute', {CHIAVE : istituto}, function(Results)
           {
-              var IstA = a.ISTITUTO.toUpperCase();
-              var IstB = b.ISTITUTO.toUpperCase();
-              return (IstA < IstB) ? -1 : (IstA > IstB) ? 1 : 0;
-          });          
-          $scope.NomeFiltro = '';          
-          $mdDialog.hide();
+            IstitutoDettaglio = SystemInformation.FindResults(Results, 'InstituteInfoAddress');
+            if(IstitutoDettaglio != undefined)
+            {
+               NuovoIstituto.INDIRIZZO = IstitutoDettaglio[0].INDIRIZZO == null ? '' : IstitutoDettaglio[0].INDIRIZZO; 
+               NuovoIstituto.CAP       = IstitutoDettaglio[0].CAP == null ? '' : IstitutoDettaglio[0].CAP; 
+               NuovoIstituto.COMUNE    = IstitutoDettaglio[0].COMUNE == null ? '' : IstitutoDettaglio[0].COMUNE; 
+               NuovoIstituto.PROVINCIA = IstitutoDettaglio[0].PROVINCIA == null ? -1 : parseInt(IstitutoDettaglio[0].PROVINCIA);
+               NuovoIstituto.PROVINCIA_LISTA_ALL = IstitutoDettaglio[0].PROVINCIA_LISTA_ALL == null ? -1 : parseInt(IstitutoDettaglio[0].PROVINCIA_LISTA_ALL);
+               $scope.DocenteInEditing.ListaIstitutiDoc.push(NuovoIstituto);
+               $scope.IstitutoDaAssociare = -1;
+               $scope.IstitutoVisualizzato = $scope.DocenteInEditing.ListaIstitutiDoc[$scope.DocenteInEditing.ListaIstitutiDoc.length-1].CHIAVE;
+               $scope.ImpostaDisponibilita($scope.IstitutoVisualizzato);         
+               $scope.DocenteInEditing.ListaIstitutiDoc.sort(function(a,b) 
+               {
+                   var IstA = a.ISTITUTO.toUpperCase();
+                   var IstB = b.ISTITUTO.toUpperCase();
+                   return (IstA < IstB) ? -1 : (IstA > IstB) ? 1 : 0;
+               });          
+               $scope.NomeFiltro = '';          
+               $mdDialog.hide();
+            }
+            else SystemInformation.ApplyOnError('Modello indirizzo istituto conforme');
+          },'SelectSQLOnlyAddress');
         }
       }        
     };

@@ -1085,7 +1085,7 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
          
          if(ListaDocenti.length != 0)
          {
-            /*ListaDocenti.forEach(function(Docente){Docente.DISPONIBILITA = []});
+            ListaDocenti.forEach(function(Docente){Docente.DISPONIBILITA = []});
 
             for(let i = 0;i < ListaDocenti.length;i ++)
                 for(let j = 0;j < ListaDisponibilita.length;j ++)
@@ -1104,61 +1104,12 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                 
                 if(ListaDocenti[i].DISPONIBILITA.length != 0)
                 {
-                   if(ListaDocenti[i].DISPONIBILITA[0] != undefined)
+                   for(let j = 0;j < ListaDocenti[i].DISPONIBILITA.length;j ++)
                    {
-                      var DaMin = ListaDocenti[i].DISPONIBILITA[0].DA.substr(3,2);
-                      var DaOra = ListaDocenti[i].DISPONIBILITA[0].DA.substr(0,2);
-                      if(parseInt(DaMin) > 30)
-                         DaOra = parseInt(DaOra) + 1;
-                      ListaDocenti[i].DISPONIBILITA[0].DA = DaOra;
-                         
-                      var AMin = ListaDocenti[i].DISPONIBILITA[0].A.substr(3,2);
-                      var AOra = ListaDocenti[i].DISPONIBILITA[0].A.substr(0,2);
-                      if(parseInt(AMin) > 30)
-                         AOra = parseInt(AOra) + 1;
-                      ListaDocenti[i].DISPONIBILITA[0].A = AOra;
-
-                      for(let j = parseInt(ListaDocenti[i].DISPONIBILITA[0].DA); j < parseInt(ListaDocenti[i].DISPONIBILITA[0].A);j ++)
-                          ListaDocenti[i].DISPONIBILITA.SETTIMANA[parseInt(ListaDocenti[i].DISPONIBILITA[0].GIORNO)][j - 8] = true;
-                   }
-                   
-                   if(ListaDocenti[i].DISPONIBILITA[1] != undefined)
-                   {
-                      var DaMin = ListaDocenti[i].DISPONIBILITA[1].DA.substr(3,2);
-                      var DaOra = ListaDocenti[i].DISPONIBILITA[1].DA.substr(0,2);
-                      if(parseInt(DaMin) > 30)
-                         DaOra = parseInt(DaOra) + 1;
-                      ListaDocenti[i].DISPONIBILITA[1].DA = DaOra;
-                        
-                      var AMin = ListaDocenti[i].DISPONIBILITA[1].A.substr(3,2);
-                      var AOra = ListaDocenti[i].DISPONIBILITA[1].A.substr(0,2);
-                      if(parseInt(AMin) > 30)
-                         AOra = parseInt(AOra) + 1;
-                      ListaDocenti[i].DISPONIBILITA[1].A = AOra;
-
-                      for(let j = parseInt(ListaDocenti[i].DISPONIBILITA[1].DA); j < parseInt(ListaDocenti[i].DISPONIBILITA[1].A);j ++)
-                          ListaDocenti[i].DISPONIBILITA.SETTIMANA[parseInt(ListaDocenti[i].DISPONIBILITA[1].GIORNO)][j - 8] = true;
-                   }
-                   
-                   if(ListaDocenti[i].DISPONIBILITA[2] != undefined)
-                   {
-                      var DaMin = ListaDocenti[i].DISPONIBILITA[2].DA.substr(3,2);
-                      var DaOra = ListaDocenti[i].DISPONIBILITA[2].DA.substr(0,2);
-                      if(parseInt(DaMin) > 30)
-                         DaOra = parseInt(DaOra) + 1;
-                      ListaDocenti[i].DISPONIBILITA[2].DA = DaOra;
-                        
-                      var AMin = ListaDocenti[i].DISPONIBILITA[2].A.substr(3,2);
-                      var AOra = ListaDocenti[i].DISPONIBILITA[2].A.substr(0,2);
-                      if(parseInt(AMin) > 30)
-                         AOra = parseInt(AOra) + 1;
-                      ListaDocenti[i].DISPONIBILITA[2].A = AOra;
-
-                      for(let j = parseInt(ListaDocenti[i].DISPONIBILITA[2].DA); j < parseInt(ListaDocenti[i].DISPONIBILITA[2].A);j ++)
-                          ListaDocenti[i].DISPONIBILITA.SETTIMANA[parseInt(ListaDocenti[i].DISPONIBILITA[2].GIORNO)][j - 8] = true;
+                       ListaDocenti[i].DISPONIBILITA.SETTIMANA[parseInt(ListaDocenti[i].DISPONIBILITA[j].GIORNO)][parseInt(ListaDocenti[i].DISPONIBILITA[j].ORA)] = true;
                    }
                 }
-            }*/
+            }
             doc.addPage();
             doc.setFontSize(8);
             var CoordY = 10;
@@ -1181,7 +1132,7 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                 doc.text(10,CoordY+5,'DOCENTE: ' + ListaDocenti[i].NOME_DOCENTE);
                 doc.text(10,CoordY+10,'MATERIE: ' + (ListaDocenti[i].NOME_MATERIA_1 == undefined ? '' : ListaDocenti[i].NOME_MATERIA_1) + ' - ' + (ListaDocenti[i].NOME_MATERIA_2 == undefined ? '' : ListaDocenti[i].NOME_MATERIA_2) + ' - ' + (ListaDocenti[i].NOME_MATERIA_3 == undefined ? '' : ListaDocenti[i].NOME_MATERIA_3));
                 CoordY += 15;
-                /*doc.setFontSize(7);
+                doc.setFontSize(7);
                 doc.setFontType('italic');
                 doc.text(10,CoordY,'LUNEDI');
                 doc.text(30,CoordY,'MARTEDI')
@@ -1210,7 +1161,7 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                 doc.text(90,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[4]);
                 doc.text(110,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[5]);
                 doc.text(130,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[6]);
-                CoordY += 10;*/
+                CoordY += 10;
             }            
          }
          document.getElementById('teacherListPdf').src = doc.output('datauristring');              

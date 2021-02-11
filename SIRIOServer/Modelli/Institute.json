@@ -13,7 +13,12 @@
                       }                       
                      ],
 
-
+ "SelectSQLOnlyAddress" : [
+                            {
+                               "Name" : "InstituteInfoAddress",
+                               "SQL"  : "SELECT istituti.INDIRIZZO,istituti.CAP,istituti.PROVINCIA,istituti.COMUNE,(SELECT province_all.CHIAVE FROM province_all WHERE NOME=(SELECT province.NOME FROM province WHERE CHIAVE = istituti.PROVINCIA)) AS PROVINCIA_LISTA_ALL FROM istituti WHERE CHIAVE=:CHIAVE"      
+                            }
+                          ],
  
  "SelectSQLOnlyVisible"    : [
                                { 
@@ -48,7 +53,7 @@
                                    },
                                    {
                                      "Name" : "InstituteTeacherAvailability",
-                                     "SQL"  : "SELECT docenti_disponibilita.* FROM docenti_disponibilita WHERE ISTITUTO=:CHIAVE ORDER BY DOCENTE,GIORNO ASC,LUOGO ASC,ORA ASC"
+                                     "SQL"  : "SELECT docenti_disponibilita.DOCENTE,docenti_disponibilita.GIORNO,docenti_disponibilita.ORA FROM docenti_disponibilita WHERE ISTITUTO=:CHIAVE ORDER BY DOCENTE,GIORNO ASC,ORA ASC"
                                    }
                                  ],                           
                    

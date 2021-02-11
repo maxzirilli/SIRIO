@@ -20,3 +20,4 @@
 [10-Feb-2021 11:09:11 Europe/Berlin] INSERT INTO docenti_disponibilita (DOCENTE,ISTITUTO,GIORNO,LUOGO,ORA)VALUES(2,13216,0,278840,0)
 [10-Feb-2021 12:04:31 Europe/Berlin] DELETE FROM luoghi_disponibilita WHERE CHIAVE=278840
 [10-Feb-2021 12:06:24 Europe/Berlin] SELECT docenti_disponibilita.* FROM docenti_disponibilita WHERE ISTITUTO=6749 ORDER BY DOCENTE,POSIZIONE ASC,GIORNO ASC,DA DESC,A DESC
+[11-Feb-2021 16:15:51 Europe/Berlin] SELECT istituti.INDIRIZZO,istituti.CAP,istituti.PROVINCIA,istituti.COMUNE FROM istituti WHERE CHIAVE =

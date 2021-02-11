@@ -3,7 +3,9 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
   $scope.DataRicercaAl     = new Date();
   let TmpDate              = new Date($scope.DataRicercaAl);
   TmpDate.setDate(TmpDate.getDate() - 7);
-  $scope.DataRicercaDal    = new Date(TmpDate);
+  //$scope.DataRicercaDal   = new Date(TmpDate);
+  var AnnoCorrente = new Date().getFullYear();
+  $scope.DataRicercaDal   = new Date(AnnoCorrente, 01, 01)
   $scope.TitoloFiltro      = undefined;
   $scope.Magazzino         = 'G';
   $scope.ResearchOn        = false;
