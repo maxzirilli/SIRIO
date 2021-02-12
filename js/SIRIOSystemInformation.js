@@ -196,7 +196,7 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
              let Result = Self.FindResults(Answer.data.Results,'UserInformation');
              if(Result != undefined)
              {
-                Self.UserInformation = { Ruolo : Result[0].ROLE };
+                Self.UserInformation = { Ruolo : Result[0].ROLE, OrdinamentoDoc : Result[0].ORDINAMENTO_DOC };
                 ScopeHeaderController.ChangeStatoLogin(true);
                 OnSuccess();
              }

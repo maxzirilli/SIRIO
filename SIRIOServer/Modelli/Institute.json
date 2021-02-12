@@ -34,28 +34,51 @@
                                    }                       
                                  ],
 
-  "SelectInstituteTeacherList" : [
-                                   {
-                                     "Name" : "InstituteInformationAll",
-                                     "SQL"  : "SELECT *,(SELECT NOME FROM province WHERE CHIAVE = istituti.PROVINCIA) AS NOME_PROVINCIA,(SELECT DESCRIZIONE FROM tipologie_istituto WHERE CHIAVE = istituti.TIPOLOGIA) AS NOME_TIPOLOGIA FROM istituti WHERE CHIAVE =:CHIAVE"
-                                   },
-                                   {
-                                    "Name" : "AllClassiInstitute",
-                                    "SQL"  : "SELECT *,(SELECT COUNT(*) FROM classi WHERE ISTITUTO=:CHIAVE AND ANNO = 1) AS PRIME_CLASSI,(SELECT COUNT(*) FROM classi WHERE ISTITUTO=:CHIAVE AND ANNO = 2) AS SECONDE_CLASSI,(SELECT COUNT(*) FROM classi WHERE ISTITUTO=:CHIAVE AND ANNO = 3) AS TERZE_CLASSI,(SELECT COUNT(*) FROM classi WHERE ISTITUTO=:CHIAVE AND ANNO = 4) AS QUARTE_CLASSI,(SELECT COUNT(*) FROM classi WHERE ISTITUTO=:CHIAVE AND ANNO = 5) AS QUINTE_CLASSI,(SELECT DESCRIZIONE FROM classi_combinazioni WHERE CHIAVE = classi.COMBINAZIONE) AS COMBINAZIONE_DESCR FROM classi WHERE ISTITUTO=:CHIAVE ORDER BY classi.COMBINAZIONE,classi.SEZIONE,classi.ANNO"
-                                   },
-                                   {
-                                     "Name" : "CountClassi",
-                                     "SQL"  : "SELECT NOME,(SELECT COUNT(*) FROM classi WHERE ISTITUTO=:CHIAVE AND ANNO = 1) AS PRIME_CLASSI,(SELECT COUNT(*) FROM classi WHERE ISTITUTO=:CHIAVE AND ANNO = 2) AS SECONDE_CLASSI,(SELECT COUNT(*) FROM classi WHERE ISTITUTO=:CHIAVE AND ANNO = 3) AS TERZE_CLASSI,(SELECT COUNT(*) FROM classi WHERE ISTITUTO=:CHIAVE AND ANNO = 4) AS QUARTE_CLASSI,(SELECT COUNT(*) FROM classi WHERE ISTITUTO=:CHIAVE AND ANNO = 5) AS QUINTE_CLASSI FROM istituti WHERE CHIAVE =:CHIAVE"
-                                   },
-                                   {
-                                     "Name" : "InstituteTeacherList",
-                                     "SQL"  : "SELECT istituti_x_docenti.DOCENTE,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE IN (SELECT docenti.MATERIA_1 FROM docenti WHERE CHIAVE = istituti_x_docenti.DOCENTE)) AS NOME_MATERIA_1,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE IN (SELECT docenti.MATERIA_2 FROM docenti WHERE CHIAVE = istituti_x_docenti.DOCENTE)) AS NOME_MATERIA_2,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE IN (SELECT docenti.MATERIA_3 FROM docenti WHERE CHIAVE = istituti_x_docenti.DOCENTE)) AS NOME_MATERIA_3, (SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE CHIAVE = istituti_x_docenti.DOCENTE) AS NOME_DOCENTE FROM istituti_x_docenti WHERE istituti_x_docenti.ISTITUTO=:CHIAVE ORDER BY NOME_DOCENTE"
-                                   },
-                                   {
-                                     "Name" : "InstituteTeacherAvailability",
-                                     "SQL"  : "SELECT docenti_disponibilita.DOCENTE,docenti_disponibilita.GIORNO,docenti_disponibilita.ORA FROM docenti_disponibilita WHERE ISTITUTO=:CHIAVE ORDER BY DOCENTE,GIORNO ASC,ORA ASC"
-                                   }
-                                 ],                           
+  "SelectInstituteTeacherListOrderAlf" : [
+                                            {
+                                              "Name" : "InstituteInformationAll",
+                                              "SQL"  : "SELECT *,(SELECT NOME FROM province WHERE CHIAVE = istituti.PROVINCIA) AS NOME_PROVINCIA,(SELECT DESCRIZIONE FROM tipologie_istituto WHERE CHIAVE = istituti.TIPOLOGIA) AS NOME_TIPOLOGIA FROM istituti WHERE CHIAVE =:CHIAVE"
+                                            },
+                                            {
+                                              "Name" : "AllClassiInstitute",
+                                              "SQL"  : "SELECT *,(SELECT COUNT(*) FROM classi WHERE ISTITUTO=:CHIAVE AND ANNO = 1) AS PRIME_CLASSI,(SELECT COUNT(*) FROM classi WHERE ISTITUTO=:CHIAVE AND ANNO = 2) AS SECONDE_CLASSI,(SELECT COUNT(*) FROM classi WHERE ISTITUTO=:CHIAVE AND ANNO = 3) AS TERZE_CLASSI,(SELECT COUNT(*) FROM classi WHERE ISTITUTO=:CHIAVE AND ANNO = 4) AS QUARTE_CLASSI,(SELECT COUNT(*) FROM classi WHERE ISTITUTO=:CHIAVE AND ANNO = 5) AS QUINTE_CLASSI,(SELECT DESCRIZIONE FROM classi_combinazioni WHERE CHIAVE = classi.COMBINAZIONE) AS COMBINAZIONE_DESCR FROM classi WHERE ISTITUTO=:CHIAVE ORDER BY classi.COMBINAZIONE,classi.SEZIONE,classi.ANNO"
+                                            },
+                                            {
+                                              "Name" : "CountClassi",
+                                              "SQL"  : "SELECT NOME,(SELECT COUNT(*) FROM classi WHERE ISTITUTO=:CHIAVE AND ANNO = 1) AS PRIME_CLASSI,(SELECT COUNT(*) FROM classi WHERE ISTITUTO=:CHIAVE AND ANNO = 2) AS SECONDE_CLASSI,(SELECT COUNT(*) FROM classi WHERE ISTITUTO=:CHIAVE AND ANNO = 3) AS TERZE_CLASSI,(SELECT COUNT(*) FROM classi WHERE ISTITUTO=:CHIAVE AND ANNO = 4) AS QUARTE_CLASSI,(SELECT COUNT(*) FROM classi WHERE ISTITUTO=:CHIAVE AND ANNO = 5) AS QUINTE_CLASSI FROM istituti WHERE CHIAVE =:CHIAVE"
+                                            },
+                                            {
+                                              "Name" : "InstituteTeacherList",
+                                              "SQL"  : "SELECT istituti_x_docenti.DOCENTE,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE IN (SELECT docenti.MATERIA_1 FROM docenti WHERE CHIAVE = istituti_x_docenti.DOCENTE)) AS NOME_MATERIA_1,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE IN (SELECT docenti.MATERIA_2 FROM docenti WHERE CHIAVE = istituti_x_docenti.DOCENTE)) AS NOME_MATERIA_2,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE IN (SELECT docenti.MATERIA_3 FROM docenti WHERE CHIAVE = istituti_x_docenti.DOCENTE)) AS NOME_MATERIA_3, (SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE CHIAVE = istituti_x_docenti.DOCENTE) AS NOME_DOCENTE FROM istituti_x_docenti WHERE istituti_x_docenti.ISTITUTO=:CHIAVE ORDER BY NOME_DOCENTE"
+                                            },
+                                            {
+                                              "Name" : "InstituteTeacherAvailability",
+                                              "SQL"  : "SELECT docenti_disponibilita.DOCENTE,docenti_disponibilita.GIORNO,docenti_disponibilita.ORA FROM docenti_disponibilita WHERE ISTITUTO=:CHIAVE ORDER BY DOCENTE,GIORNO ASC,ORA ASC"
+                                            }
+                                          ],
+                                          
+"SelectInstituteTeacherListOrderMat" : [
+                                          {
+                                            "Name" : "InstituteInformationAll",
+                                            "SQL"  : "SELECT *,(SELECT NOME FROM province WHERE CHIAVE = istituti.PROVINCIA) AS NOME_PROVINCIA,(SELECT DESCRIZIONE FROM tipologie_istituto WHERE CHIAVE = istituti.TIPOLOGIA) AS NOME_TIPOLOGIA FROM istituti WHERE CHIAVE =:CHIAVE"
+                                          },
+                                          {
+                                            "Name" : "AllClassiInstitute",
+                                            "SQL"  : "SELECT *,(SELECT COUNT(*) FROM classi WHERE ISTITUTO=:CHIAVE AND ANNO = 1) AS PRIME_CLASSI,(SELECT COUNT(*) FROM classi WHERE ISTITUTO=:CHIAVE AND ANNO = 2) AS SECONDE_CLASSI,(SELECT COUNT(*) FROM classi WHERE ISTITUTO=:CHIAVE AND ANNO = 3) AS TERZE_CLASSI,(SELECT COUNT(*) FROM classi WHERE ISTITUTO=:CHIAVE AND ANNO = 4) AS QUARTE_CLASSI,(SELECT COUNT(*) FROM classi WHERE ISTITUTO=:CHIAVE AND ANNO = 5) AS QUINTE_CLASSI,(SELECT DESCRIZIONE FROM classi_combinazioni WHERE CHIAVE = classi.COMBINAZIONE) AS COMBINAZIONE_DESCR FROM classi WHERE ISTITUTO=:CHIAVE ORDER BY classi.COMBINAZIONE,classi.SEZIONE,classi.ANNO"
+                                          },
+                                          {
+                                            "Name" : "CountClassi",
+                                            "SQL"  : "SELECT NOME,(SELECT COUNT(*) FROM classi WHERE ISTITUTO=:CHIAVE AND ANNO = 1) AS PRIME_CLASSI,(SELECT COUNT(*) FROM classi WHERE ISTITUTO=:CHIAVE AND ANNO = 2) AS SECONDE_CLASSI,(SELECT COUNT(*) FROM classi WHERE ISTITUTO=:CHIAVE AND ANNO = 3) AS TERZE_CLASSI,(SELECT COUNT(*) FROM classi WHERE ISTITUTO=:CHIAVE AND ANNO = 4) AS QUARTE_CLASSI,(SELECT COUNT(*) FROM classi WHERE ISTITUTO=:CHIAVE AND ANNO = 5) AS QUINTE_CLASSI FROM istituti WHERE CHIAVE =:CHIAVE"
+                                          },
+                                          {
+                                            "Name" : "InstituteTeacherList",
+                                            "SQL"  : "SELECT istituti_x_docenti.DOCENTE,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE IN (SELECT docenti.MATERIA_1 FROM docenti WHERE CHIAVE = istituti_x_docenti.DOCENTE)) AS NOME_MATERIA_1,(SELECT materie_insegnamento.ORDINAMENTO from materie_insegnamento WHERE CHIAVE IN (SELECT docenti.MATERIA_1 FROM docenti WHERE CHIAVE = istituti_x_docenti.DOCENTE)) AS ORDINAMENTO_MATERIA_1,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE IN (SELECT docenti.MATERIA_2 FROM docenti WHERE CHIAVE = istituti_x_docenti.DOCENTE)) AS NOME_MATERIA_2,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE IN (SELECT docenti.MATERIA_3 FROM docenti WHERE CHIAVE = istituti_x_docenti.DOCENTE)) AS NOME_MATERIA_3, (SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE CHIAVE = istituti_x_docenti.DOCENTE) AS NOME_DOCENTE FROM istituti_x_docenti WHERE istituti_x_docenti.ISTITUTO=:CHIAVE ORDER BY ORDINAMENTO_MATERIA_1 DESC,NOME_DOCENTE ASC"
+                                          },
+                                          {
+                                            "Name" : "InstituteTeacherAvailability",
+                                            "SQL"  : "SELECT docenti_disponibilita.DOCENTE,docenti_disponibilita.GIORNO,docenti_disponibilita.ORA FROM docenti_disponibilita WHERE ISTITUTO=:CHIAVE ORDER BY DOCENTE,GIORNO ASC,ORA ASC"
+                                          }
+                                        ], 
                    
   "SQLDettaglio" : [
                      { 

@@ -64,7 +64,14 @@
              <div ng-message="required">Inserire una email</div>
             </div>
           </md-input-container>
-        </div>        
+        </div>
+
+        <md-input-container class="containerSelect" style="width:33%;"><label>ORDINAMENTO</label>
+          <md-select ng-model="UtenteInEditing.ORDINAMENTO_DOC" class="mdb-select" type="text" name="Ordinamento">
+            <md-option ng-repeat="ordinamento in ListaOrdinamenti" ng-value="ordinamento.Sigla">{{ordinamento.Descrizione}}</md-option>
+          </md-select>
+        </md-input-container>
+
         <md-input-container class="containerSelect" style="width:33%;">
           <md-select ng-model="UtenteInEditing.ROLE" class="mdb-select" type="text" name="Ruolo" required >
             <md-option ng-value="1">AMMINISTRATORE</md-option>

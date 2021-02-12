@@ -13,11 +13,11 @@
  "EditSQL"  : [   
                 {
                   "Name" : "InsertUser",
-                  "SQL"  : "INSERT INTO utenti (CHIAVE,USERNAME,RAGIONE_SOCIALE,EMAIL,ROLE,PASSWORD) VALUES (:NewKey1,#USERNAME,#RAGIONE_SOCIALE,#EMAIL,:ROLE,'')"
+                  "SQL"  : "INSERT INTO utenti (CHIAVE,USERNAME,RAGIONE_SOCIALE,EMAIL,ROLE,PASSWORD,ORDINAMENTO_DOC) VALUES (:NewKey1,#USERNAME,#RAGIONE_SOCIALE,#EMAIL,:ROLE,'',#ORDINAMENTO_DOC)"
                 }, 
                 {
                   "Name" : "UpdateUser",
-                  "SQL"  : "UPDATE utenti SET USERNAME=#USERNAME,RAGIONE_SOCIALE=#RAGIONE_SOCIALE,EMAIL=#EMAIL,ROLE=:ROLE WHERE CHIAVE=:CHIAVE"
+                  "SQL"  : "UPDATE utenti SET USERNAME=#USERNAME,RAGIONE_SOCIALE=#RAGIONE_SOCIALE,EMAIL=#EMAIL,ROLE=:ROLE,ORDINAMENTO_DOC=#ORDINAMENTO_DOC WHERE CHIAVE=:CHIAVE"
                 },
                 {
                   "Name" : "DeleteUser",

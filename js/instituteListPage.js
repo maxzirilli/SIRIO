@@ -834,7 +834,12 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
     $scope.StampaOn        = true;
     $scope.EditingOn       = false;
     var ListaDocenti       = [];
-    var ListaDisponibilita = []
+    var ListaDisponibilita = [];
+    var ModelloOrdinamento = 'SelectInstituteTeacherListOrdAlf'
+    if(SystemInformation.UserInformation.OrdinamentoDoc === 'M')
+       ModelloOrdinamento = 'SelectInstituteTeacherListOrderMat'
+    else ModelloOrdinamento = 'SelectInstituteTeacherListOrderAlf';
+
     SystemInformation.GetSQL('Institute',{CHIAVE : ChiaveIstituto},function(Results)
     {
       var InfoIstituto = {};
@@ -1167,7 +1172,7 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
          document.getElementById('teacherListPdf').src = doc.output('datauristring');              
       }
       else SystemInformation.ApplyOnError('Modello docenti e disponibilita per istituto non conforme','');     
-    },'SelectInstituteTeacherList')
+    },ModelloOrdinamento)
   }  
   
   $scope.RefreshListaIstituti();

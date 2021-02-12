@@ -1,10 +1,13 @@
 {
  "Version": {
   "Major": 1,
-  "Minor": 11,
+  "Minor": 12,
   "Release": 7
  },
  "Storia": [
+  "Versione 1.12.7   12 Febbraio 2021",
+  "                  - NEW: Aggiunto campo ordinamento nella tabella materie_insegnamento",
+  "                  - NEW: Aggiunto il campo ordinamento_doc nella tabella utenti",
   "Versione 1.11.7   12 Febbraio 2021",
   "                  - CHG: Modificata la tabella degli orari dei docenti, aggiunto il campo luogo e sostituiti i due campi precedenti da e a con il campo ora",
   "                  - CHG: Rimossa la store procedure di per l'inserimento degli orari dei docenti",
@@ -411,6 +414,15 @@
      "Nome": "DESCRIZIONE",
      "IsNullable": true,
      "DataType": "varchar(255)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "ORDINAMENTO",
+     "IsNullable": true,
+     "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
      "DefaultValue": null,
@@ -1174,6 +1186,15 @@
      "AutoIncrement": false,
      "Commento": "",
      "DefaultValue": "0",
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "ORDINAMENTO_DOC",
+     "IsNullable": true,
+     "DataType": "char(1)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
      "SQLAfterAddedColumn": null
     }
    ],
@@ -2727,7 +2748,20 @@
   }
  ],
  "__CommentCampiDaEliminare": "Vettore di oggetti con Campo e Tabella",
- "CampiDaEliminare": [],
+ "CampiDaEliminare": [
+  {
+   "Campo": "DA",
+   "Tabella": "docenti_disponibilita"
+  },
+  {
+   "Campo": "A",
+   "Tabella": "docenti_disponibilita"
+  },
+  {
+   "Campo": "POSIZIONE",
+   "Tabella": "docenti_disponibilita"
+  }
+ ],
  "__CommentTabelleDaEliminare": "Vettore di stringhe con i nomi delle tabelle",
  "TabelleDaEliminare": [],
  "__CommentQueryAllCreazione": "Vettore di stringhe contenente la lista di query",

@@ -1,6 +1,6 @@
 SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','ZConfirm','ZPrompt', function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm,ZPrompt)
 { 
-  $scope.ListaConfigurazioni        = ['COMBINAZIONI CLASSI','CASE EDITRICI GESTITE','DATI PAGINA 43','MATERIE','TIPOLOGIE GESTITE','TIPOLOGIE ESCLUSE','PROVINCE GESTITE',"LUOGHI DISPONIBILITA' DOCENTI"];
+  $scope.ListaConfigurazioni        = ['COMBINAZIONI CLASSI','CASE EDITRICI GESTITE','DATI PAGINA 43',"LUOGHI DISPONIBILITA' DOCENTI",'MATERIE','PROVINCE GESTITE','TIPOLOGIE ISTITUTI GESTITE','TIPOLOGIE ISTITUTI ESCLUSE'];
   $scope.ConfigurazioneSelezionata  = 0;
   
   $scope.ListaMaterie               = [];
@@ -319,8 +319,9 @@ $scope.GridOptions_7 = {
       {       
         var ParamMateria = {
                             CHIAVE      : -1,
-                            DESCRIZIONE : MateriaInEditing.toUpperCase()
-                          }
+                            DESCRIZIONE : MateriaInEditing.toUpperCase(),
+                            ORDINAMENTO : ORDINAMENTO_MATERIA
+                           }
         $scope.ConfermaMateria(ParamMateria);
       }   
     }

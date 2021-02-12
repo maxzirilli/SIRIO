@@ -6,6 +6,7 @@ SIRIOApp.controller("userListPageController",['$scope','SystemInformation','$sta
   $scope.UtenteInEditing = {};
   $scope.NuovoUtente     = false;
   $scope.MyKey           = [];
+  $scope.ListaOrdinamenti = [{Sigla:'A',Descrizione:"ALFABETICO"},{Sigla:'M',Descrizione:"MATERIA"}];
   
   ScopeHeaderController.CheckButtons();
   
@@ -40,7 +41,8 @@ SIRIOApp.controller("userListPageController",['$scope','SystemInformation','$sta
                                    RagioneSociale : UtentiInfoList[i].RAGIONE_SOCIALE,
                                    Username       : UtentiInfoList[i].USERNAME,   
                                    Email          : UtentiInfoList[i].EMAIL,  
-                                   Ruolo          : UtentiInfoList[i].ROLE  
+                                   Ruolo          : UtentiInfoList[i].ROLE,
+                                   Ordinamento    : UtentiInfoList[i].ORDINAMENTO_DOC
                                 };
           
           $scope.ListaUtenti = UtentiInfoList;
@@ -58,6 +60,7 @@ SIRIOApp.controller("userListPageController",['$scope','SystemInformation','$sta
     $scope.UtenteInEditing.EMAIL           = Utente.Email;
     $scope.UtenteInEditing.ROLE            = Utente.Ruolo;
     $scope.UtenteInEditing.RAGIONE_SOCIALE = Utente.RagioneSociale;
+    $scope.UtenteInEditing.ORDINAMENTO_DOC = Utente.Ordinamento;
   }
   
   $scope.NuovoUtente = function()
@@ -69,7 +72,8 @@ SIRIOApp.controller("userListPageController",['$scope','SystemInformation','$sta
                                USERNAME        : '',
                                RAGIONE_SOCIALE : '',
                                EMAIL           : '',
-                               ROLE            : 0       
+                               ROLE            : 0,
+                               ORDINAMENTO_DOC : 'A'      
                              }
   }
   
@@ -88,7 +92,8 @@ SIRIOApp.controller("userListPageController",['$scope','SystemInformation','$sta
                          USERNAME        : $scope.UtenteInEditing.USERNAME,
                          RAGIONE_SOCIALE : $scope.UtenteInEditing.RAGIONE_SOCIALE,
                          EMAIL           : $scope.UtenteInEditing.EMAIL,
-                         ROLE            : $scope.UtenteInEditing.ROLE
+                         ROLE            : $scope.UtenteInEditing.ROLE,
+                         ORDINAMENTO_DOC : $scope.UtenteInEditing.ORDINAMENTO_DOC
                        };
                      
      var NuovoUtente = ($scope.UtenteInEditing.CHIAVE == -1);

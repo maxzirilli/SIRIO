@@ -9,7 +9,7 @@
   "EditSQL"   : [   
                   {
                     "Name" : "InsertSubject",
-                    "SQL"  : "INSERT INTO materie_insegnamento (CHIAVE,DESCRIZIONE) VALUES (:NewKey1,#DESCRIZIONE)"
+                    "SQL"  : "INSERT INTO materie_insegnamento (CHIAVE,DESCRIZIONE,ORDINAMENTO) VALUES (:NewKey1,#DESCRIZIONE,:ORDINAMENTO)"
                   }, 
                   {
                     "Name" : "UpdateSubject",
