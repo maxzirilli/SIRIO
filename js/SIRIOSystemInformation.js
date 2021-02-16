@@ -21,7 +21,7 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
   this.VDocLogStorage        = 'VERSIONE DOCUMENTO 1.0 DEL 08/09/2020';
   this.VDocInventory         = 'VERSIONE DOCUMENTO 1.1 DEL 13/10/2020';
   this.VDocCarico            = 'VERSIONE DOCUMENTO 2.2 DEL 11/11/2020';
-  this.VDocListaDocIst       = 'VERSIONE DOCUMENTO 2.0 DEL 06/11/2020';
+  this.VDocListaDocIst       = 'VERSIONE DOCUMENTO 2.1 DEL 16/02/2021';
 
   this.s2ab = function(s)
   {

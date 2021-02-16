@@ -1099,19 +1099,27 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
 
             for(let i = 0;i < ListaDocenti.length;i ++)
             {
-                ListaDocenti[i].DISPONIBILITA.SETTIMANA = [[false,false,false,false,false,false,false,false,false,false],
-                                                          [false,false,false,false,false,false,false,false,false,false],
-                                                          [false,false,false,false,false,false,false,false,false,false],
-                                                          [false,false,false,false,false,false,false,false,false,false],
-                                                          [false,false,false,false,false,false,false,false,false,false],
-                                                          [false,false,false,false,false,false,false,false,false,false],
-                                                          [false,false,false,false,false,false,false,false,false,false]];;
-                
+                ListaDocenti[i].DISPONIBILITA.SETTIMANA  = [['-','-','-','-','-','-','-','-','-','-'],
+                                                            ['-','-','-','-','-','-','-','-','-','-'],
+                                                            ['-','-','-','-','-','-','-','-','-','-'],
+                                                            ['-','-','-','-','-','-','-','-','-','-'],
+                                                            ['-','-','-','-','-','-','-','-','-','-'],
+                                                            ['-','-','-','-','-','-','-','-','-','-'],
+                                                            ['-','-','-','-','-','-','-','-','-','-']];
+                                                            
                 if(ListaDocenti[i].DISPONIBILITA.length != 0)
                 {
                    for(let j = 0;j < ListaDocenti[i].DISPONIBILITA.length;j ++)
                    {
-                       ListaDocenti[i].DISPONIBILITA.SETTIMANA[parseInt(ListaDocenti[i].DISPONIBILITA[j].GIORNO)][parseInt(ListaDocenti[i].DISPONIBILITA[j].ORA)] = true;
+                       switch(ListaDocenti[i].DISPONIBILITA[j].LUOGO_NOME)
+                       {
+                              case 'RICEVIMENTO' : ListaDocenti[i].DISPONIBILITA.SETTIMANA[parseInt(ListaDocenti[i].DISPONIBILITA[j].GIORNO)][parseInt(ListaDocenti[i].DISPONIBILITA[j].ORA)] = 'R';
+                                                   break;
+                              case 'SUCCURSALE'  : ListaDocenti[i].DISPONIBILITA.SETTIMANA[parseInt(ListaDocenti[i].DISPONIBILITA[j].GIORNO)][parseInt(ListaDocenti[i].DISPONIBILITA[j].ORA)] = 'S';
+                                                   break;
+                              case 'ORARIO'      : ListaDocenti[i].DISPONIBILITA.SETTIMANA[parseInt(ListaDocenti[i].DISPONIBILITA[j].GIORNO)][parseInt(ListaDocenti[i].DISPONIBILITA[j].ORA)] = (parseInt(ListaDocenti[i].DISPONIBILITA[j].ORA) + 1).toString();
+                                                   break;
+                       }
                    }
                 }
             }
@@ -1140,32 +1148,27 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                 doc.setFontSize(7);
                 doc.setFontType('italic');
                 doc.text(10,CoordY,'LUNEDI');
-                doc.text(30,CoordY,'MARTEDI')
-                doc.text(50,CoordY,'MERCOLEDI')
-                doc.text(70,CoordY,'GIOVEDI')
-                doc.text(90,CoordY,'VENERDI')
-                doc.text(110,CoordY,'SABATO')
-                doc.text(130,CoordY,'DOMENICA')
+                doc.text(38,CoordY,'MARTEDI')
+                doc.text(63,CoordY,'MERCOLEDI')
+                doc.text(88,CoordY,'GIOVEDI')
+                doc.text(113,CoordY,'VENERDI')
+                doc.text(138,CoordY,'SABATO')
+                doc.text(163,CoordY,'DOMENICA')
                 CoordY += 5;
                                
                 for(let j = 0;j < ListaDocenti[i].DISPONIBILITA.SETTIMANA.length;j ++)
-                {
-                    for(let k = 0;k < ListaDocenti[i].DISPONIBILITA.SETTIMANA[j].length;k ++)
-                        if(ListaDocenti[i].DISPONIBILITA.SETTIMANA[j][k])
-                           ListaDocenti[i].DISPONIBILITA.SETTIMANA[j][k] = 'X'
-                        else ListaDocenti[i].DISPONIBILITA.SETTIMANA[j][k] = '-'
-                    
+                {                   
                     ListaDocenti[i].DISPONIBILITA.SETTIMANA[j] = ListaDocenti[i].DISPONIBILITA.SETTIMANA[j].toString();
-                    ListaDocenti[i].DISPONIBILITA.SETTIMANA[j] = ListaDocenti[i].DISPONIBILITA.SETTIMANA[j].replace(/,/g, '')
+                    ListaDocenti[i].DISPONIBILITA.SETTIMANA[j] = ListaDocenti[i].DISPONIBILITA.SETTIMANA[j].replace(/,/g, ' ')
                 }                
                 doc.setFontSize(7);
                 doc.text(10,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[0]);
-                doc.text(30,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[1]);
-                doc.text(50,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[2]);
-                doc.text(70,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[3]);
-                doc.text(90,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[4]);
-                doc.text(110,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[5]);
-                doc.text(130,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[6]);
+                doc.text(38,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[1]);
+                doc.text(63,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[2]);
+                doc.text(88,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[3]);
+                doc.text(113,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[4]);
+                doc.text(138,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[5]);
+                doc.text(163,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[6]);
                 CoordY += 10;
             }            
          }

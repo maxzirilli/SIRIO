@@ -53,7 +53,7 @@
                                             },
                                             {
                                               "Name" : "InstituteTeacherAvailability",
-                                              "SQL"  : "SELECT docenti_disponibilita.DOCENTE,docenti_disponibilita.GIORNO,docenti_disponibilita.ORA FROM docenti_disponibilita WHERE ISTITUTO=:CHIAVE ORDER BY DOCENTE,GIORNO ASC,ORA ASC"
+                                              "SQL"  : "SELECT docenti_disponibilita.DOCENTE,docenti_disponibilita.GIORNO,docenti_disponibilita.ORA,(SELECT DESCRIZIONE FROM luoghi_disponibilita WHERE luoghi_disponibilita.CHIAVE = docenti_disponibilita.LUOGO) AS LUOGO_NOME FROM docenti_disponibilita WHERE ISTITUTO=:CHIAVE ORDER BY DOCENTE,GIORNO ASC,ORA ASC"
                                             }
                                           ],
                                           
@@ -76,7 +76,7 @@
                                           },
                                           {
                                             "Name" : "InstituteTeacherAvailability",
-                                            "SQL"  : "SELECT docenti_disponibilita.DOCENTE,docenti_disponibilita.GIORNO,docenti_disponibilita.ORA FROM docenti_disponibilita WHERE ISTITUTO=:CHIAVE ORDER BY DOCENTE,GIORNO ASC,ORA ASC"
+                                            "SQL"  : "SELECT docenti_disponibilita.DOCENTE,docenti_disponibilita.GIORNO,docenti_disponibilita.ORA,(SELECT DESCRIZIONE FROM luoghi_disponibilita WHERE luoghi_disponibilita.CHIAVE = docenti_disponibilita.LUOGO) AS LUOGO_NOME FROM docenti_disponibilita WHERE ISTITUTO=:CHIAVE ORDER BY DOCENTE,GIORNO ASC,ORA ASC"
                                           }
                                         ], 
                    

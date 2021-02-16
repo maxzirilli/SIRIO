@@ -400,7 +400,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
            if(ListaMailFiltrata[i].Email != 'Non disponibile')
               if(ListaMailFiltrata[i].Email.includes('@'))
               {
-                 SystemInformation.DataBetweenController.ListaDocMail.push(MailListaMailFiltrata[i].Email);
+                 SystemInformation.DataBetweenController.ListaDocMail.push(ListaMailFiltrata[i].Email);
                  ContatoreMailValide ++; 
               }
        }
