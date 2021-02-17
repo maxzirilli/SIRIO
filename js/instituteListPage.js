@@ -20,6 +20,7 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
   //$scope.IstitutoDaUnire    = -1;
   $scope.CheckOldProvincia  = false;
   $scope.OldPagina          = 0;
+  $scope.PromotoreFiltro    = -1;
 
   $scope.IsAdministrator = function ()
   {
@@ -168,6 +169,7 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                                           Codice        : (IstitutiInfoLista[i].CODICE == null || IstitutiInfoLista[i].CODICE == '') ? 'N.D.' : IstitutiInfoLista[i].CODICE,   
                                           Nome          : (IstitutiInfoLista[i].NOME == null || IstitutiInfoLista[i].NOME == '') ? 'N.D.' : IstitutiInfoLista[i].NOME,  
                                           Promotore     : IstitutiInfoLista[i].PROMOTORE,
+                                          PromotoreKey  : IstitutiInfoLista[i].PRM_CHIAVE,
                                           Provincia     : IstitutiInfoLista[i].PROVINCIA, 
                                           ProvinciaNome : IstitutiInfoLista[i].NOME_PROVINCIA,
                                           Nascosto      : (IstitutiInfoLista[i].NASCOSTO == null || IstitutiInfoLista[i].NASCOSTO == 0) ? false : true,
@@ -195,6 +197,7 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                                           Codice        : (IstitutiInfoLista[i].CODICE == null || IstitutiInfoLista[i].CODICE == '') ? 'N.D.' : IstitutiInfoLista[i].CODICE,   
                                           Nome          : (IstitutiInfoLista[i].NOME == null || IstitutiInfoLista[i].NOME == '') ? 'N.D.' : IstitutiInfoLista[i].NOME,  
                                           Promotore     : IstitutiInfoLista[i].PROMOTORE,
+                                          PromotoreKey  : IstitutiInfoLista[i].PRM_CHIAVE,
                                           Provincia     : IstitutiInfoLista[i].PROVINCIA, 
                                           ProvinciaNome : IstitutiInfoLista[i].NOME_PROVINCIA,
                                           Nascosto      : (IstitutiInfoLista[i].NASCOSTO == null || IstitutiInfoLista[i].NASCOSTO == 0) ? false : true,
@@ -1185,12 +1188,13 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
 
 SIRIOApp.filter('IstitutoByFiltro',function()
 {
-  return function(ListaIstituti,ProvinciaFiltro,NomeFiltro,NascostoFiltro,ComuneFiltro)
+  return function(ListaIstituti,ProvinciaFiltro,NomeFiltro,NascostoFiltro,ComuneFiltro,PromotoreFiltro,Admin)
          {
-           if(ProvinciaFiltro == -1 && NomeFiltro == '' && NascostoFiltro == true && ComuneFiltro == '') return(ListaIstituti);
+           if(ProvinciaFiltro == -1 && NomeFiltro == '' && NascostoFiltro == true && ComuneFiltro == '' && ((parseInt(PromotoreFiltro) == -1 && Admin) || (parseInt(PromotoreFiltro) != -1 && !Admin))) return(ListaIstituti);
            var ListaFiltrata = [];
            NomeFiltro = NomeFiltro.toUpperCase();
            ComuneFiltro = ComuneFiltro.toUpperCase();
+           PromotoreFiltro = parseInt(PromotoreFiltro);
            
            var IstitutoOK = function(Istituto)
            {  
@@ -1211,6 +1215,11 @@ SIRIOApp.filter('IstitutoByFiltro',function()
               if(!NascostoFiltro)
                  if(Istituto.Nascosto)
                     Result = false;
+
+              if(Admin)
+                 if(PromotoreFiltro != -1)
+                    if(PromotoreFiltro != Istituto.PromotoreKey)
+                       Result = false;
               
               return(Result);
            }

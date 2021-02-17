@@ -2,7 +2,7 @@
   "SelectSQL"    : [
                      { 
                        "Name" : "TeacherInfoList",
-                       "SQL"  : "SELECT docenti.CHIAVE,docenti.RAGIONE_SOCIALE,docenti.EMAIL,docenti.TITOLO,docenti.INDIRIZZO,docenti.COMUNE,docenti.CAP,docenti.PROVINCIA,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE = docenti.MATERIA_1) AS NOME_MATERIA1,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE = docenti.MATERIA_2) AS NOME_MATERIA2,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE = docenti.MATERIA_3) AS NOME_MATERIA3,(SELECT province_all.NOME FROM province_all WHERE CHIAVE = docenti.PROVINCIA) AS PROVINCIA_NOME,(SELECT COUNT(*) FROM spedizioni WHERE spedizioni.DOCENTE = docenti.CHIAVE) AS NR_SPEDIZIONI,docenti.MATERIA_1,docenti.MATERIA_2,docenti.MATERIA_3,docenti.COORD_MATERIA_1,docenti.COORD_MATERIA_2,docenti.COORD_MATERIA_3 FROM docenti {W~FiltroI~(docenti.CHIAVE IN (SELECT istituti_x_docenti.DOCENTE FROM istituti_x_docenti WHERE ISTITUTO = :FiltroI))~FiltroP~(docenti.CHIAVE IN (SELECT istituti_x_docenti.DOCENTE FROM istituti_x_docenti WHERE ISTITUTO IN (SELECT istituti.CHIAVE FROM istituti WHERE PROVINCIA = :FiltroP)))~FiltroT~(docenti.CHIAVE IN (SELECT DOCENTE FROM istituti_x_docenti WHERE ISTITUTO IN (SELECT ISTITUTO FROM classi WHERE CHIAVE IN (SELECT CLASSE FROM adozioni_titolo WHERE TITOLO=:FiltroT))))} ORDER BY docenti.RAGIONE_SOCIALE" 
+                       "SQL"  : "SELECT docenti.CHIAVE,docenti.NASCOSTO,docenti.RAGIONE_SOCIALE,docenti.EMAIL,docenti.TITOLO,docenti.INDIRIZZO,docenti.COMUNE,docenti.CAP,docenti.PROVINCIA,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE = docenti.MATERIA_1) AS NOME_MATERIA1,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE = docenti.MATERIA_2) AS NOME_MATERIA2,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE = docenti.MATERIA_3) AS NOME_MATERIA3,(SELECT province_all.NOME FROM province_all WHERE CHIAVE = docenti.PROVINCIA) AS PROVINCIA_NOME,(SELECT COUNT(*) FROM spedizioni WHERE spedizioni.DOCENTE = docenti.CHIAVE) AS NR_SPEDIZIONI,docenti.MATERIA_1,docenti.MATERIA_2,docenti.MATERIA_3,docenti.COORD_MATERIA_1,docenti.COORD_MATERIA_2,docenti.COORD_MATERIA_3 FROM docenti {W~FiltroI~(docenti.CHIAVE IN (SELECT istituti_x_docenti.DOCENTE FROM istituti_x_docenti WHERE ISTITUTO = :FiltroI))~FiltroP~(docenti.CHIAVE IN (SELECT istituti_x_docenti.DOCENTE FROM istituti_x_docenti WHERE ISTITUTO IN (SELECT istituti.CHIAVE FROM istituti WHERE PROVINCIA = :FiltroP)))~FiltroT~(docenti.CHIAVE IN (SELECT DOCENTE FROM istituti_x_docenti WHERE ISTITUTO IN (SELECT ISTITUTO FROM classi WHERE CHIAVE IN (SELECT CLASSE FROM adozioni_titolo WHERE TITOLO=:FiltroT))))} ORDER BY docenti.RAGIONE_SOCIALE" 
                      }
                    ],
                    
@@ -149,6 +149,14 @@
                      {
                        "Name" : "UpdateTeacherMailFromMailChimp",
                        "SQL"  : "CALL MAIL_FROM_MAILCHIMP(#MailDocente,#NomeDocente)"
-                     }                                       
+                     },
+                     {
+                       "Name" : "HideTeacher",
+                       "SQL"  : "UPDATE docenti SET NASCOSTO = 'T' WHERE CHIAVE=:DOCENTE"
+                     },
+                     {
+                      "Name" : "ShowTeacher",
+                      "SQL"  : "UPDATE docenti SET NASCOSTO = 'F' WHERE CHIAVE=:DOCENTE"
+                    }                                         
                    ]        
 }

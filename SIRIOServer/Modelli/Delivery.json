@@ -104,7 +104,7 @@
                                         },
                                         {
                                           "Name" : "TeacherDeliveryBook",
-                                          "SQL"  : "SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE titoli.CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.QUANTITA_MGZN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS QUANTITA_MGZN,CALCOLA_DISPONIBILITA_ALL(dettaglio_spedizioni.TITOLO) AS QUANTITA_DISP FROM dettaglio_spedizioni WHERE SPEDIZIONE=:CHIAVE"
+                                          "SQL"  : "SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE titoli.CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.CODICE_ISBN FROM titoli WHERE titoli.CHIAVE = dettaglio_spedizioni.TITOLO) AS ISBN_TITOLO,(SELECT titoli.QUANTITA_MGZN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS QUANTITA_MGZN,CALCOLA_DISPONIBILITA_ALL(dettaglio_spedizioni.TITOLO) AS QUANTITA_DISP FROM dettaglio_spedizioni WHERE SPEDIZIONE=:CHIAVE"
                                         }
                                      ],
    
@@ -115,14 +115,14 @@
                                        },
                                        {
                                          "Name" : "PublisherDeliveryBook",
-                                         "SQL"  : "SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE titoli.CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.QUANTITA_MGZN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS QUANTITA_MGZN,CALCOLA_DISPONIBILITA_ALL(dettaglio_spedizioni.TITOLO) AS QUANTITA_DISP FROM dettaglio_spedizioni WHERE SPEDIZIONE=:CHIAVE"
+                                         "SQL"  : "SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE titoli.CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.CODICE_ISBN FROM titoli WHERE titoli.CHIAVE = dettaglio_spedizioni.TITOLO) AS ISBN_TITOLO,(SELECT titoli.QUANTITA_MGZN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS QUANTITA_MGZN,CALCOLA_DISPONIBILITA_ALL(dettaglio_spedizioni.TITOLO) AS QUANTITA_DISP FROM dettaglio_spedizioni WHERE SPEDIZIONE=:CHIAVE"
                                        }                                      
                                      ],
   
  "SQLDettaglioSpedizioneGenerico"  : [
                                        {
                                          "Name" : "DeliveryDettaglio",
-                                         "SQL"  : "SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE titoli.CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.QUANTITA_MGZN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS QUANTITA_MGZN FROM dettaglio_spedizioni WHERE SPEDIZIONE=:CHIAVE"
+                                         "SQL"  : "SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE titoli.CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.CODICE_ISBN FROM titoli WHERE titoli.CHIAVE = dettaglio_spedizioni.TITOLO) AS ISBN_TITOLO,(SELECT titoli.QUANTITA_MGZN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS QUANTITA_MGZN FROM dettaglio_spedizioni WHERE SPEDIZIONE=:CHIAVE"
                                        }
                                      ],
 

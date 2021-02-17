@@ -177,6 +177,7 @@
             <th></th>
             <th></th>                        
             <th>TITOLO</th>
+            <th>ISBN</th>
             <th>QUANTITA</th>
             <th>STATO</th>
             <th>DISPONIBILITA</th>
@@ -185,7 +186,8 @@
           <tr ng-repeat="Titolo in ListaTitoliSpedizione | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Titolo.Chiave}}>
             <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA TITOLO" ng-click="EliminaTitolo(Titolo)"></td> 
             <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA TITOLO" ng-click="ModificaTitolo(Titolo)"></td>
-            <td>{{Titolo.NOME_TITOLO | uppercase}}</td> 
+            <td>{{Titolo.NOME_TITOLO | uppercase}}</td>
+            <td>{{Titolo.ISBN_TITOLO}}</td> 
             <td>{{Titolo.QUANTITA}}</td>
             <td ng-if="Titolo.STATO == 'C'">CONSEGNATO</td>
             <td ng-if="Titolo.STATO == 'S'">DA SPEDIRE</td>

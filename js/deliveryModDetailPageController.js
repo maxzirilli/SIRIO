@@ -417,6 +417,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                                                         "CHIAVE"        : DettaglioSpedizioneTitoloDoc[i].CHIAVE,
                                                         "SPEDIZIONE"    : DettaglioSpedizioneTitoloDoc[i].SPEDIZIONE,
                                                         "TITOLO"        : DettaglioSpedizioneTitoloDoc[i].TITOLO,
+                                                        "ISBN_TITOLO"   : DettaglioSpedizioneTitoloDoc[i].ISBN_TITOLO,
                                                         "NOME_TITOLO"   : DettaglioSpedizioneTitoloDoc[i].NOME_TITOLO,
                                                         "QUANTITA"      : parseInt(DettaglioSpedizioneTitoloDoc[i].QUANTITA),
                                                         "STATO"         : DettaglioSpedizioneTitoloDoc[i].STATO,
@@ -529,6 +530,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                                                        "CHIAVE"        : DettaglioSpedizioneTitoloCasa[i].CHIAVE,
                                                        "SPEDIZIONE"    : DettaglioSpedizioneTitoloCasa[i].SPEDIZIONE,
                                                        "TITOLO"        : DettaglioSpedizioneTitoloCasa[i].TITOLO,
+                                                       "ISBN_TITOLO"   : DettaglioSpedizioneTitoloCasa[i].ISBN_TITOLO,
                                                        "NOME_TITOLO"   : DettaglioSpedizioneTitoloCasa[i].NOME_TITOLO,
                                                        "QUANTITA"      : parseInt(DettaglioSpedizioneTitoloCasa[i].QUANTITA),
                                                        "STATO"         : DettaglioSpedizioneTitoloCasa[i].STATO,
@@ -584,6 +586,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                          "CHIAVE"        : -1,
                          "TITOLO"        : -1,
                          "NOME_TITOLO"   : '',
+                         "ISBN_TITOLO"   : '',
                          "QUANTITA"      : 1,
                          "STATO"         : null,
                          "QUANTITA_MGZN" : null,
@@ -616,6 +619,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
         {
            $scope.Titolo.TITOLO            = itemTit.Chiave;
            $scope.Titolo.NOME_TITOLO       = itemTit.Nome;
+           $scope.Titolo.ISBN_TITOLO       = itemTit.Codice;
            $scope.Titolo.QUANTITA_MGZN     = itemTit.Quantita;
            $scope.Titolo.QUANTITA_MGZN_VOL = itemTit.QuantitaVol;
            $scope.Titolo.QUANTITA_DISP     = itemTit.QuantitaDisp;
@@ -667,7 +671,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
           $scope.ListaTitoliSpedizione.splice(TitoloCorrispondente,1);
         }  
       } 
-      ZConfirm.GetConfirmBox('AVVISO',"Eliminare il titolo " + Titolo.NOME_TITOLO + " dalla spedizione?",EliminaTit,function(){});      
+      ZConfirm.GetConfirmBox('AVVISO',"Eliminare il titolo " + Titolo.NOME_TITOLO + ' (ISBN:' + Titolo.ISBN_TITOLO + ')' + " dalla spedizione?",EliminaTit,function(){});      
     }
     
     $scope.ModificaTitolo = function (Titolo)
@@ -695,6 +699,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                          "CHIAVE"        : Titolo.CHIAVE,
                          "TITOLO"        : Titolo.TITOLO,
                          "NOME_TITOLO"   : Titolo.NOME_TITOLO,
+                         "ISBN_TITOLO"   : Titolo.ISBN_TITOLO,
                          "QUANTITA"      : parseInt(Titolo.QUANTITA),
                          "QUANTITA_MGZN" : Titolo.QUANTITA_MGZN,
                          "QUANTITA_DISP" : Titolo.QUANTITA_DISP,
@@ -721,6 +726,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
         {
           $scope.Titolo.TITOLO        = itemTit.Chiave;
           $scope.Titolo.NOME_TITOLO   = itemTit.Nome;
+          $scope.Titolo.ISBN_TITOLO   = itemTit.Codice;
           $scope.Titolo.QUANTITA_MGZN = itemTit.Quantita;
         }
       }
@@ -751,6 +757,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
         {        
           $scope.ListaTitoliSpedizione[TitoloCorrispondente].TITOLO        = $scope.Titolo.TITOLO;
           $scope.ListaTitoliSpedizione[TitoloCorrispondente].NOME_TITOLO   = $scope.Titolo.NOME_TITOLO;
+          $scope.ListaTitoliSpedizione[TitoloCorrispondente].ISBN_TITOLO   = $scope.Titolo.ISBN_TITOLO;
           $scope.ListaTitoliSpedizione[TitoloCorrispondente].QUANTITA      = $scope.Titolo.QUANTITA;
           $scope.ListaTitoliSpedizione[TitoloCorrispondente].STATO         = $scope.Titolo.STATO;
           $scope.ListaTitoliSpedizione[TitoloCorrispondente].QUANTITA_MGZN = $scope.Titolo.QUANTITA_MGZN;
@@ -874,7 +881,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                                           "TITOLO"            : $scope.ListaTitoliToHandle[i].Chiave,
                                           "NOME_TITOLO"       : $scope.ListaTitoliToHandle[i].Nome,
                                           "QUANTITA"          : 1,
-                                          "CODICE"            : $scope.ListaTitoliToHandle[i].Codice,
+                                          "ISBN_TITOLO"       : $scope.ListaTitoliToHandle[i].Codice,
                                           "STATO"             : null,
                                           "QUANTITA_MGZN"     : $scope.ListaTitoliToHandle[i].Quantita,
                                           "QUANTITA_MGZN_VOL" : $scope.ListaTitoliToHandle[i].QuantitaVol,
@@ -896,6 +903,23 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
             $scope.ListaTitoliToHandle[i].STATO = 'P'
       }
 
+      $scope.SetTuttiDaSpedire = function()
+      {
+        for(let i = 0;i < $scope.ListaTitoliToHandle.length;i ++)
+            if($scope.Multipla)
+            {
+               if(($scope.ListaTitoliToHandle[i].QUANTITA * $scope.NumeroDocenti) <= $scope.ListaTitoliToHandle[i].QUANTITA_DISP)
+                   $scope.ListaTitoliToHandle[i].STATO = 'S'
+               else $scope.ListaTitoliToHandle[i].STATO = 'P';   
+            }
+            else
+            {
+              if($scope.ListaTitoliToHandle[i].QUANTITA <=  $scope.ListaTitoliToHandle[i].QUANTITA_DISP)
+                 $scope.ListaTitoliToHandle[i].STATO = 'S'
+              else $scope.ListaTitoliToHandle[i].STATO = 'P'; 
+            }       
+      }
+
       $scope.AnnullaMultipliPopup = function() 
       {
         $scope.ListaTitoliToHandle = [];
@@ -912,7 +936,17 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
               return
            }
            else
-           {                         
+           {
+              if($scope.Multipla)
+              {
+                if((($scope.ListaTitoliToHandle[i].QUANTITA * $scope.NumeroDocenti) > $scope.ListaTitoliToHandle[i].QUANTITA_DISP) && $scope.ListaTitoliToHandle[i].STATO == 'S')
+                     $scope.ListaTitoliToHandle[i].STATO = 'P';   
+              }
+              else
+              {
+                if(($scope.ListaTitoliToHandle[i].QUANTITA >  $scope.ListaTitoliToHandle[i].QUANTITA_DISP) && $scope.ListaTitoliToHandle[i].STATO == 'S') 
+                    $scope.ListaTitoliToHandle[i].STATO = 'P'; 
+              } 
               $scope.ListaTitoliSpedizione.push($scope.ListaTitoliToHandle[i]);
            }
         }

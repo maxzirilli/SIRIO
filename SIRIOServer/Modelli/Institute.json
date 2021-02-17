@@ -2,14 +2,14 @@
   "SelectSQL"    : [
                      { 
                        "Name" : "InstituteInfoList",
-                       "SQL"  : "SELECT istituti.CHIAVE,istituti.COMUNE,istituti.NASCOSTO,istituti.CODICE,istituti.NOME,(SELECT COUNT(*) FROM istituti_x_docenti WHERE ISTITUTO = istituti.CHIAVE) AS NR_DOCENTI,(SELECT COUNT(*) FROM adozioni_titolo WHERE CLASSE IN (SELECT CHIAVE FROM classi WHERE ISTITUTO=istituti.CHIAVE)) AS NR_ADOZIONI,istituti.PROVINCIA,province.NOME AS NOME_PROVINCIA,utenti.USERNAME AS PROMOTORE FROM province,istituti LEFT OUTER JOIN utenti ON (utenti.CHIAVE = istituti.PROMOTORE) WHERE province.CHIAVE = istituti.PROVINCIA ORDER BY istituti.NOME"
+                       "SQL"  : "SELECT istituti.CHIAVE,istituti.COMUNE,istituti.NASCOSTO,istituti.CODICE,istituti.NOME,(SELECT COUNT(*) FROM istituti_x_docenti WHERE ISTITUTO = istituti.CHIAVE) AS NR_DOCENTI,(SELECT COUNT(*) FROM adozioni_titolo WHERE CLASSE IN (SELECT CHIAVE FROM classi WHERE ISTITUTO=istituti.CHIAVE)) AS NR_ADOZIONI,istituti.PROVINCIA,province.NOME AS NOME_PROVINCIA,utenti.USERNAME AS PROMOTORE,utenti.CHIAVE AS PRM_CHIAVE FROM province,istituti LEFT OUTER JOIN utenti ON (utenti.CHIAVE = istituti.PROMOTORE) WHERE province.CHIAVE = istituti.PROVINCIA ORDER BY istituti.NOME"
                      }                       
                    ],
 
  "SelectSQLPrm"    : [
                       { 
                         "Name" : "InstituteInfoListPrm",
-                        "SQL"  : "SELECT istituti.CHIAVE,istituti.COMUNE,istituti.NASCOSTO,istituti.CODICE,istituti.NOME,(SELECT COUNT(*) FROM istituti_x_docenti WHERE ISTITUTO = istituti.CHIAVE) AS NR_DOCENTI,(SELECT COUNT(*) FROM istituti_x_docenti WHERE ISTITUTO = istituti.CHIAVE) AS NR_DOCENTI,(SELECT COUNT(*) FROM adozioni_titolo WHERE CLASSE IN (SELECT CHIAVE FROM classi WHERE ISTITUTO=istituti.CHIAVE)) AS NR_ADOZIONI,istituti.PROVINCIA,province.NOME AS NOME_PROVINCIA,utenti.USERNAME AS PROMOTORE FROM province,istituti LEFT OUTER JOIN utenti ON (utenti.CHIAVE = istituti.PROMOTORE) WHERE province.CHIAVE = istituti.PROVINCIA AND istituti.PROMOTORE=#KeyAccount ORDER BY istituti.NOME"
+                        "SQL"  : "SELECT istituti.CHIAVE,istituti.COMUNE,istituti.NASCOSTO,istituti.CODICE,istituti.NOME,(SELECT COUNT(*) FROM istituti_x_docenti WHERE ISTITUTO = istituti.CHIAVE) AS NR_DOCENTI,(SELECT COUNT(*) FROM istituti_x_docenti WHERE ISTITUTO = istituti.CHIAVE) AS NR_DOCENTI,(SELECT COUNT(*) FROM adozioni_titolo WHERE CLASSE IN (SELECT CHIAVE FROM classi WHERE ISTITUTO=istituti.CHIAVE)) AS NR_ADOZIONI,istituti.PROVINCIA,province.NOME AS NOME_PROVINCIA,utenti.USERNAME,utenti.CHIAVE AS PRM_CHIAVE FROM province,istituti LEFT OUTER JOIN utenti ON (utenti.CHIAVE = istituti.PROMOTORE) WHERE province.CHIAVE = istituti.PROVINCIA AND istituti.PROMOTORE=#KeyAccount ORDER BY istituti.NOME"
                       }                       
                      ],
 
