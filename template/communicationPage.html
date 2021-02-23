@@ -1,0 +1,64 @@
+<div ng-controller="communicationController">
+  <div ng-if="!EditingOn">
+    <div>
+      <h2>COMUNICAZIONI</h2>
+      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaComunicazione()">NUOVA COMUNICAZIONE</md-button>
+    </div>
+    <div ng-if="ListaComunicazioni.length != 0">
+      <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
+        <tr>
+          <th></th>
+          <th></th> 
+          <th>DATA</th>
+          <th>TITOLO</th>           
+        </tr>  
+        <tr ng-repeat="comunicazione in ListaComunicazioni | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{comunicazione.Chiave}}>
+          <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA COMUNICAZIONE" ng-click="EliminaComunicazione(comunicazione)"></td> 
+          <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA COMUNICAZIONE" ng-click="ModificaComunicazione(comunicazione)"></td>        
+          <td class="off">{{comunicazione.Data}}</td> 
+          <td class="off">{{comunicazione.Titolo}}</td> 
+        </tr>    
+      </table>
+      <md-table-pagination md-limit="GridOptions.query.limit" 
+                           md-limit-options="GridOptions.limitOptions" 
+                           md-page="GridOptions.query.page" 
+                           md-total="{{ListaComunicazioni.length}}" 
+                           md-page-select="GridOptions.pageSelect" 
+                           md-boundary-links="GridOptions.boundaryLinks" 
+                           md-on-paginate="logPagination"></md-table-pagination>
+    </div>
+    <p ng-if="ListaComunicazioni.length == 0" style="font-weight:bold;font-style:italic;text-align:center;margin-top:100px;">NESSUNA COMUNICAZIONE PRESENTE</p>
+  </div> 
+  
+  <div ng-if="EditingOn">
+    <form name="commEditForm" layout="column" style="width:100%" ng-submit="ConfermaComunicazione()">
+      <div layout="row">
+        <h2>COMUNICAZIONE</h2>
+        <div layout="row" style="width:100%;" layout-align="end start">
+            <md-button class="md-raised md-accent" style="font-weight:bold;" type="submit">CONFERMA</md-button>
+            <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="OnAnnullaComunicazioneClicked()">ANNULLA</md-button>
+        </div>
+      </div>
+      
+        <div layout="column">
+          <div layout ="row">
+            <md-input-container style="width:50%;">
+              <label>TITOLO</label><input ng-model="CommInEditing.Titolo" type="text" name="Titolo" required>
+              <div ng-messages="commEditForm.Titolo.$error" multiple md-auto-hide="true">
+                <div ng-message="required">Inserire un titolo</div>
+              </div>
+            </md-input-container>
+            <md-input-container style="width:20%;margin-left:20px;">
+             <label>DATA</label><input ng-model="CommInEditing.Data" type="date">
+            </md-input-container>
+          </div>
+          <md-input-container style="width:50%;">               
+           <label>LINK</label><input ng-model="CommInEditing.Link" type="text" name="Link">
+          </md-input-container>
+          <md-input-container style="width: 90%;">
+           <label>TESTO</label><textarea ng-model="CommInEditing.Testo" type="textarea" rows="6" cols="12" name="Testo"></textarea>
+         </md-input-container>
+        </div>       
+    </form>        
+  </div> 
+</div>

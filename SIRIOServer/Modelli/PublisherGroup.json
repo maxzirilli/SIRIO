@@ -1,0 +1,23 @@
+{ 
+  "SelectSQL"  : [
+                   {
+                     "Name" : "GroupInfoList",
+                     "SQL"  : "SELECT * FROM gruppi_case_ed ORDER BY DESCRIZIONE"
+                   }
+                 ],
+                
+  "EditSQL"   : [   
+                  {
+                    "Name" : "InsertGroup",
+                    "SQL"  : "INSERT INTO gruppi_case_ed (CHIAVE,DESCRIZIONE) VALUES (:NewKey1,#DESCRIZIONE)"
+                  }, 
+                  {
+                    "Name" : "UpdateGroup",
+                    "SQL"  : "UPDATE gruppi_case_ed SET DESCRIZIONE=#DESCRIZIONE WHERE CHIAVE=:CHIAVE"
+                  },
+                  {
+                    "Name" : "DeleteGroup",
+                    "SQL"  : "DELETE FROM gruppi_case_ed WHERE CHIAVE=:CHIAVE"
+                  }
+                ]        
+}

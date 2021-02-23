@@ -10,14 +10,35 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
   $scope.DocenteFiltro    = -1;
   ListaSpedizioni         = [];
   $scope.TitoloFiltro     = -1;
+  $scope.ListaGruppi      = [];
   $scope.DataRicercaAl    = new Date();
   let TmpDate             = new Date($scope.DataRicercaAl);
   TmpDate.setDate(TmpDate.getDate() - 30);
   //$scope.DataRicercaDal   = new Date(TmpDate);
   var AnnoCorrente = new Date().getFullYear();
-  $scope.DataRicercaDal   = new Date(AnnoCorrente, 01, 01)
+  $scope.DataRicercaDal   = new Date(AnnoCorrente, 0, 1)
  
   ScopeHeaderController.CheckButtons(); 
+
+  $scope.GetListaGruppi = function()
+  {
+    SystemInformation.GetSQL('PublisherGroup', {}, function(Results)  
+    {
+      GruppiInfoList = SystemInformation.FindResults(Results,'GroupInfoList');
+      if(GruppiInfoList != undefined)
+      { 
+         for(let i = 0;i < GruppiInfoList.length;i ++)
+         GruppiInfoList[i] = {
+                               Chiave       : GruppiInfoList[i].CHIAVE,
+                               Descrizione  : GruppiInfoList[i].DESCRIZIONE,
+                               DaAggiungere : false
+                             }
+         $scope.ListaGruppi      = GruppiInfoList;
+         $scope.ListaGruppiPopup = GruppiInfoList
+      } 
+      else SystemInformation.ApplyOnError('Modello gruppi case editrici non conforme','');   
+    });
+  }
   
   $scope.IsAdministrator = function ()
   {
@@ -43,11 +64,12 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
 
     var SheetName          = "CUMULATIVO PRENOTAZIONI";
     var BodySheet          = {};
-
-    BodySheet['A1'] = SystemInformation.GetCellaIntestazione('EDITORE');
-    BodySheet['B1'] = SystemInformation.GetCellaIntestazione('ISBN');
-    BodySheet['C1'] = SystemInformation.GetCellaIntestazione('TITOLO');
-    BodySheet['D1'] = SystemInformation.GetCellaIntestazione('QUANTITA TOTALE');
+    
+    BodySheet['A1'] = SystemInformation.GetCellaIntestazione('GRUPPO');
+    BodySheet['B1'] = SystemInformation.GetCellaIntestazione('EDITORE');
+    BodySheet['C1'] = SystemInformation.GetCellaIntestazione('ISBN');
+    BodySheet['D1'] = SystemInformation.GetCellaIntestazione('TITOLO');
+    BodySheet['E1'] = SystemInformation.GetCellaIntestazione('QUANTITA TOTALE');
     
     var ListaTitoli  = [];
     for(let j = 0;j < CumulativoTitoli.length;j ++)
@@ -57,26 +79,31 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
             ListaTitoli.push(CumulativoTitoli[j])
         else ListaTitoli[TitoloGiaInserito].Quantita += CumulativoTitoli[j].Quantita
     }
+    var Gruppo = 'ABCDEFGHIJKLMNOPQRSTUVZ'
     var CasaEditrice = '-1';
     for(let k = 0;k < ListaTitoli.length;k ++)
     {
+        if(Gruppo != ListaTitoli[k].Gruppo)
+           BodySheet['A' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Gruppo);
+        Gruppo = ListaTitoli[k].Gruppo;
+
         if(CasaEditrice != ListaTitoli[k].Editore)
-            BodySheet['A' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Editore);
-
-        BodySheet['B' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Codice);
-        BodySheet['C' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Titolo);
-        BodySheet['D' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Quantita.toString());
-
+           BodySheet['B' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Editore);
         CasaEditrice = ListaTitoli[k].Editore;
+        
+        BodySheet['C' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Codice);
+        BodySheet['D' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Titolo);
+        BodySheet['E' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Quantita.toString());
     }
 
-    BodySheet["!cols"] = [             
+    BodySheet["!cols"] = [ 
+                          {wpx: 250},            
                           {wpx: 250},
                           {wpx: 250},
                           {wpx: 250},
                           {wpx: 250}
                         ];
-    BodySheet['!ref'] = 'A1:D1' + parseInt(ListaTitoli.length + 1);
+    BodySheet['!ref'] = 'A1:E1' + parseInt(ListaTitoli.length + 1);
     
     WBook.SheetNames.push(SheetName);
     WBook.Sheets[SheetName]    = BodySheet;
@@ -132,6 +159,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
       $mdDialog.cancel();
     };
 
+    
+
     $scope.CreaXlsPrenotati = function()
     {
       var CumulativoPrenotatiTmp = [];
@@ -157,6 +186,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
             {
               for(let i = 0;i < CumulativoPrenotatiTmp.length;i ++)
                   CumulativoPrenotatiTmp[i] = {
+                                                Gruppo   : CumulativoPrenotatiTmp[i].GRUPPO_CASA == undefined ? 'NESSUN GRUPPO' : CumulativoPrenotatiTmp[i].GRUPPO_CASA, 
                                                 Editore  : CumulativoPrenotatiTmp[i].EDITORE_TITOLO == null ? 'EDITORE NON REGISTRATO' : CumulativoPrenotatiTmp[i].EDITORE_TITOLO,
                                                 Chiave   : CumulativoPrenotatiTmp[i].TITOLO,
                                                 Titolo   : CumulativoPrenotatiTmp[i].NOME_TITOLO == null ? 'NOME NON REGISTRATO' : CumulativoPrenotatiTmp[i].NOME_TITOLO,
@@ -239,13 +269,14 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
             else
             {
               for(let i = 0;i < CumulativoConsegnatiTmp.length;i ++)
-              CumulativoConsegnatiTmp[i] = {
-                                             Editore  : CumulativoConsegnatiTmp[i].EDITORE_TITOLO == null ? 'EDITORE NON REGISTRATO' : CumulativoConsegnatiTmp[i].EDITORE_TITOLO,
-                                             Chiave   : CumulativoConsegnatiTmp[i].TITOLO,
-                                             Titolo   : CumulativoConsegnatiTmp[i].NOME_TITOLO == null ? 'NOME NON REGISTRATO' : CumulativoConsegnatiTmp[i].NOME_TITOLO,
-                                             Codice   : CumulativoConsegnatiTmp[i].CODICE_TITOLO,
-                                             Quantita : parseInt(CumulativoConsegnatiTmp[i].QUANTITA)
-                                           }
+                  CumulativoConsegnatiTmp[i] = {
+                                                  Gruppo   : CumulativoConsegnatiTmp[i].GRUPPO_CASA == undefined ? 'NESSUN GRUPPO' : CumulativoConsegnatiTmp[i].GRUPPO_CASA, 
+                                                  Editore  : CumulativoConsegnatiTmp[i].EDITORE_TITOLO == null ? 'EDITORE NON REGISTRATO' : CumulativoConsegnatiTmp[i].EDITORE_TITOLO,
+                                                  Chiave   : CumulativoConsegnatiTmp[i].TITOLO,
+                                                  Titolo   : CumulativoConsegnatiTmp[i].NOME_TITOLO == null ? 'NOME NON REGISTRATO' : CumulativoConsegnatiTmp[i].NOME_TITOLO,
+                                                  Codice   : CumulativoConsegnatiTmp[i].CODICE_TITOLO,
+                                                  Quantita : parseInt(CumulativoConsegnatiTmp[i].QUANTITA)
+                                                }
               CumulativoConsegnati = CumulativoConsegnatiTmp
           
               CreaDocumentoCumulativo(CumulativoConsegnati,'CumulativoConsegnati')
@@ -272,6 +303,22 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
                                            },
                          limitOptions    : [10, 20, 30]
                        };
+
+ $scope.GridOptions_2 = {
+                          rowSelection    : false,
+                          multiSelect     : true,
+                          autoSelect      : true,
+                          decapitate      : false,
+                          largeEditDialog : false,
+                          boundaryLinks   : false,
+                          limitSelect     : true,
+                          pageSelect      : true,
+                          query           : {
+                                              limit: 10,
+                                              page: 1
+                                            },
+                          limitOptions    : [10, 20, 30]
+                        };
   
   SystemInformation.GetSQL('Accessories',{}, function(Results)
   {

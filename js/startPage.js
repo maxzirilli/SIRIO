@@ -1,6 +1,8 @@
 SIRIOApp.controller("startPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','$sce','$http','$mdDialog','ZConfirm',
 function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http,$mdDialog,ZConfirm)
 {
+  $scope.CalendarioVisibile = true;
+  $scope.UrlCalendario      = '';
   ScopeHeaderController.CheckButtons();
   $scope.MostraListaSpedizioni = false;  
   
@@ -89,6 +91,92 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http,$mdDial
     $state.go("inventoryManagementPage");
   }
 
+  $scope.ApriGestioneComunicazioni = function()
+  {
+    $state.go("communicationPage");
+  }
+    
+  $scope.GridOptions = {
+                          rowSelection    : false,
+                          multiSelect     : true,
+                          autoSelect      : true,
+                          decapitate      : false,
+                          largeEditDialog : false,
+                          boundaryLinks   : false,
+                          limitSelect     : true,
+                          pageSelect      : true,
+                          query           : {
+                                              limit: 10,
+                                              page: 1
+                                            },
+                          limitOptions    : [10, 20, 30]
+                       };
+
+  $scope.ApriComunicazione = function(Comunicazione)
+  {
+    $mdDialog.show({ 
+                    controller          : DialogControllerComunicazione,
+                    templateUrl         : "template/communicationPopup.html",
+                    targetEvent         : Comunicazione,
+                    scope               : $scope,
+                    preserveScope       : true,
+                    clickOutsideToClose : true,
+                    locals              : {Comunicazione}
+                  })
+    .then(function(answer) 
+    {}, 
+    function() 
+    {});
+  }
+  
+  function DialogControllerComunicazione($scope,$mdDialog,Comunicazione)  
+  { 
+    $scope.ComunicazioneToView = {
+                                   Titolo : Comunicazione.Titolo,
+                                   Data   : $scope.ConvertiData(Comunicazione.Data),
+                                   Testo  : Comunicazione.Testo,
+                                   Link   : Comunicazione.Link,  
+                                 }
+
+    $scope.hide = function() 
+    {
+      $scope.ComunicazioneToView = {};
+      $mdDialog.hide();
+    };
+
+    $scope.ChiudiPopupComunicazione = function() 
+    {
+      $scope.ComunicazioneToView = {};
+      $mdDialog.cancel();
+    };
+  }
+
+  $scope.ConvertiData = function (Data)
+  {
+     return(ZFormatDateTime('dd/mm/yyyy',ZDateFromHTMLInput(Data)));
+  }
+  
+  $scope.RefreshListaComunicazioni = function ()
+  {
+    SystemInformation.GetSQL('Communication', {}, function(Results)  
+    {
+      CommInfoList = SystemInformation.FindResults(Results,'CommunicationInfoList');
+      if(CommInfoList != undefined)
+      { 
+        for(let i = 0;i < CommInfoList.length;i ++)
+            CommInfoList[i] = { 
+                                 Chiave : CommInfoList[i].CHIAVE,
+                                 Data   : CommInfoList[i].DATA,
+                                 Titolo : CommInfoList[i].TITOLO,   
+                                 Testo  : CommInfoList[i].TESTO,  
+                                 Link   : CommInfoList[i].LINK
+                              };         
+          $scope.ListaComunicazioni = CommInfoList;
+      }
+      else SystemInformation.ApplyOnError('Modello comunicazioni non conforme','');   
+    });
+  }
+
   $scope.IsAdministrator = function ()
   {
     return SystemInformation.UserInformation.Ruolo == RUOLO_AMMINISTRATORE;
@@ -100,6 +188,29 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http,$mdDial
     SystemInformation.DataBetweenController.ChiaveDocente    = -1;
     SystemInformation.DataBetweenController.Provenienza      = 'StartPage';
     $state.go("deliveryModDetailPage");  
+  }
+
+  $scope.GetUrlCalendario = function()
+  {
+    SystemInformation.GetSQL('CompanyData',{}, function (Results)
+    {
+      DatiDittaSql     = SystemInformation.FindResults(Results,'GetCompanyData');
+      if (DatiDittaSql != undefined)
+      {
+         $scope.UrlCalendario = DatiDittaSql[0].URL_CALENDARIO;
+         if(DatiDittaSql[0].CALENDARIO_VISIBILE == 'T')
+         {
+           $scope.CalendarioVisibile = true;
+           $scope.UrlCalendario = $sce.trustAsResourceUrl($scope.UrlCalendario);
+         }
+         else
+         {
+            $scope.CalendarioVisibile = false; 
+            $scope.RefreshListaUltimeSpedizioni();
+         } 
+      }
+      else SystemInformation.ApplyOnError('Modello url calendario non conforme','');
+    });
   }
 
   $scope.GetDescrStatoSpedizione = function(Spedizione)
@@ -382,7 +493,9 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http,$mdDial
     ZConfirm.GetConfirmBox('AVVISO','Eliminare la spedizione del ' + Spedizione.Data + ' presso ' + Spedizione.Presso + ' ?',EliminaSped,function(){});
   }  
   
-  $scope.RefreshListaUltimeSpedizioni();
+  $scope.RefreshListaUltimeSpedizioni(); 
+  $scope.RefreshListaComunicazioni();
+  $scope.GetUrlCalendario();
 
 }]);
 

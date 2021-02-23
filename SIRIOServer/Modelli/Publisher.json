@@ -2,7 +2,7 @@
   "SelectSQL"  : [
                    {
                      "Name" : "PublisherInfoList",
-                     "SQL"  : "SELECT * FROM case_editrici ORDER BY DESCRIZIONE"
+                     "SQL"  : "SELECT *,(SELECT DESCRIZIONE FROM gruppi_case_ed WHERE CHIAVE=case_editrici.GRUPPO) AS GRUPPO_NOME FROM case_editrici ORDER BY DESCRIZIONE"
                    }
                  ],
                 
@@ -14,6 +14,10 @@
                   {
                     "Name" : "UpdatePublisher",
                     "SQL"  : "UPDATE case_editrici SET DESCRIZIONE=#DESCRIZIONE WHERE CHIAVE=:CHIAVE"
+                  },
+                  {
+                    "Name" : "UpdatePublisherGroup",
+                    "SQL"  : "UPDATE case_editrici SET GRUPPO=:GRUPPO WHERE CHIAVE=:CHIAVE"
                   },
                   {
                     "Name" : "DeletePublisher",

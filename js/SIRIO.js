@@ -171,6 +171,12 @@ SIRIOApp.config(['$stateProvider','$urlRouterProvider','$mdAriaProvider',functio
         url: '/inventoryManagementPage'
     }) 
 
+    $stateProvider.state('communicationPage', 
+    {
+        templateUrl: "template/communicationPage.html",
+        url: '/communicationPage'
+    })
+
     $urlRouterProvider.otherwise('loginPage');
 }]);
 

@@ -128,6 +128,67 @@ angular.module('ZDialogs',[])
                      });    
      }
   }])
+
+     .controller('ZCustomSelectController',['$scope','$mdDialog','Titolo','Testo','Valore','Lista','Placeholder',function($scope,$mdDialog,Titolo,Testo,Valore,Lista,Placeholder)
+     {
+       $scope.TitoloSelect      = Titolo;
+       $scope.TestoSelect       = Testo;
+       $scope.ValoreSelect      = Valore;
+       $scope.ListaSelect       = Lista;
+       $scope.ElementoSelected  = Valore;
+       $scope.PlaceholderSelect = Placeholder;
+       
+       $scope.GoOnSelect = function() 
+       {     
+         $mdDialog.hide($scope.ElementoSelected);
+         //OnConfirm;
+       };
+   
+       $scope.AnnullaSelect = function() 
+       {     
+         $mdDialog.hide();
+         //OnCancel;
+       };
+   
+     }])
+     .service('ZSelect',['$mdDialog',function($mdDialog)
+     {
+             
+        this.GetSelectBox = function(TitoloP,TestoP,ValoreInput,ListaInput,PlaceInput,OnConfirm,OnCancel)
+        {
+          $mdDialog.show({
+                          controller: 'ZCustomSelectController',
+                          templateUrl: 'ZLibrary/ZCustomSelect.html',
+                          parent: angular.element(document.body),
+                          //targetEvent: ev,
+                          clickOutsideToClose:false,
+                          locals              : {Titolo : TitoloP,Testo : TestoP,Valore : ValoreInput,Lista : ListaInput,Placeholder : PlaceInput},
+                          fullscreen: false,
+                          onComplete : function()
+                          {
+                                        
+                          }
+                        })
+                        .then(function(Answer) 
+                        {
+                          if(Answer != "")
+                          {
+                            if(OnConfirm != undefined) OnConfirm(Answer);
+                          }
+                          else
+                          {
+                            if(OnCancel != undefined) OnCancel();
+                          }
+                          
+                        }, 
+                        function() 
+                        {
+                          if(OnCancel != undefined) OnCancel();
+                        });    
+        }
+    }])
+
+
   
   
 

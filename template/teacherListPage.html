@@ -23,9 +23,6 @@
       
       <input type="checkbox" ng-model="CoordMateriaFiltro" style="margin-left:5px;margin-right:2px;margin-top:30px;width:2%;">
       <label style="margin-left:5px;margin-right:2px;margin-top:27px;">COORDINATORE DI MATERIA</label> 
-      
-      <input ng-show="IsAdministrator()" type="checkbox" ng-model="NascostoFiltro" style="margin-left:5px;margin-right:2px;margin-top:30px;width:2%;">
-      <label ng-show="IsAdministrator()" style="margin-left:5px;margin-right:2px;margin-top:27px;">NASCOSTO</label> 
     </div>
     
     <div layout="row" style="margin-top:0px;">    
@@ -104,10 +101,10 @@
           <th>COGNOME NOME</th>
           <th>MATERIA</th>
         </tr>  
-        <tr ng-repeat="Docente in ListaDocenti | DocenteByFiltro : ANomeFiltro : MateriaFiltro : CoordMateriaFiltro : NascostoFiltro : Admin | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Docente.Chiave}}>
+        <tr ng-repeat="Docente in ListaDocenti | DocenteByFiltro : ANomeFiltro : MateriaFiltro : CoordMateriaFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Docente.Chiave}}>
           <td ng-if="IsAdministrator()"><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA DOCENTE" ng-click="EliminaDocente(Docente)"></td> 
-          <td ng-if="Docente.Nascosto != 'T' && Admin"><img src="img/hide.png" style="width:30px;height:auto;" title="NASCONDI DOCENTE" ng-click="NascondiDocente(Docente)"></td>        
-          <td ng-if="Docente.Nascosto == 'T' && Admin"><img src="img/notHide.png" style="width:30px;height:auto;" title="RENDI VISIBILE DOCENTE" ng-click="RendiVisibileDocente(Docente)"></td>     
+          <td ng-if="Docente.Nascosto != 'T' && IsAdministrator()"><img src="img/hide.png" style="width:30px;height:auto;" title="NASCONDI DOCENTE" ng-click="NascondiDocente(Docente)"></td>        
+          <td ng-if="Docente.Nascosto == 'T' && IsAdministrator()"><img src="img/notHide.png" style="width:30px;height:auto;" title="RENDI VISIBILE DOCENTE" ng-click="RendiVisibileDocente(Docente)"></td>     
           <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA DOCENTE" ng-click="ModificaDocente(Docente)"></td>
           <td><img src="img/delivery.png" style="width:30px;height:auto;" title="NUOVA SPEDIZIONE" ng-click="NuovaSpedizione(Docente.Chiave)"></td>
           <td ng-if="Docente.SpedizioniAssegnate != 0"><img src="img/deliveryList.png" style="width:30px;height:auto;" title="LISTA SPEDIZIONI" ng-click="ListaSpedizioni(Docente)"></td>

@@ -1,0 +1,32 @@
+<md-dialog style="padding:5px;">
+  <form ng-cloak>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2 style="font-weight:bold;color:white;">{{TitoloSelect}}</h2>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content style="width:500px;">
+      <div class="md-dialog-content">
+        <p style="font-weight:bold;width:400px;">{{TestoSelect}}</p>
+      </div>
+      <md-input-container class="containerSelect" style="width:400px;margin:20px;"><label></label>
+        <md-select ng-model="ElementoSelected" placeholder="{{PlaceholderSelect}}" class="mdb-select" type="text">
+        <md-optgroup>
+          <md-option ng-value="-1">NESSUN GRUPPO</md-option>  
+          <md-option ng-repeat="elemento in ListaSelect" ng-value="elemento.Chiave">{{elemento.Descrizione}}</md-option>
+        </md-optgroup>
+        </md-select>
+      </md-input-container>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row" layout-align="end center">
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="GoOnSelect()">
+        SI
+      </md-button>
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="AnnullaSelect()">
+        NO
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

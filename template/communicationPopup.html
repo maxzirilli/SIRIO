@@ -1,0 +1,25 @@
+<md-dialog style="width:60%;">
+    <md-toolbar>
+      <div>
+        <h2 style="font-weight:bold;color:white;text-align:center;">{{ComunicazioneToView.Titolo}} - {{ComunicazioneToView.Data}}</h2>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content style="margin:30px;">
+      <div>
+       <div layout ="column" style="width:90%;">
+          <md-input-container>               
+           <label>LINK</label><input ng-model="ComunicazioneToView.Link" type="text" name="Link" readonly>
+          </md-input-container>
+          <md-input-container>
+           <label>TESTO</label><textarea ng-model="ComunicazioneToView.Testo" type="textarea" rows="6" cols="12" name="Testo" readonly></textarea>
+         </md-input-container>
+      </div>   
+    </md-dialog-content>
+
+    <md-dialog-actions layout="end end">
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ChiudiPopupComunicazione()">
+        CHIUDI
+      </md-button>
+    </md-dialog-actions>
+</md-dialog>

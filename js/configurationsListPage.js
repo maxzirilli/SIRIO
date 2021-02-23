@@ -1,6 +1,6 @@
-SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','ZConfirm','ZPrompt', function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm,ZPrompt)
+SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','ZConfirm','ZPrompt','ZSelect', function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm,ZPrompt,ZSelect)
 { 
-  $scope.ListaConfigurazioni        = ['COMBINAZIONI CLASSI','CASE EDITRICI GESTITE','DATI PAGINA 43',"LUOGHI DISPONIBILITA' DOCENTI",'MATERIE','PROVINCE GESTITE','TIPOLOGIE ISTITUTI GESTITE','TIPOLOGIE ISTITUTI ESCLUSE'];
+  $scope.ListaConfigurazioni        = ['COMBINAZIONI CLASSI','CASE EDITRICI GESTITE','DATI PAGINA 43',"GRUPPI CASE EDITRICI","LUOGHI DISPONIBILITA' DOCENTI",'MATERIE','PROVINCE GESTITE','TIPOLOGIE ISTITUTI GESTITE','TIPOLOGIE ISTITUTI ESCLUSE'];
   $scope.ConfigurazioneSelezionata  = 0;
   
   $scope.ListaMaterie               = [];
@@ -30,6 +30,10 @@ SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformat
   $scope.ListaLuoghi               = [];
   $scope.LuogoInEditing            = {};
   $scope.NuovoLuogo                = false;
+
+  $scope.ListaGruppi               = [];
+  $scope.GruppoInEditing           = {};
+  $scope.NuovoGruppo               = false;
   
   ScopeHeaderController.CheckButtons(); 
   
@@ -144,6 +148,22 @@ $scope.GridOptions_7 = {
                                             },
                           limitOptions    : [10, 20, 30]
                         };
+
+$scope.GridOptions_8 = {
+                          rowSelection    : false,
+                          multiSelect     : true,
+                          autoSelect      : true,
+                          decapitate      : false,
+                          largeEditDialog : false,
+                          boundaryLinks   : false,
+                          limitSelect     : true,
+                          pageSelect      : true,
+                          query           : {
+                                              limit: 10,
+                                              page: 1
+                                            },
+                          limitOptions    : [10, 20, 30]
+                       };
                            
   $scope.RefreshListaMaterie = function ()
   {
@@ -244,8 +264,10 @@ $scope.GridOptions_7 = {
       { 
          for(let i = 0;i < CaseInfoList.length;i ++)
          CaseInfoList[i] = {
-                             Chiave      : CaseInfoList[i].CHIAVE,
-                             Descrizione : CaseInfoList[i].DESCRIZIONE
+                             Chiave       : CaseInfoList[i].CHIAVE,
+                             Descrizione  : CaseInfoList[i].DESCRIZIONE,
+                             GruppoChiave : CaseInfoList[i].GRUPPO == undefined ? -1 : CaseInfoList[i].GRUPPO,
+                             GruppoNome   : CaseInfoList[i].GRUPPO_NOME == undefined ? '' : CaseInfoList[i].GRUPPO_NOME
                            }
          $scope.ListaCase = CaseInfoList
       } 
@@ -270,6 +292,24 @@ $scope.GridOptions_7 = {
       else SystemInformation.ApplyOnError('Modello luoghi disponibilità docenti non conforme','');   
     });
   }
+
+  $scope.RefreshListaGruppi = function ()
+  {
+    SystemInformation.GetSQL('PublisherGroup', {}, function(Results)  
+    {
+      GruppiInfoList = SystemInformation.FindResults(Results,'GroupInfoList');
+      if(GruppiInfoList != undefined)
+      { 
+         for(let i = 0;i < GruppiInfoList.length;i ++)
+         GruppiInfoList[i] = {
+                               Chiave      : GruppiInfoList[i].CHIAVE,
+                               Descrizione : GruppiInfoList[i].DESCRIZIONE
+                             }
+         $scope.ListaGruppi = GruppiInfoList
+      } 
+      else SystemInformation.ApplyOnError('Modello gruppi case editrici non conforme','');   
+    });
+  }
   
   $scope.GetDatiDitta = function ()
   {
@@ -279,11 +319,13 @@ $scope.GridOptions_7 = {
       DatiDittaSql     = SystemInformation.FindResults(Results,'GetCompanyData');
       if (DatiDittaSql != undefined)
       {
-        $scope.DatiDitta.INDIRIZZO      = DatiDittaSql[0].INDIRIZZO;
-        $scope.DatiDitta.TELEFONO       = DatiDittaSql[0].TELEFONO;
-        $scope.DatiDitta.EMAIL          = DatiDittaSql[0].EMAIL;
-        $scope.DatiDitta.EMAIL_ARCHIVIO = DatiDittaSql[0].EMAIL_ARCHIVIO;
-        $scope.DatiDitta.SITO_WEB       = DatiDittaSql[0].SITO_WEB;
+        $scope.DatiDitta.INDIRIZZO           = DatiDittaSql[0].INDIRIZZO;
+        $scope.DatiDitta.TELEFONO            = DatiDittaSql[0].TELEFONO;
+        $scope.DatiDitta.EMAIL               = DatiDittaSql[0].EMAIL;
+        $scope.DatiDitta.EMAIL_ARCHIVIO      = DatiDittaSql[0].EMAIL_ARCHIVIO;
+        $scope.DatiDitta.SITO_WEB            = DatiDittaSql[0].SITO_WEB;
+        $scope.DatiDitta.URL_CALENDARIO      = DatiDittaSql[0].URL_CALENDARIO;
+        $scope.DatiDitta.CALENDARIO_VISIBILE = DatiDittaSql[0].CALENDARIO_VISIBILE == 'T' ? true : false;
       }
       else SystemInformation.ApplyOnError('Modello dati ditta non conforme','');
     });
@@ -788,6 +830,36 @@ $scope.GridOptions_7 = {
     }   
     ZPrompt.GetPromptBox('MODIFICA INSERIMENTO','MODIFICA CASA EDITRICE: ',Casa.Descrizione,ModificaCsEd,function(){});         
   }
+
+  $scope.ModificaGruppoCasa = function (Casa)
+  {
+    var ModificaGruppoCasa = function(Answer)
+    {
+      CasaInEditing = Answer;
+      var ParamCasa = {
+                        CHIAVE      : Casa.Chiave,
+                        GRUPPO      : Answer
+                      }
+      $scope.ConfermaGruppoCasa(ParamCasa);
+    }   
+    ZSelect.GetSelectBox('MODIFICA INSERIMENTO','MODIFICA GRUPPO APPARTENENZA: ',parseInt(Casa.GruppoChiave),$scope.ListaGruppi,'GRUPPO',ModificaGruppoCasa,function(){});         
+  }
+
+  $scope.ConfermaGruppoCasa = function(param)
+  {
+    var $ObjQuery = { Operazioni : [] };
+    if(param.GRUPPO == -1)  
+       param.GRUPPO = null;   
+    $ObjQuery.Operazioni.push({
+                                Query     : 'UpdatePublisherGroup',
+                                Parametri : param
+                              });
+ 
+    SystemInformation.PostSQL('Publisher',$ObjQuery,function(Answer)
+    {
+      $scope.RefreshListaCase();
+    });
+  }
   
   $scope.NuovaCasa = function ()
   { 
@@ -814,7 +886,7 @@ $scope.GridOptions_7 = {
        ZCustomAlert($mdDialog,'ATTENZIONE','Casa editrice gestita già esistente!')
     else
     {
-       var $ObjQuery         = { Operazioni : [] };     
+       var $ObjQuery = { Operazioni : [] };     
        var NuovaCasa = (param.CHIAVE == -1);
        param.DESCRIZIONE = param.DESCRIZIONE.xSQL();
        if(NuovaCasa)     
@@ -859,7 +931,98 @@ $scope.GridOptions_7 = {
       });  
     }
     ZConfirm.GetConfirmBox('AVVISO','ELIMINARE LA CASA EDITRICE: ' + Casa.Descrizione + ' ?',EliminaCasEd,function(){});          
+  }
 
+  //GRUPPI CASE EDITRICI  
+ 
+  $scope.ModificaGruppo = function (Gruppo)
+  {
+    var ModificaGruppo = function(Answer)
+    {
+      GruppoInEditing = Answer;
+      if (GruppoInEditing === "") $scope.RefreshListaGruppi()
+      else 
+      {   
+        var ParamGruppo = {
+                            CHIAVE      : Gruppo.Chiave,
+                            DESCRIZIONE : GruppoInEditing.toUpperCase()
+                          }
+        $scope.ConfermaGruppo(ParamGruppo);
+      }
+    }   
+    ZPrompt.GetPromptBox('MODIFICA INSERIMENTO','MODIFICA GRUPPO CASA EDITRICE: ',Gruppo.Descrizione,ModificaGruppo,function(){});         
+  }
+  
+  $scope.NuovoGruppo = function ()
+  { 
+    var CreaGruppo = function(Answer)
+    {
+      GruppoInEditing = Answer;
+      if (GruppoInEditing === null) $scope.RefreshListaGruppi()
+      else 
+      {       
+        var ParamGruppo = {
+                            CHIAVE      : -1,
+                            DESCRIZIONE : GruppoInEditing.toUpperCase()
+                          }
+        $scope.ConfermaGruppo(ParamGruppo);
+      }
+    }
+    ZPrompt.GetPromptBox('NUOVO INSERIMENTO','NUOVO GRUPPO CASA EDITRICE: ',"",CreaGruppo,function(){});         
+  }
+  
+  $scope.ConfermaGruppo = function (param)
+  { 
+    GruppoExist = $scope.ListaGruppi.find(function(AGruppo){return (AGruppo.Descrizione == param.DESCRIZIONE);});
+    if(GruppoExist)
+       ZCustomAlert($mdDialog,'ATTENZIONE','Gruppo case editrici già esistente!')
+    else
+    {
+       var $ObjQuery     = { Operazioni : [] };     
+       var NuovoGruppo   = (param.CHIAVE == -1);
+       param.DESCRIZIONE = param.DESCRIZIONE.xSQL();
+       if(NuovoGruppo)     
+       {           
+         $ObjQuery.Operazioni.push({
+                                     Query     : 'InsertGroup',
+                                     Parametri : param
+                                   }); 
+       }
+       else
+       {
+         $ObjQuery.Operazioni.push({
+                                     Query     : 'UpdateGroup',
+                                     Parametri : param
+                                   });
+       };
+    
+       SystemInformation.PostSQL('PublisherGroup',$ObjQuery,function(Answer)
+       {
+         if(param.CHIAVE == -1)
+            param.CHIAVE = Answer.NewKey1;
+         $scope.RefreshListaGruppi();
+       });
+    }    
+  }
+  
+  $scope.EliminaGruppo = function(Gruppo)
+  {
+    var EliminaGruppo = function()
+    {
+      var $ObjQuery   = { Operazioni : [] };
+      var ParamGruppo = { CHIAVE : Gruppo.Chiave };
+       
+      $ObjQuery.Operazioni.push({
+                                  Query     : 'DeleteGroup',
+                                  Parametri : ParamGruppo
+                                });
+                                                                
+      SystemInformation.PostSQL('PublisherGroup',$ObjQuery,function(Answer)
+      {
+        $scope.RefreshListaGruppi();
+      });  
+    }
+    ZConfirm.GetConfirmBox('AVVISO','ELIMINARE IL GRUPPO DI CASE EDITRICI: ' + Gruppo.Descrizione + ' ?',EliminaGruppo,function(){});          
   }
 
   //LUOGHI DISPONIBILITA'
@@ -963,11 +1126,13 @@ $scope.GridOptions_7 = {
     $ObjQuery.Operazioni.push({
                                 Query : 'UpdateCompanyData',
                                 Parametri : {
-                                              "INDIRIZZO"      : $scope.DatiDitta.INDIRIZZO.xSQL(),
-                                              "TELEFONO"       : $scope.DatiDitta.TELEFONO.xSQL(),
-                                              "EMAIL"          : $scope.DatiDitta.EMAIL.xSQL(),
-                                              "EMAIL_ARCHIVIO" : $scope.DatiDitta.EMAIL_ARCHIVIO.xSQL(),
-                                              "SITO_WEB"       : $scope.DatiDitta.SITO_WEB.xSQL()
+                                              "INDIRIZZO"           : $scope.DatiDitta.INDIRIZZO.xSQL(),
+                                              "TELEFONO"            : $scope.DatiDitta.TELEFONO.xSQL(),
+                                              "EMAIL"               : $scope.DatiDitta.EMAIL.xSQL(),
+                                              "EMAIL_ARCHIVIO"      : $scope.DatiDitta.EMAIL_ARCHIVIO.xSQL(),
+                                              "SITO_WEB"            : $scope.DatiDitta.SITO_WEB.xSQL(),
+                                              "URL_CALENDARIO"      : $scope.DatiDitta.URL_CALENDARIO.trim().xSQL(),
+                                              "CALENDARIO_VISIBILE" : $scope.DatiDitta.CALENDARIO_VISIBILE ? 'T' : 'F'
                                             }
                                 
                               });
@@ -991,5 +1156,6 @@ $scope.GridOptions_7 = {
   $scope.RefreshListaTipologieEscluse();
   $scope.RefreshListaProvince();
   $scope.RefreshListaLuoghi();
+  $scope.RefreshListaGruppi();
 
 }]);

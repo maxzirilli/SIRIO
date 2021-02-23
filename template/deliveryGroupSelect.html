@@ -1,0 +1,44 @@
+<md-dialog>
+  <form ng-cloak name="PopupForm">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2 style="font-weight:bold;color:white;">SELEZIONE GRUPPI</h2>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+      <div class="md-dialog-content">
+        <h2>Seleziona gruppi per la creazione dell'xls</h2>  
+        <p ng-if="ListaGruppiPopup.length == 0" style="font-weight:bold;font-style:italic;float:center;">NESSUN GRUPPO TROVATO</p>  
+        <div ng-if="ListaGruppiPopup.length != 0">
+          <table style="width:1000px;text-align:center;" md-row-select="GridOptions_2.rowSelection" multiple="{{GridOptions_2.multiSelect}}">  
+          <tr>
+            <th></th>
+            <th>NOME</th>
+          </tr>
+          <tr ng-repeat="Gruppo in ListaGruppiPopup | limitTo : GridOptions_2.query.limit : (GridOptions_2.query.page - 1) * GridOptions_2.query.limit" id={{Gruppo.Chiave}}>
+            <td><input type="checkbox" ng-model="Gruppo.DaAggiungere"></td>
+            <td>{{Gruppo.Descrizione}}</td>
+          </tr>
+          </table>
+          <md-table-pagination md-limit="GridOptions_2.query.limit" 
+                             md-limit-options="GridOptions_2.limitOptions" 
+                             md-page="GridOptions_2.query.page" 
+                             md-total="{{ListaGruppiiPopup.length}}" 
+                             md-page-select="GridOptions_2.pageSelect" 
+                             md-boundary-links="GridOptions_2.boundaryLinks" 
+                             md-on-paginate="logPagination"></md-table-pagination>
+         </div>
+      </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ConfermaPopup()">
+       CONFERMA
+      </md-button>
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="AnnullaPopup()">
+       ANNULLA
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

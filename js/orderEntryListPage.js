@@ -12,7 +12,7 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
   TmpDate.setDate(TmpDate.getDate() - 30);
   //$scope.DataRicercaDal   = new Date(TmpDate);
   var AnnoCorrente = new Date().getFullYear();
-  $scope.Data.DataRicercaDal   = new Date(AnnoCorrente, 01, 01)  
+  $scope.Data.DataRicercaDal   = new Date(AnnoCorrente, 0, 1)  
   
   ScopeHeaderController.CheckButtons();
 

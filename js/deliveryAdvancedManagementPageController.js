@@ -10,7 +10,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
   TmpDate.setDate(TmpDate.getDate() - 30);
   //$scope.DataRicercaDal   = new Date(TmpDate);
   var AnnoCorrente = new Date().getFullYear();
-  $scope.DataRicercaDal   = new Date(AnnoCorrente, 01, 01)
+  $scope.DataRicercaDal   = new Date(AnnoCorrente, 0, 1)
   $scope.RicercaPerTitolo = false;
   
   $scope.ListaTitoliFiltroTmp = [];

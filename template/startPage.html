@@ -30,13 +30,30 @@
         <img src="img/deliveryStart.png" class="invert MainIcon" style="width:30px;height:auto;">
           SPEDIZIONI
         </md-button>
+        <md-button name="Comunicazioni" class="MainButton" ng-if="IsAdministrator()" ng-click="ApriGestioneComunicazioni()">
+        <img src="img/communication.png" class="invert MainIcon">
+          COMUNICAZIONI
+        </md-button>
       </div>
     </div>
   </md-toolbar>
 
   <md-content>
-    <div>
-        <md-card span=100 style="text-align:center;overflow-y:scroll;height:500px;"> <!--overflow-x:scroll-->
+    <div layout="row">
+        <md-card style="text-align:center;width:60%;height:700px;" ng-if="CalendarioVisibile"> 
+          <md-card-title>
+            <md-card-title-text style="text-align:center;">
+              <span class="md-headline" style="font-weight:bold;">CALENDARIO</span>
+            </md-card-title-text>
+          </md-card-title>
+          <md-card-content style="height:100%;">
+            <iframe ng-show="UrlCalendario != ''" ng-src={{UrlCalendario}} style="border:solid 1px #777" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+            <p  ng-show="UrlCalendario == ''" style="font-weight:bold;font-style:italic;">NESSUN CALENDARIO IMPOSTATO</p>
+          </md-card-content>
+        </md-card>
+
+
+        <md-card style="text-align:center;width:60%;overflow-y:scroll;height:700px;" ng-if="!CalendarioVisibile">
           <md-card-title>
             <md-card-title-text style="text-align:center;">
               <span class="md-headline" style="font-weight:bold;">SPEDIZIONI</span>
@@ -65,57 +82,40 @@
             <p ng-if="UltimeVentiSpedizioni.length == 0" style="font-weight:bold;font-style:italic;">NESSUNA SPEDIZIONE PRESENTE</p>
           </md-card-content>
         </md-card>
+
+
+        <md-card span=50 style="text-align:center;width:40%;overflow-y:scroll;height:700px;"> 
+          <md-card-title>
+            <md-card-title-text style="text-align:center;">
+              <span class="md-headline" style="font-weight:bold;">COMUNICAZIONI</span>
+            </md-card-title-text>
+          </md-card-title>
+          <md-card-content style="height:100%;">
+
+            <div ng-if="ListaComunicazioni.length != 0">
+              <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
+                <tr>
+                  <th>DATA</th>
+                  <th>TITOLO</th>           
+                </tr>  
+                <tr ng-repeat="comunicazione in ListaComunicazioni | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{comunicazione.Chiave}}>      
+                  <td ng-click="ApriComunicazione(comunicazione)">{{ConvertiData(comunicazione.Data)}}</td> 
+                  <td ng-click="ApriComunicazione(comunicazione)">{{comunicazione.Titolo}}</td> 
+                </tr>    
+              </table>
+              <md-table-pagination md-limit="GridOptions.query.limit" 
+                                   md-limit-options="GridOptions.limitOptions" 
+                                   md-page="GridOptions.query.page" 
+                                   md-total="{{ListaComunicazioni.length}}" 
+                                   md-page-select="GridOptions.pageSelect" 
+                                   md-boundary-links="GridOptions.boundaryLinks" 
+                                   md-on-paginate="logPagination"></md-table-pagination>
+            </div>
+            <p ng-if="ListaComunicazioni.length == 0" style="font-weight:bold;font-style:italic;text-align:center;margin-top:100px;">NESSUNA COMUNICAZIONE PRESENTE</p>
+
+          </md-card-content>
+        </md-card>
     </div>
-    
-    <!--<div layout="row">
-      <md-card>
-        <md-card-title>
-          <md-card-title-text style="text-align:center;">
-            <span class="md-headline" style="font-weight:bold;">STAMPE</span>
-          </md-card-title-text>
-        </md-card-title>
-        <md-card-content>
-          <div layout="row">
-            <div>
-              <md-button ng-click="ApriPaginaEtichette()" style="float:left;"><img src="img/label.png" style="width:55px;height:auto;margin-right:10px"></md-button>
-              <p style="font-weight:bold;padding:0px;">ETICHETTE</p>
-              <p style="font-style:italic;padding:0px;margin-left:100px;">Etichette per spedizioni</p>              
-            </div>       
-            <div>
-              <md-button ng-click="ApriLogMagazzini()" style="float:left;"><img src="img/storageLog.png" style="width:55px;height:auto;margin-right:10px"></md-button>
-              <p style="font-weight:bold;padding:0px;">LOG MAGAZZINI / INVENTARIO</p>
-              <p style="font-style:italic;padding:0px;margin-left:100px;">Log magazzini e inventario</p>              
-            </div>       
-          </div>
-        </md-card-content>
-      </md-card>
-      <md-card style="overflow-y:scroll;">
-        <md-card-title>
-          <md-card-title-text style="text-align:center;">
-            <span class="md-headline" style="font-weight:bold;">VARIE</span>
-          </md-card-title-text>
-        </md-card-title>
-        <md-card-content>
-          <div layout="row">
-            <div ng-if="IsAdministrator()">
-              <md-button ng-click="ApriGestioneInventario()" style="float:left;"><img src="img/inventory.png" style="width:55px;height:auto;margin-right:10px"></md-button>
-              <p style="font-weight:bold;padding:0px;">INVENTARIO</p>
-              <p style="font-style:italic;padding:0px;margin-left:100px;">Gestione inventario</p>
-            </div>
-            <div>
-              <md-button ng-click="ApriMagazzinoVolante()" style="float:left;"><img src="img/flyingStorage.png" style="width:55px;height:auto;margin-right:10px"></md-button>
-              <p style="font-weight:bold;padding:0px;">MAGAZZINO VOLANTE</p>
-              <p style="font-style:italic;padding:0px;margin-left:100px;">Gestione magazzino volante</p>              
-            </div>
-            <div>
-              <md-button ng-click="NuovaSpedizioneCasaEditrice()" style="float:left;"><img src="img/delivery.png" style="width:55px;height:auto;margin-right:10px"></md-button>
-              <p style="font-weight:bold;padding:0px;">SPEDIZIONE</p>
-              <p style="font-style:italic;padding:0px;margin-left:100px;">Nuova spedizione generica</p>              
-            </div>              
-          </div>
-        </md-card-content>
-      </md-card>
-    </div>-->
 
     <div layout="row" style="text-align:center;">
       <md-card style="width:100%;">

@@ -1,0 +1,23 @@
+{ 
+ "SelectSQL" : [
+                 { 
+                   "Name" : "CommunicationInfoList",
+                   "SQL"  : "SELECT * FROM comunicazioni ORDER BY comunicazioni.DATA DESC" 
+                 }
+               ],
+ 
+ "EditSQL"  : [   
+                {
+                  "Name" : "InsertCommunication",
+                  "SQL"  : "INSERT INTO comunicazioni (CHIAVE,TITOLO,DATA,TESTO,LINK) VALUES (:NewKey1,#TITOLO,#DATA,#TESTO,#LINK)"
+                }, 
+                {
+                  "Name" : "UpdateCommunication",
+                  "SQL"  : "UPDATE comunicazioni SET TITOLO=#TITOLO,DATA=#DATA,TESTO=#TESTO,LINK=#LINK WHERE CHIAVE=:CHIAVE"
+                },
+                {
+                  "Name" : "DeleteCommunication",
+                  "SQL"  : "DELETE FROM comunicazioni WHERE CHIAVE=:CHIAVE"
+                }
+              ]        
+}

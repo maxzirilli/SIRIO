@@ -21,21 +21,17 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   $scope.DisponibilitaInEditing            = [];
   $scope.NomeFiltro                        = '';
   $scope.CoordMateriaFiltro                = false;
-  $scope.NascostoFiltro                    = false;
   $scope.OldPagina                         = 0;
   $scope.ListaGiorni                       = [{Numero : 0, Descrizione : 'LUNEDI'},{Numero : 1, Descrizione : 'MARTEDI'},{Numero : 2, Descrizione : 'MERCOLEDI'},{Numero : 3, Descrizione : 'GIOVEDI'},
                                               {Numero : 4, Descrizione : 'VENERDI'},{Numero : 5, Descrizione : 'SABATO'},{Numero : 6, Descrizione : 'DOMENICA'}];
   $scope.ListaOrariTabella                 = [];
-  $scope.Admin                             = SystemInformation.UserInformation.Ruolo == 1;
-
 
   $scope.AbilitaInvioMultiplo              = function()
                                             {
                                               let DocentiFiltrati = $filter('DocenteByFiltro')($scope.ListaDocenti,
                                                                                                $scope.ANomeFiltro,
                                                                                                $scope.MateriaFiltro,
-                                                                                               $scope.CoordMateriaFiltro,
-                                                                                               $scope.NascostoFiltro);
+                                                                                               $scope.CoordMateriaFiltro);
                                               return(DocentiFiltrati.length < MAX_N_DESTINATARI_MAIL &&
                                                      DocentiFiltrati.length > 0);
                                            };
@@ -50,14 +46,6 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   $scope.IsAdministrator = function ()
   {
     return SystemInformation.UserInformation.Ruolo == RUOLO_AMMINISTRATORE;
-  }
-  
-  $scope.SetAdmin= function()
-  {
-    if ($scope.IsAdministrator())
-        Admin = true
-    else Admin = false;
-      
   }
   
   $scope.GridOptions = {
@@ -328,28 +316,42 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
       {
         for(let i = 0; i < DocentiInfoLista.length; i++)
         {
-          DocentiInfoLista[i] = { 
-                                  Chiave              : DocentiInfoLista[i].CHIAVE,
-                                  Nascosto            : DocentiInfoLista[i].NASCOSTO,
-                                  RagioneSociale      : DocentiInfoLista[i].RAGIONE_SOCIALE,
-                                  Materia1            : DocentiInfoLista[i].MATERIA_1      == null ? -1 : DocentiInfoLista[i].MATERIA_1,
-                                  DescrMateria1       : DocentiInfoLista[i].NOME_MATERIA1  == null ? '' : DocentiInfoLista[i].NOME_MATERIA1,
-                                  Materia2            : DocentiInfoLista[i].MATERIA_2      == null ? -1 : DocentiInfoLista[i].MATERIA_2,
-                                  DescrMateria2       : DocentiInfoLista[i].NOME_MATERIA2  == null ? '' : DocentiInfoLista[i].NOME_MATERIA2,
-                                  Materia3            : DocentiInfoLista[i].MATERIA_3      == null ? -1 : DocentiInfoLista[i].MATERIA_3,
-                                  DescrMateria3       : DocentiInfoLista[i].NOME_MATERIA3  == null ? '' : DocentiInfoLista[i].NOME_MATERIA3,
-                                  Titolo              : DocentiInfoLista[i].TITOLO         == null ? '' : DocentiInfoLista[i].TITOLO,
-                                  Indirizzo           : DocentiInfoLista[i].INDIRIZZO      == null ? '' : DocentiInfoLista[i].INDIRIZZO,
-                                  Comune              : DocentiInfoLista[i].COMUNE         == null ? '' : DocentiInfoLista[i].COMUNE,
-                                  Cap                 : DocentiInfoLista[i].CAP            == null ? '' : DocentiInfoLista[i].CAP,
-                                  Provincia           : DocentiInfoLista[i].PROVINCIA      == null ? 0  : DocentiInfoLista[i].PROVINCIA,
-                                  ProvinciaNome       : DocentiInfoLista[i].PROVINCIA_NOME == null ? '' : DocentiInfoLista[i].PROVINCIA_NOME,
-                                  Email               : DocentiInfoLista[i].EMAIL          == undefined || DocentiInfoLista[i].EMAIL == '' ? 'Non disponibile' : DocentiInfoLista[i].EMAIL,
-                                  CoordMateria_1      : DocentiInfoLista[i].COORD_MATERIA_1 == undefined ? -1 : DocentiInfoLista[i].COORD_MATERIA_1,
-                                  CoordMateria_2      : DocentiInfoLista[i].COORD_MATERIA_2 == undefined ? -1 : DocentiInfoLista[i].COORD_MATERIA_2,
-                                  CoordMateria_3      : DocentiInfoLista[i].COORD_MATERIA_3 == undefined ? -1 : DocentiInfoLista[i].COORD_MATERIA_3,
-                                  SpedizioniAssegnate : parseInt(DocentiInfoLista[i].NR_SPEDIZIONI)
-                                };
+          var AggiungiDoc = true;
+          if(!$scope.IsAdministrator())
+          {
+             if(DocentiInfoLista[i].NASCOSTO == 'T')
+                AggiungiDoc = false; 
+          }
+          if(AggiungiDoc)
+          {
+            DocentiInfoLista[i] = { 
+                                    Chiave              : DocentiInfoLista[i].CHIAVE,
+                                    Nascosto            : DocentiInfoLista[i].NASCOSTO,
+                                    RagioneSociale      : DocentiInfoLista[i].RAGIONE_SOCIALE,
+                                    Materia1            : DocentiInfoLista[i].MATERIA_1      == null ? -1 : DocentiInfoLista[i].MATERIA_1,
+                                    DescrMateria1       : DocentiInfoLista[i].NOME_MATERIA1  == null ? '' : DocentiInfoLista[i].NOME_MATERIA1,
+                                    Materia2            : DocentiInfoLista[i].MATERIA_2      == null ? -1 : DocentiInfoLista[i].MATERIA_2,
+                                    DescrMateria2       : DocentiInfoLista[i].NOME_MATERIA2  == null ? '' : DocentiInfoLista[i].NOME_MATERIA2,
+                                    Materia3            : DocentiInfoLista[i].MATERIA_3      == null ? -1 : DocentiInfoLista[i].MATERIA_3,
+                                    DescrMateria3       : DocentiInfoLista[i].NOME_MATERIA3  == null ? '' : DocentiInfoLista[i].NOME_MATERIA3,
+                                    Titolo              : DocentiInfoLista[i].TITOLO         == null ? '' : DocentiInfoLista[i].TITOLO,
+                                    Indirizzo           : DocentiInfoLista[i].INDIRIZZO      == null ? '' : DocentiInfoLista[i].INDIRIZZO,
+                                    Comune              : DocentiInfoLista[i].COMUNE         == null ? '' : DocentiInfoLista[i].COMUNE,
+                                    Cap                 : DocentiInfoLista[i].CAP            == null ? '' : DocentiInfoLista[i].CAP,
+                                    Provincia           : DocentiInfoLista[i].PROVINCIA      == null ? 0  : DocentiInfoLista[i].PROVINCIA,
+                                    ProvinciaNome       : DocentiInfoLista[i].PROVINCIA_NOME == null ? '' : DocentiInfoLista[i].PROVINCIA_NOME,
+                                    Email               : DocentiInfoLista[i].EMAIL          == undefined || DocentiInfoLista[i].EMAIL == '' ? 'Non disponibile' : DocentiInfoLista[i].EMAIL,
+                                    CoordMateria_1      : DocentiInfoLista[i].COORD_MATERIA_1 == undefined ? -1 : DocentiInfoLista[i].COORD_MATERIA_1,
+                                    CoordMateria_2      : DocentiInfoLista[i].COORD_MATERIA_2 == undefined ? -1 : DocentiInfoLista[i].COORD_MATERIA_2,
+                                    CoordMateria_3      : DocentiInfoLista[i].COORD_MATERIA_3 == undefined ? -1 : DocentiInfoLista[i].COORD_MATERIA_3,
+                                    SpedizioniAssegnate : parseInt(DocentiInfoLista[i].NR_SPEDIZIONI)
+                                  };
+          }
+          else
+          {
+            DocentiInfoLista.splice(i, 1);
+            i--; 
+          }  
         }
         $scope.ListaDocenti = DocentiInfoLista;
        
@@ -437,7 +439,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   $scope.InvioMultiploMail = function (Nome)
   {
     var ContatoreMailValide = 0;
-    var ListaMailFiltrata = $filter('DocenteByFiltro')($scope.ListaDocenti,Nome,$scope.MateriaFiltro,$scope.CoordMateriaFiltro,$scope.NascostoFiltro);
+    var ListaMailFiltrata = $filter('DocenteByFiltro')($scope.ListaDocenti,Nome,$scope.MateriaFiltro,$scope.CoordMateriaFiltro);
     SystemInformation.DataBetweenController  = { ListaDocMail : []};
     
     if(ListaMailFiltrata.length >= MAX_N_DESTINATARI_MAIL)
@@ -1729,9 +1731,9 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
 
 SIRIOApp.filter('DocenteByFiltro',function()
 {
-  return function(ListaDocenti,ANomeFiltro,MateriaFiltro,CoordMateriaFiltro,NascostoFiltro,Admin)
-         {
-           if(ANomeFiltro == '' && MateriaFiltro == -1 && CoordMateriaFiltro == false && (!NascostoFiltro && Admin)) 
+  return function(ListaDocenti,ANomeFiltro,MateriaFiltro,CoordMateriaFiltro)
+         {    
+            if(ANomeFiltro == '' && MateriaFiltro == -1 && CoordMateriaFiltro == false) 
               return(ListaDocenti);
            var ListaFiltrata = [];
            ANomeFiltro = ANomeFiltro.toUpperCase();
@@ -1752,13 +1754,6 @@ SIRIOApp.filter('DocenteByFiltro',function()
               if(CoordMateriaFiltro)
                  if(Docente.CoordMateria_1 == -1 && Docente.CoordMateria_2 == -1 && Docente.CoordMateria_3 == -1)
                     Result = false; 
-              
-               if(!Admin)
-                  if(Docente.Nascosto == 'T')
-                     Result = false
-               else 
-                    if(Docente.Nascosto == 'T') 
-                       Result = false;
                          
               return(Result);
            }
