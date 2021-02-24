@@ -8,9 +8,13 @@
 
     <md-dialog-content>
       <div class="md-dialog-content">
-        <h2>Seleziona gruppi per la creazione dell'xls</h2>  
-        <p ng-if="ListaGruppiPopup.length == 0" style="font-weight:bold;font-style:italic;float:center;">NESSUN GRUPPO TROVATO</p>  
-        <div ng-if="ListaGruppiPopup.length != 0">
+        <h2>Seleziona gruppi per la creazione dell'xls:</h2> 
+        <md-radio-group ng-model="CheckGruppi" layout="row" style="padding:5px;">
+          <md-radio-button value="T">TUTTI</md-radio-button>
+          <md-radio-button value="G">SELEZIONA GRUPPI</md-radio-button>
+        </md-radio-group>  
+        <p ng-show="ListaGruppiPopup.length == 0  && CheckGruppi == 'G'" style="font-weight:bold;font-style:italic;float:center;">NESSUN GRUPPO TROVATO</p> 
+        <div ng-show="ListaGruppiPopup.length != 0 && CheckGruppi == 'G'">
           <table style="width:1000px;text-align:center;" md-row-select="GridOptions_2.rowSelection" multiple="{{GridOptions_2.multiSelect}}">  
           <tr>
             <th></th>

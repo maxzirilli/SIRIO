@@ -1,10 +1,16 @@
 {
  "Version": {
   "Major": 1,
-  "Minor": 12,
+  "Minor": 13,
   "Release": 7
  },
  "Storia": [
+  "Versione 1.13.7   24 Febbraio 2021",
+  "                  - NEW: Aggiunti campi url_calendario e calendario_visibile in configurazione_ditta",
+  "                  - NEW: Aggiunto campo nascosto in docenti",
+  "                  - NEW: Aggiunta tabella gruppi_case_ed",
+  "                  - NEW: Aggiunto campo gruppo in tabella case_editrici",
+  "                  - NEW: Aggiunta tabella comunicazioni",
   "Versione 1.12.7   12 Febbraio 2021",
   "                  - NEW: Aggiunto campo ordinamento nella tabella materie_insegnamento",
   "                  - NEW: Aggiunto il campo ordinamento_doc nella tabella utenti",
@@ -115,11 +121,11 @@
    "Triggers": []
   },
   {
-   "Nome": "case_editrici",
+   "Nome": "classi_combinazioni",
    "Campi": [
     {
      "Nome": "CHIAVE",
-     "IsNullable": true,
+     "IsNullable": false,
      "DataType": "int(11)",
      "AutoIncrement": false,
      "Commento": "",
@@ -136,14 +142,18 @@
      "SQLAfterAddedColumn": null
     }
    ],
-   "PrimaryKey": null,
+   "PrimaryKey": {
+    "Campi": [
+     "CHIAVE"
+    ]
+   },
    "ForeignKeys": [],
    "UniqueKeys": [],
    "Indexes": [],
    "Triggers": []
   },
   {
-   "Nome": "classi_combinazioni",
+   "Nome": "comunicazioni",
    "Campi": [
     {
      "Nome": "CHIAVE",
@@ -155,9 +165,36 @@
      "SQLAfterAddedColumn": null
     },
     {
-     "Nome": "DESCRIZIONE",
+     "Nome": "DATA",
      "IsNullable": true,
-     "DataType": "varchar(255)",
+     "DataType": "date",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "TITOLO",
+     "IsNullable": true,
+     "DataType": "varchar(50255)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "TESTO",
+     "IsNullable": true,
+     "DataType": "blob",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "LINK",
+     "IsNullable": true,
+     "DataType": "mediumtext",
      "AutoIncrement": false,
      "Commento": "",
      "DefaultValue": null,
@@ -221,6 +258,24 @@
      "Commento": "",
      "DefaultValue": null,
      "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "URL_CALENDARIO",
+     "IsNullable": true,
+     "DataType": "mediumtext",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "CALENDARIO_VISIBILE",
+     "IsNullable": true,
+     "DataType": "char(1)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
     }
    ],
    "PrimaryKey": null,
@@ -263,6 +318,86 @@
    ],
    "PrimaryKey": null,
    "ForeignKeys": [],
+   "UniqueKeys": [],
+   "Indexes": [],
+   "Triggers": []
+  },
+  {
+   "Nome": "gruppi_case_ed",
+   "Campi": [
+    {
+     "Nome": "CHIAVE",
+     "IsNullable": false,
+     "DataType": "int(11)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "DESCRIZIONE",
+     "IsNullable": true,
+     "DataType": "varchar(255)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
+    }
+   ],
+   "PrimaryKey": {
+    "Campi": [
+     "CHIAVE"
+    ]
+   },
+   "ForeignKeys": [],
+   "UniqueKeys": [],
+   "Indexes": [],
+   "Triggers": []
+  },
+  {
+   "Nome": "case_editrici",
+   "Campi": [
+    {
+     "Nome": "CHIAVE",
+     "IsNullable": false,
+     "DataType": "int(11)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "DESCRIZIONE",
+     "IsNullable": true,
+     "DataType": "varchar(255)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "GRUPPO",
+     "IsNullable": true,
+     "DataType": "int(11)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
+    }
+   ],
+   "PrimaryKey": {
+    "Campi": [
+     "CHIAVE"
+    ]
+   },
+   "ForeignKeys": [
+    {
+     "Nome": "FK_CASE_EDITRICI_GRUPPI_CASE_ED",
+     "Campo": "GRUPPO",
+     "RefTable": "gruppi_case_ed",
+     "RefField": "CHIAVE"
+    }
+   ],
    "UniqueKeys": [],
    "Indexes": [],
    "Triggers": []
@@ -626,6 +761,15 @@
      "Nome": "COORD_MATERIA_3",
      "IsNullable": true,
      "DataType": "int(11)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "NASCOSTO",
+     "IsNullable": true,
+     "DataType": "char(1)",
      "AutoIncrement": false,
      "Commento": "",
      "DefaultValue": null,

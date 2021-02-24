@@ -120,6 +120,60 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
 
   //STAMPA CUMULATIVO PRENOTATI
 
+  $scope.SelezioneGruppiXls = function (ev,Tipo)
+  {
+      $mdDialog.show({ 
+                      controller          : DialogControllerSelezioneGruppi,
+                      templateUrl         : "template/deliveryGroupSelect.html",
+                      targetEvent         : ev,
+                      scope               : $scope,
+                      preserveScope       : true,
+                      clickOutsideToClose : true,
+                      locals              : {Tipo}
+                    })
+      .then(function(answer) 
+      {
+      }, 
+      function() 
+      {
+      });
+  }
+
+  function DialogControllerSelezioneGruppi($scope,$mdDialog,Tipo)
+  {
+    $scope.ListaGruppiToAdd   = [];
+    $scope.CheckGruppi        = 'G';
+    
+    $scope.hide = function() 
+    {
+      $mdDialog.hide();
+    };
+
+    $scope.AnnullaPopup = function() 
+    {
+      for(let i = 0;i < $scope.ListaGruppiPopup.length;i ++)
+          $scope.ListaGruppiPopup[i].DaAggiungere = false;          
+      $scope.ListaGruppiToAdd  = [];
+      $mdDialog.cancel();
+    };
+
+    $scope.ConfermaPopup = function()
+    {  
+      for(let j = 0;j < $scope.ListaGruppiPopup.length;j ++)
+      {
+        if($scope.ListaGruppiPopup[j].DaAggiungere)
+        {
+           $scope.ListaGruppiToAdd.push($scope.ListaGruppiPopup[j]); 
+           $scope.ListaGruppiPopup[j].DaAggiungere = false;
+        }
+      }                  
+      $mdDialog.hide();
+      if(Tipo == 'P')
+        $scope.ApriCumulativoPrenotati();
+      else $scope.ApriCumulativoConsegnati();        
+    };
+  }
+
   $scope.ApriCumulativoPrenotati = function(ev)
   {    
       $mdDialog.show({ 
@@ -142,7 +196,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
   {
     $scope.DataRicercaAlPrnt    = new Date();
     let TmpDatePrnt             = new Date($scope.DataRicercaAlPrnt);
-    TmpDatePrnt.setDate(TmpDatePrnt.getDate() - 7);
+    TmpDatePrnt.setDate(TmpDatePrnt.getDate() - 30);
     $scope.DataRicercaDalPrnt   = new Date(TmpDatePrnt);
 
     $scope.hide = function() 
@@ -154,18 +208,21 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     {
       $scope.DataRicercaAlPrnt    = new Date();
       let TmpDatePrnt             = new Date($scope.DataRicercaAlPrnt);
-      TmpDatePrnt.setDate(TmpDatePrnt.getDate() - 7);
+      TmpDatePrnt.setDate(TmpDatePrnt.getDate() - 30);
       $scope.DataRicercaDalPrnt   = new Date(TmpDatePrnt);
+      $scope.ListaGruppiToAdd     = [];
       $mdDialog.cancel();
     };
-
-    
 
     $scope.CreaXlsPrenotati = function()
     {
       var CumulativoPrenotatiTmp = [];
       var CumulativoPrenotati    = []
+      var ArrayGruppi            = [];
 
+      for(let i = 0;i < $scope.ListaGruppiToAdd.length;i ++)
+           ArrayGruppi.push($scope.ListaGruppiToAdd[i].Chiave);
+                
       if($scope.DataRicercaDalPrnt == undefined || $scope.DataRicercaAlPrnt == undefined)
          return;
       let TmpDatePrnt = new Date($scope.DataRicercaAlPrnt);
@@ -175,6 +232,12 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
                               Dal : ZHTMLInputFromDate($scope.DataRicercaDalPrnt), 
                               Al  : ZHTMLInputFromDate(TmpDatePrnt)
                            };
+      
+      if(ArrayGruppi.length > 0 && $scope.CheckGruppi == 'G')
+      {
+         ParamPrenotati.ChiaveGruppi = ArrayGruppi.toString() 
+      }
+
       SystemInformation.GetSQL('Delivery',ParamPrenotati,function(Results)
       {
         CumulativoPrenotatiTmp = SystemInformation.FindResults(Results,'BookedUpCumulative')
@@ -228,7 +291,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
   {
     $scope.DataRicercaAlCnsg    = new Date();
     let TmpDateCnsg             = new Date($scope.DataRicercaAlCnsg);
-    TmpDateCnsg.setDate(TmpDateCnsg.getDate() - 7);
+    TmpDateCnsg.setDate(TmpDateCnsg.getDate() - 30);
     $scope.DataRicercaDalCnsg   = new Date(TmpDateCnsg);
 
     $scope.hide = function() 
@@ -240,8 +303,9 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     {
       $scope.DataRicercaAlCnsg    = new Date();
       let TmpDateCnsg             = new Date($scope.DataRicercaAlCnsg);
-      TmpDateCnsg.setDate(TmpDateCnsg.getDate() - 7);
+      TmpDateCnsg.setDate(TmpDateCnsg.getDate() - 30);
       $scope.DataRicercaDalCnsg   = new Date(TmpDateCnsg);
+      $scope.ListaGruppiToAdd     = [];
       $mdDialog.cancel();
     };
 
@@ -249,6 +313,10 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     {
       var CumulativoConsegnatiTmp = [];
       var CumulativoConsegnati    = [];
+      var ArrayGruppi            = [];
+
+      for(let i = 0;i < $scope.ListaGruppiToAdd.length;i ++)
+          ArrayGruppi.push($scope.ListaGruppiToAdd[i].Chiave);
 
       if($scope.DataRicercaDalCnsg == undefined || $scope.DataRicercaAlCnsg == undefined)
          return;
@@ -259,6 +327,12 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
                               Dal : ZHTMLInputFromDate($scope.DataRicercaDalCnsg), 
                               Al  : ZHTMLInputFromDate(TmpDateCnsg)
                             };
+
+      if(ArrayGruppi.length > 0 && $scope.CheckGruppi == 'G')
+      {
+        ParamConsegnati.ChiaveGruppi = ArrayGruppi.toString() 
+      }
+      
       SystemInformation.GetSQL('Delivery',ParamConsegnati,function(Results)
       {
         CumulativoConsegnatiTmp = SystemInformation.FindResults(Results,'DeliveredCumulative')
@@ -1099,6 +1173,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     $state.go("deliveryModDetailPage");  
   }  
   
+  $scope.GetListaGruppi();
   $scope.RefreshListaSpedizioniAll();
   
 }]);
