@@ -95,6 +95,22 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                                             },
                           limitOptions    : [10, 20, 30]
                         };
+
+   $scope.GridOptions4 = {
+                          rowSelection    : false,
+                          multiSelect     : true,
+                          autoSelect      : true,
+                          decapitate      : false,
+                          largeEditDialog : false,
+                          boundaryLinks   : false,
+                          limitSelect     : true,
+                          pageSelect      : true,
+                          query           : {
+                                              limit: 10,
+                                              page: 1
+                                            },
+                          limitOptions    : [10, 20, 30]
+                        };
   
   SystemInformation.GetSQL('Subject',{}, function(Results)
   {
@@ -1269,6 +1285,10 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
     {  
       ZCustomAlert($mdDialog,'ATTENZIONE',"IMPOSSIBILE AGGIUNGERE ORARIO, NESSUN ISTITUTO SELEZIONATO!")       
     }
+    else if($scope.DocenteInEditing.Materia_1 == -1 && $scope.DocenteInEditing.Materia_2 == -1 && $scope.DocenteInEditing.Materia_3 == -1)
+    {  
+      ZCustomAlert($mdDialog,'ATTENZIONE',"IMPOSSIBILE AGGIUNGERE ORARIO, DOCENTE NON ASSOCIATO A NESSUNA MATERIA!")       
+    }
     else
     {     
       $mdDialog.show({ 
@@ -1311,7 +1331,8 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                                    Anno         : ListaClassiIst[i].ANNO,
                                    Sezione      : ListaClassiIst[i].SEZIONE,
                                    Istituto     : ListaClassiIst[i].ISTITUTO,
-                                   Combinazione : ListaClassiIst[i].COMBINAZIONE_DESCR
+                                   Combinazione : ListaClassiIst[i].COMBINAZIONE_DESCR,
+                                   DaAggiungere : false
                                  }
          $scope.ListaClassiIstituto = ListaClassiIst;
       }
@@ -1328,7 +1349,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
       $mdDialog.cancel();
     };
 
-    $scope.ConfermaPopupOrario = function(orario)
+    $scope.ConfermaPopupOrario = function()
     { 
       if($scope.OrarioInEditing.MATERIA == -1 || $scope.OrarioInEditing.CLASSE == -1)
       {
@@ -1337,16 +1358,136 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
       }
       else
       { 
-        MateriaCorrispondente = $scope.ListaMaterie.find(function(AMateria){return(AMateria.Chiave == orario.MATERIA);});
-        ClasseCorrispondente  = $scope.ListaClassiIstituto.find(function(AClasse){return(AClasse.Chiave == orario.CLASSE);});
+        MateriaCorrispondente = $scope.ListaMaterie.find(function(AMateria){return(AMateria.Chiave == $scope.OrarioInEditing.MATERIA);});
+        ClasseCorrispondente  = $scope.ListaClassiIstituto.find(function(AClasse){return(AClasse.Chiave == $scope.OrarioInEditing.CLASSE);});
             
-        orario.ClasseNome  = ClasseCorrispondente.Anno + ClasseCorrispondente.Sezione + ' - ' + ClasseCorrispondente.Combinazione;
-        orario.MateriaNome = MateriaCorrispondente.Nome;
+        $scope.OrarioInEditing.ClasseNome  = ClasseCorrispondente.Anno + ClasseCorrispondente.Sezione + ' - ' + ClasseCorrispondente.Combinazione;
+        $scope.OrarioInEditing.MateriaNome = MateriaCorrispondente.Nome;
                 
-        IstCorrispondente = $scope.DocenteInEditing.ListaIstitutiDoc.findIndex(function(AIstituto){return (AIstituto.CHIAVE == orario.ISTITUTO);});
-        $scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari.push(orario);
+        IstCorrispondente = $scope.DocenteInEditing.ListaIstitutiDoc.findIndex(function(AIstituto){return (AIstituto.CHIAVE == $scope.OrarioInEditing.ISTITUTO);});
+        
+        var Trovato = false;
+        for(let j = 0;j < $scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari.length;j ++)
+            if($scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari[j].MateriaNome ==  $scope.OrarioInEditing.MateriaNome && $scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari[j].ClasseNome ==  $scope.OrarioInEditing.ClasseNome)
+               Trovato = true;
+        if(!Trovato)
+           $scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari.push( $scope.OrarioInEditing);
+        else ZCustomAlert($mdDialog,'ATTENZIONE',"DOCENTE GIA' ASSOCIATO A QUESTO ORARIO")      
+        
       }        
       $mdDialog.hide();     
+    }
+  }
+  
+  $scope.NuovoOrarioMultiple = function (ev,Istituto,Docente)
+  { 
+    if(Istituto == -1)
+    {  
+      ZCustomAlert($mdDialog,'ATTENZIONE',"IMPOSSIBILE AGGIUNGERE ORARIO, NESSUN ISTITUTO SELEZIONATO!")       
+    }
+    else if($scope.DocenteInEditing.Materia_1 == -1 && $scope.DocenteInEditing.Materia_2 == -1 && $scope.DocenteInEditing.Materia_3 == -1)
+    {  
+      ZCustomAlert($mdDialog,'ATTENZIONE',"IMPOSSIBILE AGGIUNGERE ORARIO, DOCENTE NON ASSOCIATO A NESSUNA MATERIA!")       
+    }
+    else
+    {     
+      $mdDialog.show({ 
+                       controller          : DialogControllerOrarioMultiple,
+                       templateUrl         : "template/lessonTeacherPopupMultiple.html",
+                       targetEvent         : ev,
+                       scope               : $scope,
+                       preserveScope       : true,
+                       clickOutsideToClose : true,
+                       locals              : {Istituto,Docente}
+                     })
+      .then(function(answer) 
+      {}, 
+      function() 
+      {});
+    }
+  };
+ 
+  function DialogControllerOrarioMultiple($scope,$mdDialog,Istituto,Docente)  
+  { 
+    $scope.ListaClassiToAdd  = [];
+    $scope.ClasseMateria     = parseInt($scope.DocenteInEditing.Materia_1);
+    SystemInformation.GetSQL('Institute',{CHIAVE : Istituto}, function(Results)
+    {
+      ListaClassiIst = SystemInformation.FindResults(Results,'ClassiInstitute');
+      if (ListaClassiIst != undefined)
+      {  
+         for(let i = 0; i < ListaClassiIst.length; i++)
+             ListaClassiIst[i] = { 
+                                   Chiave       : ListaClassiIst[i].CHIAVE,
+                                   Anno         : ListaClassiIst[i].ANNO,
+                                   Sezione      : ListaClassiIst[i].SEZIONE,
+                                   Istituto     : ListaClassiIst[i].ISTITUTO,
+                                   Combinazione : ListaClassiIst[i].COMBINAZIONE_DESCR,
+                                   DaAggiungere : false
+                                 }
+         $scope.ListaClassiIstituto = ListaClassiIst;
+      }
+      else SystemInformation.ApplyOnError('Modello classe istituto non conforme o nessuna classe associata all\'istituto attuale','')     
+    },"SQLDettaglio");
+
+    $scope.hide = function() 
+    {
+      $mdDialog.hide();
+    };
+
+    $scope.AnnullaPopupOrarioMultiple = function() 
+    {
+      for(let i = 0;i < $scope.ListaClassiIstituto.length;i ++)
+          $scope.ListaClassiIstituto[i].DaAggiungere = false;     
+      $scope.ListaClassiToAdd = [];
+      $mdDialog.cancel();
+    };
+
+    $scope.ConfermaPopupOrarioMultiple = function()
+    {   
+      for(let j = 0;j < $scope.ListaClassiIstituto.length;j ++)
+      {
+        if($scope.ListaClassiIstituto[j].DaAggiungere)
+        {
+           $scope.ListaClassiToAdd.push($scope.ListaClassiIstituto[j]); 
+           $scope.ListaClassiIstituto[j].DaAggiungere = false;
+        }
+      }  
+
+      if($scope.ClasseMateria == -1 || $scope.ListaClassiToAdd.length == 0)
+      {
+        ZCustomAlert($mdDialog,'ATTENZIONE','DATI ORARI MANCANTI!');
+        return
+      }
+      else
+      { 
+        MateriaCorrispondente = $scope.ListaMaterie.find(function(AMateria){return(AMateria.Chiave == $scope.ClasseMateria);});
+        for(let i = 0;i < $scope.ListaClassiToAdd.length;i ++)
+        {
+            ClasseCorrispondente  = $scope.ListaClassiIstituto.find(function(AClasse){return(AClasse.Chiave == $scope.ListaClassiToAdd[i].Chiave);});
+            var Orario = {
+                          "CHIAVE"     : -1,
+                          "MATERIA"    : MateriaCorrispondente.Chiave,
+                          "CLASSE"     : ClasseCorrispondente.Chiave,
+                          "ISTITUTO"   : Istituto,
+                          "DOCENTE"    : Docente,
+                          "Nuovo"      : true,
+                          "Modificato" : false,
+                          "Eliminato"  : false
+                         } 
+            Orario.ClasseNome  = ClasseCorrispondente.Anno + ClasseCorrispondente.Sezione + ' - ' + ClasseCorrispondente.Combinazione;
+            Orario.MateriaNome = MateriaCorrispondente.Nome;
+                    
+            IstCorrispondente = $scope.DocenteInEditing.ListaIstitutiDoc.findIndex(function(AIstituto){return (AIstituto.CHIAVE == Orario.ISTITUTO);});
+            var Trovato = false;
+            for(let j = 0;j < $scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari.length;j ++)
+                if($scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari[j].MateriaNome == Orario.MateriaNome && $scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari[j].ClasseNome == Orario.ClasseNome)
+                   Trovato = true;
+            if(!Trovato)
+               $scope.DocenteInEditing.ListaIstitutiDoc[IstCorrispondente].Orari.push(Orario);
+        }
+      }        
+      $mdDialog.hide();    
     }
   } 
   

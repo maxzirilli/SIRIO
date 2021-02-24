@@ -1,0 +1,54 @@
+<md-dialog>
+  <form ng-cloak name="PopupForm">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2 style="font-weight:bold;color:white;">ASSOCIAZIONE MATERIA/CLASSE</h2>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+      <div class="md-dialog-content">
+        <md-input-container class="containerSelect" style="width:200px">  <label>MATERIA</label>
+          <md-select ng-model="ClasseMateria" class="mdb-select" type="text" name="OrarioMateriaMultiple">
+          <md-optgroup label="-">           
+            <md-option ng-repeat="materia in ListaMaterieDoc" ng-value="materia.Chiave">{{materia.MateriaNome}}</md-option>
+          </md-optgroup>
+          </md-select>
+        </md-input-container>
+        <h2>Seleziona classi</h2>
+        <div layout="row">
+        </div>
+  
+        <p ng-if="ListaClassiIstituto.length == 0" style="font-weight:bold;font-style:italic;float:center;">NESSUNA CLASSE PRESENTE</p>  
+        <div ng-if="ListaClassiIstituto.length != 0">
+          <table style="width:1000px;text-align:center;" md-row-select="GridOptions4.rowSelection" multiple="{{GridOptions4.multiSelect}}">  
+          <tr>
+            <th></th>
+            <th>CLASSE</th>
+          </tr>
+          <tr ng-repeat="classe in ListaClassiIstituto | limitTo : GridOptions4.query.limit : (GridOptions4.query.page - 1) * GridOptions4.query.limit" id={{Titolo.Chiave}}>
+            <td><input type="checkbox" ng-model="classe.DaAggiungere"></td>
+            <td>{{classe.Anno}}{{classe.Sezione}} - {{classe.Combinazione}}</td>
+          </tr>
+          </table>
+          <md-table-pagination md-limit="GridOptions4.query.limit" 
+                             md-limit-options="GridOptions4.limitOptions" 
+                             md-page="GridOptions4.query.page" 
+                             md-total="{{ListaClassiIstituto.length}}" 
+                             md-page-select="GridOptions4.pageSelect" 
+                             md-boundary-links="GridOptions4.boundaryLinks" 
+                             md-on-paginate="logPagination"></md-table-pagination>
+         </div>
+      </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ConfermaPopupOrarioMultiple()">
+       CONFERMA
+      </md-button>
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="AnnullaPopupOrarioMultiple()">
+       ANNULLA
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

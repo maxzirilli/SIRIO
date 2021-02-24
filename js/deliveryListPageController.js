@@ -62,15 +62,20 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
                   Sheets     : {}
                 };
 
-    var SheetName          = "CUMULATIVO PRENOTAZIONI";
+    var SheetName          = NomeDocumento == 'CumulativoPrenotati' ? "CUMULATIVO PRENOTAZIONI" : "CUMULATIVO CONSEGNE";
     var BodySheet          = {};
     
     BodySheet['A1'] = SystemInformation.GetCellaIntestazione('GRUPPO');
     BodySheet['B1'] = SystemInformation.GetCellaIntestazione('EDITORE');
     BodySheet['C1'] = SystemInformation.GetCellaIntestazione('ISBN');
     BodySheet['D1'] = SystemInformation.GetCellaIntestazione('TITOLO');
-    BodySheet['E1'] = SystemInformation.GetCellaIntestazione('QUANTITA TOTALE');
-    
+    BodySheet['E1'] = SystemInformation.GetCellaIntestazione('QUANTITA');
+    if(NomeDocumento == 'CumulativoPrenotati')
+    {
+      BodySheet['F1'] = SystemInformation.GetCellaIntestazione('QUANTITA MAGAZZINO');
+      BodySheet['G1'] = SystemInformation.GetCellaIntestazione('DIFFERENZA');
+    }
+       
     var ListaTitoli  = [];
     for(let j = 0;j < CumulativoTitoli.length;j ++)
     {
@@ -94,6 +99,11 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
         BodySheet['C' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Codice);
         BodySheet['D' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Titolo);
         BodySheet['E' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Quantita.toString());
+        if(NomeDocumento == 'CumulativoPrenotati')
+        {
+          BodySheet['F' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].QuantitaMag.toString());
+          BodySheet['G' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',(parseInt(ListaTitoli[k].QuantitaMag) - parseInt(ListaTitoli[k].Quantita)).toString());
+        }
     }
 
     BodySheet["!cols"] = [ 
@@ -101,9 +111,17 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
                           {wpx: 250},
                           {wpx: 250},
                           {wpx: 250},
+                          {wpx: 250},
+                          {wpx: 250},
                           {wpx: 250}
                         ];
-    BodySheet['!ref'] = 'A1:E1' + parseInt(ListaTitoli.length + 1);
+    if(NomeDocumento == 'CumulativoPrenotati')
+    {
+      BodySheet["!cols"].push({wpx: 250});
+      BodySheet["!cols"].push({wpx: 250}); 
+    }
+   
+    BodySheet['!ref'] = (NomeDocumento == 'CumulativoPrenotati' ?  'A1:G1' :  'A1:E1') + parseInt(ListaTitoli.length + 1);
     
     WBook.SheetNames.push(SheetName);
     WBook.Sheets[SheetName]    = BodySheet;
@@ -249,12 +267,14 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
             {
               for(let i = 0;i < CumulativoPrenotatiTmp.length;i ++)
                   CumulativoPrenotatiTmp[i] = {
-                                                Gruppo   : CumulativoPrenotatiTmp[i].GRUPPO_CASA == undefined ? 'NESSUN GRUPPO' : CumulativoPrenotatiTmp[i].GRUPPO_CASA, 
-                                                Editore  : CumulativoPrenotatiTmp[i].EDITORE_TITOLO == null ? 'EDITORE NON REGISTRATO' : CumulativoPrenotatiTmp[i].EDITORE_TITOLO,
-                                                Chiave   : CumulativoPrenotatiTmp[i].TITOLO,
-                                                Titolo   : CumulativoPrenotatiTmp[i].NOME_TITOLO == null ? 'NOME NON REGISTRATO' : CumulativoPrenotatiTmp[i].NOME_TITOLO,
-                                                Codice   : CumulativoPrenotatiTmp[i].CODICE_TITOLO,
-                                                Quantita : parseInt(CumulativoPrenotatiTmp[i].QUANTITA)
+                                                Gruppo       : CumulativoPrenotatiTmp[i].GRUPPO_CASA == undefined ? 'NESSUN GRUPPO' : CumulativoPrenotatiTmp[i].GRUPPO_CASA, 
+                                                Editore      : CumulativoPrenotatiTmp[i].EDITORE_TITOLO == null ? 'EDITORE NON REGISTRATO' : CumulativoPrenotatiTmp[i].EDITORE_TITOLO,
+                                                Chiave       : CumulativoPrenotatiTmp[i].TITOLO,
+                                                Titolo       : CumulativoPrenotatiTmp[i].NOME_TITOLO == null ? 'NOME NON REGISTRATO' : CumulativoPrenotatiTmp[i].NOME_TITOLO,
+                                                Codice       : CumulativoPrenotatiTmp[i].CODICE_TITOLO,
+                                                Quantita     : parseInt(CumulativoPrenotatiTmp[i].QUANTITA),
+                                                QuantitaMag  : parseInt(CumulativoPrenotatiTmp[i].QUANTITA_MAGAZZINO)
+                                                //QuantitaDiff : parseInt(CumulativoPrenotatiTmp[i].QUANTITA) - parseInt(CumulativoPrenotatiTmp[i].QUANTITA_MAGAZZINO)  
                                               }
               CumulativoPrenotati = CumulativoPrenotatiTmp
               
