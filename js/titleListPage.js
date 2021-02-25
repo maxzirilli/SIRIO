@@ -269,6 +269,7 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
       if(TitoloDettaglio != undefined && Istituti != undefined && AdozioniAll != undefined)
       {
         $scope.TitoloInEditing.Chiave           = TitoloDettaglio[0].CHIAVE;
+        $scope.TitoloInEditing.PrenotazNovita   = TitoloDettaglio[0].PRENOTAZ_NOVITA   == undefined ? 0 : parseInt(TitoloDettaglio[0].PRENOTAZ_NOVITA);
         $scope.TitoloInEditing.Codice           = TitoloDettaglio[0].CODICE_ISBN       == null ? '' : TitoloDettaglio[0].CODICE_ISBN;
         $scope.TitoloInEditing.Titolo           = TitoloDettaglio[0].TITOLO            == null ? '' : TitoloDettaglio[0].TITOLO;
         $scope.TitoloInEditing.Sottotitolo      = TitoloDettaglio[0].SOTTOTITOLO       == null ? '' : TitoloDettaglio[0].SOTTOTITOLO;
@@ -319,6 +320,7 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
                                Prezzo           : '',
                                Q_Mgzn           : 0,
                                Q_Mgzn_Vol       : 0,
+                               PrenotazNovita   : 0,
                                ListaIstitutiTit : []
                              };
   }
@@ -350,7 +352,8 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
                          POS_MAGAZZINO     : $scope.TitoloInEditing.Pos_Magazzino == '' ? null : $scope.TitoloInEditing.Pos_Magazzino.xSQL(),
                          PREZZO            : $scope.TitoloInEditing.Prezzo == '' ? null : $scope.TitoloInEditing.Prezzo.xSQL(),
                          QUANTITA_MGZN     : $scope.TitoloInEditing.Q_Mgzn,
-                         QUANTITA_MGZN_VOL : $scope.TitoloInEditing.Q_Mgzn_Vol                     
+                         QUANTITA_MGZN_VOL : $scope.TitoloInEditing.Q_Mgzn_Vol,
+                         PRENOTAZ_NOVITA   : $scope.TitoloInEditing.PrenotazNovita                    
                        }
 
     var NuovoTitolo = ($scope.TitoloInEditing.Chiave == -1);
@@ -376,7 +379,8 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
                       Prezzo            : $scope.TitoloInEditing.Prezzo == '' ? null : $scope.TitoloInEditing.Prezzo.xSQL(),
                       PosMgzn           : $scope.TitoloInEditing.Pos_Magazzino == '' ? null : $scope.TitoloInEditing.Pos_Magazzino.xSQL(),
                       QuantitaMgzn      : $scope.TitoloInEditing.Q_Mgzn,
-                      QuantitaMgznVol   : $scope.TitoloInEditing.Q_Mgzn_Vol 
+                      QuantitaMgznVol   : $scope.TitoloInEditing.Q_Mgzn_Vol,
+                      PrenotazNovita    : $scope.TitoloInEditing.PrenotazNovita 
                     }                               
       $ObjQuery.Operazioni.push({
                                   Query     : 'UpdateBook',

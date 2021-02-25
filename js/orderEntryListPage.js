@@ -131,15 +131,16 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
             else            
             { 
               $ObjQuery.Operazioni.push({ 
-                                          Query     : 'InsertOrderEntry',
+                                          Query     : 'InsertOrderEntryTest',
                                           Parametri : { 
-                                                        CHIAVE    : -1,
-                                                        DATA      : new Date(),                                        
-                                                        TITOLO    : TitoloCorrisp.Chiave,
-                                                        QUANTITA  : RecordOrdine[1]//,
+                                                        //CHIAVE    : -1,
+                                                        DataCarico       : new Date(),                                        
+                                                        TitoloCarico     : TitoloCorrisp.Chiave,
+                                                        QuantitaCarico   : RecordOrdine[1],
+                                                        UbicazioneCarico : TitoloCorrisp.Posizione
                                                         //UBICAZIONE : RecordOrdine[2]  //AGGIUNTA PRIMO CSV PER UBICAZIONI (PRIMA NON PRESENTE)                                                                                                         
                                                       },
-                                          ResetKeys :[1]
+                                          //ResetKeys :[1]
                                         });
               
               ListaCarico.push({                                
@@ -455,25 +456,26 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
          ZCustomAlert($mdDialog,'ATTENZIONE','DATI MANCANTI');      
      var $ObjQuery   = { Operazioni : [] };          
      var ParamOrdine = {
-                         CHIAVE     : $scope.OrdineInEditing.Chiave,
-                         DATA       : $scope.OrdineInEditing.Data,
-                         TITOLO     : $scope.OrdineInEditing.Titolo,
-                         QUANTITA   : $scope.OrdineInEditing.Quantita,
-                         UBICAZIONE : $scope.OrdineInEditing.Ubicazione 
+                         //CHIAVE     : $scope.OrdineInEditing.Chiave,
+                         DataCarico       : $scope.OrdineInEditing.Data,
+                         TitoloCarico     : $scope.OrdineInEditing.Titolo,
+                         QuantitaCarico   : $scope.OrdineInEditing.Quantita,
+                         UbicazioneCarico : $scope.OrdineInEditing.Ubicazione 
                        }
                      
      var NuovoOrdine = ($scope.OrdineInEditing.Chiave == -1);
      if(NuovoOrdine)     
      {           
        $ObjQuery.Operazioni.push({
-                                   Query     : 'InsertOrderEntry',
+                                   Query     : 'InsertOrderEntryTest',
                                    Parametri : ParamOrdine
                                  }); 
      }
      else
      {
+       ParamOrdine.ChiaveCarico =  $scope.OrdineInEditing.Chiave;
        $ObjQuery.Operazioni.push({
-                                   Query     : 'UpdateOrderEntry',
+                                   Query     : 'UpdateOrderEntryTest',
                                    Parametri : ParamOrdine
                                  });
      };

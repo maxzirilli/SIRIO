@@ -12,6 +12,14 @@
                        "SQL"  : "INSERT INTO ordini_ingresso (CHIAVE,DATA,TITOLO,QUANTITA,UBICAZIONE) VALUES (:NewKey1,#DATA,:TITOLO,:QUANTITA,#UBICAZIONE)"                      
                      },
                      {
+                       "Name" : "InsertOrderEntryTest",
+                       "SQL"  : "CALL INSERT_CARICO(#DataCarico,:TitoloCarico,:QuantitaCarico,#UbicazioneCarico)"
+                     },
+                     {
+                      "Name" : "UpdateOrderEntryTest",
+                      "SQL"  : "CALL UPDATE_CARICO(:ChiaveCarico,#DataCarico,:TitoloCarico,:QuantitaCarico,#UbicazioneCarico)"
+                    },
+                     {
                        "Name" : "UpdateOrderEntry",
                        "SQL"  : "UPDATE ordini_ingresso SET DATA=#DATA,TITOLO=:TITOLO,QUANTITA=:QUANTITA,UBICAZIONE=#UBICAZIONE WHERE CHIAVE=:CHIAVE"
                      },

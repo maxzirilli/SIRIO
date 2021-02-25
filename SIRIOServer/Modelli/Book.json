@@ -79,7 +79,7 @@
                             },                     
                             {
                               "Name" : "UpdateBook",
-                              "SQL"  : "CALL UPDATE_TITOLI_LOG_MAGAZZINI(:ChiaveTitolo,#Codice,#Titolo,#Sottotitolo,:Materia,#Autori,#Editore,:Volume,#Prezzo,#PosMgzn,:QuantitaMgzn,:QuantitaMgznVol)"
+                              "SQL"  : "CALL UPDATE_TITOLI_LOG_MAGAZZINI(:ChiaveTitolo,#Codice,#Titolo,#Sottotitolo,:Materia,#Autori,#Editore,:Volume,#Prezzo,#PosMgzn,:QuantitaMgzn,:QuantitaMgznVol,:PrenotazNovita)"
                             },
                             {
                               "Name" : "UpdateAdoption",

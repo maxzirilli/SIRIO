@@ -155,10 +155,13 @@
                
                <div layout="row">
                  <md-input-container flex=50>
-                     <label>EDITORE</label><input ng-model="TitoloInEditing.Editore" type="text" name="Editore">
+                    <label>EDITORE</label><input ng-model="TitoloInEditing.Editore" type="text" name="Editore">
+                 </md-input-container>
+                 <md-input-container flex=20 ng-show="IsAdministrator()">
+                   <label>PRENOTAZIONE NOVITA'</label><input ng-model="TitoloInEditing.PrenotazNovita" type="number" min=0 name="PrenotazioneNovita">
                  </md-input-container>
                  <md-input-container>
-                     <label>PREZZO</label><input ng-model="TitoloInEditing.Prezzo" type="text" name="Prezzo">
+                   <label>PREZZO</label><input ng-model="TitoloInEditing.Prezzo" type="text" name="Prezzo">
                  </md-input-container>
                </div>
              </div>             
