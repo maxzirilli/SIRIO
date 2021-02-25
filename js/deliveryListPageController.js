@@ -16,7 +16,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
   TmpDate.setDate(TmpDate.getDate() - 30);
   //$scope.DataRicercaDal   = new Date(TmpDate);
   var AnnoCorrente = new Date().getFullYear();
-  $scope.DataRicercaDal   = new Date(AnnoCorrente, 0, 1)
+  $scope.DataRicercaDal   = new Date(AnnoCorrente, 1, 1)
  
   ScopeHeaderController.CheckButtons(); 
 
@@ -31,7 +31,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
          GruppiInfoList[i] = {
                                Chiave       : GruppiInfoList[i].CHIAVE,
                                Descrizione  : GruppiInfoList[i].DESCRIZIONE,
-                               DaAggiungere : false
+                               DaAggiungere : true
                              }
          $scope.ListaGruppi      = GruppiInfoList;
          $scope.ListaGruppiPopup = GruppiInfoList
@@ -61,9 +61,14 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
                   SheetNames : [],
                   Sheets     : {}
                 };
+    
+    var TitoliPositivi = 0;
 
     var SheetName          = NomeDocumento == 'CumulativoPrenotati' ? "CUMULATIVO PRENOTAZIONI" : "CUMULATIVO CONSEGNE";
     var BodySheet          = {};
+
+    if(NomeDocumento != 'CumulativoPrenotati')
+       $scope.CheckNegativi = 'T';
     
     BodySheet['A1'] = SystemInformation.GetCellaIntestazione('GRUPPO');
     BodySheet['B1'] = SystemInformation.GetCellaIntestazione('EDITORE');
@@ -88,21 +93,39 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     var CasaEditrice = '-1';
     for(let k = 0;k < ListaTitoli.length;k ++)
     {
-        if(Gruppo != ListaTitoli[k].Gruppo)
-           BodySheet['A' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Gruppo);
-        Gruppo = ListaTitoli[k].Gruppo;
-
-        if(CasaEditrice != ListaTitoli[k].Editore)
-           BodySheet['B' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Editore);
-        CasaEditrice = ListaTitoli[k].Editore;
-        
-        BodySheet['C' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Codice);
-        BodySheet['D' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Titolo);
-        BodySheet['E' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Quantita.toString());
-        if(NomeDocumento == 'CumulativoPrenotati')
+        var InserisciTitolo = function()
         {
-          BodySheet['F' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].QuantitaMag.toString());
-          BodySheet['G' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',(parseInt(ListaTitoli[k].QuantitaMag) - parseInt(ListaTitoli[k].Quantita)).toString());
+          if(Gruppo != ListaTitoli[k].Gruppo)
+            BodySheet['A' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Gruppo);
+          Gruppo = ListaTitoli[k].Gruppo;
+
+          if(CasaEditrice != ListaTitoli[k].Editore)
+              BodySheet['B' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Editore);
+          CasaEditrice = ListaTitoli[k].Editore;
+          
+          BodySheet['C' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Codice);
+          BodySheet['D' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Titolo);
+          BodySheet['E' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Quantita.toString());
+          if(NomeDocumento == 'CumulativoPrenotati')
+          {
+            BodySheet['F' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].QuantitaMag.toString());
+            BodySheet['G' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',(parseInt(ListaTitoli[k].QuantitaMag) - parseInt(ListaTitoli[k].Quantita)).toString());
+          }
+        }
+
+        if($scope.CheckNegativi == 'N')
+        {
+           if((parseInt(ListaTitoli[k].QuantitaMag) - parseInt(ListaTitoli[k].Quantita)) < 0)
+               InserisciTitolo()
+           else
+           {
+              ListaTitoli.splice(k,1)
+              k--
+           } 
+        }
+        else
+        {
+           InserisciTitolo();
         }
     }
 
@@ -120,7 +143,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
       BodySheet["!cols"].push({wpx: 250});
       BodySheet["!cols"].push({wpx: 250}); 
     }
-   
+
     BodySheet['!ref'] = (NomeDocumento == 'CumulativoPrenotati' ?  'A1:G1' :  'A1:E1') + parseInt(ListaTitoli.length + 1);
     
     WBook.SheetNames.push(SheetName);
@@ -161,6 +184,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
   {
     $scope.ListaGruppiToAdd   = [];
     $scope.CheckGruppi        = 'G';
+    $scope.CheckNegativi      = 'N';
+    $scope.Tipo               = Tipo;
     
     $scope.hide = function() 
     {
@@ -176,19 +201,28 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     };
 
     $scope.ConfermaPopup = function()
-    {  
+    { 
+      ContatoreGruppi = 0; 
       for(let j = 0;j < $scope.ListaGruppiPopup.length;j ++)
       {
         if($scope.ListaGruppiPopup[j].DaAggiungere)
         {
-           $scope.ListaGruppiToAdd.push($scope.ListaGruppiPopup[j]); 
-           $scope.ListaGruppiPopup[j].DaAggiungere = false;
+           $scope.ListaGruppiToAdd.push($scope.ListaGruppiPopup[j]);
+           ContatoreGruppi++; 
+           $scope.ListaGruppiPopup[j].DaAggiungere = true;
         }
-      }                  
-      $mdDialog.hide();
-      if(Tipo == 'P')
-        $scope.ApriCumulativoPrenotati();
-      else $scope.ApriCumulativoConsegnati();        
+      }
+      if(ContatoreGruppi == 0 && $scope.CheckGruppi == 'G')
+      {
+         ZCustomAlert($mdDialog,'ATTENZIONE','NESSUN GRUPPO SELEZIONATO')
+      }
+      else
+      {
+        $mdDialog.hide();
+        if(Tipo == 'P')
+          $scope.ApriCumulativoPrenotati();
+        else $scope.ApriCumulativoConsegnati();   
+      }                       
     };
   }
 

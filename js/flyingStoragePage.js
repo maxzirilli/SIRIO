@@ -2,6 +2,7 @@ SIRIOApp.controller("flyingStoragePageController",['$scope','SystemInformation',
 {  
   $scope.ListaVolante = [];
   $scope.EditingOn    = false;
+  $scope.CodiceBippato = '',
   
   ScopeHeaderController.CheckButtons();
 
@@ -61,6 +62,23 @@ $scope.GridOptions_2 = {
       else SystemInformation.ApplyOnError('Modello lista mag.volante non conforme','');    
     })
   }
+
+  SystemInformation.GetSQL('Accessories', {}, function(Results)  
+  {  
+    TitoliInfoLista = SystemInformation.FindResults(Results,'BookList');
+    if(TitoliInfoLista != undefined)
+    { 
+       for(let i = 0; i < TitoliInfoLista.length; i++)
+           TitoliInfoLista[i] = { 
+                                  Chiave        : TitoliInfoLista[i].CHIAVE,
+                                  Nome          : TitoliInfoLista[i].TITOLO,
+                                  Codice        : TitoliInfoLista[i].CODICE_ISBN,
+                                  QuantitaMgzn  : parseInt(TitoliInfoLista[i].QUANTITA_MGZN)
+                                }
+       $scope.ListaTitoli = TitoliInfoLista;
+    }
+    else SystemInformation.ApplyOnError('Modello titoli non conforme','');   
+  },'SelectTitoliSQL');
   
   $scope.NuovoMovimento = function ()
   {
@@ -70,23 +88,135 @@ $scope.GridOptions_2 = {
     $scope.MovimentoInEditing.CHIAVE = -1;
     $scope.ListaCarico               = [];
     $scope.ListaCaricoEliminati      = [];
+  }
+
+  $scope.ModificaMovimento = function (Movimento) //DA GESTIRE
+  {
+    $scope.EditingOn            = true;
+    $scope.MovimentoInEditing   = {};
+    $scope.ListaCarico          = [];
+    $scope.ListaCaricoEliminati = [];
     
-    SystemInformation.GetSQL('Accessories', {}, function(Results)  
-    {  
-      TitoliInfoLista = SystemInformation.FindResults(Results,'BookList');
-      if(TitoliInfoLista != undefined)
-      { 
-         for(let i = 0; i < TitoliInfoLista.length; i++)
-             TitoliInfoLista[i] = { 
-                                    Chiave        : TitoliInfoLista[i].CHIAVE,
-                                    Nome          : TitoliInfoLista[i].TITOLO,
-                                    Codice        : TitoliInfoLista[i].CODICE_ISBN,
-                                    Quantita_Mgzn : TitoliInfoLista[i].QUANTITA_MGZN
-                                  }
-         $scope.ListaTitoli = TitoliInfoLista;
+    SystemInformation.GetSQL('FlyingStorage',{CHIAVE : Movimento.CHIAVE},function(Results)
+    {
+      ListaCaricoTmp = SystemInformation.FindResults(Results,'FlyingDettaglio');
+      if (ListaCaricoTmp != undefined)
+      {
+        $scope.MovimentoInEditing.CHIAVE = Movimento.CHIAVE;
+        $scope.MovimentoInEditing.DATA   = new Date (Movimento.DATA); 
+        
+        for (let i = 0; i < ListaCaricoTmp.length;i ++)
+        {
+             ListaCaricoTmp[i] = {
+                                    Chiave      : ListaCaricoTmp[i].CHIAVE,
+                                    Titolo      : ListaCaricoTmp[i].TITOLO,
+                                    Codice      : ListaCaricoTmp[i].CODICE_TITOLO,
+                                    Nome        : ListaCaricoTmp[i].NOME_TITOLO,
+                                    Quantita    : parseInt(ListaCaricoTmp[i].QUANTITA),
+                                    QuantitaMag : parseInt(ListaCaricoTmp[i].QUANTITA_MGZN_MAX),
+                                    Nuovo       : false,
+                                    Modificato  : false,
+                                    Eliminato   : false,
+                                 }
+        }
+        $scope.ListaCarico = ListaCaricoTmp
       }
-      else SystemInformation.ApplyOnError('Modello titoli non conforme','');   
-    },'SelectTitoliSQL');
+      else SystemInformation.ApplyOnError('Modello dettaglio movimento non conforme','');
+    },'SQLDettaglio');
+  }
+
+  $scope.ResetIsbnInput = function()
+  {
+    $scope.CodiceBippatoVisible = '';
+  }  
+
+  $scope.CheckQuantita = function(Titolo)
+  {
+    if(Titolo.QuantitaMag < Titolo.Quantita)
+       ZCustomAlert($mdDialog,'ATTENZIONE! QUANTITA PRESENTE IN MAGAZZINO SUPERATA!')
+    var TitoloInLista = $scope.ListaCarico.findIndex(function(ACodice){return(ACodice.Codice == Titolo.Codice);});   
+    if(TitoloInLista != -1)
+       $scope.ListaCarico[TitoloInLista].Modificato = true;
+  }
+
+  $scope.AggiungiInserimento = function(KeyPressed)
+  {
+    $scope.CodiceBippato = $scope.CodiceBippatoVisible;
+    
+    if($scope.CodiceFocused == undefined)
+       $scope.CodiceFocused = {Chiave : -1, Codice : -1, Titolo : -1, Nome : '', Quantita : 0, QuantitaMag : 0};
+
+    if(KeyPressed.keyCode == 13)
+    {
+      if($scope.CodiceFocused.Codice == $scope.CodiceBippato)
+      {
+         var TitoloInLista = $scope.ListaCarico.findIndex(function(ACodice){return(ACodice.Codice == $scope.CodiceBippato);});
+         if(TitoloInLista != -1)
+         {
+            if($scope.ListaCarico[TitoloInLista].QuantitaMag >= ($scope.ListaCarico[TitoloInLista].Quantita + 1)) 
+               $scope.ListaCarico[TitoloInLista].Quantita += 1
+            else
+            {
+              ZCustomAlert($mdDialog,'QUANTITA IN MAGAZZINO NON DISPONIBILE!')
+              $scope.CodiceBippatoVisible = '';
+            } 
+         }
+         $scope.CodiceBippato = $scope.CodiceFocused.Codice;
+      }
+      else
+      {
+           var TitoloTrovato = $scope.ListaTitoli.findIndex(function(ACodice){return(ACodice.Codice == $scope.CodiceBippato);});
+           if(TitoloTrovato == -1)
+           {
+             ZCustomAlert($mdDialog,'ATTENZIONE',"NESSUN TITOLO IN MAGAZZINO ASSOCIATO A QUESTO TITOLO! SI CONSIGLIA DI CONTROLLARE IL DATABASE O DI VERIFICARE L'INSERIMENTO DEL CODICE!")
+             $scope.CodiceBippato = '';
+             return
+           }
+           else
+           {
+              var TitoloInLista = $scope.ListaCarico.findIndex(function(ACodice){return(ACodice.Codice == $scope.CodiceBippato);});
+              if(TitoloInLista != -1)
+              {
+                 if($scope.ListaCarico[TitoloInLista].QuantitaMag >= ($scope.ListaCarico[TitoloInLista].Quantita + 1)) 
+                    $scope.ListaCarico[TitoloInLista].Quantita += 1
+                 else
+                 {
+                   ZCustomAlert($mdDialog,'QUANTITA IN MAGAZZINO NON DISPONIBILE!')
+                   $scope.CodiceBippatoVisible = '';
+                 } 
+                
+                 $scope.CodiceBippato = $scope.ListaCarico[TitoloInLista].Codice;
+              }
+              else
+              { 
+                 if($scope.ListaTitoli[TitoloTrovato].QuantitaMgzn > 0)
+                 {
+                    $scope.CodiceFocused                 = {Chiave : -1,Codice : 0, Nome : '', Quantita : 0, QuantitaMag : 0,QuantitaMagStr : "0"};
+                    $scope.CodiceFocused.Titolo          = $scope.ListaTitoli[TitoloTrovato].Chiave;
+                    $scope.CodiceFocused.Codice          = $scope.CodiceBippato;
+                    $scope.CodiceFocused.Nome            = $scope.ListaTitoli[TitoloTrovato].Nome;
+                    $scope.CodiceFocused.Quantita        = 1;
+                    $scope.CodiceFocused.QuantitaMag     = $scope.ListaTitoli[TitoloTrovato].QuantitaMgzn;
+                    $scope.CodiceFocused.Nuovo           = true; 
+                    $scope.CodiceFocused.Modificato      = false; 
+                    $scope.CodiceFocused.Eliminato       = false;
+                    if($scope.CodiceBippato != -1)
+                    {
+                      $scope.ListaCarico.unshift($scope.CodiceFocused); //PUSH
+                    }
+                    $scope.CodiceBippato = $scope.CodiceFocused.Codice;
+                 }
+                 else 
+                 {
+                  ZCustomAlert($mdDialog,'QUANTITA IN MAGAZZINO NON DISPONIBILE!')
+                  $scope.CodiceBippatoVisible = '';
+                 } 
+                 $scope.CodiceBippato = $scope.CodiceFocused.Codice;
+              }
+            }
+      }
+      $scope.CodiceBippatoVisible = '';
+    }  
   }
   
   $scope.EliminaMovimento = function (Movimento) 
@@ -115,230 +245,11 @@ $scope.GridOptions_2 = {
    ZConfirm.GetConfirmBox('AVVISO',"Eliminare il movimento della data " + Movimento.DATA + " ?",EliminaMov,function(){});
   }
   
-  $scope.ModificaMovimento = function (Movimento) //DA GESTIRE
-  {
-    $scope.EditingOn            = true;
-    $scope.MovimentoInEditing   = {};
-    $scope.ListaCaricoEliminati = [];
-    
-    SystemInformation.GetSQL('FlyingStorage',{CHIAVE : Movimento.CHIAVE},function(Results)
-    {
-      $scope.ListaCarico = SystemInformation.FindResults(Results,'FlyingDettaglio');
-      if ($scope.ListaCarico != undefined)
-      {
-        $scope.MovimentoInEditing.CHIAVE = Movimento.CHIAVE;
-        $scope.MovimentoInEditing.DATA   = new Date (Movimento.DATA); 
-        
-        for (let i = 0; i < $scope.ListaCarico.length;i ++)
-        {
-             $scope.ListaCarico[i].Nuovo      = false;
-             $scope.ListaCarico[i].Modificato = false;
-             $scope.ListaCarico[i].Eliminato  = false;
-        }
-        SystemInformation.GetSQL('Accessories', {}, function(Results)  
-        {  
-          TitoliInfoLista = SystemInformation.FindResults(Results,'BookList');
-          if(TitoliInfoLista != undefined)
-          { 
-            for(let i = 0; i < TitoliInfoLista.length; i++)
-                TitoliInfoLista[i] = { 
-                                        Chiave        : TitoliInfoLista[i].CHIAVE,
-                                        Nome          : TitoliInfoLista[i].TITOLO,
-                                        Codice        : TitoliInfoLista[i].CODICE_ISBN,
-                                        Quantita_Mgzn : TitoliInfoLista[i].QUANTITA_MGZN
-                                      }
-            $scope.ListaTitoli = TitoliInfoLista;
-          }
-          else SystemInformation.ApplyOnError('Modello titoli non conforme','');   
-        },'SelectTitoliSQL');   
-      }
-      else SystemInformation.ApplyOnError('Modello dettaglio movimento non conforme','');
-    },'SQLDettaglio');
-  }
-  
-  $scope.AggiungiTitoloCarico = function (ev)
-  {  
-      $mdDialog.show({ 
-                       controller          : DialogControllerTitoloVolante,
-                       templateUrl         : "template/bookFlyingPopup.html",
-                       targetEvent         : ev,
-                       scope               : $scope,
-                       preserveScope       : true,
-                       clickOutsideToClose : true
-                     })
-      .then(function(answer) 
-      {}, 
-      function() 
-      {});
-    }
- 
-  function DialogControllerTitoloVolante($scope,$mdDialog)  
-  {
-    $scope.Titolo      = {};
-    
-    $scope.Titolo = {
-                       "CHIAVE"      : -1,
-                       "TITOLO"      : -1,
-                       "CODICE_TITOLO" : -1,
-                       "NOME_TITOLO" : '',
-                       "QUANTITA"    : 0,
-                       "Nuovo"       : true,
-                       "Modificato"  : false,
-                       "Eliminato"   : false,
-                       "QuantitaMax" : 0                                   
-                    } 
-                              
-    $scope.queryTitolo = function(searchTextTit)
-    {
-       if(searchTextTit != undefined)
-       {
-          searchTextTit = searchTextTit.toUpperCase();
-          return($scope.ListaTitoli.grep(function(Elemento) 
-          { 
-            return(Elemento.Nome.toUpperCase().indexOf(searchTextTit) != -1 || Elemento.Codice.indexOf(searchTextTit) != -1);
-          }));
-      }
-    }
-    
-    $scope.selectedItemChangeTitolo = function(itemTit)
-    {
-      if(itemTit != undefined)
-      {
-        $scope.Titolo.TITOLO        = itemTit.Chiave;
-        $scope.Titolo.NOME_TITOLO   = itemTit.Nome;
-        $scope.Titolo.CODICE_TITOLO = itemTit.Codice;
-        $scope.Titolo.QuantitaMax   = itemTit.Quantita_Mgzn
-      }
-    }
-
-    $scope.hide = function() 
-    {
-      $scope.searchTextTit = '';
-      $scope.TitoloPopup = undefined;
-      $mdDialog.hide();
-    };
-
-    $scope.AnnullaPopupTitolo = function() 
-    {
-      $scope.searchTextTit = '';
-      $scope.TitoloPopup   = undefined;
-      $mdDialog.cancel();
-    };
-
-    $scope.ConfermaPopupTitolo = function()
-    { 
-      if($scope.Titolo.TITOLO == -1 || $scope.Titolo.QUANTITA == 0)
-      {
-        ZCustomAlert($mdDialog,'ATTENZIONE','DATI TITOLO MANCANTI!');
-        return
-      }
-      else
-      {                         
-        $scope.ListaCarico.push($scope.Titolo);
-        $scope.searchTextTit = '';
-        $scope.TitoloPopup   = undefined;
-        $mdDialog.hide();
-      }             
-    }
-  }
-  
-  $scope.ModificaTitolo = function (Titolo)
-  {  
-      $mdDialog.show({ 
-                       controller          : DialogControllerTitoloVolanteMod,
-                       templateUrl         : "template/bookFlyingPopup.html",
-                       targetEvent         : Titolo,
-                       scope               : $scope,
-                       preserveScope       : true,
-                       clickOutsideToClose : true,
-                       locals              : {Titolo}
-                     })
-      .then(function(answer) 
-      {}, 
-      function() 
-      {});
-    }
- 
-  function DialogControllerTitoloVolanteMod($scope,$mdDialog,Titolo)  
-  {
-    $scope.Titolo = {};
-
-    $scope.Titolo = {
-                       "CHIAVE"       : Titolo.CHIAVE,
-                       "TITOLO"       : Titolo.TITOLO,
-                       "NOME_TITOLO"  : Titolo.NOME_TITOLO,
-                       "CODICE_TITOLO"  : Titolo.CODICE_TITOLO,
-                       "QUANTITA"     : parseInt(Titolo.QUANTITA),
-                       "QuantitaMgzn" : Titolo.QUANTITA_MGZN_MAX,
-                       "Nuovo"        : false,
-                       "Modificato"   : true,
-                       "Eliminato"    : false                                   
-                    }
-    $scope.searchTextTit = Titolo.NOME_TITOLO;                        
-   
-    $scope.queryTitolo = function(searchTextTit)
-    {
-       searchTextTit = searchTextTit.toUpperCase();
-       return($scope.ListaTitoli.grep(function(Elemento) 
-       { 
-         return(Elemento.Nome.toUpperCase().indexOf(searchTextTit) != -1 || Elemento.Codice.indexOf(searchTextTit) != -1);
-       }));
-    }
-    
-    $scope.selectedItemChangeTitolo = function(itemTit)
-    {
-      if(itemTit != undefined)
-      {
-        $scope.Titolo.TITOLO        = itemTit.Chiave;
-        $scope.Titolo.NOME_TITOLO   = itemTit.Nome;
-        $scope.Titolo.CODICE_TITOLO = itemTit.Codice;
-        $scope.Titolo.QuantitaMax   = itemTit.Quantita_Mgzn;
-      }
-    }
-
-    $scope.hide = function() 
-    {
-      $scope.searchTextTit = '';
-      $scope.TitoloPopup = undefined;
-      $mdDialog.hide();
-    };
-
-    $scope.AnnullaPopupTitolo = function() 
-    {
-      $scope.searchTextTit = '';
-      $scope.TitoloPopup   = undefined;
-      $mdDialog.cancel();
-    };
-
-    $scope.ConfermaPopupTitolo = function()
-    { 
-      TitoloCorrispondente = $scope.ListaCarico.findIndex(function(ATitolo){return (ATitolo.CHIAVE == Titolo.CHIAVE);});
-      if($scope.Titolo.TITOLO == -1 || $scope.Titolo.QUANTITA == 0)
-      {
-         ZCustomAlert($mdDialog,'ATTENZIONE','DATI TITOLO MANCANTI!');
-         return
-      }
-      else
-      {        
-         $scope.ListaCarico[TitoloCorrispondente].TITOLO      = $scope.Titolo.TITOLO;
-         $scope.ListaCarico[TitoloCorrispondente].NOME_TITOLO = $scope.Titolo.NOME_TITOLO;
-         $scope.ListaCarico[TitoloCorrispondente].QUANTITA    = $scope.Titolo.QUANTITA;
-         if($scope.ListaCarico[TitoloCorrispondente].Nuovo)
-            $scope.ListaCarico[TitoloCorrispondente].Modificato = false
-         else
-            $scope.ListaCarico[TitoloCorrispondente].Modificato = true;
-      }
-      $scope.TitoloPopup = undefined;
-      $scope.searchTextTit = '';
-      $mdDialog.hide();     
-    }                
-  }
-  
   $scope.EliminaTitolo = function(Titolo)
   {
     var EliminaTit = function()
     {
-      TitoloCorrispondente = $scope.ListaCarico.findIndex(function(ATitolo){return(ATitolo.CHIAVE == Titolo.CHIAVE);});     
+      TitoloCorrispondente = $scope.ListaCarico.findIndex(function(ATitolo){return(ATitolo.Titolo == Titolo.Titolo);});     
       if ($scope.ListaCarico[TitoloCorrispondente].Nuovo)
           $scope.ListaCarico.splice(TitoloCorrispondente,1)
       else
@@ -346,14 +257,23 @@ $scope.GridOptions_2 = {
         $scope.ListaCaricoEliminati.push($scope.ListaCarico[TitoloCorrispondente]);
         $scope.ListaCaricoEliminati[$scope.ListaCaricoEliminati.length-1].Eliminato = true;
         $scope.ListaCarico.splice(TitoloCorrispondente,1);
+      }
+      if($scope.CodiceBippato == Titolo.Codice)
+      {
+        $scope.CodiceBippato = '';
+        $scope.CodiceFocused = undefined;
       }       
     }
-    ZConfirm.GetConfirmBox('AVVISO',"Eliminare il titolo  >>" + Titolo.NOME_TITOLO + "<< dal carico?",EliminaTit,function(){});      
+    ZConfirm.GetConfirmBox('AVVISO',"Eliminare il titolo  >>" + Titolo.Nome + "<< dal carico?",EliminaTit,function(){});      
   }
   
   $scope.OnAnnullaMovimento = function()
   {
-    $scope.EditingOn = false;
+    $scope.EditingOn          = false;
+    $scope.ListaCarico        = [];
+    $scope.CodiceBippato      = '';
+    $scope.CodiceFocused      = undefined;
+    $scope.MovimentoInEditing = {};
     $scope.RefreshListaMovimenti();
   }
   
@@ -393,7 +313,7 @@ $scope.GridOptions_2 = {
          for(let j = 0; j < $scope.ListaCaricoEliminati.length ;j ++)
          {
            var ParamTitolo = {
-                               CHIAVE : $scope.ListaCaricoEliminati[j].CHIAVE
+                               CHIAVE : $scope.ListaCaricoEliminati[j].Chiave
                              }
            if ($scope.ListaCaricoEliminati[j].Eliminato)
            {
@@ -413,8 +333,8 @@ $scope.GridOptions_2 = {
       for(let i = 0; i < $scope.ListaCarico.length;i ++)
       {
           var ParamTitolo = {
-                              "TITOLO"     : $scope.ListaCarico[i].TITOLO,  
-                              "QUANTITA"   : $scope.ListaCarico[i].QUANTITA
+                              "TITOLO"     : $scope.ListaCarico[i].Titolo,  
+                              "QUANTITA"   : $scope.ListaCarico[i].Quantita
                             }
           if(NuovoMovimento && $scope.ListaCarico[i].Nuovo)
           {
@@ -428,8 +348,8 @@ $scope.GridOptions_2 = {
           {
              var ParamTitolo  = {
                                   "CHIAVE"     : $scope.MovimentoInEditing.CHIAVE,
-                                  "TITOLO"     : $scope.ListaCarico[i].TITOLO,  
-                                  "QUANTITA"   : $scope.ListaCarico[i].QUANTITA
+                                  "TITOLO"     : $scope.ListaCarico[i].Titolo,  
+                                  "QUANTITA"   : $scope.ListaCarico[i].Quantita
                                 }
              $ObjQuery.Operazioni.push({
                                          Query     : 'InsertMovementBook',
@@ -437,12 +357,12 @@ $scope.GridOptions_2 = {
                                          ResetKeys : [1]
                                        });
           }
-          if(!NuovoMovimento && $scope.ListaCarico[i].Modificato)
+          if(!NuovoMovimento && $scope.ListaCarico[i].Modificato && !$scope.ListaCarico[i].Nuovo)
           {
             var ParamTitolo  = {
-                                 "CHIAVE"   : $scope.ListaCarico[i].CHIAVE,
-                                 "TITOLO"   : $scope.ListaCarico[i].TITOLO,  
-                                 "QUANTITA" : $scope.ListaCarico[i].QUANTITA
+                                 "CHIAVE"   : $scope.ListaCarico[i].Chiave,
+                                 "TITOLO"   : $scope.ListaCarico[i].Titolo,  
+                                 "QUANTITA" : $scope.ListaCarico[i].Quantita
                                }
             $ObjQuery.Operazioni.push({
                                         Query     : 'UpdateMovementBook',
@@ -456,6 +376,9 @@ $scope.GridOptions_2 = {
         $ObjQuery.Operazioni      = [];
         $scope.MovimentoInEditing = {};
         $scope.EditingOn          = false;
+        $scope.ListaCarico        = [];
+        $scope.CodiceBippato      = '';
+        $scope.CodiceFocused      = undefined;
         $scope.RefreshListaMovimenti();
       });
     }             

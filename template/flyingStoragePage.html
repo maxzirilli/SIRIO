@@ -1,5 +1,5 @@
 <div ng-controller="flyingStoragePageController" ng-cloak md-theme="{{ActualTheme}}" style="height:75%">
-  <div ng-if="!EditingOn">
+  <div ng-show="!EditingOn">
     <div>
       <h2 style="float:left;margin-right:50px;">MAGAZZINO VOLANTE</h2>
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoMovimento()">INSERISCI NUOVO MOVIMENTO</md-button> 
@@ -34,45 +34,49 @@
     <p ng-if="ListaVolante.length == 0" style="text-align:center;font-weight:bold;font-style:italic;">NESSUN CARICO ESEGUITO</p>
   </div>
   </div>
-  <div ng-if="EditingOn">
-  <div layout="row">
-    <h2>CARICO MAGAZZINO VOLANTE</h2>
-    <div style="width:100%;" layout="row" layout-align="end start">
-      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ConfermaMovimento()" ng-disabled="ListaCarico.length==0">CONFERMA</md-button>
-      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="OnAnnullaMovimento()">ANNULLA</md-button>
+  
+  <div ng-show="EditingOn">
+    
+    <h2>CARICO VOLANTE</h2>
+    <md-input-container>
+      <label>DATA CARICO</label><input ng-model="MovimentoInEditing.DATA" type="date" name="DataCarico">
+    </md-input-container>
+    <div layout="row" style="padding-bottom:0px;">
+     <md-input-container class="containerSelect" style="width:33%;height:20px;"><label>CODICE ISBN DEL TITOLO</label>
+       <input ng-model="CodiceBippatoVisible" ng-keyup="AggiungiInserimento($event)">
+     </md-input-container>
+     <img title="SVUOTA CAMPO" src="img/deleteCross.png" style="height:30px;margin-top:20px;margin-left:10px;" ng-click="ResetIsbnInput()">
     </div>
-  </div>
-    <br>
-    <div>
-      <md-button class="md-raised md-accent" style="font-weight:bold;float:left;" ng-click="AggiungiTitoloCarico($event)">AGGIUNGI NUOVO CARICO</md-button>
-      <md-input-container>
-        <label>DATA CARICO</label><input ng-model="MovimentoInEditing.DATA" type="date" name="DataCarico">
-      </md-input-container>
-    </div>
-        
-        <table style="width:100%;text-align:center;" md-row-select="GridOptions2.rowSelection" multiple="{{GridOptions2.multiSelect}}">  
-          <tr>
-            <th></th>
-            <th></th>
-            <th>ISBN</th> 
-            <th>TITOLO</th>
-            <th>QUANTITA</th>
-          </tr>  
-          <tr ng-repeat="Titolo in ListaCarico | limitTo : GridOptions2.query.limit : (GridOptions_2.query.page - 1) * GridOptions2.query.limit" id={{Titolo.CHIAVE}}>
-            <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA TITOLO" ng-click="EliminaTitolo(Titolo)"></td> 
-            <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA TITOLO" ng-click="ModificaTitolo(Titolo)"></td>        
-            <td>{{Titolo.CODICE_TITOLO}}</td>           
-            <td>{{Titolo.NOME_TITOLO | uppercase}}</td> 
-            <td>{{Titolo.QUANTITA}}</td>           
+  
+     <div>
+      <div layout="row" style="width:100%;" layout-align="end start">
+        <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ConfermaMovimento()" ng-disabled="ListaCarico.length == 0">CONFERMA</md-button>
+        <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="OnAnnullaMovimento()">ANNULLA</md-button>
+      </div>
+       <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
+         <tr>
+           <th></th>
+           <th>ISBN</th>
+           <th>TITOLO</th>
+           <th>QUANTITA</th>
+         </tr>  
+         <tr ng-repeat="Titolo in ListaCarico | limitTo : GridOptions_2.query.limit : (GridOptions_2.query.page - 1) * GridOptions_2.query.limit">
+           <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA INSERIMENTO" ng-click="EliminaTitolo(Titolo)"></td> 
+           <td>{{Titolo.Codice}}</td>
+           <td>{{Titolo.Nome}}</td>
+           <td><input type=number ng-model="Titolo.Quantita" ng-change="CheckQuantita(Titolo)"></td>
           </tr>    
-        </table>
-        <md-table-pagination md-limit="GridOptions_2.query.limit" 
-                             md-limit-options="GridOptions_2.limitOptions" 
-                             md-page="GridOptions_2.query.page" 
-                             md-total="{{ListaCarico.length}}" 
-                             md-page-select="GridOptions_2.pageSelect" 
-                             md-boundary-links="GridOptions_2.boundaryLinks" 
-                             md-on-paginate="logPagination"></md-table-pagination>        
+       </table>
+       <md-table-pagination md-limit="GridOptions_2.query.limit" 
+                            md-limit-options="GridOptions_2.limitOptions" 
+                            md-page="GridOptions_2.query.page" 
+                            md-total="{{ListaCarico.length}}" 
+                            md-page-select="GridOptions_2.pageSelect" 
+                            md-boundary-links="GridOptions_2.boundaryLinks" 
+                            md-on-paginate="logPagination"></md-table-pagination>
+       </div>
+     </div>
+
   </div>
     
 </div>

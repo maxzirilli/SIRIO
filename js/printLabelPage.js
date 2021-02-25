@@ -39,7 +39,9 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
     DatiDitta          = {};
     $scope.ListaSpedizioni = [];
     ListaDaSpedireTmp  = [];
-    $state.go("startPage");
+    if(SystemInformation.DataBetweenDelivery.Provenienza == 'TeacherPage')
+       $state.go("teacherListPage")
+    else $state.go("startPage");
   }
   
   var TroncaTitolo = function(str, n)
@@ -1036,7 +1038,9 @@ $scope.ConfermaStampa = function ()
         DatiDitta              = {};
         $scope.ListaSpedizioni = [];
         ListaDaSpedireTmp      = [];
-        $state.go("startPage");
+        if(SystemInformation.DataBetweenDelivery.Provenienza == 'TeacherPage')
+           $state.go("teacherListPage")
+        else $state.go("startPage");
       });
   }
   ZConfirm.GetConfirmBox('AVVISO','Tutte le etichette sono state stampate correttamente?',ConfermaStampaSped,function(){});

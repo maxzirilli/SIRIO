@@ -4,6 +4,8 @@
       <h2>CARICHI</h2>
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoOrdine()">NUOVO CARICO</md-button>
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoOrdineCsv()">CARICO DA CSV</md-button>
+      <md-button ng-click="ShowInfoCsv()" style="float:right;margin:5px;" title="INFO FORMATO CSV"><img src="img/smallinfo.png" style="width:30px;height:auto;"></md-button>
+      <p ng-show="ViewInfoCsv" style="font-style:italic;font-weight:bold;">ISBN;QUANTITA; (Nessuna intestazione)</p>
       <input id="fileLoadCVSDocument" accept=".csv" name="file" type="file" class="ng-hide" onchange="angular.element(this).scope().CVSLoaded(this)">      
       
       <md-input-container style="float:left;margin-left:20px;">

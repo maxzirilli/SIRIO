@@ -2,6 +2,7 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
 {
 
   $scope.EditingOn             = false;
+  $scope.ViewInfoCsv           = false;
   $scope.TitoloFiltro          = -1;
   $scope.OrdineInEditing       = {};
   $scope.ListaOrdini           = [];  
@@ -15,6 +16,11 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
   $scope.Data.DataRicercaDal   = new Date(AnnoCorrente, 0, 1)  
   
   ScopeHeaderController.CheckButtons();
+
+  $scope.ShowInfoCsv = function()
+  {
+    $scope.ViewInfoCsv = !$scope.ViewInfoCsv;
+  }
 
   SystemInformation.GetSQL('Book', {}, function(Results)  
   {  
@@ -104,7 +110,7 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
         
         var CreaOrdine = function()
         {
-          while (i < CsvSplitted.length - 1)          
+          while (i < CsvSplitted.length)          
           {
             let RecordOrdine  = CsvSplitted[i++].split(";");
             RecordOrdine[0]   = RecordOrdine[0].trim();
@@ -175,7 +181,7 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
                 doc.text(10,CoordY,'QNT');
                 doc.text(25,CoordY,'ISBN');
                 doc.text(45,CoordY,'TITOLO');
-                doc.text(180,CoordY,'UBICAZIONE');
+                //doc.text(180,CoordY,'UBICAZIONE');
                 doc.setFontType('normal');
                 CoordY += 5;             
                 

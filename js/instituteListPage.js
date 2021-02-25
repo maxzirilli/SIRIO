@@ -851,7 +851,9 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
       ListaDocenti       = SystemInformation.FindResults(Results,'InstituteTeacherList');
       ContaClassi        = SystemInformation.FindResults(Results,'CountClassi');
       ListaDisponibilita = SystemInformation.FindResults(Results,'InstituteTeacherAvailability');
-      if(ListaDocenti != undefined && ListaDisponibilita != undefined && ClassiIstituto != undefined && InfoIstitutoTmp != undefined  && ContaClassi != undefined)
+      ListaClassiDocenti = SystemInformation.FindResults(Results,'InstituteTeacherClasses');
+      
+      if(ListaDocenti != undefined && ListaDisponibilita != undefined && ClassiIstituto != undefined && InfoIstitutoTmp != undefined  && ContaClassi != undefined && ListaClassiDocenti != undefined)
       {
          InfoIstituto.Codice                = InfoIstitutoTmp[0].CODICE          == null ? '' : InfoIstitutoTmp[0].CODICE;
          InfoIstituto.Nome                  = InfoIstitutoTmp[0].NOME            == null ? '' : InfoIstitutoTmp[0].NOME;
@@ -1093,12 +1095,18 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
          
          if(ListaDocenti.length != 0)
          {
-            ListaDocenti.forEach(function(Docente){Docente.DISPONIBILITA = []});
+            ListaDocenti.forEach(function(Docente){Docente.DISPONIBILITA = [],Docente.CLASSI = []});
 
             for(let i = 0;i < ListaDocenti.length;i ++)
-                for(let j = 0;j < ListaDisponibilita.length;j ++)
-                    if (ListaDisponibilita[j].DOCENTE == ListaDocenti[i].DOCENTE)
-                        ListaDocenti[i].DISPONIBILITA.push(ListaDisponibilita[j]);
+            {
+              for(let j = 0;j < ListaDisponibilita.length;j ++)
+                  if (ListaDisponibilita[j].DOCENTE == ListaDocenti[i].DOCENTE)
+                      ListaDocenti[i].DISPONIBILITA.push(ListaDisponibilita[j]);
+
+              for (let k = 0;k < ListaClassiDocenti.length;k ++)
+                    if(ListaClassiDocenti[k].DOCENTE == ListaDocenti[i].DOCENTE)
+                      ListaDocenti[i].CLASSI.push(ListaClassiDocenti[k].ANNO_CLASSE + ListaClassiDocenti[k].SEZIONE_CLASSE);
+            }
 
             for(let i = 0;i < ListaDocenti.length;i ++)
             {
@@ -1147,7 +1155,8 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                 doc.setFontType('bold');
                 doc.text(10,CoordY+5,'DOCENTE: ' + ListaDocenti[i].NOME_DOCENTE);
                 doc.text(10,CoordY+10,'MATERIE: ' + (ListaDocenti[i].NOME_MATERIA_1 == undefined ? '' : ListaDocenti[i].NOME_MATERIA_1) + ' - ' + (ListaDocenti[i].NOME_MATERIA_2 == undefined ? '' : ListaDocenti[i].NOME_MATERIA_2) + ' - ' + (ListaDocenti[i].NOME_MATERIA_3 == undefined ? '' : ListaDocenti[i].NOME_MATERIA_3));
-                CoordY += 15;
+                doc.text(10,CoordY+15,'CLASSI: ' + ListaDocenti[i].CLASSI.toString());
+                CoordY += 20;
                 doc.setFontSize(7);
                 doc.setFontType('italic');
                 doc.text(10,CoordY,'LUNEDI');

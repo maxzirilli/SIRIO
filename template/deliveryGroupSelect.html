@@ -8,11 +8,16 @@
 
     <md-dialog-content>
       <div class="md-dialog-content">
-        <h2>Seleziona gruppi per la creazione dell'xls:</h2> 
+        <h4 style="margin-bottom:5px;">VISUALIZZAZIONE GRUPPI:</h4> 
         <md-radio-group ng-model="CheckGruppi" layout="row" style="padding:5px;">
           <md-radio-button value="T">TUTTI</md-radio-button>
           <md-radio-button value="G">SELEZIONA GRUPPI</md-radio-button>
-        </md-radio-group>  
+        </md-radio-group>
+        <h4 ng-show="Tipo=='P'" style="margin-bottom:5px;">VISUALIZZAZIONE QUANTITA':</h4>
+        <md-radio-group ng-show="Tipo=='P'" ng-model="CheckNegativi" layout="row" style="padding-bottom:10px;">
+          <md-radio-button value="T">POSITIVI/NEGATIVI</md-radio-button>
+          <md-radio-button value="N">SOLO NEGATIVI</md-radio-button>
+        </md-radio-group>    
         <p ng-show="ListaGruppiPopup.length == 0  && CheckGruppi == 'G'" style="font-weight:bold;font-style:italic;float:center;">NESSUN GRUPPO TROVATO</p> 
         <div ng-show="ListaGruppiPopup.length != 0 && CheckGruppi == 'G'">
           <table style="width:1000px;text-align:center;" md-row-select="GridOptions_2.rowSelection" multiple="{{GridOptions_2.multiSelect}}">  

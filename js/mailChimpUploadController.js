@@ -43,7 +43,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$http)
 
         var SendDieciMail = function()
         {
-          while(i < CsvSplitted.length - 1)
+          while(i < CsvSplitted.length)
           {
             let RecordTitolo = CsvSplitted[i++].SplitCSVWithDoublequotes(';');
             RecordTitolo[0]  = RecordTitolo[0].trim();

@@ -43,6 +43,16 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
 
   ScopeHeaderController.CheckButtons();
 
+  if(SystemInformation.DataBetweenDelivery.Provenienza == 'TeacherPage')
+  {
+    $scope.MateriaFiltro                  = parseInt(SystemInformation.DataBetweenDelivery.MateriaFiltro);
+    $scope.searchTextMat                  = SystemInformation.DataBetweenDelivery.MateriaFiltroNome
+    $scope.IstitutoFiltrato               = parseInt(SystemInformation.DataBetweenDelivery.IstitutoFiltrato);
+    $scope.searchTextIstituto             = SystemInformation.DataBetweenDelivery.IstitutoFiltratoNome;
+    //$scope.GridOptions.query.page         = SystemInformation.DataBetweenDelivery.Pagina;
+    SystemInformation.DataBetweenDelivery = {};
+  }
+
   $scope.IsAdministrator = function ()
   {
     return SystemInformation.UserInformation.Ruolo == RUOLO_AMMINISTRATORE;
@@ -239,7 +249,10 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   $scope.selectedItemChangeMateria = function(itemMat)
   {
     if(itemMat != undefined)
-       $scope.MateriaFiltro = itemMat.Chiave
+    {
+      $scope.MateriaFiltro = itemMat.Chiave;
+      $scope.MateriaFiltroNome = itemMat.Nome
+    }
     else $scope.MateriaFiltro = -1;
   }
 
@@ -499,6 +512,11 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   {
     var ListaFiltrata = $filter('DocenteByFiltro')($scope.ListaDocenti,Nome,$scope.MateriaFiltro,$scope.CoordMateriaFiltro);
     SystemInformation.DataBetweenController  = { ListaDocSped : []};
+    SystemInformation.DataBetweenController.Provenienza             = 'TeacherPage';
+    SystemInformation.DataBetweenController.MateriaFiltro           = $scope.MateriaFiltro;
+    SystemInformation.DataBetweenController.MateriaFiltroNome       = $scope.searchTextMat;
+    SystemInformation.DataBetweenController.IstitutoFiltrato        = $scope.IstitutoFiltrato;
+    SystemInformation.DataBetweenController.IstitutoFiltratoNome    = $scope.searchTextIstituto;
 
     if(ListaFiltrata.length == 0)
     {
@@ -1605,9 +1623,14 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   
   $scope.NuovaSpedizione = function (ChiaveDocente)
   { 
-    SystemInformation.DataBetweenController.ChiaveSpedizione = -1;
-    SystemInformation.DataBetweenController.ChiaveDocente    = ChiaveDocente;
-    SystemInformation.DataBetweenController.Provenienza      = 'TeacherPage';
+    SystemInformation.DataBetweenController.ChiaveSpedizione        = -1;
+    SystemInformation.DataBetweenController.ChiaveDocente           = ChiaveDocente;
+    SystemInformation.DataBetweenController.Provenienza             = 'TeacherPage';
+    SystemInformation.DataBetweenController.MateriaFiltro           = $scope.MateriaFiltro;
+    SystemInformation.DataBetweenController.MateriaFiltroNome       = $scope.searchTextMat;
+    SystemInformation.DataBetweenController.IstitutoFiltrato        = $scope.IstitutoFiltrato;
+    SystemInformation.DataBetweenController.IstitutoFiltratoNome    = $scope.searchTextIstituto;
+    //SystemInformation.DataBetweenController.Pagina                  = $scope.GridOptions.query.page;
     $state.go("deliveryModDetailPage");  
   }
   
@@ -1730,8 +1753,13 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
     
     $scope.ModificaSpedizione = function(ChiaveSpedizione) 
     { 
-      SystemInformation.DataBetweenController.ChiaveSpedizione = ChiaveSpedizione;
-      SystemInformation.DataBetweenController.ChiaveDocente    = Docente.Chiave;
+      SystemInformation.DataBetweenController.ChiaveSpedizione        = ChiaveSpedizione;
+      SystemInformation.DataBetweenController.ChiaveDocente           = Docente.Chiave;
+      SystemInformation.DataBetweenController.Provenienza             = 'TeacherPage';
+      SystemInformation.DataBetweenController.MateriaFiltro           = $scope.MateriaFiltro;
+      SystemInformation.DataBetweenController.MateriaFiltroNome       = $scope.searchTextMat;
+      SystemInformation.DataBetweenController.IstitutoFiltrato        = $scope.IstitutoFiltrato;
+      SystemInformation.DataBetweenController.IstitutoFiltratoNome    = $scope.searchTextIstituto;
       SystemInformation.DataBetweenController.Provenienza      = 'TeacherPage';
       $state.go("deliveryModDetailPage");   
     };

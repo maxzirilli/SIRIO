@@ -963,7 +963,13 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
       $scope.ListaTitoliEliminati = [];      
       switch (SystemInformation.DataBetweenController.Provenienza)
       {
-         case 'TeacherPage'  : $state.go("teacherListPage");
+         case 'TeacherPage'  : SystemInformation.DataBetweenDelivery.MateriaFiltro        = SystemInformation.DataBetweenController.MateriaFiltro;
+                               SystemInformation.DataBetweenDelivery.MateriaFiltroNome    = SystemInformation.DataBetweenController.MateriaFiltroNome;
+                               SystemInformation.DataBetweenDelivery.IstitutoFiltrato     = SystemInformation.DataBetweenController.IstitutoFiltrato;
+                               SystemInformation.DataBetweenDelivery.IstitutoFiltratoNome = SystemInformation.DataBetweenController.IstitutoFiltratoNome;
+                               SystemInformation.DataBetweenDelivery.Provenienza          = SystemInformation.DataBetweenController.Provenienza;
+                               $state.go("teacherListPage");
+                               //SystemInformation.DataBetweenDelivery.Pagina               = SystemInformation.DataBetweenController.Pagina;
                                SystemInformation.DataBetweenController = {};
                                break;
          case 'DeliveryPage' : $state.go("deliveryListPage");
@@ -1260,12 +1266,17 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                         {
                           NewChiaviToSend = SystemInformation.FindResults(Results,'SmallNewToSend');
                           SystemInformation.DataBetweenController.ListaChiaviFromAdvanced = [];
-                          SystemInformation.DataBetweenController.Provenienza = 'NOT_ADVANCED';
+                          //SystemInformation.DataBetweenController.Provenienza = 'NOT_ADVANCED';
                           if(NewChiaviToSend != undefined)
                           {
                             for(let i = 0;i < NewChiaviToSend.length;i ++)
                                 SystemInformation.DataBetweenController.ListaChiaviFromAdvanced.push(NewChiaviToSend[i].CHIAVE)
                             
+                            SystemInformation.DataBetweenDelivery.MateriaFiltro        = SystemInformation.DataBetweenController.MateriaFiltro;
+                            SystemInformation.DataBetweenDelivery.MateriaFiltroNome    = SystemInformation.DataBetweenController.MateriaFiltroNome;
+                            SystemInformation.DataBetweenDelivery.IstitutoFiltrato     = SystemInformation.DataBetweenController.IstitutoFiltrato;
+                            SystemInformation.DataBetweenDelivery.IstitutoFiltratoNome = SystemInformation.DataBetweenController.IstitutoFiltratoNome;
+                            SystemInformation.DataBetweenDelivery.Provenienza          = SystemInformation.DataBetweenController.Provenienza;    
                             $state.go('printLabelPage');
                           }
                         },'SelectKeyToSend')
@@ -1293,8 +1304,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                                     SystemInformation.DataBetweenController.ListaChiaviFromAdvanced.push(NewChiaviToSend[i].CHIAVE)
                                 if(DaSpedireEsistenti.length != 0)
                                    for(let j = 0;j < DaSpedireEsistenti.length;j ++)
-                                       SystemInformation.DataBetweenController.ListaChiaviFromAdvanced.push(DaSpedireEsistenti[j])
-                                
+                                       SystemInformation.DataBetweenController.ListaChiaviFromAdvanced.push(DaSpedireEsistenti[j])   
                                 $state.go('printLabelPage');
                               }
                             },'SelectKeyToSend')
@@ -1305,7 +1315,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                             SystemInformation.DataBetweenController.Provenienza = 'NOT_ADVANCED';
                             if(DaSpedireEsistenti.length != 0)
                                for(let j = 0;j < DaSpedireEsistenti.length;j ++)
-                                   SystemInformation.DataBetweenController.ListaChiaviFromAdvanced.push(DaSpedireEsistenti[j])
+                                   SystemInformation.DataBetweenController.ListaChiaviFromAdvanced.push(DaSpedireEsistenti[j])   
                             $state.go('printLabelPage');
                           }
                         }                       
@@ -1367,7 +1377,13 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                             $scope.ListaDocentiEsclusi    = [];
                             switch (SystemInformation.DataBetweenController.Provenienza)
                             {
-                              case 'TeacherPage'  : $state.go("teacherListPage");
+                              case 'TeacherPage'  : SystemInformation.DataBetweenDelivery.MateriaFiltro        = SystemInformation.DataBetweenController.MateriaFiltro;
+                                                    SystemInformation.DataBetweenDelivery.MateriaFiltroNome    = SystemInformation.DataBetweenController.MateriaFiltroNome;
+                                                    SystemInformation.DataBetweenDelivery.IstitutoFiltrato     = SystemInformation.DataBetweenController.IstitutoFiltrato;
+                                                    SystemInformation.DataBetweenDelivery.IstitutoFiltratoNome = SystemInformation.DataBetweenController.IstitutoFiltratoNome;
+                                                    SystemInformation.DataBetweenDelivery.Provenienza          = SystemInformation.DataBetweenController.Provenienza;
+                                                    $state.go("teacherListPage");
+                                                    //SystemInformation.DataBetweenDelivery.Pagina               = SystemInformation.DataBetweenController.Pagina;
                                                     SystemInformation.DataBetweenController = {};
                                                     break;
                               case 'DeliveryPage' : $state.go("deliveryListPage");
@@ -1469,7 +1485,13 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
     
                       switch (SystemInformation.DataBetweenController.Provenienza)
                       {
-                          case 'TeacherPage'  : $state.go("teacherListPage");
+                          case 'TeacherPage'  : SystemInformation.DataBetweenDelivery.MateriaFiltro        = SystemInformation.DataBetweenController.MateriaFiltro;
+                                                SystemInformation.DataBetweenDelivery.MateriaFiltroNome    = SystemInformation.DataBetweenController.MateriaFiltroNome;
+                                                SystemInformation.DataBetweenDelivery.IstitutoFiltrato     = SystemInformation.DataBetweenController.IstitutoFiltrato;
+                                                SystemInformation.DataBetweenDelivery.IstitutoFiltratoNome = SystemInformation.DataBetweenController.IstitutoFiltratoNome;
+                                                SystemInformation.DataBetweenDelivery.Provenienza          = SystemInformation.DataBetweenController.Provenienza;
+                                                $state.go("teacherListPage");
+                                                //SystemInformation.DataBetweenDelivery.Pagina               = SystemInformation.DataBetweenController.Pagina;
                                                 SystemInformation.DataBetweenController = {};
                                                 break;
                           case 'DeliveryPage' : $state.go("deliveryListPage");
@@ -1590,7 +1612,13 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                       $scope.SpedizioneInEditing = {};
                       switch (SystemInformation.DataBetweenController.Provenienza)
                       {
-                        case 'TeacherPage'  : $state.go("teacherListPage");
+                        case 'TeacherPage'  : SystemInformation.DataBetweenDelivery.MateriaFiltro        = SystemInformation.DataBetweenController.MateriaFiltro;
+                                              SystemInformation.DataBetweenDelivery.MateriaFiltroNome    = SystemInformation.DataBetweenController.MateriaFiltroNome;
+                                              SystemInformation.DataBetweenDelivery.IstitutoFiltrato     = SystemInformation.DataBetweenController.IstitutoFiltrato;
+                                              SystemInformation.DataBetweenDelivery.IstitutoFiltratoNome = SystemInformation.DataBetweenController.IstitutoFiltratoNome;
+                                              SystemInformation.DataBetweenDelivery.Provenienza          = SystemInformation.DataBetweenController.Provenienza;
+                                              $state.go("teacherListPage");
+                                              //SystemInformation.DataBetweenDelivery.Pagina               = SystemInformation.DataBetweenController.Pagina;
                                               SystemInformation.DataBetweenController = {};
                                               break;
                         case 'DeliveryPage' : $state.go("deliveryListPage");

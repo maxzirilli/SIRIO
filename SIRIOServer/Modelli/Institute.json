@@ -54,6 +54,10 @@
                                             {
                                               "Name" : "InstituteTeacherAvailability",
                                               "SQL"  : "SELECT docenti_disponibilita.DOCENTE,docenti_disponibilita.GIORNO,docenti_disponibilita.ORA,(SELECT DESCRIZIONE FROM luoghi_disponibilita WHERE luoghi_disponibilita.CHIAVE = docenti_disponibilita.LUOGO) AS LUOGO_NOME FROM docenti_disponibilita WHERE ISTITUTO=:CHIAVE ORDER BY DOCENTE,GIORNO ASC,ORA ASC"
+                                            },
+                                            {
+                                              "Name" : "InstituteTeacherClasses",
+                                              "SQL"  : "SELECT insegnamenti_docente.CLASSE,insegnamenti_docente.DOCENTE, (SELECT ANNO FROM classi WHERE CHIAVE = insegnamenti_docente.CLASSE) AS ANNO_CLASSE, (SELECT SEZIONE FROM classi WHERE CHIAVE = insegnamenti_docente.CLASSE) AS SEZIONE_CLASSE FROM insegnamenti_docente WHERE insegnamenti_docente.CLASSE IN (SELECT CHIAVE FROM classi WHERE ISTITUTO = :CHIAVE) ORDER BY DOCENTE,SEZIONE_CLASSE,ANNO_CLASSE"
                                             }
                                           ],
                                           
