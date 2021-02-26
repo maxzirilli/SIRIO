@@ -126,36 +126,42 @@
         </md-card-title>
         <md-card-content>
           <div layout="row">
-            <div style="margin-left:5px;margin-right:5px;" flex=20>
+            <div style="margin-left:5px;margin-right:5px;" flex=15>
               <md-button ng-click="ApriPaginaEtichette()"><img src="img/label.png" style="width:60px;height:auto;"></md-button>
               <br>
               <p style="font-weight:bold;padding:0px;">ETICHETTE</p>
               <br>
             </div>       
-            <div style="margin-left:5px;margin-right:5px;"  flex=20>
+            <div style="margin-left:5px;margin-right:5px;"  flex=15>
               <md-button ng-click="ApriLogMagazzini()"><img src="img/storageLog.png" style="width:60px;height:auto;"></md-button>
               <br>
               <p style="font-weight:bold;padding:0px;">LOG MAGAZZINI & INVENTARIO</p>
               <br>
             </div>       
-            <div ng-if="IsAdministrator()" style="margin-left:5px;margin-right:5px;"  flex=20>
+            <div ng-if="IsAdministrator()" style="margin-left:5px;margin-right:5px;"  flex=15>
               <md-button ng-click="ApriGestioneInventario()"><img src="img/inventory.png" style="width:60px;height:auto;"></md-button>
               <br>
               <p style="font-weight:bold;padding:0px;">INVENTARIO</p>
               <br>
             </div>
-            <div style="margin-left:5px;margin-right:5px;"  flex=20>
+            <div style="margin-left:5px;margin-right:5px;"  flex=15>
               <md-button ng-click="ApriMagazzinoVolante()"><img src="img/flyingStorage.png" style="width:60px;height:auto;"></md-button>
               <br>
               <p style="font-weight:bold;padding:0px;">MAGAZZINO VOLANTE</p>
               <br>
             </div>
-            <div style="margin-left:5px;margin-right:5px;"  flex=20>
+            <div style="margin-left:5px;margin-right:5px;"  flex=15>
               <md-button ng-click="NuovaSpedizioneCasaEditrice()"><img src="img/delivery.png" style="width:60px;height:auto;"></md-button>
               <br>
               <p style="font-weight:bold;padding:0px;">SPEDIZIONE GENERICA</p>
               <br>
-            </div>              
+            </div>
+            <div style="margin-left:5px;margin-right:5px;" flex=15>
+              <md-button ng-click="CreaXlsMailchimp()"><img src="img/printMailXls.png" style="width:60px;height:auto;"></md-button>
+              <br>
+              <p style="font-weight:bold;padding:0px;">ESPORTAZIONE XLS MAILCHIMP</p>
+              <br>
+            </div>                  
           </div>
         </md-card-content>
       </md-card>

@@ -28,7 +28,18 @@
                                       "Name" : "TeacherForInstitute",
                                       "SQL"  : "SELECT *,(SELECT NOME FROM istituti WHERE CHIAVE=istituti_x_docenti.ISTITUTO) AS NOME_ISTITUTO FROM istituti_x_docenti ORDER BY istituti_x_docenti.DOCENTE"
                                     }
-                                  ],                             
+                                  ],
+                                  
+    "SelectMailchimpTeacher"    : [
+                                    {
+                                      "Name" : "TeacherMailList",
+                                      "SQL"  : "SELECT docenti.CHIAVE,SUBSTRING_INDEX(docenti.RAGIONE_SOCIALE, ' ', -1) AS NOME,docenti.RAGIONE_SOCIALE,docenti.EMAIL,docenti.COMUNE,(SELECT TARGA FROM province_all WHERE CHIAVE = docenti.PROVINCIA) AS TARGA_PROVINCIA,(SELECT DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE = docenti.MATERIA_1) AS MATERIA_1_NOME,(SELECT DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE = docenti.MATERIA_2) AS MATERIA_2_NOME, (SELECT DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE = docenti.MATERIA_3) AS MATERIA_3_NOME FROM docenti WHERE docenti.EMAIL IS NOT NULL AND TRIM(docenti.EMAIL) <> ''"
+                                    },
+                                    {
+                                      "Name" : "TeacherMailInstitute",
+                                      "SQL"  : "SELECT istituti_x_docenti.ISTITUTO,istituti_x_docenti.DOCENTE,(SELECT NOME FROM istituti WHERE CHIAVE = istituti_x_docenti.ISTITUTO) AS NOME_ISTITUTO,(SELECT DESCRIZIONE FROM tipologie_istituto WHERE CHIAVE IN (SELECT istituti.TIPOLOGIA FROM istituti WHERE CHIAVE = istituti_x_docenti.ISTITUTO)) AS TIPO_ISTITUTO FROM istituti_x_docenti WHERE istituti_x_docenti.DOCENTE IN(SELECT CHIAVE FROM docenti WHERE EMAIL IS NOT NULL OR TRIM(EMAIL) <> '')  ORDER BY DOCENTE,ISTITUTO"
+                                    }
+                                  ],
                    
   "SQLDettaglio" : [
                      { 

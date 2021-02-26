@@ -7,7 +7,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
   $scope.DocenteFiltro    = -1;
   $scope.DataRicercaAl    = new Date();
   let TmpDate             = new Date($scope.DataRicercaAl);
-  TmpDate.setDate(TmpDate.getDate() - 15);
+  TmpDate.setDate(TmpDate.getDate() - 7);
   //$scope.DataRicercaDal   = new Date(TmpDate);
   var AnnoCorrente = new Date().getFullYear();
   $scope.DataRicercaDal   = new Date(AnnoCorrente, 0, 1)

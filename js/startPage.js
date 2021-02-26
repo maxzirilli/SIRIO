@@ -112,6 +112,192 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http,$mdDial
                           limitOptions    : [10, 20, 30]
                        };
 
+  $scope.CreaXlsMailchimp = function()
+  {
+    SystemInformation.GetSQL('Teacher',{},function(Results)
+    {
+      DocenteDettaglioTmp = SystemInformation.FindResults(Results,'TeacherMailList');
+      ListaIstituti = SystemInformation.FindResults(Results,'TeacherMailInstitute');
+      if(ListaIstituti != undefined && DocenteDettaglioTmp != undefined)
+      { 
+         var ListaDocentiFinaleMultipleIst = [];
+         for(let i = 0;i < DocenteDettaglioTmp.length;i ++)
+         {
+           
+            if(DocenteDettaglioTmp[i].RAGIONE_SOCIALE != undefined)
+            {
+              var NomeCognome = DocenteDettaglioTmp[i].RAGIONE_SOCIALE;
+              var NomeCognomeSplittato = NomeCognome.split(" ");
+              DocenteDettaglioTmp[i].Nome    = NomeCognomeSplittato[NomeCognomeSplittato.length-1];
+              DocenteDettaglioTmp[i].Cognome = (NomeCognomeSplittato.slice(0, -1)).toString();
+            }
+            else
+            {
+              DocenteDettaglioTmp[i].Nome    = 'SCONOSCIUTO';
+              DocenteDettaglioTmp[i].Cognome = 'SCONOSCIUTO';
+            }
+            
+            DocenteDettaglioTmp[i] = {
+                                        Chiave         : DocenteDettaglioTmp[i].CHIAVE,
+                                        Nome           : DocenteDettaglioTmp[i].Nome,
+                                        Cognome        : DocenteDettaglioTmp[i].Cognome,
+                                        Email          : DocenteDettaglioTmp[i].EMAIL,
+                                        Comune         :  DocenteDettaglioTmp[i].COMUNE == undefined ? 'SCONOSCIUTO' : DocenteDettaglioTmp[i].COMUNE,
+                                        Provincia      :  DocenteDettaglioTmp[i].TARGA_PROVINCIA == undefined ? 'SCONOSCIUTA' :  DocenteDettaglioTmp[i].TARGA_PROVINCIA,
+                                        Materia1       :  DocenteDettaglioTmp[i].MATERIA_1_NOME == undefined ? '' :  DocenteDettaglioTmp[i].MATERIA_1_NOME,
+                                        Materia2       :  DocenteDettaglioTmp[i].MATERIA_2_NOME == undefined ? '' :  DocenteDettaglioTmp[i].MATERIA_2_NOME,
+                                        Materia3       :  DocenteDettaglioTmp[i].MATERIA_3_NOME == undefined ? '' :  DocenteDettaglioTmp[i].MATERIA_3_NOME,
+                                        StringaMaterie : '',
+                                        ListaIst       : []
+                                     }
+            
+            if(DocenteDettaglioTmp[i].Materia1 == '' && DocenteDettaglioTmp[i].Materia2 == '' && DocenteDettaglioTmp[i].Materia3 == '' )
+               DocenteDettaglioTmp[i].StringaMaterie = 'SCONOSCIUTA'
+            else 
+            {
+              if(DocenteDettaglioTmp[i].Materia1 != '')
+                 DocenteDettaglioTmp[i].StringaMaterie = DocenteDettaglioTmp[i].StringaMaterie + DocenteDettaglioTmp[i].Materia1;
+              if(DocenteDettaglioTmp[i].Materia2 != '')
+                 DocenteDettaglioTmp[i].StringaMaterie = DocenteDettaglioTmp[i]. StringaMaterie + ' - ' + DocenteDettaglioTmp[i].Materia2;
+              if(DocenteDettaglioTmp[i].Materia3 != '')
+                 DocenteDettaglioTmp[i].StringaMaterie = DocenteDettaglioTmp[i].StringaMaterie + ' - ' + DocenteDettaglioTmp[i].Materia3;
+            }
+            for(let j = 0;j < ListaIstituti.length;j ++)
+            {
+              if(ListaIstituti[j].NOME_ISTITUTO == undefined)
+                 ListaIstituti[j].NOME_ISTITUTO = 'SCONOSCIUTO';
+              if(ListaIstituti[j].TIPO_ISTITUTO == undefined)
+                 ListaIstituti[j].TIPO_ISTITUTO = 'SCONOSCIUTA';
+
+              if(ListaIstituti[j].DOCENTE == DocenteDettaglioTmp[i].Chiave)
+                 DocenteDettaglioTmp[i].ListaIst.push({Istituto : ListaIstituti[j].NOME_ISTITUTO,Tipologia : ListaIstituti[j].TIPO_ISTITUTO});
+            }
+            
+            if(DocenteDettaglioTmp[i].ListaIst.length > 1)
+            {
+               ListaDocentiFinaleMultipleIst.push(DocenteDettaglioTmp[i])
+               DocenteDettaglioTmp.splice(i,1);
+               i--
+            }
+            if(DocenteDettaglioTmp[i].ListaIst.length == 0)
+            {
+              DocenteDettaglioTmp[i].ListaIst.push({Istituto :'NESSUN ISTITUTO',Tipologia : '-'}); 
+            }
+
+         }
+         ListaDocentiFinale = DocenteDettaglioTmp;
+
+         var WBook = {
+                      SheetNames : [],
+                      Sheets     : {}
+                     };
+
+        var SheetName       = "MAIL DOCENTI";
+        var BodySheet       = {};
+        var SheetNameMulti  = "MAIL DOCENTI - ISTITUTI MULTIPLI";
+        var BodySheetMulti  = {};
+
+        BodySheet['A1'] = SystemInformation.GetCellaIntestazione('EMAIL');
+        BodySheet['B1'] = SystemInformation.GetCellaIntestazione('NOME');
+        BodySheet['C1'] = SystemInformation.GetCellaIntestazione('COGNOME');
+        BodySheet['D1'] = SystemInformation.GetCellaIntestazione('MATERIE');
+        BodySheet['E1'] = SystemInformation.GetCellaIntestazione('PROVINCIA');
+        BodySheet['F1'] = SystemInformation.GetCellaIntestazione('COMUNE');
+        BodySheet['G1'] = SystemInformation.GetCellaIntestazione('ISTITUTO');
+        BodySheet['H1'] = SystemInformation.GetCellaIntestazione('TIPOLOGIA ISTITUTO');
+        BodySheet['I1'] = SystemInformation.GetCellaIntestazione('CONSENSO');
+
+        BodySheetMulti['A1'] = SystemInformation.GetCellaIntestazione('EMAIL');
+        BodySheetMulti['B1'] = SystemInformation.GetCellaIntestazione('NOME');
+        BodySheetMulti['C1'] = SystemInformation.GetCellaIntestazione('COGNOME');
+        BodySheetMulti['D1'] = SystemInformation.GetCellaIntestazione('MATERIE');
+        BodySheetMulti['E1'] = SystemInformation.GetCellaIntestazione('PROVINCIA');
+        BodySheetMulti['F1'] = SystemInformation.GetCellaIntestazione('COMUNE');
+        BodySheetMulti['G1'] = SystemInformation.GetCellaIntestazione('ISTITUTO');
+        BodySheetMulti['H1'] = SystemInformation.GetCellaIntestazione('TIPOLOGIA ISTITUTO');
+        BodySheetMulti['I1'] = SystemInformation.GetCellaIntestazione('ISTITUTO');
+        BodySheetMulti['J1'] = SystemInformation.GetCellaIntestazione('TIPOLOGIA ISTITUTO');
+        BodySheetMulti['K1'] = SystemInformation.GetCellaIntestazione('ISTITUTO');
+        BodySheetMulti['L1'] = SystemInformation.GetCellaIntestazione('TIPOLOGIA ISTITUTO');
+        BodySheetMulti['M1'] = SystemInformation.GetCellaIntestazione('CONSENSO');
+
+        for(let i = 0;i < ListaDocentiFinale.length;i ++)
+        {
+          BodySheet['A' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinale[i].Email);
+          BodySheet['B' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinale[i].Nome);
+          BodySheet['C' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinale[i].Cognome);
+          BodySheet['D' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinale[i].StringaMaterie);
+          BodySheet['E' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinale[i].Provincia);
+          BodySheet['F' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinale[i].Comune);
+          BodySheet['G' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinale[i].ListaIst[0].Istituto);
+          BodySheet['H' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinale[i].ListaIst[0].Tipologia);
+          BodySheet['I' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s','Acconsento');
+        }
+
+        for(let i = 0;i < ListaDocentiFinaleMultipleIst.length;i ++)
+        {
+
+          if(ListaDocentiFinaleMultipleIst[i].ListaIst.length < 3)
+             ListaDocentiFinaleMultipleIst[i].ListaIst.push({Istituto :'',Tipologia : ''}); 
+
+          BodySheetMulti['A' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinaleMultipleIst[i].Email);
+          BodySheetMulti['B' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinaleMultipleIst[i].Nome);
+          BodySheetMulti['C' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinaleMultipleIst[i].Cognome);
+          BodySheetMulti['D' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinaleMultipleIst[i].StringaMaterie);
+          BodySheetMulti['E' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinaleMultipleIst[i].Provincia);
+          BodySheetMulti['F' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinaleMultipleIst[i].Comune);
+          BodySheetMulti['G' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinaleMultipleIst[i].ListaIst[0].Istituto);
+          BodySheetMulti['H' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinaleMultipleIst[i].ListaIst[0].Tipologia);
+          BodySheetMulti['I' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinaleMultipleIst[i].ListaIst[1].Istituto);
+          BodySheetMulti['J' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinaleMultipleIst[i].ListaIst[1].Tipologia);
+          BodySheetMulti['K' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinaleMultipleIst[i].ListaIst[2].Istituto);
+          BodySheetMulti['L' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinaleMultipleIst[i].ListaIst[2].Tipologia);
+          BodySheetMulti['M' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s','Acconsento'); 
+        }
+
+        BodySheet["!cols"] = [             
+                                {wpx: 200},
+                                {wpx: 200},
+                                {wpx: 200},
+                                {wpx: 250},
+                                {wpx: 200},
+                                {wpx: 200},
+                                {wpx: 300},
+                                {wpx: 300},
+                                {wpx: 200}
+                             ];
+
+        BodySheet['!ref'] = 'A1:I1' + parseInt(ListaDocentiFinale.length + 1);
+
+        BodySheetMulti["!cols"] = [             
+                                    {wpx: 200},
+                                    {wpx: 200},
+                                    {wpx: 200},
+                                    {wpx: 250},
+                                    {wpx: 200},
+                                    {wpx: 200},
+                                    {wpx: 300},
+                                    {wpx: 300},
+                                    {wpx: 300},
+                                    {wpx: 300},
+                                    {wpx: 300},
+                                    {wpx: 300},
+                                    {wpx: 200}
+                                 ];
+        BodySheetMulti['!ref'] = 'A1:M1' + parseInt(ListaDocentiFinaleMultipleIst.length + 1);
+
+        WBook.SheetNames.push(SheetName);
+        WBook.Sheets[SheetName] = BodySheet;
+        WBook.SheetNames.push(SheetNameMulti);
+        WBook.Sheets[SheetNameMulti] = BodySheetMulti;
+
+        var wbout = XLSX.write(WBook, {bookType:'xlsx', bookSST:true, type: 'binary'});
+        saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}), "MailDocenti.xlsx")  
+      }
+      else SystemInformation.ApplyOnError('Modello mail docenti non conforme','');
+    },'SelectMailchimpTeacher');
+  }
+
   $scope.ApriComunicazione = function(Comunicazione)
   {
     $mdDialog.show({ 

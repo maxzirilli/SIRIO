@@ -40,7 +40,7 @@
           <th>NOME</th>
           <th>PROVINCIA</th>
           <th>COMUNE</th>  
-          <th>PROMOTORE ASSEGNATO</th>      
+          <th ng-show="IsAdministrator()">PROMOTORE ASSEGNATO</th>      
         </tr>  
         <tr ng-repeat="Istituto in ListaIstituti | IstitutoByFiltro : ProvinciaFiltro : NomeFiltro : NascostoFiltro : ComuneFiltro : PromotoreFiltro : IsAdministrator() | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Istituto.Chiave}}>
           <td ng-if="IsAdministrator()"><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA ISTITUTO" ng-click="EliminaIstituto(Istituto)"></td> 
@@ -52,7 +52,7 @@
           <td>{{Istituto.Nome}}<img ng-if="Istituto.NrDocenti > 0" src="img/smallTeacher.png" style="width:20px;height:auto;padding-left:10px;" title="DOCENTI PRESENTI"><img ng-if="Istituto.NrAdozioni > 0" src="img/smallAdoption.png" style="width:20px;height:auto;padding-left:10px;" title="ADOZIONI PRESENTI"></td>
           <td>{{Istituto.ProvinciaNome}}</td>
           <td>{{Istituto.Comune == '' ? 'N.D.' : Istituto.Comune}}</td>
-          <td>{{(Istituto.Promotore || 'NESSUN PROMOTORE ASSEGNATO') | uppercase}}</td>        
+          <td ng-show="IsAdministrator()">{{(Istituto.Promotore || 'NESSUN PROMOTORE ASSEGNATO') | uppercase}}</td>        
         </tr>    
       </table>
       <md-table-pagination md-limit="GridOptions.query.limit" 

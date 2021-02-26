@@ -493,10 +493,14 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
     var EliminaOrd = function()
     {
       var $ObjQuery   = { Operazioni : [] };
-      var ParamOrdine = { CHIAVE     : Ordine.Chiave };
+      var ParamOrdine = { 
+                          ChiaveCarico   : Ordine.Chiave,
+                          TitoloCarico   : Ordine.Titolo,
+                          QuantitaCarico : Ordine.Quantita
+                        };
        
       $ObjQuery.Operazioni.push({
-                                  Query     : 'DeleteOrderEntry',
+                                  Query     : 'DeleteOrderEntryTest',
                                   Parametri : ParamOrdine
                                 });
     
