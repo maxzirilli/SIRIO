@@ -353,7 +353,14 @@
         <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="OnAnnullaMailClicked()">ANNULLA</md-button>
       </div>
       <div layout="column">
-        <p style="font-weight: bold;" ng-if="MailMultipla">N° DESTINATARI : {{NumeroDestinatari}}</p>
+        <!--<p style="font-weight: bold;" ng-if="MailMultipla">N° DESTINATARI : {{NumeroDestinatari}}</p>-->
+
+        <div layout="column" ng-if="MailMultipla">
+          <p style="font-weight:bold;">DESTINATARI MAIL:</p>
+          <ul>
+            <li ng-repeat="Docente in ListaDocentiMailMultipla">{{Docente.RagioneSociale}} - {{Docente.Email}}<img src="img/deleteCross.png" style="width:20px;height:auto;margin-left:10px;" title="RIMUOVI DESTINATARIO" ng-click="RimuoviDestinatario(Docente)"></li>                        
+          </ul>
+
         <md-input-container ng-if="!MailMultipla">
           <p style="font-weight: bold;">DESTINATARIO:</p><input type="email" ng-model="MailInEditing.Destinatario" flex=30>
         </md-input-container>

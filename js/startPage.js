@@ -130,6 +130,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http,$mdDial
               var NomeCognomeSplittato = NomeCognome.split(" ");
               DocenteDettaglioTmp[i].Nome    = NomeCognomeSplittato[NomeCognomeSplittato.length-1];
               DocenteDettaglioTmp[i].Cognome = (NomeCognomeSplittato.slice(0, -1)).toString();
+              DocenteDettaglioTmp[i].Cognome = DocenteDettaglioTmp[i].Cognome.replace(",", " ");
             }
             else
             {
@@ -146,7 +147,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http,$mdDial
                                         Provincia      :  DocenteDettaglioTmp[i].TARGA_PROVINCIA == undefined ? 'SCONOSCIUTA' :  DocenteDettaglioTmp[i].TARGA_PROVINCIA,
                                         Materia1       :  DocenteDettaglioTmp[i].MATERIA_1_NOME == undefined ? '' :  DocenteDettaglioTmp[i].MATERIA_1_NOME,
                                         Materia2       :  DocenteDettaglioTmp[i].MATERIA_2_NOME == undefined ? '' :  DocenteDettaglioTmp[i].MATERIA_2_NOME,
-                                        Materia3       :  DocenteDettaglioTmp[i].MATERIA_3_NOME == undefined ? '' :  DocenteDettaglioTmp[i].MATERIA_3_NOME,
+                                        Materia3       :  DocenteDettaglioTmp[i].MATERIA_3_NOME == undefined ? '' :  DocenteDettaglioTmp[i].MATERIA_3_NOME,                                       
                                         StringaMaterie : '',
                                         ListaIst       : []
                                      }
@@ -166,11 +167,11 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http,$mdDial
             {
               if(ListaIstituti[j].NOME_ISTITUTO == undefined)
                  ListaIstituti[j].NOME_ISTITUTO = 'SCONOSCIUTO';
-              if(ListaIstituti[j].TIPO_ISTITUTO == undefined)
-                 ListaIstituti[j].TIPO_ISTITUTO = 'SCONOSCIUTA';
+              if(ListaIstituti[j].CODICE_ISTITUTO == undefined)
+                 ListaIstituti[j].CODICE_ISTITUTO = 'SCONOSCIUTO';
 
               if(ListaIstituti[j].DOCENTE == DocenteDettaglioTmp[i].Chiave)
-                 DocenteDettaglioTmp[i].ListaIst.push({Istituto : ListaIstituti[j].NOME_ISTITUTO,Tipologia : ListaIstituti[j].TIPO_ISTITUTO});
+                 DocenteDettaglioTmp[i].ListaIst.push({Istituto : ListaIstituti[j].NOME_ISTITUTO,Codice : ListaIstituti[j].CODICE_ISTITUTO });
             }
             
             if(DocenteDettaglioTmp[i].ListaIst.length > 1)
@@ -181,7 +182,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http,$mdDial
             }
             if(DocenteDettaglioTmp[i].ListaIst.length == 0)
             {
-              DocenteDettaglioTmp[i].ListaIst.push({Istituto :'NESSUN ISTITUTO',Tipologia : '-'}); 
+              DocenteDettaglioTmp[i].ListaIst.push({Istituto :'NESSUN ISTITUTO',Codice : '-'}); 
             }
 
          }
@@ -204,7 +205,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http,$mdDial
         BodySheet['E1'] = SystemInformation.GetCellaIntestazione('PROVINCIA');
         BodySheet['F1'] = SystemInformation.GetCellaIntestazione('COMUNE');
         BodySheet['G1'] = SystemInformation.GetCellaIntestazione('ISTITUTO');
-        BodySheet['H1'] = SystemInformation.GetCellaIntestazione('TIPOLOGIA ISTITUTO');
+        BodySheet['H1'] = SystemInformation.GetCellaIntestazione('CODICE ISTITUTO');
         BodySheet['I1'] = SystemInformation.GetCellaIntestazione('CONSENSO');
 
         BodySheetMulti['A1'] = SystemInformation.GetCellaIntestazione('EMAIL');
@@ -214,11 +215,11 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http,$mdDial
         BodySheetMulti['E1'] = SystemInformation.GetCellaIntestazione('PROVINCIA');
         BodySheetMulti['F1'] = SystemInformation.GetCellaIntestazione('COMUNE');
         BodySheetMulti['G1'] = SystemInformation.GetCellaIntestazione('ISTITUTO');
-        BodySheetMulti['H1'] = SystemInformation.GetCellaIntestazione('TIPOLOGIA ISTITUTO');
+        BodySheetMulti['H1'] = SystemInformation.GetCellaIntestazione('CODICE ISTITUTO');
         BodySheetMulti['I1'] = SystemInformation.GetCellaIntestazione('ISTITUTO');
-        BodySheetMulti['J1'] = SystemInformation.GetCellaIntestazione('TIPOLOGIA ISTITUTO');
+        BodySheetMulti['J1'] = SystemInformation.GetCellaIntestazione('CODICE ISTITUTO');
         BodySheetMulti['K1'] = SystemInformation.GetCellaIntestazione('ISTITUTO');
-        BodySheetMulti['L1'] = SystemInformation.GetCellaIntestazione('TIPOLOGIA ISTITUTO');
+        BodySheetMulti['L1'] = SystemInformation.GetCellaIntestazione('CODICE ISTITUTO');
         BodySheetMulti['M1'] = SystemInformation.GetCellaIntestazione('CONSENSO');
 
         for(let i = 0;i < ListaDocentiFinale.length;i ++)
@@ -230,7 +231,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http,$mdDial
           BodySheet['E' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinale[i].Provincia);
           BodySheet['F' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinale[i].Comune);
           BodySheet['G' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinale[i].ListaIst[0].Istituto);
-          BodySheet['H' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinale[i].ListaIst[0].Tipologia);
+          BodySheet['H' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinale[i].ListaIst[0].Codice);
           BodySheet['I' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s','Acconsento');
         }
 
@@ -238,7 +239,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http,$mdDial
         {
 
           if(ListaDocentiFinaleMultipleIst[i].ListaIst.length < 3)
-             ListaDocentiFinaleMultipleIst[i].ListaIst.push({Istituto :'',Tipologia : ''}); 
+             ListaDocentiFinaleMultipleIst[i].ListaIst.push({Istituto :'',Codice : ''}); 
 
           BodySheetMulti['A' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinaleMultipleIst[i].Email);
           BodySheetMulti['B' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinaleMultipleIst[i].Nome);
@@ -247,11 +248,11 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http,$mdDial
           BodySheetMulti['E' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinaleMultipleIst[i].Provincia);
           BodySheetMulti['F' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinaleMultipleIst[i].Comune);
           BodySheetMulti['G' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinaleMultipleIst[i].ListaIst[0].Istituto);
-          BodySheetMulti['H' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinaleMultipleIst[i].ListaIst[0].Tipologia);
+          BodySheetMulti['H' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinaleMultipleIst[i].ListaIst[0].Codice);
           BodySheetMulti['I' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinaleMultipleIst[i].ListaIst[1].Istituto);
-          BodySheetMulti['J' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinaleMultipleIst[i].ListaIst[1].Tipologia);
+          BodySheetMulti['J' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinaleMultipleIst[i].ListaIst[1].Codice);
           BodySheetMulti['K' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinaleMultipleIst[i].ListaIst[2].Istituto);
-          BodySheetMulti['L' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinaleMultipleIst[i].ListaIst[2].Tipologia);
+          BodySheetMulti['L' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',ListaDocentiFinaleMultipleIst[i].ListaIst[2].Codice);
           BodySheetMulti['M' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s','Acconsento'); 
         }
 

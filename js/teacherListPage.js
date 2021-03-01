@@ -484,7 +484,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
            if(ListaMailFiltrata[i].Email != 'Non disponibile')
               if(ListaMailFiltrata[i].Email.includes('@'))
               {
-                 SystemInformation.DataBetweenController.ListaDocMail.push(ListaMailFiltrata[i].Email);
+                 SystemInformation.DataBetweenController.ListaDocMail.push({Chiave : ListaMailFiltrata[i].Chiave,Email: ListaMailFiltrata[i].Email, RagioneSociale : ListaMailFiltrata[i].RagioneSociale});
                  ContatoreMailValide ++; 
               }
        }
@@ -1837,7 +1837,13 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                             };
     if(!$scope.MailMultipla)
        $scope.MailInEditing.Destinatario = SystemInformation.DataBetweenController.DocMail;
-  }    
+  }
+  
+  $scope.RimuoviDestinatario = function(Docente)
+  {
+     DestinatarioIndex = $scope.ListaDocentiMailMultipla.findIndex(function(ADoc){return(ADoc.Chiave == Docente.Chiave);})
+     $scope.ListaDocentiMailMultipla.splice(DestinatarioIndex,1);
+  }
   
   $scope.InviaMail = function()
   {
@@ -1866,7 +1872,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                                  {
                                    Oggetto      : $scope.MailInEditing.Oggetto.xSQL(),
                                    Testo        : $scope.MailInEditing.Testo.xSQL(), 
-                                   Destinatario : $scope.ListaDocentiMailMultipla[$scope.ContatoreInvio].xSQL()
+                                   Destinatario : $scope.ListaDocentiMailMultipla[$scope.ContatoreInvio].Email.xSQL()
                                  },
                                  function()
                                  {       

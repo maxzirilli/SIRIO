@@ -37,7 +37,7 @@
                                     },
                                     {
                                       "Name" : "TeacherMailInstitute",
-                                      "SQL"  : "SELECT istituti_x_docenti.ISTITUTO,istituti_x_docenti.DOCENTE,(SELECT NOME FROM istituti WHERE CHIAVE = istituti_x_docenti.ISTITUTO) AS NOME_ISTITUTO,(SELECT DESCRIZIONE FROM tipologie_istituto WHERE CHIAVE IN (SELECT istituti.TIPOLOGIA FROM istituti WHERE CHIAVE = istituti_x_docenti.ISTITUTO)) AS TIPO_ISTITUTO FROM istituti_x_docenti WHERE istituti_x_docenti.DOCENTE IN(SELECT CHIAVE FROM docenti WHERE EMAIL IS NOT NULL OR TRIM(EMAIL) <> '')  ORDER BY DOCENTE,ISTITUTO"
+                                      "SQL"  : "SELECT istituti_x_docenti.ISTITUTO,istituti_x_docenti.DOCENTE,(SELECT NOME FROM istituti WHERE CHIAVE = istituti_x_docenti.ISTITUTO) AS NOME_ISTITUTO,(SELECT CODICE FROM istituti WHERE CHIAVE = istituti_x_docenti.ISTITUTO) AS CODICE_ISTITUTO,(SELECT DESCRIZIONE FROM tipologie_istituto WHERE CHIAVE IN (SELECT istituti.TIPOLOGIA FROM istituti WHERE CHIAVE = istituti_x_docenti.ISTITUTO)) AS TIPO_ISTITUTO FROM istituti_x_docenti WHERE istituti_x_docenti.DOCENTE IN(SELECT CHIAVE FROM docenti WHERE EMAIL IS NOT NULL OR TRIM(EMAIL) <> '')  ORDER BY DOCENTE,ISTITUTO"
                                     }
                                   ],
                    
