@@ -65,8 +65,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
                   SheetNames : [],
                   Sheets     : {}
                 };
-    
-    var TitoliPositivi = 0;
 
     var SheetName          = NomeDocumento == 'CumulativoPrenotati' ? "CUMULATIVO PRENOTAZIONI" : "CUMULATIVO CONSEGNE";
     var BodySheet          = {};
@@ -161,6 +159,75 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
 
     var wbout = XLSX.write(WBook, {bookType:'xlsx', bookSST:true, type: 'binary'});
     saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}), NomeDocumento + DataCumulativo + ".xlsx");
+  }
+
+  function CreaDocumentoCumulativoOrd(CumulativoTitoli)
+  {           
+    /*var WBook = {
+                  SheetNames : [],
+                  Sheets     : {}
+                };
+
+    var SheetName          = "CUMULATIVO PRENOTAZIONI DEAGOSTINI";
+    var BodySheet          = {};
+
+    if(NomeDocumento != 'CumulativoPrenotati')
+       $scope.CheckNegativi = 'T';
+    
+    BodySheet['A1'] = SystemInformation.GetCellaIntestazione('ISBN');
+    BodySheet['B1'] = SystemInformation.GetCellaIntestazione('QUANTITA');
+       
+    var ListaTitoli  = [];
+    for(let j = 0;j < CumulativoTitoli.length;j ++)
+    {
+        TitoloGiaInserito = ListaTitoli.findIndex(function(ATitolo){return(ATitolo.Chiave == CumulativoTitoli[j].Chiave)})
+        if(TitoloGiaInserito == -1)
+            ListaTitoli.push(CumulativoTitoli[j])
+        else ListaTitoli[TitoloGiaInserito].Quantita += CumulativoTitoli[j].Quantita
+    }
+    var CasaEditrice = '-1';
+    for(let k = 0;k < ListaTitoli.length;k ++)
+    {
+        var InserisciTitolo = function()
+        {          
+          BodySheet['C' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Codice);
+          BodySheet['G' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',(parseInt(ListaTitoli[k].QuantitaMag) - parseInt(ListaTitoli[k].Quantita) + parseInt(ListaTitoli[k].QuantitaNovita)).toString());
+        }
+
+        if($scope.CheckNegativi == 'N')
+        {
+           if((parseInt(ListaTitoli[k].QuantitaMag) - parseInt(ListaTitoli[k].Quantita) + parseInt(ListaTitoli[k].QuantitaNovita)) < 0)
+               InserisciTitolo()
+           else
+           {
+              ListaTitoli.splice(k,1)
+              k--
+           } 
+        }
+        else
+        {
+           InserisciTitolo();
+        }
+    }
+
+    BodySheet["!cols"] = [ 
+                          {wpx: 250},            
+                          {wpx: 250}
+                        ];
+
+    BodySheet['!ref'] = 'A1:B1' + parseInt(ListaTitoli.length + 1);
+    
+    WBook.SheetNames.push(SheetName);
+    WBook.Sheets[SheetName]    = BodySheet;
+
+    var Data           = new Date();
+    var DataAnno       = Data.getFullYear();
+    var DataMese       = Data.getMonth()+1; 
+    var DataGiorno     = Data.getDate();
+    var DataCumulativo = DataGiorno.toString() + '/' + DataMese.toString() +  '/' + DataAnno.toString();
+
+    var wbout = XLSX.write(WBook, {bookType:'xlsx', bookSST:true, type: 'binary'});
+    saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}), NomeDocumento + DataCumulativo + ".ord");*/
   }
 
   //STAMPA CUMULATIVO PRENOTATI
@@ -417,6 +484,93 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
         }
         else SystemInformation.ApplyOnError('Modello cumulativo consegnati non conforme','')
       },'SQLCumulativoConsegnati')
+    }
+  }
+
+  $scope.ApriCumulativoPrenotatiOrd = function(ev)
+  {    
+      $mdDialog.show({ 
+                       controller          : DialogControllerOrdPrenotati,
+                       templateUrl         : "template/documentBookedUpPopupOrd.html",
+                       targetEvent         : ev,
+                       scope               : $scope,
+                       preserveScope       : true,
+                       clickOutsideToClose : true
+                     })
+      .then(function(answer) 
+      {
+      }, 
+      function() 
+      {
+      });
+  }
+
+  function DialogControllerOrdPrenotati($scope,$mdDialog)
+  {
+    $scope.DataRicercaAlPrnt    = new Date();
+    let TmpDatePrnt             = new Date($scope.DataRicercaAlPrnt);
+    TmpDatePrnt.setDate(TmpDatePrnt.getDate() - 30);
+    $scope.DataRicercaDalPrnt   = new Date(TmpDatePrnt);
+
+    $scope.hide = function() 
+    {
+      $mdDialog.hide();
+    };
+
+    $scope.AnnullaPopupOrdPrenotati = function() 
+    {
+      $scope.DataRicercaAlPrnt    = new Date();
+      let TmpDatePrnt             = new Date($scope.DataRicercaAlPrnt);
+      TmpDatePrnt.setDate(TmpDatePrnt.getDate() - 30);
+      $scope.DataRicercaDalPrnt   = new Date(TmpDatePrnt);
+      $scope.ListaGruppiToAdd     = [];
+      $mdDialog.cancel();
+    };
+
+    $scope.CreaOrdPrenotati = function()
+    {
+      var CumulativoPrenotatiTmp = [];
+      var CumulativoPrenotati    = [];
+                
+      if($scope.DataRicercaDalPrnt == undefined || $scope.DataRicercaAlPrnt == undefined)
+         return;
+      let TmpDatePrnt = new Date($scope.DataRicercaAlPrnt);
+      TmpDatePrnt.setDate($scope.DataRicercaAlPrnt.getDate() + 1);
+      
+      var ParamPrenotati = {
+                              Dal          : ZHTMLInputFromDate($scope.DataRicercaDalPrnt), 
+                              Al           : ZHTMLInputFromDate(TmpDatePrnt),
+                              ChiaveGruppi : '286061' //CHIAVE DEAGOSTINI
+                           };
+
+      SystemInformation.GetSQL('Delivery',ParamPrenotati,function(Results)
+      {
+        CumulativoPrenotatiTmp = SystemInformation.FindResults(Results,'BookedUpCumulative')
+        if (CumulativoPrenotatiTmp != undefined)
+        {
+            if(CumulativoPrenotatiTmp.length == 0)
+               ZCustomAlert($mdDialog,'AVVISO','NESSUN TITOLO PRENOTATO NEL PERIODO INDICATO')
+            else
+            {
+              for(let i = 0;i < CumulativoPrenotatiTmp.length;i ++)
+                  CumulativoPrenotatiTmp[i] = {
+                                                Gruppo         : CumulativoPrenotatiTmp[i].GRUPPO_CASA == undefined ? 'NESSUN GRUPPO' : CumulativoPrenotatiTmp[i].GRUPPO_CASA, 
+                                                Editore        : CumulativoPrenotatiTmp[i].EDITORE_TITOLO == null ? 'EDITORE NON REGISTRATO' : CumulativoPrenotatiTmp[i].EDITORE_TITOLO,
+                                                Chiave         : CumulativoPrenotatiTmp[i].TITOLO,
+                                                Titolo         : CumulativoPrenotatiTmp[i].NOME_TITOLO == null ? 'NOME NON REGISTRATO' : CumulativoPrenotatiTmp[i].NOME_TITOLO,
+                                                Codice         : CumulativoPrenotatiTmp[i].CODICE_TITOLO,
+                                                Quantita       : parseInt(CumulativoPrenotatiTmp[i].QUANTITA),
+                                                QuantitaMag    : parseInt(CumulativoPrenotatiTmp[i].QUANTITA_MAGAZZINO),
+                                                QuantitaNovita : CumulativoPrenotatiTmp[i].Q_PREN_NOVITA == undefined ? 0 : parseInt(CumulativoPrenotatiTmp[i].Q_PREN_NOVITA)
+                                              }
+              CumulativoPrenotati = CumulativoPrenotatiTmp
+              
+              CreaDocumentoCumulativoOrd(CumulativoPrenotati)
+              $mdDialog.hide();
+            }
+        }
+        else SystemInformation.ApplyOnError('Modello cumulativo prenotati non conforme','')
+      },'SQLCumulativoPrenotati')
     }
   }
   
