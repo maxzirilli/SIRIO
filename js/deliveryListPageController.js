@@ -162,21 +162,15 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
   }
 
   function CreaDocumentoCumulativoOrd(CumulativoTitoli)
-  {           
-    /*var WBook = {
-                  SheetNames : [],
-                  Sheets     : {}
-                };
+  { 
+    var Data           = new Date();
+    var DataAnno       = Data.getFullYear();
+    var DataMese       = Data.getMonth()+1; 
+    var DataGiorno     = Data.getDate();
+    Data               = DataGiorno.toString() + '-' + DataMese.toString() +  '-' + DataAnno.toString();
+    var OrdText = "";
+    OrdText = "[codice]=999047\n[intest]=PAGINA43 snc\n[note]=\n[email]=info@pagina43.it\n[data]=" + Data + "\n";
 
-    var SheetName          = "CUMULATIVO PRENOTAZIONI DEAGOSTINI";
-    var BodySheet          = {};
-
-    if(NomeDocumento != 'CumulativoPrenotati')
-       $scope.CheckNegativi = 'T';
-    
-    BodySheet['A1'] = SystemInformation.GetCellaIntestazione('ISBN');
-    BodySheet['B1'] = SystemInformation.GetCellaIntestazione('QUANTITA');
-       
     var ListaTitoli  = [];
     for(let j = 0;j < CumulativoTitoli.length;j ++)
     {
@@ -185,49 +179,25 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
             ListaTitoli.push(CumulativoTitoli[j])
         else ListaTitoli[TitoloGiaInserito].Quantita += CumulativoTitoli[j].Quantita
     }
-    var CasaEditrice = '-1';
     for(let k = 0;k < ListaTitoli.length;k ++)
     {
         var InserisciTitolo = function()
-        {          
-          BodySheet['C' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Codice);
-          BodySheet['G' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',(parseInt(ListaTitoli[k].QuantitaMag) - parseInt(ListaTitoli[k].Quantita) + parseInt(ListaTitoli[k].QuantitaNovita)).toString());
+        { 
+          OrdText = OrdText + ListaTitoli[k].Codice + ' ' + Math.abs((parseInt(ListaTitoli[k].QuantitaMag) - parseInt(ListaTitoli[k].Quantita) + parseInt(ListaTitoli[k].QuantitaNovita))).toString() + "\n";        
         }
 
-        if($scope.CheckNegativi == 'N')
-        {
-           if((parseInt(ListaTitoli[k].QuantitaMag) - parseInt(ListaTitoli[k].Quantita) + parseInt(ListaTitoli[k].QuantitaNovita)) < 0)
-               InserisciTitolo()
-           else
-           {
-              ListaTitoli.splice(k,1)
-              k--
-           } 
-        }
+        if((parseInt(ListaTitoli[k].QuantitaMag) - parseInt(ListaTitoli[k].Quantita) + parseInt(ListaTitoli[k].QuantitaNovita)) < 0)
+            InserisciTitolo()
         else
         {
-           InserisciTitolo();
-        }
+          ListaTitoli.splice(k,1)
+          k--
+        } 
     }
 
-    BodySheet["!cols"] = [ 
-                          {wpx: 250},            
-                          {wpx: 250}
-                        ];
-
-    BodySheet['!ref'] = 'A1:B1' + parseInt(ListaTitoli.length + 1);
-    
-    WBook.SheetNames.push(SheetName);
-    WBook.Sheets[SheetName]    = BodySheet;
-
-    var Data           = new Date();
-    var DataAnno       = Data.getFullYear();
-    var DataMese       = Data.getMonth()+1; 
-    var DataGiorno     = Data.getDate();
-    var DataCumulativo = DataGiorno.toString() + '/' + DataMese.toString() +  '/' + DataAnno.toString();
-
-    var wbout = XLSX.write(WBook, {bookType:'xlsx', bookSST:true, type: 'binary'});
-    saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}), NomeDocumento + DataCumulativo + ".ord");*/
+    var blob = new Blob([OrdText], {type: "text/plain;charset=utf-8"});
+    saveAs(blob, "CumulativoDeAgostini" + Data + ".Ord");   
+  
   }
 
   //STAMPA CUMULATIVO PRENOTATI
@@ -540,7 +510,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
       var ParamPrenotati = {
                               Dal          : ZHTMLInputFromDate($scope.DataRicercaDalPrnt), 
                               Al           : ZHTMLInputFromDate(TmpDatePrnt),
-                              ChiaveGruppi : '286061' //CHIAVE DEAGOSTINI
+                              ChiaveGruppi : '286071' //CHIAVE DEAGOSTINI
                            };
 
       SystemInformation.GetSQL('Delivery',ParamPrenotati,function(Results)

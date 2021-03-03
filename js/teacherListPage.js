@@ -300,6 +300,362 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
     $scope.RefreshListaDocenti();
   }
 
+  $scope.CreaPdfListaDocenti = function (ChiaveIstituto)
+  {
+    var ListaDocenti       = [];
+    var ListaDisponibilita = [];
+    var ModelloOrdinamento = 'SelectInstituteTeacherListOrdAlf'
+    if(SystemInformation.UserInformation.OrdinamentoDoc === 'M')
+       ModelloOrdinamento = 'SelectInstituteTeacherListOrderMat'
+    else ModelloOrdinamento = 'SelectInstituteTeacherListOrderAlf';
+
+    SystemInformation.GetSQL('Institute',{CHIAVE : ChiaveIstituto},function(Results)
+    {
+      var InfoIstituto = {};
+      InfoIstitutoTmp    = SystemInformation.FindResults(Results,'InstituteInformationAll');
+      ClassiIstituto     = SystemInformation.FindResults(Results,'AllClassiInstitute');
+      ListaDocenti       = SystemInformation.FindResults(Results,'InstituteTeacherList');
+      ContaClassi        = SystemInformation.FindResults(Results,'CountClassi');
+      ListaDisponibilita = SystemInformation.FindResults(Results,'InstituteTeacherAvailability');
+      ListaClassiDocenti = SystemInformation.FindResults(Results,'InstituteTeacherClasses');
+      
+      if(ListaDocenti != undefined && ListaDisponibilita != undefined && ClassiIstituto != undefined && InfoIstitutoTmp != undefined  && ContaClassi != undefined && ListaClassiDocenti != undefined)
+      {
+         InfoIstituto.Codice                = InfoIstitutoTmp[0].CODICE          == null ? '' : InfoIstitutoTmp[0].CODICE;
+         InfoIstituto.Nome                  = InfoIstitutoTmp[0].NOME            == null ? '' : InfoIstitutoTmp[0].NOME;
+         InfoIstituto.Tipologia             = InfoIstitutoTmp[0].NOME_TIPOLOGIA  == null ? '' : InfoIstitutoTmp[0].NOME_TIPOLOGIA;
+         InfoIstituto.Indirizzo             = InfoIstitutoTmp[0].CODICE          == null ? '' : InfoIstitutoTmp[0].INDIRIZZO;
+         InfoIstituto.Comune                = InfoIstitutoTmp[0].COMUNE          == null ? '' : InfoIstitutoTmp[0].COMUNE;
+         InfoIstituto.Provincia             = InfoIstitutoTmp[0].NOME_PROVINCIA  == null ? -1 : InfoIstitutoTmp[0].NOME_PROVINCIA;
+         InfoIstituto.Cap                   = InfoIstitutoTmp[0].CAP             == null ? '' : InfoIstitutoTmp[0].CAP;
+         InfoIstituto.Email                 = InfoIstitutoTmp[0].EMAIL           == null ? '' : InfoIstitutoTmp[0].EMAIL;
+         InfoIstituto.Pec                   = InfoIstitutoTmp[0].PEC             == null ? '' : InfoIstitutoTmp[0].PEC;
+         InfoIstituto.SitoWeb               = InfoIstitutoTmp[0].SITO_WEB        == null ? '' : InfoIstitutoTmp[0].SITO_WEB;
+         InfoIstituto.SedeSuccursale        = InfoIstitutoTmp[0].SEDE            == null ? 1  : InfoIstitutoTmp[0].SEDE;
+         InfoIstituto.Referente_1           = InfoIstitutoTmp[0].REFERENTE_1     == null ? '' : InfoIstitutoTmp[0].REFERENTE_1;
+         InfoIstituto.NumeroTelefono_1      = InfoIstitutoTmp[0].TELEFONO_1      == null ? '' : InfoIstitutoTmp[0].TELEFONO_1;
+         InfoIstituto.Referente_2           = InfoIstitutoTmp[0].REFERENTE_2     == null ? '' : InfoIstitutoTmp[0].REFERENTE_2;
+         InfoIstituto.NumeroTelefono_2      = InfoIstitutoTmp[0].TELEFONO_2      == null ? '' : InfoIstitutoTmp[0].TELEFONO_2;
+         InfoIstituto.Referente_3           = InfoIstitutoTmp[0].REFERENTE_3     == null ? '' : InfoIstitutoTmp[0].REFERENTE_3;
+         InfoIstituto.NumeroTelefono_3      = InfoIstitutoTmp[0].TELEFONO_3      == null ? '' : InfoIstitutoTmp[0].TELEFONO_3;
+         InfoIstituto.PromotoreAssegnato    = InfoIstitutoTmp[0].PROMOTORE       == null ? -1 : InfoIstitutoTmp[0].PROMOTORE;
+         InfoIstituto.Preside               = InfoIstitutoTmp[0].PRESIDE         == null ? '' : InfoIstitutoTmp[0].PRESIDE;
+         InfoIstituto.Vicepreside           = InfoIstitutoTmp[0].VICEPRESIDE     == null ? '' : InfoIstitutoTmp[0].VICEPRESIDE;
+         InfoIstituto.DirAmmnstr            = InfoIstitutoTmp[0].DIR_AMMNSTR     == null ? '' : InfoIstitutoTmp[0].DIR_AMMNSTR;
+
+         var Data           = new Date();
+         var DataAnno       = Data.getFullYear();
+         var DataMese       = Data.getMonth()+1; 
+         var DataGiorno     = Data.getDate();
+         var DataDocumento = DataGiorno.toString() + '/' + DataMese.toString() +  '/' + DataAnno.toString();               
+         var doc = new jsPDF();           
+         doc.setProperties({title: 'FOGLIO SCUOLA ' + DataDocumento});
+                  
+         var CoordY = 10;
+         var CoordX = 5;
+         doc.setFontSize(7);
+         doc.text(CoordX,CoordY,'ANNO ' + DataAnno + ' / ' + (DataAnno + 1));
+         doc.text(CoordX + 30,CoordY,InfoIstituto.Nome);
+         doc.text(CoordX,CoordY+3,'PAGINA43');
+         doc.text(CoordX + 190,CoordY+3,'GENOVA');
+         CoordX = 10;
+
+         doc.rect(5,15,200,275);
+
+         doc.rect(155,15,50,12);
+         doc.rect(155,15,50,22);
+
+         doc.rect(5,15,200,80);
+         doc.rect(5,15,200,60);
+         doc.rect(5,15,200,40);
+         doc.rect(5,15,150,40);
+         doc.rect(5,158,130,72);
+         doc.rect(5,158,200,72);
+         doc.rect(5,200,130,30);
+         doc.rect(5,185,130,15);         
+         doc.rect(5,95,200,10);
+         doc.rect(5,95,100,10);
+         doc.rect(5,105,200,12);
+         doc.rect(5,105,60,12);
+         doc.rect(5,105,100,12);
+         doc.rect(5,105,160,12);
+         
+         doc.rect(5,117,80,20);
+         doc.rect(5,117,160,20);
+         doc.rect(5,117,200,20);
+         doc.rect(5,117,200,10);
+
+         doc.rect(5,137,200,10);
+         doc.rect(5,137,50,10);
+         doc.rect(5,137,100,10);
+         doc.rect(5,137,150,10);
+         doc.rect(5,137,50,21);
+         doc.rect(5,137,100,21);
+         
+         doc.text(CoordX,CoordY + 12,'Scuola');
+         doc.text(CoordX + 147,CoordY + 12,'Cod.Ministeriale');
+         doc.text(CoordX + 172,CoordY + 12,'Ist.Riferimento');
+         doc.setFontType('bold');
+         doc.text(CoordX + 147,CoordY + 15,InfoIstituto.Codice);
+         doc.text(CoordX + 172,CoordY + 15,InfoIstituto.Codice);
+         doc.setFontType('normal');
+         doc.text(CoordX + 147,CoordY + 20,'Partita IVA');
+         doc.text(CoordX + 147,CoordY + 30,'Raccolto da');
+         doc.setFontSize(8);
+         doc.setFontType('bold');
+         doc.text(CoordX,CoordY + 15,InfoIstituto.Nome + '          ' + InfoIstituto.Tipologia);
+         doc.setFontSize(7);
+         doc.setFontType('normal');
+         doc.text(CoordX,CoordY+25,InfoIstituto.Indirizzo);
+         doc.text(CoordX,CoordY+28,InfoIstituto.Cap + ' ' + InfoIstituto.Comune + ' (' +InfoIstituto.Provincia + ')');         
+         doc.text(CoordX,CoordY+38,'Sede centrale');         
+         doc.text(CoordX,CoordY+48,'Dipendenze');         
+         doc.text(CoordX,CoordY+68,'Plessi');        
+         doc.text(CoordX,CoordY+88,'Indirizzo posta elettronica');
+         doc.setFontType('bold');
+         doc.text(CoordX,CoordY+92,InfoIstituto.Email);
+         doc.setFontType('normal');
+         doc.text(CoordX + 100,CoordY+88,'Pagina Web');
+         doc.setFontType('bold');
+         doc.text(CoordX + 100,CoordY+92,InfoIstituto.SitoWeb);
+         doc.setFontType('normal');
+         
+         doc.text(CoordX,CoordY+98,'Tel.Istituto');
+         doc.setFontType('bold');
+         doc.text(CoordX,CoordY+102,InfoIstituto.NumeroTelefono_1);
+         doc.setFontType('normal');
+         doc.text(CoordX + 60,CoordY+98,'Fax(uff.)');
+         doc.setFontType('bold');
+         doc.text(CoordX + 60,CoordY+102,InfoIstituto.NumeroTelefono_2);
+         doc.setFontType('normal');
+         doc.text(CoordX + 100,CoordY+98,'Dirigente scolastico');
+         doc.setFontType('bold');
+         doc.text(CoordX + 100,CoordY+102,InfoIstituto.NumeroTelefono_3);
+         doc.setFontType('normal');
+         doc.text(CoordX + 160,CoordY+98,'Segreteria');
+         doc.setFontType('bold');
+         doc.text(CoordX + 160,CoordY+102,'');
+         doc.setFontType('normal');
+         
+         doc.text(CoordX,CoordY+110,'Dirigente scolastico');
+         doc.setFontType('bold');
+         doc.text(CoordX,CoordY+116,InfoIstituto.Preside);
+         doc.setFontType('normal');
+         doc.text(CoordX + 80,CoordY+110,'Segreteria');
+         doc.setFontType('bold');
+         doc.text(CoordX + 80,CoordY+116,'');
+         doc.setFontType('normal');
+         doc.text(CoordX + 160,CoordY+110,'Dir.Amministrativo');
+         doc.setFontType('bold');
+         doc.text(CoordX + 160,CoordY+116,InfoIstituto.DirAmmnstr);
+         doc.setFontType('normal');
+
+         doc.text(CoordX,CoordY+120,'Vice');
+         doc.setFontType('bold');
+         doc.text(CoordX,CoordY+124,InfoIstituto.Vicepreside);
+         doc.setFontType('normal');
+         doc.text(CoordX + 80,CoordY+120,'Segreteria didattica');
+         doc.setFontType('bold');
+         doc.text(CoordX + 80,CoordY+124,'');
+         doc.setFontType('normal');
+         doc.text(CoordX + 160,CoordY+120,'Resp.Bibilioteca');
+         doc.setFontType('bold');
+         doc.text(CoordX + 160,CoordY+124,'');
+         doc.setFontType('normal');
+
+         doc.text(CoordX,CoordY+130,'Passaggio');
+         doc.text(CoordX,CoordY+134,'');
+         doc.text(CoordX + 50,CoordY+130,'Giorno mercato');
+         doc.text(CoordX + 50,CoordY+134,'');
+         doc.text(CoordX + 100,CoordY+130,'Seggio');
+         doc.text(CoordX + 100,CoordY+134,'');
+         doc.text(CoordX + 150,CoordY+130,'Chiusure');
+         doc.text(CoordX + 150,CoordY+134,'');
+
+         doc.text(CoordX,CoordY+140,'Festa patrono');
+         doc.text(CoordX,CoordY+144,'');
+         doc.text(CoordX + 50,CoordY+140,'Limitazioni traffico');
+         doc.text(CoordX + 50,CoordY+144,'');
+         doc.text(CoordX + 100,CoordY+140,"Comodato d'uso");
+         doc.text(CoordX + 100,CoordY+144,'');
+
+         CoordY += 4; //PIGRIZIA
+
+         doc.text(CoordX,CoordY+148,'Sezioni');
+         doc.setFontType('bold');
+         doc.text(CoordX,CoordY+152,'1 - ');
+         doc.text(CoordX + 103,CoordY+152,ContaClassi[0].PRIME_CLASSI.toString());
+         doc.text(CoordX,CoordY+156,'2 - ');
+         doc.text(CoordX + 103,CoordY+156,ContaClassi[0].SECONDE_CLASSI.toString());
+         doc.text(CoordX,CoordY+160,'3 - ');
+         doc.text(CoordX + 103,CoordY+160,ContaClassi[0].TERZE_CLASSI.toString());
+         doc.text(CoordX,CoordY+164,'4 - ');
+         doc.text(CoordX + 103,CoordY+164,ContaClassi[0].QUARTE_CLASSI.toString());
+         doc.text(CoordX,CoordY+168,'5 - ');
+         doc.text(CoordX + 103,CoordY+168,ContaClassi[0].QUINTE_CLASSI.toString());
+         doc.setFontType('normal');
+
+         doc.rect(190,158,15,41); //ore
+         doc.rect(190,158,15,5);
+         doc.rect(190,158,15,9);
+         doc.rect(190,158,15,13);
+         doc.rect(190,158,15,17);
+         doc.rect(190,158,15,21);
+         doc.rect(190,158,15,25);
+         doc.rect(190,158,15,29);
+         doc.rect(190,158,15,33);
+         doc.rect(190,158,15,37);
+         doc.rect(190,158,15,41) 
+         
+         doc.rect(160,163.5,15,35);
+         doc.rect(160,163.5,15,3);
+         doc.rect(160,163.5,15,6);
+         doc.rect(160,163.5,15,9);
+         doc.rect(160,163.5,15,12);
+         doc.rect(160,163.5,15,15);
+         doc.rect(160,163.5,15,18);
+         doc.rect(160,163.5,15,21);
+         doc.rect(160,163.5,15,24);
+         doc.rect(160,163.5,15,27);
+         doc.rect(160,163.5,15,31);        
+         
+         doc.rect(108,158,13,27); //alunni
+
+         doc.text(CoordX + 100,CoordY+148,'Classi');
+         doc.text(CoordX + 114,CoordY+148,'Alunni');
+         doc.text(CoordX + 130,CoordY+148,'Orario');
+         doc.text(CoordX + 162.5,CoordY+148,'Inizio mattino');
+         doc.text(CoordX + 170,CoordY+152,'2° Ora');
+         doc.text(CoordX + 170,CoordY+156,'3° Ora');
+         doc.text(CoordX + 170,CoordY+160,'4° Ora');
+         doc.text(CoordX + 170,CoordY+164,'5° Ora');
+         doc.text(CoordX + 170,CoordY+168,'6° Ora');
+         doc.text(CoordX + 170,CoordY+172,'7° Ora');
+         doc.text(CoordX + 170,CoordY+176,'8° Ora');
+         doc.text(CoordX + 170,CoordY+180,'9° Ora');
+         doc.text(CoordX + 168.5,CoordY+184,'10° Ora');
+         
+         doc.text(CoordX + 130,CoordY+152,'Inizio preinterv.');
+         doc.text(CoordX + 130,CoordY+156,'Fine preinterv.');
+         doc.text(CoordX + 130,CoordY+160,'Inizio intervallo');
+         doc.text(CoordX + 130,CoordY+164,'Fine intervallo');
+         doc.text(CoordX + 130,CoordY+168,'Fine mattino');
+         doc.text(CoordX + 130,CoordY+172,'Inizio mensa');
+         doc.text(CoordX + 130,CoordY+176,'Fine mensa');
+         doc.text(CoordX + 130,CoordY+180,'Inizio intervallo');
+         doc.text(CoordX + 130,CoordY+184,'Fine intervallo');
+
+         doc.text(CoordX,CoordY+175,'Totali');
+         doc.setFontType('bold');
+         doc.text(CoordX + 103,CoordY+175,ClassiIstituto.length.toString());
+         doc.setFontType('normal');
+
+         doc.text(CoordX,CoordY+190,'Specializzazioni');
+         doc.text(CoordX,CoordY+220,'Note');
+         doc.text(CoordX + 150,CoordY+220,'Vacanze');
+         
+         doc.setFontSize(6);
+         doc.setFontType('bold');
+         doc.text(5,295,SystemInformation.VDocListaDocIst);
+         doc.text(CoordX + 185,295,'GENOVA');   
+         
+         if(ListaDocenti.length != 0)
+         {
+            ListaDocenti.forEach(function(Docente){Docente.DISPONIBILITA = [],Docente.CLASSI = []});
+
+            for(let i = 0;i < ListaDocenti.length;i ++)
+            {
+              for(let j = 0;j < ListaDisponibilita.length;j ++)
+                  if (ListaDisponibilita[j].DOCENTE == ListaDocenti[i].DOCENTE)
+                      ListaDocenti[i].DISPONIBILITA.push(ListaDisponibilita[j]);
+
+              for (let k = 0;k < ListaClassiDocenti.length;k ++)
+                    if(ListaClassiDocenti[k].DOCENTE == ListaDocenti[i].DOCENTE)
+                      ListaDocenti[i].CLASSI.push(ListaClassiDocenti[k].ANNO_CLASSE + ListaClassiDocenti[k].SEZIONE_CLASSE);
+            }
+
+            for(let i = 0;i < ListaDocenti.length;i ++)
+            {
+                ListaDocenti[i].DISPONIBILITA.SETTIMANA  = [['-','-','-','-','-','-','-','-','-','-'],
+                                                            ['-','-','-','-','-','-','-','-','-','-'],
+                                                            ['-','-','-','-','-','-','-','-','-','-'],
+                                                            ['-','-','-','-','-','-','-','-','-','-'],
+                                                            ['-','-','-','-','-','-','-','-','-','-'],
+                                                            ['-','-','-','-','-','-','-','-','-','-'],
+                                                            ['-','-','-','-','-','-','-','-','-','-']];
+                                                            
+                if(ListaDocenti[i].DISPONIBILITA.length != 0)
+                {
+                   for(let j = 0;j < ListaDocenti[i].DISPONIBILITA.length;j ++)
+                   {
+                       switch(ListaDocenti[i].DISPONIBILITA[j].LUOGO_NOME)
+                       {
+                              case 'RICEVIMENTO' : ListaDocenti[i].DISPONIBILITA.SETTIMANA[parseInt(ListaDocenti[i].DISPONIBILITA[j].GIORNO)][parseInt(ListaDocenti[i].DISPONIBILITA[j].ORA)] = 'R';
+                                                   break;
+                              case 'SUCCURSALE'  : ListaDocenti[i].DISPONIBILITA.SETTIMANA[parseInt(ListaDocenti[i].DISPONIBILITA[j].GIORNO)][parseInt(ListaDocenti[i].DISPONIBILITA[j].ORA)] = 'S';
+                                                   break;
+                              case 'ORARIO'      : ListaDocenti[i].DISPONIBILITA.SETTIMANA[parseInt(ListaDocenti[i].DISPONIBILITA[j].GIORNO)][parseInt(ListaDocenti[i].DISPONIBILITA[j].ORA)] = (parseInt(ListaDocenti[i].DISPONIBILITA[j].ORA) + 1).toString();
+                                                   break;
+                       }
+                   }
+                }
+            }
+            doc.addPage();
+            doc.setFontSize(8);
+            var CoordY = 10;
+            doc.setFontSize(6);
+            doc.setFontType('bold');
+            doc.text(5,295,SystemInformation.VDocListaDocIst);  
+
+            for(let i = 0;i < ListaDocenti.length;i ++)
+            {
+                if (CoordY >= 275) 
+                {
+                  doc.addPage();
+                  CoordY = 10;
+                  doc.setFontSize(6);
+                  doc.setFontType('bold');
+                  doc.text(10,275,SystemInformation.VDocListaDocIst); 
+                }
+                doc.setFontSize(8);
+                doc.setFontType('bold');
+                doc.text(10,CoordY+5,ListaDocenti[i].NOME_DOCENTE);
+                doc.text(10,CoordY+10,(ListaDocenti[i].NOME_MATERIA_1 == undefined ? '' : ListaDocenti[i].NOME_MATERIA_1) + ' - ' + (ListaDocenti[i].NOME_MATERIA_2 == undefined ? '' : ListaDocenti[i].NOME_MATERIA_2) + ' - ' + (ListaDocenti[i].NOME_MATERIA_3 == undefined ? '' : ListaDocenti[i].NOME_MATERIA_3));
+                doc.text(10,CoordY+15,ListaDocenti[i].CLASSI.toString());
+                CoordY += 20;
+                doc.setFontSize(7);
+                doc.setFontType('italic');
+                doc.text(10,CoordY,'LUNEDI');
+                doc.text(38,CoordY,'MARTEDI')
+                doc.text(63,CoordY,'MERCOLEDI')
+                doc.text(88,CoordY,'GIOVEDI')
+                doc.text(113,CoordY,'VENERDI')
+                doc.text(138,CoordY,'SABATO')
+               //doc.text(163,CoordY,'DOMENICA')
+                CoordY += 5;
+                               
+                for(let j = 0;j < ListaDocenti[i].DISPONIBILITA.SETTIMANA.length;j ++)
+                {                   
+                    ListaDocenti[i].DISPONIBILITA.SETTIMANA[j] = ListaDocenti[i].DISPONIBILITA.SETTIMANA[j].toString();
+                    ListaDocenti[i].DISPONIBILITA.SETTIMANA[j] = ListaDocenti[i].DISPONIBILITA.SETTIMANA[j].replace(/,/g, ' ')
+                }                
+                doc.setFontSize(7);
+                doc.text(10,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[0]);
+                doc.text(38,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[1]);
+                doc.text(63,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[2]);
+                doc.text(88,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[3]);
+                doc.text(113,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[4]);
+                doc.text(138,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[5]);
+                //doc.text(163,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[6]);
+                CoordY += 10;
+            }            
+         }
+         doc.save('FOGLIO SCUOLA ' + DataDocumento + '.pdf',{});            
+      }
+      else SystemInformation.ApplyOnError('Modello docenti e disponibilita per istituto non conforme','');     
+    },ModelloOrdinamento)
+  } 
+
   $scope.GetMaterieDoc = function(Docente)
   {
      var Result = '';

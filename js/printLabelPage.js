@@ -45,7 +45,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
     else $state.go("startPage");
   }
   
-  var TroncaTitolo = function(str, n)
+  var TroncaTesto = function(str, n)
   {
     return (str.length > n) ? str.substr(0, n-1) + '(...)' : str;
   };
@@ -364,17 +364,20 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                 var Qt = doc.getTextWidth(ListaCumulativo[k].Quantita);
                 doc.text(10 + Q + 1 - Qt,CoordY+10,ListaCumulativo[k].Quantita);
                 doc.text(20,CoordY+10,ListaCumulativo[k].Codice);
-                doc.text(45,CoordY+10,TroncaTitolo(ListaCumulativo[k].Nome,65));
+                doc.text(45,CoordY+10,TroncaTesto(ListaCumulativo[k].Nome,65));
                 doc.text(160,CoordY+10,ListaCumulativo[k].Posizione);            
             }
             doc.addPage();
          }
 
-         
+         if($scope.SpedizioneImmediata)
+            doc.deletePage(1) 
+
          for (let i = 0;i < ListaSpedizioniToPrint.length;i ++)
          {
                if(ListaSpedizioniToPrint.length > 1)
                   doc.addPage();
+
                doc.setFontSize(8);
                if(BORDO_ETICHETTA)
                {   
@@ -462,22 +465,22 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
 
                CoordY = 80;
                doc.setFontType('bold');
-               doc.setFontSize(7);
-               doc.text(10,CoordY + 80,'CODICE ISBN');
+               doc.setFontSize(9);
+               doc.text(10,CoodY + 80,'CODICE ISBN');
                doc.text(40,CoordY + 80,'AUTORE/TITOLO');
                doc.text(120,CoordY + 80,'EDITORE');
                doc.text(150,CoordY + 80,'QUANTITA');
                doc.text(170,CoordY + 80,'POS.MAGAZZINO');
                
                doc.setFontType('normal');
-               doc.setFontSize(6);
                
                for (let j = 0;j < ListaSpedizioniToPrint[i].ListaTitoli.length;j ++)
                {    
                    doc.text(10,CoordY+90,ListaSpedizioniToPrint[i].ListaTitoli[j].CODICE_ISBN);
-                   doc.text(40,CoordY+90,ListaSpedizioniToPrint[i].ListaTitoli[j].AUTORI + ' / ');
-                   doc.text(40,CoordY+95,ListaSpedizioniToPrint[i].ListaTitoli[j].NOME_TITOLO);
-                   doc.text(120,CoordY+90,ListaSpedizioniToPrint[i].ListaTitoli[j].EDITORE);
+                   doc.setFontSize(8);
+                   doc.text(40,CoordY+90,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].AUTORI,60) + ' / ');
+                   doc.text(40,CoordY+95,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].NOME_TITOLO,60));
+                   doc.text(120,CoordY+90,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].EDITORE,20));
                    var Q  = doc.getTextWidth('QUANTITA');
                    var Qt = doc.getTextWidth(ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA);
                    doc.text(150 + Q + 1 - Qt,CoordY+90,ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA);
@@ -486,8 +489,17 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                }          
                doc.setFontSize(6);
                doc.text(10,290,SystemInformation.VDocDelivery)
-       }
+               
+         }
        doc.save('EtichettePDF' + DataSpedizione + '.pdf',{});
+
+       /*var string = doc.output('datauristring');
+       var iframe = "<iframe width='100%' height='100%' src='" + string + "'></iframe>"
+       var x = window.open();
+       x.document.open();
+       x.document.write(iframe);
+       x.document.close();*/
+
        $scope.AbilitaConfermaStampa = true;
      }
      else SystemInformation.ApplyOnError('Modello lista spedizioni non conforme') 
@@ -833,6 +845,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
           
             var doc = new jsPDF();
             doc.setProperties({title: 'STAMPA ETICHETTE ' + DataSpedizione});
+            
             doc.setFontSize(10); 
             doc.setFontType('bold');
             doc.text(10,20,'REPORT SPEDIZIONI - IN DATA ' + DataSpedizione);
@@ -894,7 +907,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                 var Qt = doc.getTextWidth(ListaCumulativo[k].Quantita);
                 doc.text(10 + Q + 1 - Qt,CoordY+10,ListaCumulativo[k].Quantita);
                 doc.text(20,CoordY+10,ListaCumulativo[k].Codice);
-                doc.text(45,CoordY+10,TroncaTitolo(ListaCumulativo[k].Nome,65));
+                doc.text(45,CoordY+10,TroncaTesto(ListaCumulativo[k].Nome,65));
                 doc.text(160,CoordY+10,ListaCumulativo[k].Posizione);            
             }
             
@@ -987,7 +1000,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                   
                   CoordY = 80;
                   doc.setFontType('bold');
-                  doc.setFontSize(7);
+                  doc.setFontSize(9);
                   doc.text(10,CoordY + 80,'CODICE ISBN');
                   doc.text(40,CoordY + 80,'AUTORE/TITOLO');
                   doc.text(120,CoordY + 80,'EDITORE');
@@ -995,14 +1008,14 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                   doc.text(170,CoordY + 80,'POS.MAGAZZINO');
                   
                   doc.setFontType('normal');
-                  doc.setFontSize(6);
                   
                   for (let j = 0;j < ListaSpedizioniToPrint[i].ListaTitoli.length;j ++)
-                  {    
+                  {                       
                       doc.text(10,CoordY+90,ListaSpedizioniToPrint[i].ListaTitoli[j].CODICE_ISBN);
-                      doc.text(40,CoordY+90,ListaSpedizioniToPrint[i].ListaTitoli[j].AUTORI + ' / ');
-                      doc.text(40,CoordY+95,ListaSpedizioniToPrint[i].ListaTitoli[j].NOME_TITOLO);
-                      doc.text(120,CoordY+90,ListaSpedizioniToPrint[i].ListaTitoli[j].EDITORE);
+                      doc.setFontSize(8);
+                      doc.text(40,CoordY+90,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].AUTORI,60) + ' / ');
+                      doc.text(40,CoordY+95,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].NOME_TITOLO,60));
+                      doc.text(120,CoordY+90,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].EDITORE,20));
                       var Q  = doc.getTextWidth('QUANTITA');
                       var Qt = doc.getTextWidth(ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA);
                       doc.text(150 + Q + 1 - Qt,CoordY+90,ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA);
@@ -1013,6 +1026,14 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                   doc.text(10,290,SystemInformation.VDocDelivery)
           }
           doc.save('EtichettePDF' + DataSpedizione + '.pdf',{});
+
+          /*var string = doc.output('datauristring');
+          var iframe = "<iframe width='100%' height='100%' src='" + string + "'></iframe>"
+          var x = window.open();
+          x.document.open();
+          x.document.write(iframe);
+          x.document.close();*/
+          
           $scope.AbilitaConfermaStampa = true;
         }
         else SystemInformation.ApplyOnError('Modello lista spedizioni non conforme') 

@@ -1153,9 +1153,9 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                 }
                 doc.setFontSize(8);
                 doc.setFontType('bold');
-                doc.text(10,CoordY+5,'DOCENTE: ' + ListaDocenti[i].NOME_DOCENTE);
-                doc.text(10,CoordY+10,'MATERIE: ' + (ListaDocenti[i].NOME_MATERIA_1 == undefined ? '' : ListaDocenti[i].NOME_MATERIA_1) + ' - ' + (ListaDocenti[i].NOME_MATERIA_2 == undefined ? '' : ListaDocenti[i].NOME_MATERIA_2) + ' - ' + (ListaDocenti[i].NOME_MATERIA_3 == undefined ? '' : ListaDocenti[i].NOME_MATERIA_3));
-                doc.text(10,CoordY+15,'CLASSI: ' + ListaDocenti[i].CLASSI.toString());
+                doc.text(10,CoordY+5,ListaDocenti[i].NOME_DOCENTE);
+                doc.text(10,CoordY+10,(ListaDocenti[i].NOME_MATERIA_1 == undefined ? '' : ListaDocenti[i].NOME_MATERIA_1) + ' - ' + (ListaDocenti[i].NOME_MATERIA_2 == undefined ? '' : ListaDocenti[i].NOME_MATERIA_2) + ' - ' + (ListaDocenti[i].NOME_MATERIA_3 == undefined ? '' : ListaDocenti[i].NOME_MATERIA_3));
+                doc.text(10,CoordY+15,ListaDocenti[i].CLASSI.toString());
                 CoordY += 20;
                 doc.setFontSize(7);
                 doc.setFontType('italic');
@@ -1165,7 +1165,7 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                 doc.text(88,CoordY,'GIOVEDI')
                 doc.text(113,CoordY,'VENERDI')
                 doc.text(138,CoordY,'SABATO')
-                doc.text(163,CoordY,'DOMENICA')
+               //doc.text(163,CoordY,'DOMENICA')
                 CoordY += 5;
                                
                 for(let j = 0;j < ListaDocenti[i].DISPONIBILITA.SETTIMANA.length;j ++)
@@ -1180,7 +1180,7 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                 doc.text(88,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[3]);
                 doc.text(113,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[4]);
                 doc.text(138,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[5]);
-                doc.text(163,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[6]);
+                //doc.text(163,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[6]);
                 CoordY += 10;
             }            
          }
