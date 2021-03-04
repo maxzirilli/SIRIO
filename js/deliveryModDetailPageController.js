@@ -216,8 +216,11 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
 
                $scope.ResetCampi = function()
                {
+                 $scope.SpedizioneAIstituto = !$scope.SpedizioneAIstituto;
+
                  if(!$scope.SpedizioneAIstituto)
                  {
+                   //$scope.SpedizioneAIstituto           = false;
                    $scope.IstitutoSelezionato           = '';
                    $scope.SpedizioneInEditing.INDIRIZZO = '';
                    $scope.SpedizioneInEditing.COMUNE    = '';
@@ -318,7 +321,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                  else 
                  {
                     $scope.IstitutoSelezionato = -1;
-                    //$scope.SpedizioneAIstituto = false;
+                    $scope.SpedizioneAIstituto = false; //ANAKIN
                  }
                }                     
             }
@@ -1027,19 +1030,24 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
 
               if ($scope.SpedizioneMultipla && !($scope.SpedizioneAIstituto))
               {
-                  if($scope.ListaDocentiSpedizione.length > 0)
-                  {                  
-                    for (let d = 0; d < $scope.ListaDocentiSpedizione.length;d ++)
+                  SystemInformation.DataBetweenController.ListaChiaviFromAdvanced = [];
+                  var i = 0;
+                  
+                  var GestisciDocInclusi = function()
+                  {
+                    if(i > $scope.ListaDocentiSpedizione.length - 1)
+                       Finito()
+                    else
                     {
                           $ObjQuery = {Operazioni : []};
                           ParamSpedizione = {
                                               "CHIAVE"         : $scope.SpedizioneInEditing.CHIAVE,
-                                              "DOCENTE"        : $scope.ListaDocentiSpedizione[d].ChiaveDocente,
-                                              "PRESSO"         : $scope.ListaDocentiSpedizione[d].NomeDocente,
-                                              "INDIRIZZO"      : $scope.ListaDocentiSpedizione[d].IndirizzoDocente,
-                                              "COMUNE"         : $scope.ListaDocentiSpedizione[d].ComuneDocente,
-                                              "CAP"            : $scope.ListaDocentiSpedizione[d].CapDocente,
-                                              "PROVINCIA"      : $scope.ListaDocentiSpedizione[d].ProvinciaDocente,
+                                              "DOCENTE"        : $scope.ListaDocentiSpedizione[i].ChiaveDocente,
+                                              "PRESSO"         : $scope.ListaDocentiSpedizione[i].NomeDocente,
+                                              "INDIRIZZO"      : $scope.ListaDocentiSpedizione[i].IndirizzoDocente,
+                                              "COMUNE"         : $scope.ListaDocentiSpedizione[i].ComuneDocente,
+                                              "CAP"            : $scope.ListaDocentiSpedizione[i].CapDocente,
+                                              "PROVINCIA"      : $scope.ListaDocentiSpedizione[i].ProvinciaDocente,
                                               "DATA"           : $scope.SpedizioneInEditing.DATA,
                                               "ISTITUTO"       : null
                                             }
@@ -1047,14 +1055,14 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                                                       Query     : 'InsertDelivery',
                                                       Parametri : ParamSpedizione   
                                                     });
-                          for(let t = 0; t < $scope.ListaTitoliSpedizione.length;t ++)
+                          for(let j = 0; j < $scope.ListaTitoliSpedizione.length;j ++)
                           {
                               var ParamTitolo = {
-                                                  "TITOLO"     : $scope.ListaTitoliSpedizione[t].TITOLO,  
-                                                  "QUANTITA"   : $scope.ListaTitoliSpedizione[t].QUANTITA,
-                                                  "STATO"      : $scope.ListaTitoliSpedizione[t].STATO
+                                                  "TITOLO"     : $scope.ListaTitoliSpedizione[j].TITOLO,  
+                                                  "QUANTITA"   : $scope.ListaTitoliSpedizione[j].QUANTITA,
+                                                  "STATO"      : $scope.ListaTitoliSpedizione[j].STATO
                                                 }
-                              if($scope.ListaTitoliSpedizione[t].Nuovo)
+                              if($scope.ListaTitoliSpedizione[j].Nuovo)
                               {
                                 $ObjQuery.Operazioni.push({
                                                             Query     : 'InsertDeliveryBookAfterInsert',
@@ -1065,31 +1073,93 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                           }
                           SystemInformation.PostSQL('Delivery',$ObjQuery,function(Answer)
                           {
-                            for(let i = 0;i < Answer.NewKeys.length;i ++)
+                            for(let k = 0;k < Answer.NewKeys.length;k ++)
                             {                           
-                             if(Answer.NewKeys[i].Id == 2)                            
-                                ChiaviDaFiltrare.push(Answer.NewKeys[i].Value)
+                            if(Answer.NewKeys[k].Id == 2)                            
+                                ChiaviDaFiltrare.push(Answer.NewKeys[k].Value)
                             } 
-                            if(d == $scope.ListaDocentiSpedizione.length - 1)
-                               Finito(); 
-                          })      
+                            i++;
+                            GestisciDocInclusi();            
+                          });  
                     }
-                  } else ZCustomAlert($mdDialog,'ATTENZIONE','IMPOSSIBILE SPEDIRE, NESSUNO DEI DOCENTI HA UN INDIRIZZO DI SPEDIZIONE VALIDO!')
+                  }
+                  if($scope.ListaDocentiSpedizione.length > 0)
+                     GestisciDocInclusi()                 
               }
               else if ($scope.SpedizioneMultipla && $scope.SpedizioneAIstituto)
               {
+                      
                       SystemInformation.DataBetweenController.ListaChiaviFromAdvanced = [];
                       //SystemInformation.DataBetweenController.Provenienza = 'NOT_ADVANCED';
+                      var SaltaInclusi = false;
 
-                      var GoOnEsclusi = function()
+                      var i = 0;
+                      var m = 0;
+                      var GestisciDocInclusi = function()
                       {
-                        for (let e = 0; e < $scope.ListaDocentiEsclusi.length;e ++)
+                        if(i > $scope.ListaDocentiSpedizione.length - 1 || SaltaInclusi)
+                        {
+                          if($scope.ListaDocentiEsclusi.length == 0)
+                             Finito()
+                          else 
+                             if(m > $scope.ListaDocentiEsclusi.length - 1)
+                                Finito()
+                             else GestisciDocEsclusi()
+                        }
+                        else
                         {
                               $ObjQuery = {Operazioni : []};
                               ParamSpedizione = {
                                                   "CHIAVE"         : $scope.SpedizioneInEditing.CHIAVE,
-                                                  "DOCENTE"        : $scope.ListaDocentiEsclusi[e].ChiaveDocente,
-                                                  "PRESSO"         : $scope.ListaDocentiEsclusi[e].NomeDocente,
+                                                  "DOCENTE"        : $scope.ListaDocentiSpedizione[i].ChiaveDocente,
+                                                  "PRESSO"         : $scope.ListaDocentiSpedizione[i].NomeDocente,
+                                                  "INDIRIZZO"      : $scope.SpedizioneInEditing.INDIRIZZO,
+                                                  "COMUNE"         : $scope.SpedizioneInEditing.COMUNE,
+                                                  "CAP"            : $scope.SpedizioneInEditing.CAP,
+                                                  "PROVINCIA"      : $scope.SpedizioneInEditing.PROVINCIA,
+                                                  "DATA"           : $scope.SpedizioneInEditing.DATA,
+                                                  "ISTITUTO"       : $scope.SpedizioneInEditing.ISTITUTO
+                                                }
+                              $ObjQuery.Operazioni.push({
+                                                          Query     : 'InsertDelivery',
+                                                          Parametri : ParamSpedizione   
+                                                        });
+                              for(let j = 0; j < $scope.ListaTitoliSpedizione.length;j ++)
+                              {
+                                  var ParamTitolo = {
+                                                      "TITOLO"     : $scope.ListaTitoliSpedizione[j].TITOLO,  
+                                                      "QUANTITA"   : $scope.ListaTitoliSpedizione[j].QUANTITA,
+                                                      "STATO"      : $scope.ListaTitoliSpedizione[j].STATO
+                                                    }
+                                  if($scope.ListaTitoliSpedizione[j].Nuovo)
+                                  {
+                                    $ObjQuery.Operazioni.push({
+                                                                Query     : 'InsertDeliveryBookAfterInsert',
+                                                                Parametri : ParamTitolo,
+                                                                ResetKeys : [2]
+                                                              });
+                                  }             
+                              }
+                              SystemInformation.PostSQL('Delivery',$ObjQuery,function(Answer)
+                              {
+                                for(let k = 0;k < Answer.NewKeys.length;k ++)
+                                {                           
+                                if(Answer.NewKeys[k].Id == 2)                            
+                                    ChiaviDaFiltrare.push(Answer.NewKeys[k].Value)
+                                } 
+                                i++;
+                                GestisciDocInclusi();            
+                              });  
+                        }
+                      }
+
+                      var GestisciDocEsclusi = function()
+                      {
+                              $ObjQuery = {Operazioni : []};
+                              ParamSpedizione = {
+                                                  "CHIAVE"         : $scope.SpedizioneInEditing.CHIAVE,
+                                                  "DOCENTE"        : $scope.ListaDocentiEsclusi[m].ChiaveDocente,
+                                                  "PRESSO"         : $scope.ListaDocentiEsclusi[m].NomeDocente,
                                                   "INDIRIZZO"      : $scope.SpedizioneInEditing.INDIRIZZO,
                                                   "COMUNE"         : $scope.SpedizioneInEditing.COMUNE,
                                                   "CAP"            : $scope.SpedizioneInEditing.CAP,
@@ -1101,14 +1171,14 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                                                           Query     : 'InsertDelivery',
                                                           Parametri : ParamSpedizione   
                                                         });
-                              for(let t = 0; t < $scope.ListaTitoliSpedizione.length;t ++)
+                              for(let n = 0; n < $scope.ListaTitoliSpedizione.length;n ++)
                               {
                                   var ParamTitolo = {
-                                                      "TITOLO"     : $scope.ListaTitoliSpedizione[t].TITOLO,  
-                                                      "QUANTITA"   : $scope.ListaTitoliSpedizione[t].QUANTITA,
-                                                      "STATO"      : $scope.ListaTitoliSpedizione[t].STATO
+                                                      "TITOLO"     : $scope.ListaTitoliSpedizione[n].TITOLO,  
+                                                      "QUANTITA"   : $scope.ListaTitoliSpedizione[n].QUANTITA,
+                                                      "STATO"      : $scope.ListaTitoliSpedizione[n].STATO
                                                     }
-                                  if($scope.ListaTitoliSpedizione[t].Nuovo)
+                                  if($scope.ListaTitoliSpedizione[n].Nuovo)
                                   {
                                     $ObjQuery.Operazioni.push({
                                                                 Query     : 'InsertDeliveryBookAfterInsert',
@@ -1119,75 +1189,25 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                               }
                               SystemInformation.PostSQL('Delivery',$ObjQuery,function(Answer)
                               {
-                                for(let i = 0;i < Answer.NewKeys.length;i ++)
+                                for(let o = 0;o < Answer.NewKeys.length;o ++)
                                 {                           
-                                 if(Answer.NewKeys[i].Id == 2)                            
-                                    ChiaviDaFiltrare.push(Answer.NewKeys[i].Value)
-                                } 
-                                if(e == $scope.ListaDocentiEsclusi.length - 1)
-                                   Finito();                     
-                              });          
-                        } 
-                      } 
-                      
-                      if($scope.ListaDocentiSpedizione.length > 0)
-                      {
-                          for (let d = 0; d < $scope.ListaDocentiSpedizione.length;d ++)
-                          {
-                                $ObjQuery = {Operazioni : []};
-                                ParamSpedizione = {
-                                                    "CHIAVE"         : $scope.SpedizioneInEditing.CHIAVE,
-                                                    "DOCENTE"        : $scope.ListaDocentiSpedizione[d].ChiaveDocente,
-                                                    "PRESSO"         : $scope.ListaDocentiSpedizione[d].NomeDocente,
-                                                    "INDIRIZZO"      : $scope.SpedizioneInEditing.INDIRIZZO,
-                                                    "COMUNE"         : $scope.SpedizioneInEditing.COMUNE,
-                                                    "CAP"            : $scope.SpedizioneInEditing.CAP,
-                                                    "PROVINCIA"      : $scope.SpedizioneInEditing.PROVINCIA,
-                                                    "DATA"           : $scope.SpedizioneInEditing.DATA,
-                                                    "ISTITUTO"       : $scope.SpedizioneInEditing.ISTITUTO
-                                                  }
-                                $ObjQuery.Operazioni.push({
-                                                            Query     : 'InsertDelivery',
-                                                            Parametri : ParamSpedizione   
-                                                          });
-                                for(let t = 0; t < $scope.ListaTitoliSpedizione.length;t ++)
-                                {
-                                    var ParamTitolo = {
-                                                        "TITOLO"     : $scope.ListaTitoliSpedizione[t].TITOLO,  
-                                                        "QUANTITA"   : $scope.ListaTitoliSpedizione[t].QUANTITA,
-                                                        "STATO"      : $scope.ListaTitoliSpedizione[t].STATO
-                                                      }
-                                    if($scope.ListaTitoliSpedizione[t].Nuovo)
-                                    {
-                                      $ObjQuery.Operazioni.push({
-                                                                  Query     : 'InsertDeliveryBookAfterInsert',
-                                                                  Parametri : ParamTitolo,
-                                                                  ResetKeys : [2]
-                                                                });
-                                    }             
+                                 if(Answer.NewKeys[o].Id == 2)                            
+                                    ChiaviDaFiltrare.push(Answer.NewKeys[o].Value)
                                 }
-                                SystemInformation.PostSQL('Delivery',$ObjQuery,function(Answer)
-                                {
-                                  for(let i = 0;i < Answer.NewKeys.length;i ++)
-                                  {                           
-                                  if(Answer.NewKeys[i].Id == 2)                            
-                                      ChiaviDaFiltrare.push(Answer.NewKeys[i].Value)
-                                  } 
-                                  if(d == $scope.ListaDocentiSpedizione.length - 1)
-                                  {
-                                    if ($scope.ListaDocentiEsclusi.length == 0)
-                                        Finito()
-                                    else GoOnEsclusi();    
-                                  }                  
-                                });        
-                        }
-                      }
-                      else GoOnEsclusi(); 
-                                  
-                      //$scope.SpedizioneInEditing    = {};
-                      //$scope.ListaDocentiSpedizione = [];
-                      //$scope.ListaDocentiEsclusi    = [];
-                      //$scope.ListaDocentiSpedizioneAIstituto = [];                      
+                                m++;
+                                if(m > $scope.ListaDocentiEsclusi.length - 1)
+                                   Finito()
+                                else GestisciDocEsclusi()                  
+                              });          
+                      } 
+
+                      if($scope.ListaDocentiSpedizione.length > 0)
+                          GestisciDocInclusi()
+                      else 
+                      {
+                        SaltaInclusi = true;
+                        GestisciDocEsclusi() 
+                      }                   
               }
               else
               {         

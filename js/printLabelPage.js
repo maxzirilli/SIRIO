@@ -466,7 +466,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                CoordY = 80;
                doc.setFontType('bold');
                doc.setFontSize(9);
-               doc.text(10,CoodY + 80,'CODICE ISBN');
+               doc.text(10,CoordY + 80,'CODICE ISBN');
                doc.text(40,CoordY + 80,'AUTORE/TITOLO');
                doc.text(120,CoordY + 80,'EDITORE');
                doc.text(150,CoordY + 80,'QUANTITA');
