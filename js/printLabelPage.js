@@ -370,8 +370,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
             doc.addPage();
          }
 
-         //if($scope.SpedizioneImmediata)
-            //doc.deletePage(1) 
+         if($scope.SpedizioneImmediata)
+            doc.deletePage(0) 
 
          for (let i = 0;i < ListaSpedizioniToPrint.length;i ++)
          {

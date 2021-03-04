@@ -357,7 +357,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
               if($scope.ListaIstitutiDoc.length == 1)
               {
                  $scope.IstitutoDoc = $scope.ListaIstitutiDoc[0].CHIAVE;
-                 $scope.IndirizzoByIstituto($scope.ListaIstitutiDoc[0].CHIAVE)
+                 $scope.IndirizzoByIstituto($scope.ListaIstitutiDoc[0].CHIAVE);
                  $scope.SpedizioneInEditing.ISTITUTO = $scope.IstitutoDoc;               
               }
               else
@@ -367,7 +367,14 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                  $scope.SpedizioneInEditing.CAP             = '';
                  $scope.SpedizioneInEditing.PROVINCIA       = -1;
                  $scope.SpedizioneInEditing.PROVINCIA_NOME  = '';
-              }                      
+              }
+              
+              if(parseInt(SystemInformation.DataBetweenController.IstitutoFiltrato) != -1)
+              {
+                $scope.IstitutoDoc = parseInt(SystemInformation.DataBetweenController.IstitutoFiltrato)
+                $scope.SpedizioneInEditing.ISTITUTO = $scope.IstitutoDoc;    
+                $scope.IndirizzoByIstituto(parseInt(SystemInformation.DataBetweenController.IstitutoFiltrato));
+              }   
             }       
             else SystemInformation.ApplyOnError('Modello docente per spedizione non conforme','');      
           },'SQLDettaglio'); 

@@ -49,7 +49,7 @@
   "SQLAdmin"       : [
                        {
                          "Name" : "DeliveryListAll",
-                         "SQL"  : "SELECT *,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS NOME_DOCENTE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'S') AS NR_DA_SPEDIRE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'C') AS NR_CONSEGNATE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'P') AS NR_PRENOTATE FROM spedizioni WHERE DATA >= #Dal AND DATA <= #Al ORDER BY DATA DESC"
+                         "SQL"  : "SELECT *,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS NOME_DOCENTE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'S') AS NR_DA_SPEDIRE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'C') AS NR_CONSEGNATE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'P') AS NR_PRENOTATE FROM spedizioni WHERE DATA >= #Dal AND DATA <= #Al ORDER BY DATA DESC LIMIT 100"
                        }                      
                      ],
   "SQLAdminDettaglio" : [                         
