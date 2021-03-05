@@ -9,6 +9,13 @@
                    "SQL"  : "SELECT CHIAVE FROM utenti WHERE CHIAVE = #KeyAccount"
                  }
                ],
+
+ "SelectStatistica" : [
+                        {
+                          "Name" : "GetUserStatistics",
+                          "SQL"  : "CALL GET_STATISTICA_PROMOTORI(#DataDal,#DataAl)"                       
+                        }
+                      ],
  
  "EditSQL"  : [   
                 {

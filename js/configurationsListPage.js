@@ -326,6 +326,7 @@ $scope.GridOptions_8 = {
         $scope.DatiDitta.SITO_WEB            = DatiDittaSql[0].SITO_WEB;
         $scope.DatiDitta.URL_CALENDARIO      = DatiDittaSql[0].URL_CALENDARIO;
         $scope.DatiDitta.CALENDARIO_VISIBILE = DatiDittaSql[0].CALENDARIO_VISIBILE == 'T' ? true : false;
+        $scope.DatiDitta.NR_ALUNNI           = parseInt(DatiDittaSql[0].NR_ALUNNI);
       }
       else SystemInformation.ApplyOnError('Modello dati ditta non conforme','');
     });
@@ -1132,7 +1133,8 @@ $scope.GridOptions_8 = {
                                               "EMAIL_ARCHIVIO"      : $scope.DatiDitta.EMAIL_ARCHIVIO.xSQL(),
                                               "SITO_WEB"            : $scope.DatiDitta.SITO_WEB.xSQL(),
                                               "URL_CALENDARIO"      : $scope.DatiDitta.URL_CALENDARIO.trim().xSQL(),
-                                              "CALENDARIO_VISIBILE" : $scope.DatiDitta.CALENDARIO_VISIBILE ? 'T' : 'F'
+                                              "CALENDARIO_VISIBILE" : $scope.DatiDitta.CALENDARIO_VISIBILE ? 'T' : 'F',
+                                              "NR_ALUNNI"           : parseInt($scope.DatiDitta.NR_ALUNNI)
                                             }
                                 
                               });

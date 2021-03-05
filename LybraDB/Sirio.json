@@ -1,13 +1,15 @@
 {
  "Version": {
   "Major": 1,
-  "Minor": 16,
+  "Minor": 17,
   "Release": 7
  },
  "Storia": [
+  "Versione 1.17.7   05 Marzo 2021 - Tommaso Martinoli",
+  "                  - NEW: Introdotta store procedure per la generazione dell xls del fatturato",
   "Versione 1.16.7   03 Marzo 2021 - Tommaso Martinoli",
   "                  - NEW: Introdotte store procedure di insert ed update del carico",
-  "                  - CHG: Modifica del trigger di update del carico per gestione novità", 
+  "                  - CHG: Modifica del trigger di update del carico per gestione novità",
   "Versione 1.15.7   26 Febbraio 2021 - Tommaso Martinoli",
   "                  - NEW: Introdotti campi prenotazione_novita e novita_caricate in tabella titoli",
   "                  - NEW: Introdotte store procedure di insert,update e delete dei carichi per gestire le novità prenotate",
@@ -286,6 +288,15 @@
      "AutoIncrement": false,
      "Commento": "",
      "DefaultValue": "'F'",
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "NR_ALUNNI",
+     "IsNullable": true,
+     "DataType": "tinyint(4)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": "20",
      "SQLAfterAddedColumn": null
     }
    ],
@@ -2651,6 +2662,24 @@
    "ReturnType": null,
    "Body": "BEGIN\r\n\r\n  DELETE FROM insegnamenti_docente;\r\n  DELETE FROM adozioni_titolo;\r\n  DELETE FROM classi;\r\n\r\nEND",
    "Parametri": []
+  },
+  {
+   "Nome": "GET_STATISTICA_PROMOTORI",
+   "Type": "PROCEDURE",
+   "ReturnType": null,
+   "Body": "BEGIN\r\n\tSELECT titoli.CODICE_ISBN,\r\n\t       titoli.PREZZO,\r\n\t       titoli.TITOLO,\r\n\t       istituti.CHIAVE AS CHIAVE_ISTITUTO,\r\n\t       istituti.NOME AS NOME_ISTITUTO,\r\n\t       istituti.PROMOTORE,\r\n\t       utenti.RAGIONE_SOCIALE,\r\n\t       COUNT(*) AS NUMERO_ADOZIONI_X_ISTITUTO,\r\n\t       configurazione_ditta.NR_ALUNNI\r\n\t  FROM adozioni_titolo,titoli,classi,istituti,utenti,configurazione_ditta\r\n\t WHERE adozioni_titolo.TITOLO = titoli.CHIAVE\r\n\t   AND adozioni_titolo.CLASSE = classi.CHIAVE\r\n\t   AND titoli.EDITORE IN (SELECT DESCRIZIONE\r\n\t                            FROM case_editrici) \r\n\t   AND classi.ISTITUTO = istituti.CHIAVE\r\n\t   AND utenti.ELIMINATO <> 1\r\n\t   AND adozioni_titolo.CLASSE IN  (SELECT insegnamenti_docente.CLASSE\r\n\t\t\t\t                            FROM insegnamenti_docente\r\n\t\t\t\t\t\t\t\t\t\t\t\t\tWHERE insegnamenti_docente.DOCENTE IN (SELECT spedizioni.DOCENTE\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t                                         FROM spedizioni\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t WHERE spedizioni.PROMOTORE = utenti.CHIAVE \r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t   AND spedizioni.CHIAVE IN (SELECT dettaglio_spedizioni.SPEDIZIONE\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t                               FROM dettaglio_spedizioni\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tWHERE dettaglio_spedizioni.STATO = 'C'\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t  AND dettaglio_spedizioni.TITOLO = titoli.CHIAVE\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t  AND dettaglio_spedizioni.DATA_ULTIMA_MODIFICA >= DataDal \r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t  AND dettaglio_spedizioni.DATA_ULTIMA_MODIFICA <= DataAl)))\r\n\t\r\n\tGROUP BY adozioni_titolo.TITOLO,istituti.CHIAVE\r\n\tORDER BY utenti.RAGIONE_SOCIALE,istituti.NOME,titoli.TITOLO;\r\n\r\nEND",
+   "Parametri": [
+    {
+     "Nome": "DataDal",
+     "Mode": "IN",
+     "Type": "date"
+    },
+    {
+     "Nome": "DataAl",
+     "Mode": "IN",
+     "Type": "date"
+    }
+   ]
   },
   {
    "Nome": "INSERT_CARICO",
