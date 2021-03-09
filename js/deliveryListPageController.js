@@ -46,8 +46,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     return SystemInformation.UserInformation.Ruolo == RUOLO_AMMINISTRATORE;
   }
 
-  if ($scope.IsAdministrator())  //PER PROBLEMA CRASH TROPPE QUERY
-      $scope.DataRicercaDal = new Date(TmpDate);
+  //if ($scope.IsAdministrator())  //PER PROBLEMA CRASH TROPPE QUERY
+      //$scope.DataRicercaDal = new Date(TmpDate);
   
   $scope.ConvertiData = function (Dati)
   {
@@ -81,6 +81,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     {
       BodySheet['F1'] = SystemInformation.GetCellaIntestazione('QUANTITA MAGAZZINO');
       BodySheet['G1'] = SystemInformation.GetCellaIntestazione('DIFFERENZA');
+      BodySheet['H1'] = SystemInformation.GetCellaIntestazione('PROMOTORI');
     }
        
     var ListaTitoli  = [];
@@ -88,8 +89,17 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     {
         TitoloGiaInserito = ListaTitoli.findIndex(function(ATitolo){return(ATitolo.Chiave == CumulativoTitoli[j].Chiave)})
         if(TitoloGiaInserito == -1)
-            ListaTitoli.push(CumulativoTitoli[j])
-        else ListaTitoli[TitoloGiaInserito].Quantita += CumulativoTitoli[j].Quantita
+        {
+          ListaTitoli.push(CumulativoTitoli[j])
+          ListaTitoli[ListaTitoli.length - 1].ListaPromotori = [CumulativoTitoli[j].NomePromotore];
+        }
+        else
+        {
+          ListaTitoli[TitoloGiaInserito].Quantita += CumulativoTitoli[j].Quantita;
+          var PromotoreTrovato = ListaTitoli[TitoloGiaInserito].ListaPromotori.findIndex(function(ALista){return(ALista == CumulativoTitoli[j].NomePromotore);});
+          if(PromotoreTrovato == -1)
+             ListaTitoli[TitoloGiaInserito].ListaPromotori.push(CumulativoTitoli[j].NomePromotore);
+        } 
     }
     var Gruppo = 'ABCDEFGHIJKLMNOPQRSTUVZ'
     var CasaEditrice = '-1';
@@ -112,6 +122,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
           {
             BodySheet['F' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].QuantitaMag.toString());
             BodySheet['G' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',(parseInt(ListaTitoli[k].QuantitaMag) - parseInt(ListaTitoli[k].Quantita) + parseInt(ListaTitoli[k].QuantitaNovita)).toString());
+            BodySheet['H' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].ListaPromotori.toString());
           }
         }
 
@@ -143,10 +154,11 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     if(NomeDocumento == 'CumulativoPrenotati')
     {
       BodySheet["!cols"].push({wpx: 250});
-      BodySheet["!cols"].push({wpx: 250}); 
+      BodySheet["!cols"].push({wpx: 250});
+      BodySheet["!cols"].push({wpx: 500});  
     }
 
-    BodySheet['!ref'] = (NomeDocumento == 'CumulativoPrenotati' ?  'A1:G1' :  'A1:E1') + parseInt(ListaTitoli.length + 1);
+    BodySheet['!ref'] = (NomeDocumento == 'CumulativoPrenotati' ?  'A1:H1' :  'A1:E1') + parseInt(ListaTitoli.length + 1);
     
     WBook.SheetNames.push(SheetName);
     WBook.Sheets[SheetName]    = BodySheet;
@@ -349,7 +361,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
                                                 Codice         : CumulativoPrenotatiTmp[i].CODICE_TITOLO,
                                                 Quantita       : parseInt(CumulativoPrenotatiTmp[i].QUANTITA),
                                                 QuantitaMag    : parseInt(CumulativoPrenotatiTmp[i].QUANTITA_MAGAZZINO),
-                                                QuantitaNovita : CumulativoPrenotatiTmp[i].Q_PREN_NOVITA == undefined ? 0 : parseInt(CumulativoPrenotatiTmp[i].Q_PREN_NOVITA)
+                                                QuantitaNovita : CumulativoPrenotatiTmp[i].Q_PREN_NOVITA == undefined ? 0 : parseInt(CumulativoPrenotatiTmp[i].Q_PREN_NOVITA),
+                                                NomePromotore  : CumulativoPrenotatiTmp[i].NOME_PROMOTORE, 
                                               }
               CumulativoPrenotati = CumulativoPrenotatiTmp
               
@@ -697,6 +710,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     if(itemTit != undefined)
        $scope.TitoloFiltro = itemTit.Chiave;
     else $scope.TitoloFiltro  = -1;
+    $scope.GridOptions.query.page = 1;
   }  
   
   $scope.selectedItemChangeDocente = function(itemDocente)
@@ -704,6 +718,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     if(itemDocente != undefined)
        $scope.DocenteFiltro = itemDocente.Chiave;
     else $scope.DocenteFiltro = -1;
+    $scope.GridOptions.query.page = 1;
   }  
 
   $scope.queryIstituto = function(searchTextIstituto)
@@ -720,160 +735,21 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     if(itemIstituto != undefined)
        $scope.IstitutoFiltro = itemIstituto.Chiave;
     else $scope.IstitutoFiltro = -1;
+    $scope.GridOptions.query.page = 1;
   }    
   
   $scope.RefreshListaSpedizioniAll = function ()
   {
-    $scope.GridOptions.query.page = 1; 
+    $scope.GridOptions.query.page = 1;
     if($scope.DataRicercaDal == undefined || $scope.DataRicercaAl == undefined)
        return;
     let TmpDate = new Date($scope.DataRicercaAl);
     TmpDate.setDate($scope.DataRicercaAl.getDate() + 1);
-     
-    if($scope.IsAdministrator())
+  
+    SystemInformation.ExecuteExternalScript('SIRIOExtra',{ Dal : ZHTMLInputFromDate($scope.DataRicercaDal), Al : ZHTMLInputFromDate(TmpDate), Admin : ($scope.IsAdministrator() ? 'T' : 'F')},function(Answer) 
     {
-      SystemInformation.GetSQL('Delivery',{ Dal : ZHTMLInputFromDate($scope.DataRicercaDal), Al : ZHTMLInputFromDate(TmpDate) },function(Results)
-      {
-        ListaSpedizioniTmp = SystemInformation.FindResults(Results,'DeliveryListAll');
-        if (ListaSpedizioniTmp != undefined) 
-        {
-          var i = 0;
-          var Finito = function()
-          {
-            $scope.ListaSpedizioni = ListaSpedizioniTmp;
-          }
-
-          var GestisciDettaglio = function()
-          {
-              if(i > ListaSpedizioniTmp.length - 1)
-                 Finito()
-              else
-              {
-                ListaSpedizioniTmp[i] = {
-                                          Chiave          : ListaSpedizioniTmp[i].CHIAVE,
-                                          Presso          : ListaSpedizioniTmp[i].PRESSO == undefined ? 'N.D.' : ListaSpedizioniTmp[i].PRESSO,
-                                          Docente         : ListaSpedizioniTmp[i].DOCENTE == undefined ? -1 : ListaSpedizioniTmp[i].DOCENTE,
-                                          DocenteNome     : ListaSpedizioniTmp[i].NOME_DOCENTE == undefined ? '' : ListaSpedizioniTmp[i].NOME_DOCENTE,
-                                          Data            : ListaSpedizioniTmp[i].DATA,
-                                          Provincia       : ListaSpedizioniTmp[i].PROVINCIA,
-                                          NrConsegnate    : ListaSpedizioniTmp[i].NR_CONSEGNATE,
-                                          NrDaSpedire     : ListaSpedizioniTmp[i].NR_DA_SPEDIRE,
-                                          NrPrenotate     : ListaSpedizioniTmp[i].NR_PRENOTATE,
-                                          Promotore       : ListaSpedizioniTmp[i].PROMOTORE,
-                                          Istituto        : ListaSpedizioniTmp[i].ISTITUTO == null ? -1 : ListaSpedizioniTmp[i].ISTITUTO,
-                                          Spedibile       : false,
-                                          DettagliTitoli  : []
-                                        }
-                 SystemInformation.GetSQL('Delivery',{CHIAVE : ListaSpedizioniTmp[i].Chiave},function(Results)
-                 {
-                    AdminSpedizioniDettaglioTmp = SystemInformation.FindResults(Results,'GenericDeliveryDettaglio');
-                    if(AdminSpedizioniDettaglioTmp != undefined)
-                    {
-                        for(let j = 0;j < AdminSpedizioniDettaglioTmp.length;j ++)
-                        {                     
-                            if (AdminSpedizioniDettaglioTmp[j].SPEDIBILE == 1)
-                            {                                                                   
-                                ListaSpedizioniTmp[i].Spedibile = true;
-                            }
-                            switch(AdminSpedizioniDettaglioTmp[j].STATO)
-                            {
-                                    case 'P' : AdminSpedizioniDettaglioTmp[j].STATO = 'PRENOTATO'
-                                              break;
-                                    case 'S' : AdminSpedizioniDettaglioTmp[j].STATO = 'DA SPEDIRE'
-                                              break;
-                                    case 'C' : AdminSpedizioniDettaglioTmp[j].STATO = 'CONSEGNATO'
-                                              break;
-                                    default  : AdminSpedizioniDettaglioTmp[j].STATO = 'N.D';                                       
-                                              
-                            }
-                            AdminSpedizioniDettaglioTmp[j] = {
-                                                                Chiave       : AdminSpedizioniDettaglioTmp[j].CHIAVE,
-                                                                Titolo       : AdminSpedizioniDettaglioTmp[j].TITOLO,
-                                                                NomeTitolo   : AdminSpedizioniDettaglioTmp[j].NOME_TITOLO == undefined ? 'N.D' : AdminSpedizioniDettaglioTmp[j].NOME_TITOLO,
-                                                                CodiceTitolo : AdminSpedizioniDettaglioTmp[j].CODICE_TITOLO == undefined ? 'N.D' : AdminSpedizioniDettaglioTmp[j].CODICE_TITOLO,
-                                                                StatoTitolo  : AdminSpedizioniDettaglioTmp[j].STATO                         
-                                                              }
-                            if(AdminSpedizioniDettaglioTmp[j] == undefined)
-                               alert('PROBLEMA')
-                            ListaSpedizioniTmp[i].DettagliTitoli.push(AdminSpedizioniDettaglioTmp[j]);                                                               
-                        }
-                    i++;
-                    GestisciDettaglio();                    
-                    }
-                    else SystemInformation.ApplyOnError('Modello dettaglio spedizioni non conforme','');     
-                  },'SQLDettaglio')  
-              }          
-          }
-          GestisciDettaglio();                    
-        }
-        else SystemInformation.ApplyOnError('Modello spedizioni non conforme','')     
-      },'SQLAdmin')     
-    }
-    else
-    {    
-      SystemInformation.GetSQL('Delivery',{ Dal : ZHTMLInputFromDate($scope.DataRicercaDal), Al : ZHTMLInputFromDate(TmpDate) },function(Results)
-      {
-        ListaSpedizioniTmp = SystemInformation.FindResults(Results,'MyDeliveryList');
-        if (ListaSpedizioniTmp != undefined) 
-        {
-          for(let i = 0; i < ListaSpedizioniTmp.length; i++)
-          {
-              ListaSpedizioniTmp[i] = {
-                                        Chiave          : ListaSpedizioniTmp[i].CHIAVE,
-                                        Presso          : ListaSpedizioniTmp[i].PRESSO == undefined ? 'N.D.' : ListaSpedizioniTmp[i].PRESSO,
-                                        Docente         : ListaSpedizioniTmp[i].DOCENTE == undefined ? -1 : ListaSpedizioniTmp[i].DOCENTE,
-                                        DocenteNome     : ListaSpedizioniTmp[i].NOME_DOCENTE == undefined ? '' : ListaSpedizioniTmp[i].NOME_DOCENTE,
-                                        Data            : ListaSpedizioniTmp[i].DATA,
-                                        Provincia       : ListaSpedizioniTmp[i].PROVINCIA,
-                                        NrConsegnate    : ListaSpedizioniTmp[i].NR_CONSEGNATE,
-                                        NrDaSpedire     : ListaSpedizioniTmp[i].NR_DA_SPEDIRE,
-                                        NrPrenotate     : ListaSpedizioniTmp[i].NR_PRENOTATE,
-                                        Promotore       : ListaSpedizioniTmp[i].PROMOTORE,
-                                        Istituto        : ListaSpedizioniTmp[i].ISTITUTO == null ? -1 : ListaSpedizioniTmp[i].ISTITUTO,
-                                        Spedibile       : false,
-                                        DettagliTitoli  : []
-                                      }
-              SystemInformation.GetSQL('Delivery',{CHIAVE : ListaSpedizioniTmp[i].Chiave},function(Results)
-              {
-                PromotoreSpedizioniDettaglioTmp = SystemInformation.FindResults(Results,'GenericDeliveryDettaglio');
-                if(PromotoreSpedizioniDettaglioTmp != undefined)
-                {
-                   for(let j = 0;j < PromotoreSpedizioniDettaglioTmp.length;j ++)
-                   {                     
-                       if (PromotoreSpedizioniDettaglioTmp[j].SPEDIBILE == 1)
-                       {                                                                   
-                           ListaSpedizioniTmp[i].Spedibile = true;
-                       }
-                       switch(PromotoreSpedizioniDettaglioTmp[j].STATO)
-                       {
-                              case 'P' : PromotoreSpedizioniDettaglioTmp[j].STATO = 'PRENOTATO'
-                                         break;
-                              case 'S' : PromotoreSpedizioniDettaglioTmp[j].STATO = 'DA SPEDIRE'
-                                         break;
-                              case 'C' : PromotoreSpedizioniDettaglioTmp[j].STATO = 'CONSEGNATO'
-                                         break;
-                              default  : PromotoreSpedizioniDettaglioTmp[j].STATO = 'N.D';                                       
-                                         
-                       }
-                       PromotoreSpedizioniDettaglioTmp[j] = {
-                                                              Chiave       : PromotoreSpedizioniDettaglioTmp[j].CHIAVE,
-                                                              Titolo       : PromotoreSpedizioniDettaglioTmp[j].TITOLO,
-                                                              NomeTitolo   : PromotoreSpedizioniDettaglioTmp[j].NOME_TITOLO == undefined ? 'N.D' : PromotoreSpedizioniDettaglioTmp[j].NOME_TITOLO,
-                                                              CodiceTitolo : PromotoreSpedizioniDettaglioTmp[j].CODICE_TITOLO == undefined ? 'N.D' : PromotoreSpedizioniDettaglioTmp[j].CODICE_TITOLO,
-                                                              StatoTitolo  : PromotoreSpedizioniDettaglioTmp[j].STATO                         
-                                                            }
-
-                       ListaSpedizioniTmp[i].DettagliTitoli.push(PromotoreSpedizioniDettaglioTmp[j]);                                                               
-                   }                    
-                }
-                else SystemInformation.ApplyOnError('Modello dettaglio spedizioni non conforme','');     
-              },'SQLDettaglio')            
-          }
-          $scope.ListaSpedizioni = ListaSpedizioniTmp                
-        }
-        else SystemInformation.ApplyOnError('Modello spedizioni non conforme','');     
-      },'SQLPromotore');
-    }
+      $scope.ListaSpedizioni = Answer.ListaSpedizioni; 
+    }); 
   }
   
   $scope.GetTitoliSpedizione = function(Spedizione)

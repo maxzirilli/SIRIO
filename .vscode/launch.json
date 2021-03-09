@@ -5,11 +5,21 @@
  "version": "0.2.0",
  "configurations": [
   {
-   "type": "pwa-chrome",
+   "type": "php",
    "request": "launch",
-   "name": "Launch Chrome against localhost",
-   "url": "http://localhost:8080",
-   "webRoot": "${workspaceFolder}"
-  }
+   "name": "Listen For XDebug",
+   "port": 9000,
+   "pathMappings": {
+       "/var/www/": "${workspaceRoot}"
+   },
+   "xdebugSettings": {
+       "max_children": 256,
+       "max_data": -1,
+       "max_depth": 5
+   },
+   "ignore": [
+       "**/vendor/**/*.php"
+   ]
+}
  ]
 }

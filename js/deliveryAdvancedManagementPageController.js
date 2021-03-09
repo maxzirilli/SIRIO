@@ -31,8 +31,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
     return SystemInformation.UserInformation.Ruolo == RUOLO_AMMINISTRATORE;
   }
 
-  if ($scope.IsAdministrator()) //PER PROBLEMA CRASH TROPPE QUERY
-      $scope.DataRicercaDal = new Date(TmpDate);
+  //if ($scope.IsAdministrator()) //PER PROBLEMA CRASH TROPPE QUERY
+     // $scope.DataRicercaDal = new Date(TmpDate);
   
   $scope.IsAdministrator(); 
   

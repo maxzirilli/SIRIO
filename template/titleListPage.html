@@ -5,7 +5,7 @@
     </div>
     <div layout="row">  
       <md-input-container class="containerSelect" style="width:40%;float:left;margin-right:10px;"><label>MATERIA</label>
-        <md-select ng-model="MateriaFiltro" placeholder="MATERIA" class="mdb-select" type="text" name="MateriaFiltro">
+        <md-select ng-model="MateriaFiltro" ng-change="GridOptions.query.page = 1" placeholder="MATERIA" class="mdb-select" type="text" name="MateriaFiltro">
         <md-optgroup>
           <md-option ng-value="-1">QUALSIASI</md-option>  
           <md-option ng-repeat="materia in ListaMaterie" ng-value="materia.Chiave">{{materia.Materia}}</md-option>
@@ -34,10 +34,10 @@
     </div>
     <div>               
       <md-input-container class="containerSelect" style="width:40%;float:left;"><label>NOME</label>
-        <input ng-model="NomeFiltro" type="search">
+        <input ng-model="NomeFiltro" ng-change="GridOptions.query.page = 1" type="search">
       </md-input-container>
       <md-input-container class="containerSelect" style="width:30%;float:left;"><label>CODICE ISBN</label>
-        <input ng-model="CodiceFiltro" type="search">
+        <input ng-model="CodiceFiltro" ng-change="GridOptions.query.page = 1" type="search">
       </md-input-container>
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoTitolo()">NUOVO TITOLO</md-button>
 
@@ -53,9 +53,11 @@
           <th>MATERIA</th>
           <th>AUTORE</th>
           <th>EDITORE</th>  
-          <th style="width:10%;">POS.MAGAZZINO</th>
-          <th style="width:10%;">Q.MAGAZZINO</th>
-          <th style="width:10%;">Q.MAGAZZINO VOLANTE</th>        
+          <th style="width:10%;">UBI</th>
+          <th style="width:10%;">GIAC</th>
+          <th style="width:10%;">VOL</th>
+          <th style="width:10%;">PREN</th>
+         <!--<th style="width:10%;">SPED</th>-->       
         </tr>  
         <tr ng-repeat="Titolo in ListaTitoli | TitoloByFiltro : MateriaFiltro : NomeFiltro : CodiceFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Titolo.Chiave}}> 
           <td ng-if="IsAdministrator()"><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA TITOLO" ng-click="EliminaTitolo(Titolo)"></td> 
@@ -68,7 +70,9 @@
           <td>{{Titolo.Editore | uppercase}}</td>
           <td>{{Titolo.Pos_Magazzino | uppercase }}</td> 
           <td>{{Titolo.Q_Magazzino}}</td>
-          <td>{{Titolo.Q_MagazzinoVolante}}</td>        
+          <td>{{Titolo.Q_MagazzinoVolante}}</td>
+          <td>{{Titolo.Q_Prenotata}}</td>
+          <!--<td>{{Titolo.Q_DaSpedire}}</td>-->         
         </tr>    
       </table>
       <md-table-pagination  md-limit="GridOptions.query.limit" 

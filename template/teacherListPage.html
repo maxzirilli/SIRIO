@@ -9,7 +9,7 @@
     
     <div layout="row" style="padding-bottom:0px;">
       <md-input-container class="containerSelect" style="width:33%;height:20px;"><label>COGNOME NOME</label>
-        <input ng-model="ANomeFiltro" type="search">
+        <input ng-model="ANomeFiltro" ng-change="GridOptions.query.page = 1" type="search">
       </md-input-container>
        
       <md-input-container class="containerSelect" style="width:33%;"><label>PROVINCIA</label>
@@ -21,7 +21,7 @@
         </md-select>
       </md-input-container>
       
-      <input type="checkbox" ng-model="CoordMateriaFiltro" style="margin-left:5px;margin-right:2px;margin-top:30px;width:2%;">
+      <input type="checkbox" ng-model="CoordMateriaFiltro" ng-change="GridOptions.query.page = 1" style="margin-left:5px;margin-right:2px;margin-top:30px;width:2%;">
       <label style="margin-left:5px;margin-right:2px;margin-top:27px;">COORDINATORE DI MATERIA</label> 
     </div>
     
@@ -191,13 +191,20 @@
                      </div>
                     
                     <div layout="row">
-                       <md-input-container class="containerSelect" style="width:33%;"><label>PIATTAFORMA</label>
+                       <md-input-container class="containerSelect" style="width:33%;"><label>PIATTAFORMA 1</label>
                          <md-select ng-model="DocenteInEditing.Piattaforma" class="mdb-select" type="text" name="Piattaforma">
-                         <md-optgroup label="-">
+                         <md-optgroup>
                            <md-option ng-repeat="piattaforma in ListaPiattaforme" ng-value="piattaforma.Sigla">{{piattaforma.Valore}}</md-option>
                          </md-optgroup>
                          </md-select>
                        </md-input-container>
+                       <md-input-container class="containerSelect" style="width:33%;"><label>PIATTAFORMA 2</label>
+                        <md-select ng-model="DocenteInEditing.Piattaforma_2" class="mdb-select" type="text" name="Piattaforma_2">
+                        <md-optgroup>
+                          <md-option ng-repeat="piattaforma in ListaPiattaforme" ng-value="piattaforma.Sigla">{{piattaforma.Valore}}</md-option>
+                        </md-optgroup>
+                        </md-select>
+                      </md-input-container>
                        <md-input-container style="width:20%;">
                          <label>EMAIL PRINCIPALE</label><input type="text" ng-model="DocenteInEditing.Email" type="text" name="Email">
                        </md-input-container>

@@ -1102,10 +1102,41 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
               for(let j = 0;j < ListaDisponibilita.length;j ++)
                   if (ListaDisponibilita[j].DOCENTE == ListaDocenti[i].DOCENTE)
                       ListaDocenti[i].DISPONIBILITA.push(ListaDisponibilita[j]);
-
+              
+              var UltimaSezione = '-';
+              var CatenaSezioni = '';
+              
               for (let k = 0;k < ListaClassiDocenti.length;k ++)
-                    if(ListaClassiDocenti[k].DOCENTE == ListaDocenti[i].DOCENTE)
-                      ListaDocenti[i].CLASSI.push(ListaClassiDocenti[k].ANNO_CLASSE + ListaClassiDocenti[k].SEZIONE_CLASSE);
+                  if(ListaClassiDocenti[k].DOCENTE == ListaDocenti[i].DOCENTE)
+                  {
+                      if(UltimaSezione != ListaClassiDocenti[k].SEZIONE_CLASSE)
+                      {
+                        if(k != 0 && CatenaSezioni != '' && UltimaSezione != '-')
+                        {
+                          ListaDocenti[i].CLASSI.push(CatenaSezioni + UltimaSezione);
+                          CatenaSezioni = ListaClassiDocenti[k].ANNO_CLASSE;
+                        }
+                        else CatenaSezioni = CatenaSezioni + ListaClassiDocenti[k].ANNO_CLASSE
+                      }                         
+                      else CatenaSezioni = CatenaSezioni + ListaClassiDocenti[k].ANNO_CLASSE
+
+                      UltimaSezione = ListaClassiDocenti[k].SEZIONE_CLASSE;
+                      
+                      //if(ListaClassiDocenti[k].DOCENTE != UltimoDocente)
+                        // ListaDocenti[i].CLASSI.push(CatenaSezioni + UltimaSezione);
+                      //if(k == ListaClassiDocenti.length - 1)
+                         //ListaDocenti[i].CLASSI.push(CatenaSezioni + UltimaSezione);
+                  }
+                  if(CatenaSezioni != '' && UltimaSezione != '-')
+                     ListaDocenti[i].CLASSI.push(CatenaSezioni + UltimaSezione);            
+
+                    //ListaDocenti[i].CLASSI.push(ListaClassiDocenti[k].ANNO_CLASSE + ListaClassiDocenti[k].SEZIONE_CLASSE);
+  
+              /*for (let k = 0;k < ListaClassiDocenti.length;k ++)
+                  if(ListaClassiDocenti[k].DOCENTE == ListaDocenti[i].DOCENTE)
+                    ListaDocenti[i].CLASSI.push(ListaClassiDocenti[k].ANNO_CLASSE + ListaClassiDocenti[k].SEZIONE_CLASSE);*/
+
+
             }
 
             for(let i = 0;i < ListaDocenti.length;i ++)
@@ -1149,7 +1180,7 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                   CoordY = 10;
                   doc.setFontSize(6);
                   doc.setFontType('bold');
-                  doc.text(10,275,SystemInformation.VDocListaDocIst); 
+                  doc.text(10,295,SystemInformation.VDocListaDocIst); 
                 }
                 doc.setFontSize(8);
                 doc.setFontType('bold');

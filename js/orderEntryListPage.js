@@ -416,7 +416,8 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
     if(itemTitMain != undefined)
       $scope.TitoloFiltro = itemTitMain.Chiave;
     else $scope.TitoloFiltro = -1;
-    $scope.RefreshListaOrdini(); 
+    $scope.RefreshListaOrdini();
+    $scope.GridOptions.query.page = 1;
   }
   
   $scope.ModificaOrdine = function(Ordine)

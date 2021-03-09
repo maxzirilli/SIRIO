@@ -254,6 +254,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
       $scope.MateriaFiltroNome = itemMat.Nome
     }
     else $scope.MateriaFiltro = -1;
+    $scope.GridOptions.query.page = 1;
   }
 
   $scope.queryTitolo = function(searchTextTit)
@@ -964,6 +965,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
         $scope.DocenteInEditing.CoordMateria_2   = (DocenteDettaglio[0].COORD_MATERIA_2 != undefined && DocenteDettaglio[0].COORD_MATERIA_2 == DocenteDettaglio[0].MATERIA_2) ? true : false; 
         $scope.DocenteInEditing.CoordMateria_3   = (DocenteDettaglio[0].COORD_MATERIA_3 != undefined && DocenteDettaglio[0].COORD_MATERIA_3 == DocenteDettaglio[0].MATERIA_3) ? true : false;   
         $scope.DocenteInEditing.Piattaforma      = DocenteDettaglio[0].PIATTAFORMA;
+        $scope.DocenteInEditing.Piattaforma_2    = DocenteDettaglio[0].PIATTAFORMA_2;
         $scope.DocenteInEditing.Indirizzo        = DocenteDettaglio[0].INDIRIZZO;
         $scope.DocenteInEditing.Comune           = DocenteDettaglio[0].COMUNE;
         $scope.DocenteInEditing.Cap              = DocenteDettaglio[0].CAP;
@@ -1088,6 +1090,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                                 CoordMateria_2   : false,
                                 CoordMateria_3   : false,
                                 Piattaforma      : '',
+                                Piattaforma_2    : '',
                                 Indirizzo        : '',
                                 Comune           : '',
                                 Cap              : '',
@@ -1255,6 +1258,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                          COORD_MATERIA_2 : ($scope.DocenteInEditing.CoordMateria_2 == true && $scope.DocenteInEditing.Materia_2 != null) ? $scope.DocenteInEditing.Materia_2 : null,
                          COORD_MATERIA_3 : ($scope.DocenteInEditing.CoordMateria_3 == true && $scope.DocenteInEditing.Materia_3 != null) ? $scope.DocenteInEditing.Materia_3 : null, 
                          PIATTAFORMA     : $scope.DocenteInEditing.Piattaforma.xSQL(),
+                         PIATTAFORMA_2   : $scope.DocenteInEditing.Piattaforma_2.xSQL(),
                          INDIRIZZO       : $scope.DocenteInEditing.Indirizzo == undefined ? '' : $scope.DocenteInEditing.Indirizzo.xSQL(),
                          COMUNE          : $scope.DocenteInEditing.Comune == undefined? '' : $scope.DocenteInEditing.Comune.xSQL(),
                          CAP             : $scope.DocenteInEditing.Cap == undefined ? '' : $scope.DocenteInEditing.Cap.xSQL(),

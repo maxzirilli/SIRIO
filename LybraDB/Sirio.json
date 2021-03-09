@@ -1,10 +1,12 @@
 {
  "Version": {
   "Major": 1,
-  "Minor": 17,
+  "Minor": 18,
   "Release": 7
  },
  "Storia": [
+  "Versione 1.18.7   09 Marzo 2021 - Tommaso Martinoli",
+  "                  - NEW: Aggiuta colonna piattaforma_2 nella tabella docenti",
   "Versione 1.17.7   05 Marzo 2021 - Tommaso Martinoli",
   "                  - NEW: Introdotta store procedure per la generazione dell xls del fatturato",
   "Versione 1.16.7   03 Marzo 2021 - Tommaso Martinoli",
@@ -782,6 +784,15 @@
     },
     {
      "Nome": "PIATTAFORMA",
+     "IsNullable": true,
+     "DataType": "char(1)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": "NULL",
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "PIATTAFORMA_2",
      "IsNullable": true,
      "DataType": "char(1)",
      "AutoIncrement": false,

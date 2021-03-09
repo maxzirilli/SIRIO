@@ -144,7 +144,9 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
                                   Pos_Magazzino      : TitoliInfoLista[i].POS_MAGAZZINO == undefined ? 'N.D.' : TitoliInfoLista[i].POS_MAGAZZINO,
                                   Autori             : TitoliInfoLista[i].AUTORI == undefined ? 'N.D' : TitoliInfoLista[i].AUTORI,
                                   Q_Magazzino        : TitoliInfoLista[i].QUANTITA_MGZN == undefined ? 0 : TitoliInfoLista[i].QUANTITA_MGZN,
-                                  Q_MagazzinoVolante : TitoliInfoLista[i].QUANTITA_MGZN_VOL == undefined ? 0 : TitoliInfoLista[i].QUANTITA_MGZN_VOL
+                                  Q_MagazzinoVolante : TitoliInfoLista[i].QUANTITA_MGZN_VOL == undefined ? 0 : TitoliInfoLista[i].QUANTITA_MGZN_VOL,
+                                  Q_Prenotata        : TitoliInfoLista[i].QUANTITA_PREN == undefined ? 0 : TitoliInfoLista[i].QUANTITA_PREN,
+                                  Q_DaSpedire        : TitoliInfoLista[i].QUANTITA_SPED 
                                 };
          }
          $scope.ListaTitoli = TitoliInfoLista;

@@ -2,7 +2,7 @@
   "SelectSQL"           : [
                             { 
                               "Name" : "BookInfoList",
-                              "SQL"  : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,titoli.EDITORE,titoli.MATERIA,titoli.POS_MAGAZZINO,titoli.AUTORI,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL, (SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE materie_insegnamento.CHIAVE = titoli.MATERIA) AS NOME_MATERIA FROM titoli {W~FiltroI~(titoli.CHIAVE IN (SELECT istituti_x_titoli.TITOLO FROM istituti_x_titoli WHERE ISTITUTO IN (SELECT CHIAVE FROM istituti WHERE CHIAVE = :FiltroI)))} ORDER BY titoli.TITOLO" 
+                              "SQL"  : "SELECT titoli.CHIAVE,(SELECT SUM(dettaglio_spedizioni.QUANTITA) FROM dettaglio_spedizioni WHERE TITOLO = titoli.CHIAVE AND STATO = 'P') AS QUANTITA_PREN,(SELECT SUM(dettaglio_spedizioni.QUANTITA) FROM dettaglio_spedizioni WHERE TITOLO = titoli.CHIAVE AND STATO = 'S') AS QUANTITA_SPED,titoli.CODICE_ISBN,titoli.TITOLO,titoli.EDITORE,titoli.MATERIA,titoli.POS_MAGAZZINO,titoli.AUTORI,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL, (SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE materie_insegnamento.CHIAVE = titoli.MATERIA) AS NOME_MATERIA FROM titoli {W~FiltroI~(titoli.CHIAVE IN (SELECT istituti_x_titoli.TITOLO FROM istituti_x_titoli WHERE ISTITUTO IN (SELECT CHIAVE FROM istituti WHERE CHIAVE = :FiltroI)))} ORDER BY titoli.TITOLO" 
                             }
                           ],
 

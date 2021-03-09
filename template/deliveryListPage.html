@@ -9,7 +9,7 @@
         <label>AL</label><input ng-model="DataRicercaAl" type="date" name="DataRicercaAl" ng-change="RefreshListaSpedizioniAll()">
       </md-input-container>
       <md-input-container><label style="width:100%;margin-left:20px;float:left;">PROVINCIA</label>
-        <md-select ng-model="ProvinciaFiltro" placeholder="Provincia di spedizione" class="mdb-select" style="width:100%;margin-left:20px;float:left;" type="text" name="ProvinciaFiltro">
+        <md-select ng-model="ProvinciaFiltro" ng-change="GridOptions.query.page = 1" placeholder="Provincia di spedizione" class="mdb-select" style="width:100%;margin-left:20px;float:left;" type="text" name="ProvinciaFiltro">
           <md-optgroup>
             <md-option ng-value="-1">QUALSIASI</md-option>  
             <md-option ng-repeat="provincia in ListaProvinceAll" ng-value="provincia.Chiave">{{provincia.Nome}}</md-option>
@@ -17,7 +17,7 @@
         </md-select>
       </md-input-container>
       <md-input-container ng-if="IsAdministrator()"><label style="width:100%;margin-left:20px;float:left;">PROMOTORE</label>
-        <md-select ng-model="$parent.PromotoreFiltro" placeholder="Promotore" class="mdb-select" style="width:100%;margin-left:20px;float:left;" type="text" name="PromotoreFiltro">
+        <md-select ng-model="$parent.PromotoreFiltro" ng-change="GridOptions.query.page = 1" placeholder="Promotore" class="mdb-select" style="width:100%;margin-left:20px;float:left;" type="text" name="PromotoreFiltro">
           <md-optgroup>
             <md-option ng-value="-1">QUALSIASI</md-option>  
             <md-option ng-repeat="promotore in ListaPromotori" ng-value="promotore.Chiave">{{promotore.Nome}}</md-option>
@@ -25,9 +25,9 @@
         </md-select>
       </md-input-container>
       
-      <input type="checkbox" ng-model="DaSpedireFiltro" style="margin-left:60px;">DA SPEDIRE
-      <input type="checkbox" ng-model="PrenotataFiltro" style="margin-left:20px;">PRENOTATA
-      <input type="checkbox" ng-model="ConsegnataFiltro" style="margin-left:20px;">CONSEGNATA
+      <input type="checkbox" ng-change="GridOptions.query.page = 1" ng-model="DaSpedireFiltro" style="margin-left:60px;">DA SPEDIRE
+      <input type="checkbox" ng-change="GridOptions.query.page = 1" ng-model="PrenotataFiltro" style="margin-left:20px;">PRENOTATA
+      <input type="checkbox" ng-change="GridOptions.query.page = 1"ng-model="ConsegnataFiltro" style="margin-left:20px;">CONSEGNATA
 
     </div>   
     <br>

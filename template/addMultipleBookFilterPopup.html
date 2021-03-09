@@ -31,7 +31,8 @@
             <th></th>
             <th>ISBN</th>
             <th>TITOLO</th>
-            <th>QUANTITA</th>
+            <th>GIACENZA</th>
+            <th>DISPONIBILE</th>
           </tr>
           <tr ng-repeat="Titolo in ListaTitoliPopup | TitoliMultipliPopupByFiltro : NomeFiltro : CodiceFiltro : AutoreFiltro | limitTo : GridOptions_3.query.limit : (GridOptions_3.query.page - 1) * GridOptions_3.query.limit" id={{Titolo.Chiave}}>
             <td><input type="checkbox" ng-model="Titolo.DaAggiungere"></td>
@@ -40,6 +41,7 @@
             <td>{{Titolo.Codice}}</td>
             <td>{{Titolo.Nome}}</td>
             <td>{{Titolo.Quantita}}</td>
+            <td>{{Titolo.QuantitaDisp}}</td>
           </tr>
           </table>
           <md-table-pagination md-limit="GridOptions_3.query.limit" 

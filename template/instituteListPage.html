@@ -5,7 +5,7 @@
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoIstituto()">NUOVO ISTITUTO</md-button>      
       <div layout="row">
         <md-input-container class="containerSelect" style="width:20%;margin-right:10px;"><label>PROVINCIA</label>
-          <md-select ng-model="ProvinciaFiltro" placeholder="PROVINCIA" class="mdb-select" type="text" name="ProvinciaFiltro">
+          <md-select ng-model="ProvinciaFiltro" ng-change="GridOptions.query.page = 1" placeholder="PROVINCIA" class="mdb-select" type="text" name="ProvinciaFiltro">
           <md-optgroup>
             <md-option ng-value="-1">QUALSIASI</md-option>  
             <md-option ng-repeat="provincia in ListaProvince" ng-value="provincia.Chiave">{{provincia.Nome}}</md-option>
@@ -13,20 +13,20 @@
           </md-select>
         </md-input-container>
         <md-input-container class="containerSelect" style="width:20%;margin-right:10px;"><label>COMUNE</label>
-          <input ng-model="ComuneFiltro" type="search">
+          <input ng-model="ComuneFiltro" ng-change="GridOptions.query.page = 1" type="search">
         </md-input-container>
         <md-input-container class="containerSelect" style="width:20%;"><label>NOME</label>
-          <input ng-model="NomeFiltro" type="search">
+          <input ng-model="NomeFiltro" ng-change="GridOptions.query.page = 1" type="search">
         </md-input-container>
         <md-input-container class="containerSelect" style="width:20%;margin-right:10px;" ng-show="IsAdministrator()"><label>PROMOTORE</label>
-          <md-select ng-model="PromotoreFiltro" placeholder="PROMOTORE" class="mdb-select" type="text" name="PromotoreFiltro">
+          <md-select ng-model="PromotoreFiltro" ng-change="GridOptions.query.page = 1" placeholder="PROMOTORE" class="mdb-select" type="text" name="PromotoreFiltro">
           <md-optgroup>
             <md-option ng-value="-1">QUALSIASI</md-option>  
             <md-option ng-repeat="promotore in ListaPromotori" ng-value="promotore.Chiave">{{promotore.RagioneSociale}}</md-option>
           </md-optgroup>
           </md-select>
         </md-input-container>
-        <input type="checkbox" ng-model="NascostoFiltro" style="margin-top:30px;margin-left:20px;"><label style="margin-top:28px;">ISTITUTI NASCOSTI</label>
+        <input type="checkbox" ng-model="NascostoFiltro" ng-change="GridOptions.query.page = 1" style="margin-top:30px;margin-left:20px;"><label style="margin-top:28px;">ISTITUTI NASCOSTI</label>
       </div>
     </div>
     <div ng-if="ListaIstituti.length != 0">
