@@ -491,7 +491,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                doc.text(10,290,SystemInformation.VDocDelivery)
                
          }
-       doc.save('EtichettePDF' + DataSpedizione + '.pdf',{});
+       doc.save('EtichettePDF' + DataSpedizione + '.pdf',{}); // USANDO IFRAME NON PERMETTE IL SALVATAGGIO!
 
        /*var string = doc.output('datauristring');
        var iframe = "<iframe width='100%' height='100%' src='" + string + "'></iframe>"
@@ -1025,7 +1025,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                   doc.setFontSize(6);
                   doc.text(10,290,SystemInformation.VDocDelivery)
           }
-          doc.save('EtichettePDF' + DataSpedizione + '.pdf',{});
+          doc.save('EtichettePDF' + DataSpedizione + '.pdf',{});  // USANDO IFRAME NON PERMETTE IL SALVATAGGIO!
 
           /*var string = doc.output('datauristring');
           var iframe = "<iframe width='100%' height='100%' src='" + string + "'></iframe>"
