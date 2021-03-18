@@ -95,6 +95,11 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http,$mdDial
   {
     $state.go("communicationPage");
   }
+
+  $scope.CheckAdozioniInScadenza = function()
+  {
+    $state.go("adoptionDeadlinePage");
+  }
     
   $scope.GridOptions = {
                           rowSelection    : false,

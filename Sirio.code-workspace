@@ -6,5 +6,9 @@
 		{
 			"path": "..\\..\\..\\..\\..\\Librerie\\PHP"
 		}
-	]
+	],
+	"settings": {
+		"editor.tabSize": 1,
+		"workbench.editor.showTabs": false
+	}
 }

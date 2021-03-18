@@ -170,16 +170,22 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
        case HTTP_ERROR_EXTRA_SCRIPT     : Self.HTTPError = 'Errore script customizzato'; break;
        default                          : Self.HTTPError = 'Errore sconosciuto'; break;
     }
-   Self.SubHTTPError = ''; 
-   if(Answer.Response == HTTP_ERROR_CONNECTION_SQL ||
-      Answer.Response == HTTP_ERROR_MODEL_LOAD ||
-      Answer.Response == HTTP_ERROR_SQL ||
-      Answer.Response == HTTP_ERROR_EXTRA_SCRIPT ||
-      Answer.Response == HTTP_ERROR_PARAMETERS ||
-      Answer.Response == HTTP_ERROR_SMTP_GENERIC) 
-      if(Answer.Error != undefined)
-         Self.SubHTTPError += '[' + Answer.Error + ']';
-   return(Answer.Response == HTTP_OPERATION_OK)
+
+    Self.SubHTTPError = ''; 
+    if(Answer.Response == undefined)
+       Self.SubHTTPError = Answer;
+    else
+    {
+      if(Answer.Response == HTTP_ERROR_CONNECTION_SQL ||
+         Answer.Response == HTTP_ERROR_MODEL_LOAD ||
+         Answer.Response == HTTP_ERROR_SQL ||
+         Answer.Response == HTTP_ERROR_EXTRA_SCRIPT ||
+         Answer.Response == HTTP_ERROR_PARAMETERS ||
+         Answer.Response == HTTP_ERROR_SMTP_GENERIC) 
+         if(Answer.Error != undefined)
+            Self.SubHTTPError += '[' + Answer.Error + ']';
+     }
+     return(Answer.Response == HTTP_OPERATION_OK)
   }
 
   this.GetInformation = function(OnSuccess,OnError)

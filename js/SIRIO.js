@@ -177,6 +177,12 @@ SIRIOApp.config(['$stateProvider','$urlRouterProvider','$mdAriaProvider',functio
         url: '/communicationPage'
     })
 
+    $stateProvider.state('adoptionDeadlinePage', 
+    {
+        templateUrl: "template/adoptionDeadlinePage.html",
+        url: '/adoptionDeadlinePage'
+    })
+
     $urlRouterProvider.otherwise('loginPage');
 }]);
 
