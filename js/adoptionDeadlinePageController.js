@@ -81,9 +81,10 @@ SIRIOApp.controller("adoptionDeadlinePageController",['$scope','SystemInformatio
             
             for(let j = 0;j < ListaAdozioniInScadenza[i].ListaIstituti.length;j++)
             {
+                CountRighe++;
                 BodySheet['C' + parseInt(CountRighe + 2)] = SystemInformation.GetCellaDati('s',ListaAdozioniInScadenza[i].ListaIstituti[j].Istituto);
                 BodySheet['D' + parseInt(CountRighe + 2)] = SystemInformation.GetCellaDati('s',ListaAdozioniInScadenza[i].ListaIstituti[j].Promotore);
-                CountRighe++;
+                
             }
         }
     
