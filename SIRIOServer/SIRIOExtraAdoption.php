@@ -15,54 +15,48 @@
             {
                   $JSONAnswer->ListaAdozioniInScadenza = array();                  
                   $Parametri   = JSON_decode($_POST['SIRIOParams']);
-                  $ListaCodici = explode(",", $Parametri->ListaCodici);
 
-                  for ($i = 0; $i < count($ListaCodici); $i++)
-                  {
-                        $SQLBody = "SELECT titoli.CODICE_ISBN AS CODICE_TITOLO,".
-                                          "titoli.TITOLO AS NOME_TITOLO,".
-                                          "titoli.CHIAVE AS CHIAVE_TITOLO,".
-                                          "istituti.CHIAVE AS CHIAVE_ISTITUTO,".
-                                          "istituti.NOME AS NOME_ISTITUTO,".
-                                          "utenti.USERNAME AS NOME_PROMOTORE,".
-                                    " FROM titoli,adozioni,istituti,utenti ".
-                                    "WHERE titoli.CODICE = ".$ListaCodici[$i].
-                                    "  AND utenti.CHIAVE IN (SELECT PROMOTORE FROM istituti WHERE CHIAVE IN (SELECT ISTITUTO FROM classi WHERE CHIAVE IN (SELECT CLASSE FROM adozioni_titolo WHERE TITOLO IN (SELECT CHIAVE FROM titoli WHERE CODICE_ISBN=".$ListaCodici[$i].")))) ".
-                                    "  AND istituti.CHIAVE IN (SELECT ISTITUTO FROM classi WHERE CHIAVE IN (SELECT CLASSE FROM adozioni_titolo WHERE TITOLO IN (SELECT CHIAVE FROM titoli WHERE CODICE_ISBN=".$ListaCodici[$i].")))".
-                                 " ORDER BY titoli.TITOLO,istituti.NOME";
-                        
-                        
-                        if($Query = $PDODBase->query($SQLBody))
-                        {
-                           $ChiaveIstituto = -1;
-                           while($Row = $Query->fetch(PDO::FETCH_ASSOC))
-                           {
-                              $Titolo = new stdClass();
-                              $Titolo->Chiave = $Row ['CHIAVE_TITOLO']; 
-                              $Titolo->Codice = $Row ['CODICE_TITOLO']; 
-                              $Titolo->Titolo = $Row ['NOME_TITOLO'];
-                              $Titolo->ListaIstituti = array();
+                  $SQLBody = "SELECT titoli.CODICE_ISBN AS CODICE_TITOLO,".
+                                    "titoli.TITOLO AS NOME_TITOLO,".
+                                    "titoli.CHIAVE AS CHIAVE_TITOLO,".
+                                    "istituti.CHIAVE AS CHIAVE_ISTITUTO,".
+                                    "istituti.NOME AS NOME_ISTITUTO,".
+                                    "utenti.USERNAME AS NOME_PROMOTORE". 
+                       " FROM titoli,adozioni_titolo,istituti LEFT OUTER JOIN utenti ON (utenti.CHIAVE = istituti.PROMOTORE),classi" .
+                      " WHERE titoli.CODICE_ISBN IN ('". str_replace(",","','",$Parametri->ListaCodici) . "')" .
+                        " AND adozioni_titolo.TITOLO = titoli.CHIAVE".
+                        " AND classi.CHIAVE = adozioni_titolo.CLASSE".
+                        " AND istituti.CHIAVE = classi.ISTITUTO".
+                      " GROUP BY istituti.CHIAVE ".
+                      " ORDER BY titoli.TITOLO,utenti.USERNAME,istituti.NOME";                                            
+                   
+                   if($Query = $PDODBase->query($SQLBody))
+                   {
+                      $ChiaveTitolo = -1;
+                      
+                      while($Row = $Query->fetch(PDO::FETCH_ASSOC))
+                      {
+                         if($Row ['CHIAVE_TITOLO'] != $ChiaveTitolo)
+                         {
+                          $Titolo       = new stdClass();
+                          $Titolo->Chiave = $Row ['CHIAVE_TITOLO']; 
+                          $Titolo->Codice = $Row ['CODICE_TITOLO']; 
+                          $Titolo->Titolo = $Row ['NOME_TITOLO'];
+                          $Titolo->ListaIstituti = array();
+                          array_push($JSONAnswer->ListaAdozioniInScadenza,$Titolo);
+                         }
+                         $ChiaveTitolo = $Row ['CHIAVE_TITOLO'];
 
-                              if(!is_null($Row['CHIAVE_ISTITUTO'])) 
-                              {
-                                 $DettaglioIstituto = new stdClass();
-                                 $DettaglioIstituto->ChiaveIstituto = $Row ['CHIAVE_ISTITUTO'];
-                                 $DettaglioIstituto->Istituto       = $Row ['NOME_ISTITUTO'];
-                                 if(!is_null($Row['NOME_PROMOTORE'])) 
-                                   $DettaglioIstituto->Promotore    = $Row ['NOME_PROMOTORE'];
-                                 else $DettaglioIstituto->Promotore = '-';
-
-                                 if($ChiaveIstituto != $Row ['CHIAVE_ISTITUTO'])
-                                    array_push($Titolo->ListaIstituti,$DettaglioIstituto); 
-                              
-                                 $ChiaveIstituto = $Row ['CHIAVE_ISTITUTO'];
-                              }
-                              else $ChiaveIstituto = -1;   
-                           }
-                           $Query = null;
-                        }
-                        array_push($JSONAnswer->ListaAdozioniInScadenza,$Titolo)        
-                  }
+                         $DettaglioIstituto = new stdClass();
+                         $DettaglioIstituto->ChiaveIstituto = $Row ['CHIAVE_ISTITUTO'];
+                         $DettaglioIstituto->Istituto       = $Row ['NOME_ISTITUTO'];
+                         if(!is_null($Row['NOME_PROMOTORE'])) 
+                           $DettaglioIstituto->Promotore    = $Row ['NOME_PROMOTORE'];
+                         else $DettaglioIstituto->Promotore = '-';
+                         array_push($JSONAnswer->ListaAdozioniInScadenza[count($JSONAnswer->ListaAdozioniInScadenza) - 1]->ListaIstituti,$DettaglioIstituto);
+                      }
+                      $Query = null;
+                    }        
            }     
       }
 
