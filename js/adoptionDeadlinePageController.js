@@ -68,23 +68,24 @@ SIRIOApp.controller("adoptionDeadlinePageController",['$scope','SystemInformatio
         BodySheet['C1'] = SystemInformation.GetCellaIntestazione('ISTITUTO');
         BodySheet['D1'] = SystemInformation.GetCellaIntestazione('PROMOTORE');
 
-        var ChiaveTitolo = -1;
+        //var ChiaveTitolo = -1;
         var CountRighe = 0;
         for(let i = 0;i < ListaAdozioniInScadenza.length;i ++)
         {         
-            if(ChiaveTitolo != ListaAdozioniInScadenza[i].Titolo.Chiave)
-            {
-              BodySheet['A' + parseInt(CountRighe + 2)] = SystemInformation.GetCellaDati('s',ListaAdozioniInScadenza[i].Codice);
-              BodySheet['B' + parseInt(CountRighe + 2)] = SystemInformation.GetCellaDati('s',ListaAdozioniInScadenza[i].Titolo);
-            }
-            ChiaveTitolo = ListaAdozioniInScadenza[i].Chiave;
+            //if(ChiaveTitolo != ListaAdozioniInScadenza[i].Titolo.Chiave)
+            //{
+              //BodySheet['A' + parseInt(CountRighe + 2)] = SystemInformation.GetCellaDati('s',ListaAdozioniInScadenza[i].Codice);
+              //BodySheet['B' + parseInt(CountRighe + 2)] = SystemInformation.GetCellaDati('s',ListaAdozioniInScadenza[i].Titolo);
+            //}
+            //ChiaveTitolo = ListaAdozioniInScadenza[i].Chiave;
             
             for(let j = 0;j < ListaAdozioniInScadenza[i].ListaIstituti.length;j++)
-            {
-                CountRighe++;
+            {              
+                BodySheet['A' + parseInt(CountRighe + 2)] = SystemInformation.GetCellaDati('s',ListaAdozioniInScadenza[i].Codice);
+                BodySheet['B' + parseInt(CountRighe + 2)] = SystemInformation.GetCellaDati('s',ListaAdozioniInScadenza[i].Titolo);
                 BodySheet['C' + parseInt(CountRighe + 2)] = SystemInformation.GetCellaDati('s',ListaAdozioniInScadenza[i].ListaIstituti[j].Istituto);
                 BodySheet['D' + parseInt(CountRighe + 2)] = SystemInformation.GetCellaDati('s',ListaAdozioniInScadenza[i].ListaIstituti[j].Promotore);
-                
+                CountRighe++;
             }
         }
     

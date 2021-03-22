@@ -29,7 +29,7 @@
                         " AND istituti.CHIAVE = classi.ISTITUTO".
                       " GROUP BY istituti.CHIAVE,titoli.CODICE_ISBN ".
                       " ORDER BY titoli.TITOLO,utenti.USERNAME,istituti.NOME";                                            
-                   error_log($SQLBody);
+
                    if($Query = $PDODBase->query($SQLBody))
                    {
                       $ChiaveTitolo = -1;
