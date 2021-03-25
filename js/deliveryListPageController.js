@@ -691,8 +691,9 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
   {
      searchTextDocente = searchTextDocente.toUpperCase();
      return($scope.ListaDocenti.grep(function(Elemento) 
-     { 
-       return(Elemento.Nome.toUpperCase().indexOf(searchTextDocente) != -1);
+     {
+       //return(Elemento.Nome.toUpperCase().indexOf(searchTextDocente) != -1);
+       return(Elemento.Nome.toUpperCase().startsWith(searchTextDocente))
      }));
   }
 

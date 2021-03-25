@@ -1128,7 +1128,8 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
            searchTextDoc = searchTextDoc.toUpperCase();
            return($scope.ListaDocToTransfer.grep(function(Elemento) 
            { 
-             return(Elemento.NomeDoc.toUpperCase().indexOf(searchTextDoc) != -1);
+             //return(Elemento.NomeDoc.toUpperCase().indexOf(searchTextDoc) != -1);
+             return(Elemento.NomeDoc.toUpperCase().startsWith(searchTextDoc))
            }));
         }
         
@@ -2279,7 +2280,8 @@ SIRIOApp.filter('DocenteByFiltro',function()
               var Result = true;
               
               if(ANomeFiltro != '')
-                 if(Docente.RagioneSociale.toUpperCase().indexOf(ANomeFiltro) < 0)
+                 //if(Docente.RagioneSociale.toUpperCase().indexOf(ANomeFiltro) < 0)
+                 if(!Docente.RagioneSociale.startsWith(ANomeFiltro))
                     Result = false;
                   
               if(MateriaFiltro != -1)

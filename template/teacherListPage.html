@@ -27,7 +27,7 @@
     
     <div layout="row" style="margin-top:0px;">    
 
-      <img src="img/printPDF.png" ng-show="IstitutoFiltrato != -1" style="margin-top:15px;margin-right:10px;width:3%;height:3%;" title="LISTA DOCENTI" ng-click="CreaPdfListaDocenti(IstitutoFiltrato)">
+      <img src="img/printPDF.png" ng-show="IstitutoFiltrato != -1 && searchTextIstituto != ''" style="margin-top:15px;margin-right:10px;width:3%;height:3%;" title="LISTA DOCENTI" ng-click="CreaPdfListaDocenti(IstitutoFiltrato)">
 
       <md-input-container class="containerSelect" style="width:30%;margin-right:10px;">
         <label>ISTITUTO</label>
