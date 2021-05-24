@@ -622,8 +622,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                                                 Promotore        : ListaSpedizioniTmp[i].PROMOTORE,
                                                 PromotoreNome    : ListaSpedizioniTmp[i].NOME_PROMOTORE,
                                                 Istituto         : ListaSpedizioniTmp[i].ISTITUTO,
-                                                NomeIstituto     : ListaSpedizioniTmp[i].NOME_ISTITUTO == undefined ? '' : ListaSpedizioniTmp[i].NOME_ISTITUTO
-    
+                                                NomeIstituto     : ListaSpedizioniTmp[i].NOME_ISTITUTO == undefined ? '' : ListaSpedizioniTmp[i].NOME_ISTITUTO   
                                               })
                 }
                 $scope.ListaSpedizioni.push({ 
@@ -656,7 +655,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
         }
       }
       $scope.RefreshListaSpedizioniAll();
-    }
+   }
  
   $scope.SelezionaTutto = function()
   {

@@ -19,5 +19,6 @@
     define('FIELD_UTENTI_CAMPO_ELIMINATO','ELIMINATO');
     define('PAR_MAIL_BODY','Testo');
     define('PAR_MAIL_SUBJECT','Oggetto');
+    define('PAR_SESSION_ID','SIRIOSessionId')
     
 ?>    

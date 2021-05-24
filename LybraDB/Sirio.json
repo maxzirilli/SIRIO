@@ -1,10 +1,12 @@
 {
  "Version": {
   "Major": 1,
-  "Minor": 18,
+  "Minor": 19,
   "Release": 7
  },
  "Storia": [
+  "Versione 1.19.7   24 Maggio 2021 - Tommaso Martinoli",
+  "                  - NEW: Aggiunta unique key in tabella titoli per prevenire inserimento duplicati con stesso codice isbn e titolo",
   "Versione 1.18.7   09 Marzo 2021 - Tommaso Martinoli",
   "                  - NEW: Aggiuta colonna piattaforma_2 nella tabella docenti",
   "Versione 1.17.7   05 Marzo 2021 - Tommaso Martinoli",
@@ -792,15 +794,6 @@
      "SQLAfterAddedColumn": null
     },
     {
-     "Nome": "PIATTAFORMA_2",
-     "IsNullable": true,
-     "DataType": "char(1)",
-     "AutoIncrement": false,
-     "Commento": "",
-     "DefaultValue": "NULL",
-     "SQLAfterAddedColumn": null
-    },
-    {
      "Nome": "TEL_PRIMO",
      "IsNullable": true,
      "DataType": "varchar(255)",
@@ -888,6 +881,15 @@
      "AutoIncrement": false,
      "Commento": "",
      "DefaultValue": "'F'",
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "PIATTAFORMA_2",
+     "IsNullable": true,
+     "DataType": "char(1)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": "NULL",
      "SQLAfterAddedColumn": null
     }
    ],
@@ -1133,7 +1135,15 @@
      "RefField": "CHIAVE"
     }
    ],
-   "UniqueKeys": [],
+   "UniqueKeys": [
+    {
+     "Campi": [
+      "CODICE_ISBN",
+      "TITOLO"
+     ],
+     "Nome": "TITOLO_UNIVOCO"
+    }
+   ],
    "Indexes": [],
    "Triggers": [
     {

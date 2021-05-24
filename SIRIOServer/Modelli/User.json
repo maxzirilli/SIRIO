@@ -2,7 +2,7 @@
  "SelectSQL" : [
                  { 
                    "Name" : "UserInfoList",
-                   "SQL"  : "SELECT * FROM utenti WHERE ELIMINATO <> 1 ORDER BY utenti.USERNAME" 
+                   "SQL"  : "SELECT CHIAVE,USERNAME,RAGIONE_SOCIALE,EMAIL,ROLE,ELIMINATO,ORDINAMENTO_DOC FROM utenti WHERE ELIMINATO <> 1 ORDER BY utenti.USERNAME" 
                  },
                  {
                    "Name" : "MyUserKey",
