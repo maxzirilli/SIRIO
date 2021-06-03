@@ -1,5 +1,5 @@
 <div ng-controller="startPageController" ng-cloak md-theme="{{ActualTheme}}" style="height:75%">
-  <md-toolbar class="md-menu-toolbar">
+  <!--<md-toolbar class="md-menu-toolbar">
     <div layout="row">
       <div>
         <md-button name="Utenti" class="MainButton" ng-if="IsAdministrator()" ng-click="ApriListaUtenti()">
@@ -10,7 +10,7 @@
         <img src="img/school.png" class="invert MainIcon">
           ISTITUTI
         </md-button>
-        <md-button name="Docenti" class="MainButton" ng-click="ApriListaDocenti()">
+        <md-button name="Docenti" class="MainButton" ng-click="$rootScope.ApriListaDocenti()">
         <img src="img/teacher.png" class="invert MainIcon">        
           DOCENTI
         </md-button>
@@ -36,7 +36,7 @@
         </md-button>
       </div>
     </div>
-  </md-toolbar>
+  </md-toolbar>-->
 
   <md-content>
     <div layout="row">

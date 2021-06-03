@@ -1,0 +1,59 @@
+<md-dialog>
+ <form ng-cloak name="PopupForm">
+   <md-toolbar>
+     <div class="md-toolbar-tools">
+       <h2 style="font-weight:bold;color:white;">RICERCA TITOLI</h2>
+     </div>
+   </md-toolbar>
+
+   <md-dialog-content>
+     <div class="md-dialog-content">
+       <h2>Seleziona titoli</h2>
+       <div layout="row">
+         <md-input-container class="containerSelect"><label>Filtra per nome...</label>
+           <input ng-model="NomeFiltro" type="search">
+         </md-input-container>
+         
+         <md-input-container class="containerSelect"><label>Filtra per ISBN...</label>
+           <input ng-model="CodiceFiltro" type="search">
+         </md-input-container>
+       </div>
+ 
+       <p ng-if="ListaTitoli.length == 0" style="font-weight:bold;font-style:italic;float:center;">NESSUN TITOLO TROVATO</p>  
+       <div ng-if="ListaTitoli.length != 0">
+         <table style="width:950px;text-align:center;" md-row-select="GridOptions_2.rowSelection" multiple="{{GridOptions_2.multiSelect}}">  
+         <tr>
+           <th>
+           <th>ISBN</th>
+           <th>TITOLO</th>
+           <th>GIACENZA</th>
+         </tr>
+         <tr ng-repeat="Titolo in ListaTitoli | MultiploCaricoPopupByFiltro : NomeFiltro : CodiceFiltro | limitTo : GridOptions_2.query.limit : (GridOptions_2.query.page - 1) * GridOptions_2.query.limit" id={{Titolo.Chiave}}>
+           <td><input type="checkbox" ng-model="Titolo.DaAggiungere"></td>
+           <td>{{Titolo.Codice}}</td>
+           <td>{{Titolo.Nome}}</td>
+           <td>{{Titolo.Quantita}}</td>
+         </tr>
+         </table>
+         <md-table-pagination md-limit="GridOptions_2.query.limit" 
+                            md-limit-options="GridOptions_2.limitOptions" 
+                            md-page="GridOptions_2.query.page" 
+                            md-total="{{ListaTitoli.length}}" 
+                            md-page-select="GridOptions_2.pageSelect" 
+                            md-boundary-links="GridOptions_2.boundaryLinks" 
+                            style="width:950px;"
+                            md-on-paginate="logPagination"></md-table-pagination>
+        </div>
+     </div>
+   </md-dialog-content>
+
+   <md-dialog-actions layout="row">
+     <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ConfermaPopupRicercaMultipla()">
+      CONFERMA
+     </md-button>
+     <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="AnnullaPopupRicercaMultipla()">
+      ANNULLA
+     </md-button>
+   </md-dialog-actions>
+ </form>
+</md-dialog>

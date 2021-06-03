@@ -1,106 +1,107 @@
 <div ng-controller="deliveryListPageController" ng-cloak md-theme="{{ActualTheme}}" style="height:75%">
   <h2>SPEDIZIONI</h2>
 
-    <div layout="row" style="margin:0px;">
-      <md-input-container style="float:left;margin-left:20px;">
-        <label>DAL</label><input ng-model="DataRicercaDal" type="date" name="DataRicercaDal" ng-change="RefreshListaSpedizioniAll()">
-      </md-input-container>
-      <md-input-container style="float:left;margin-left:20px;">  
-        <label>AL</label><input ng-model="DataRicercaAl" type="date" name="DataRicercaAl" ng-change="RefreshListaSpedizioniAll()">
-      </md-input-container>
-      <md-input-container><label style="width:100%;margin-left:20px;float:left;">PROVINCIA</label>
-        <md-select ng-model="ProvinciaFiltro" ng-change="GridOptions.query.page = 1" placeholder="Provincia di spedizione" class="mdb-select" style="width:100%;margin-left:20px;float:left;" type="text" name="ProvinciaFiltro">
-          <md-optgroup>
-            <md-option ng-value="-1">QUALSIASI</md-option>  
-            <md-option ng-repeat="provincia in ListaProvinceAll" ng-value="provincia.Chiave">{{provincia.Nome}}</md-option>
-          </md-optgroup>
-        </md-select>
-      </md-input-container>
-      <md-input-container ng-if="IsAdministrator()"><label style="width:100%;margin-left:20px;float:left;">PROMOTORE</label>
-        <md-select ng-model="$parent.PromotoreFiltro" ng-change="GridOptions.query.page = 1" placeholder="Promotore" class="mdb-select" style="width:100%;margin-left:20px;float:left;" type="text" name="PromotoreFiltro">
-          <md-optgroup>
-            <md-option ng-value="-1">QUALSIASI</md-option>  
-            <md-option ng-repeat="promotore in ListaPromotori" ng-value="promotore.Chiave">{{promotore.Nome}}</md-option>
-          </md-optgroup>
-        </md-select>
-      </md-input-container>
-      
-      <input type="checkbox" ng-change="GridOptions.query.page = 1" ng-model="DaSpedireFiltro" style="margin-left:60px;">DA SPEDIRE
-      <input type="checkbox" ng-change="GridOptions.query.page = 1" ng-model="PrenotataFiltro" style="margin-left:20px;">PRENOTATA
-      <input type="checkbox" ng-change="GridOptions.query.page = 1"ng-model="ConsegnataFiltro" style="margin-left:20px;">CONSEGNATA
+  <div layout="row" style="margin:0px;">
+    <md-input-container style="float:left;margin-left:20px;margin-bottom: 0px;">
+      <label>DAL</label><input ng-model="DataRicercaDal" type="date" name="DataRicercaDal" ng-change="RefreshListaSpedizioniAll()">
+    </md-input-container>
+    <md-input-container style="float:left;margin-left:20px;margin-bottom: 0px;">  
+      <label>AL</label><input ng-model="DataRicercaAl" type="date" name="DataRicercaAl" ng-change="RefreshListaSpedizioniAll()">
+    </md-input-container>
+    <md-input-container><label style="width:100%;margin-left:20px;float:left;margin-bottom: 0px;">PROVINCIA</label>
+      <md-select ng-model="ProvinciaFiltro" ng-change="GridOptions.query.page = 1" placeholder="Provincia di spedizione" class="mdb-select" style="width:100%;margin-left:20px;float:left;" type="text" name="ProvinciaFiltro">
+        <md-optgroup>
+          <md-option ng-value="-1">QUALSIASI</md-option>  
+          <md-option ng-repeat="provincia in ListaProvinceAll" ng-value="provincia.Chiave">{{provincia.Nome}}</md-option>
+        </md-optgroup>
+      </md-select>
+    </md-input-container>
+    <md-input-container ng-if="IsAdministrator()"><label style="width:100%;margin-left:20px;float:left;margin-bottom: 0px;">PROMOTORE</label>
+      <md-select ng-model="$parent.PromotoreFiltro" ng-change="GridOptions.query.page = 1" placeholder="Promotore" class="mdb-select" style="width:100%;margin-left:20px;float:left;" type="text" name="PromotoreFiltro">
+        <md-optgroup>
+          <md-option ng-value="-1">QUALSIASI</md-option>  
+          <md-option ng-repeat="promotore in ListaPromotori" ng-value="promotore.Chiave">{{promotore.Nome}}</md-option>
+        </md-optgroup>
+      </md-select>
+    </md-input-container>
+    
+    <input type="checkbox" ng-change="GridOptions.query.page = 1" ng-model="DaSpedireFiltro" style="margin-left:60px;">DA SPEDIRE
+    <input type="checkbox" ng-change="GridOptions.query.page = 1" ng-model="PrenotataFiltro" style="margin-left:20px;">PRENOTATA
+    <input type="checkbox" ng-change="GridOptions.query.page = 1"ng-model="ConsegnataFiltro" style="margin-left:20px;">CONSEGNATA
 
-    </div>   
-    <br>
-    <div layout="row" layout-align="start start" style="margin-top:0px;padding-top:0px;">
-      <md-input-container class="containerSelect" style="margin-left:5px;width:30%;padding-top:0px;">
-         <label>ISTITUTO</label>
-         <md-autocomplete
-                     md-input-name="Istituto"
-                     md-autofocus="true"
-                     md-no-cache="true"
-                     md-selected-item-change = "selectedItemChangeIstituto(item)"
-                     md-search-text="searchTextIstituto"
-                     md-items="item in queryIstituto(searchTextIstituto)"
-                     md-item-text="item.Istituto"
-                     md-require-match="true"
-                     md-clear-button="true">
-         <md-item-template>
-           <span md-highlight-text="searchText">{{item.Istituto}}</span>
-         </md-item-template>
-         <md-not-found>
-           NESSUNA CORRISPONDENZA
-         </md-not-found>
-      </md-input-container>
-      <md-input-container class="containerSelect" style="margin-left:5px;width:30%;padding-top:0px;">
-         <label>DOCENTE</label>
-         <md-autocomplete
-                     md-input-name="Docente"
-                     md-autofocus="true"
-                     md-no-cache="true"
-                     md-selected-item-change = "selectedItemChangeDocente(item)"
-                     md-search-text="searchTextDocente"
-                     md-items="item in queryDocente(searchTextDocente)"
-                     md-item-text="item.Nome"
-                     md-require-match="true"
-                     md-clear-button="true">
-         <md-item-template>
-           <span md-highlight-text="searchText">{{item.Nome}}</span>
-         </md-item-template>
-         <md-not-found>
-           NESSUNA CORRISPONDENZA
-         </md-not-found>
-      </md-input-container>
-      <md-input-container class="containerSelect" style="width:40%;margin-right:10px;">
-        <label>TITOLO</label>
-        <md-autocomplete
-                    md-input-name="Titolo"
-                    md-autofocus="true"
-                    md-no-cache="true"
-                    md-selected-item-change = "selectedItemChangeTitolo(item)"
-                    md-search-text="searchTextTit"
-                    md-items="item in queryTitolo(searchTextTit)"
-                    md-item-text="item.Nome"
-                    md-require-match="true"
-                    md-clear-button="true">
-        <md-item-template>
-          <span md-highlight-text="searchText">ISBN : {{item.Codice}} - {{item.Nome}}</span>
-        </md-item-template>
-        <md-not-found>
-          Nessuna corrispondenza
-        </md-not-found>
-      </md-input-container>
-    </div>
-    <br>
-    <div style="text-align:right;">
-      <md-button class="md-raised md-accent" style="float:left;font-weight:bold;" ng-click="SelezioneGruppiXls($event,'P')">XLS CUMULATIVO PRENOTATI</md-button>
-      <md-button class="md-raised md-accent" style="float:left;font-weight:bold;" ng-click="ApriCumulativoPrenotatiOrd($event)">ORD CUMULATIVO PRENOTATI</md-button>
-      <md-button class="md-raised md-accent" style="float:left;font-weight:bold;" ng-click="SelezioneGruppiXls($event,'C')">XLS CUMULATIVO CONSEGNATI</md-button>
-
-      <md-button class="md-raised md-accent" style="float:left;font-weight:bold;" ng-click="CreaXlsSpedizioni()">XLS SPEDIZIONI GENERICO</md-button>
-
-      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaSpedizioneCasaEditrice()">NUOVA SPEDIZIONE CASA EDITRICE</md-button>
-      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="GestioneAvanzataSpedizioni()">GESTIONE SPEDIZIONI DISPONIBILI</md-button>
-    </div>
+  </div>   
+  <br>
+  <div layout="row" layout-align="start start" style="margin-top:0px;padding-top:0px;">
+    <md-input-container class="containerSelect" style="margin-left:5px;width:30%;padding-top:0px;">
+       <label>ISTITUTO</label>
+       <md-autocomplete
+                   md-input-name="Istituto"
+                   md-autofocus="true"
+                   md-no-cache="true"
+                   md-selected-item-change = "selectedItemChangeIstituto(item)"
+                   md-search-text="searchTextIstituto"
+                   md-items="item in queryIstituto(searchTextIstituto)"
+                   md-item-text="item.Istituto"
+                   md-require-match="true"
+                   md-clear-button="true">
+       <md-item-template>
+         <span md-highlight-text="searchText">{{item.Istituto}}</span>
+       </md-item-template>
+       <md-not-found>
+         NESSUNA CORRISPONDENZA
+       </md-not-found>
+    </md-input-container>
+    <md-input-container class="containerSelect" style="margin-left:5px;width:30%;padding-top:0px;">
+       <label>DOCENTE</label>
+       <md-autocomplete
+                   md-input-name="Docente"
+                   md-autofocus="true"
+                   md-no-cache="true"
+                   md-selected-item-change = "selectedItemChangeDocente(item)"
+                   md-search-text="searchTextDocente"
+                   md-items="item in queryDocente(searchTextDocente)"
+                   md-item-text="item.Nome"
+                   md-require-match="true"
+                   md-clear-button="true">
+       <md-item-template>
+         <span md-highlight-text="searchText">{{item.Nome}}</span>
+       </md-item-template>
+       <md-not-found>
+         NESSUNA CORRISPONDENZA
+       </md-not-found>
+    </md-input-container>
+    <md-input-container class="containerSelect" style="width:40%;margin-right:10px;">
+      <label>TITOLO</label>
+      <md-autocomplete
+                  md-input-name="Titolo"
+                  md-autofocus="true"
+                  md-no-cache="true"
+                  md-selected-item-change = "selectedItemChangeTitolo(item)"
+                  md-search-text="searchTextTit"
+                  md-items="item in queryTitolo(searchTextTit)"
+                  md-item-text="item.Nome"
+                  md-require-match="true"
+                  md-clear-button="true">
+      <md-item-template>
+        <span md-highlight-text="searchText">ISBN : {{item.Codice}} - {{item.Nome}}</span>
+      </md-item-template>
+      <md-not-found>
+        Nessuna corrispondenza
+      </md-not-found>
+    </md-input-container>
+  </div>
+  <br>
+  <div>
+    <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="SelezioneGruppiXls($event,'P')">XLS CUMULATIVO PRENOTATI</md-button>
+    <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="ApriCumulativoPrenotatiOrd($event)">ORD CUMULATIVO PRENOTATI</md-button>
+    <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="SelezioneGruppiXls($event,'C')">XLS CUMULATIVO CONSEGNATI</md-button>
+    <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="CreaXlsSpedizioni()">XLS SPEDIZIONI GENERICO</md-button>
+  </div>
+  <br>
+  <div>
+    <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaSpedizioneCasaEditrice()">NUOVA SPEDIZIONE CASA EDITRICE</md-button>
+    <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="GestioneAvanzataSpedizioni()">GESTIONE SPEDIZIONI DISPONIBILI</md-button>
+  </div>
 
   <div ng-if="ListaSpedizioni.length != 0">
     <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  

@@ -29,10 +29,12 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
     { 
        for(let i = 0; i < TitoliInfoLista.length; i++)
            TitoliInfoLista[i] = { 
-                                  Chiave    : TitoliInfoLista[i].CHIAVE,
-                                  Nome      : TitoliInfoLista[i].TITOLO,
-                                  Codice    : TitoliInfoLista[i].CODICE_ISBN,
-                                  Posizione : TitoliInfoLista[i].POS_MAGAZZINO == null ? '' : TitoliInfoLista[i].POS_MAGAZZINO
+                                  Chiave       : TitoliInfoLista[i].CHIAVE,
+                                  Nome         : TitoliInfoLista[i].TITOLO,
+                                  Quantita     : parseInt(TitoliInfoLista[i].QUANTITA_MGZN),
+                                  Codice       : TitoliInfoLista[i].CODICE_ISBN,
+                                  Posizione    : TitoliInfoLista[i].POS_MAGAZZINO == null ? '' : TitoliInfoLista[i].POS_MAGAZZINO,
+                                  DaAggiungere : false
                                 }
        $scope.ListaTitoli  = TitoliInfoLista;
        $scope.ListaTitoliF = TitoliInfoLista;
@@ -47,11 +49,11 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
     { 
        for(let i = 0; i < TitoliInfoListaNF.length; i++)
            TitoliInfoListaNF[i] = { 
-                                  Chiave    : TitoliInfoListaNF[i].CHIAVE,
-                                  Nome      : TitoliInfoListaNF[i].TITOLO,
-                                  Codice    : TitoliInfoListaNF[i].CODICE_ISBN,
-                                  Editore   : TitoliInfoListaNF[i].EDITORE
-                                }
+                                    Chiave    : TitoliInfoListaNF[i].CHIAVE,
+                                    Nome      : TitoliInfoListaNF[i].TITOLO,
+                                    Codice    : TitoliInfoListaNF[i].CODICE_ISBN,
+                                    Editore   : TitoliInfoListaNF[i].EDITORE
+                                  }
        $scope.ListaTitoliNoFilter = TitoliInfoListaNF
     }
     else SystemInformation.ApplyOnError('Modello titoli non filtrati non conforme','');   
@@ -90,6 +92,22 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
                                            },
                          limitOptions    : [10, 20, 30]
                        };
+
+ $scope.GridOptions_2 = {
+                          rowSelection    : false,
+                          multiSelect     : true,
+                          autoSelect      : true,
+                          decapitate      : false,
+                          largeEditDialog : false,
+                          boundaryLinks   : false,
+                          limitSelect     : true,
+                          pageSelect      : true,
+                          query           : {
+                                              limit: 10,
+                                              page: 1
+                                            },
+                          limitOptions    : [10, 20, 30]
+                        };
     
   $scope.CVSLoaded = function(fileInfo)
   { 
@@ -420,6 +438,132 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
     $scope.GridOptions.query.page = 1;
   }
   
+  $scope.NuovoOrdineMultiplo = function(ev)
+  {
+    $mdDialog.show({ 
+                     controller          : DialogControllerOrdineMultiplo,
+                     templateUrl         : "template/multipleOrderListPopup.html",
+                     targetEvent         : ev,
+                     scope               : $scope,
+                     preserveScope       : true,
+                     clickOutsideToClose : true
+                   })
+    .then(function(answer) 
+    {}, 
+    function() 
+    {});
+  }
+
+  function DialogControllerOrdineMultiplo()
+  {
+    $scope.NomeFiltro        = '';
+    $scope.CodiceFiltro      = '';
+    $scope.ListaTitoliToAdd  = [];
+    
+    $scope.hide = function() 
+    {
+      $mdDialog.hide();
+    };
+
+    $scope.AnnullaPopupRicercaMultipla = function() 
+    {
+      for(let i = 0;i < $scope.ListaTitoli.length;i ++)
+          $scope.ListaTitoli[i].DaAggiungere = false;
+      $scope.NomeFiltro        = '';
+      $scope.CodiceFiltro      = '';              
+      $scope.ListaTitoliToAdd  = [];
+      $mdDialog.cancel();
+    };
+
+    $scope.ConfermaPopupRicercaMultipla = function()
+    {  
+      for(let i = 0;i < $scope.ListaTitoli.length;i ++)
+      {
+        if($scope.ListaTitoli[i].DaAggiungere)
+        {
+           $scope.ListaTitoliToAdd.push($scope.ListaTitoli[i]); 
+           $scope.ListaTitoli[i].DaAggiungere = false;
+        }
+      }                   
+      $scope.NomeFiltro   = '';
+      $scope.CodiceFiltro = '';        
+      $mdDialog.hide();
+      $scope.GestisciOrdineMultiplo($scope.ListaTitoliToAdd)          
+    };
+  }
+
+  $scope.GestisciOrdineMultiplo = function(ListaTitoli) 
+  {
+    $mdDialog.show({ 
+                      controller          : DialogControllerGestioneCaricoMultiplo,
+                      templateUrl         : "template/handleMultipleOrderPopup.html",
+                      targetEvent         : ListaTitoli,
+                      scope               : $scope,
+                      preserveScope       : true,
+                      clickOutsideToClose : true,
+                      locals              :{ListaTitoli}
+                    })
+    .then(function(answer) 
+    {}, 
+    function() 
+    {});
+  }
+
+  function DialogControllerGestioneCaricoMultiplo($scope,$mdDialog,ListaTitoli)
+  {
+    $scope.ListaTitoliToHandle = ListaTitoli;
+    $scope.dataOrdineMultiplo = new Date();
+
+    for(let i = 0;i < $scope.ListaTitoliToHandle.length;i ++)
+    {
+      $scope.ListaTitoliToHandle[i] = {
+                                        "TITOLO"            : $scope.ListaTitoliToHandle[i].Chiave,
+                                        "UBICAZIONE"        : $scope.ListaTitoliToHandle[i].Posizione,
+                                        "NOME_TITOLO"       : $scope.ListaTitoliToHandle[i].Nome,
+                                        "QUANTITA"          : 1,
+                                        "ISBN_TITOLO"       : $scope.ListaTitoliToHandle[i].Codice                               
+                                      }
+    }
+
+    $scope.hide = function() 
+    {
+      $mdDialog.hide();
+    };
+
+    $scope.AnnullaMultiploCaricoPopup = function() 
+    {
+      $scope.ListaTitoliToHandle = [];
+      $scope.dataOrdineMultiplo  = null;
+      $mdDialog.cancel();
+    };
+
+    $scope.ConfermaMultiploCaricoPopup = function()
+    {
+      $ObjQuery = {Operazioni : []};
+      for(let j = 0; j < $scope.ListaTitoliToHandle.length;j ++)
+      {
+          var ParamCarico = {
+                              DataCarico       : $scope.dataOrdineMultiplo,
+                              TitoloCarico     : $scope.ListaTitoliToHandle[j].TITOLO,  
+                              QuantitaCarico   : $scope.ListaTitoliToHandle[j].QUANTITA,
+                              UbicazioneCarico : $scope.ListaTitoliToHandle[j].UBICAZIONE
+                            }
+
+            $ObjQuery.Operazioni.push({
+                                        Query     : 'InsertOrderEntryTest',
+                                        Parametri : ParamCarico,
+                                      });           
+      }
+      SystemInformation.PostSQL('OrderEntry',$ObjQuery,function(Answer)
+      {
+        $scope.ListaTitoliToHandle = [];
+        $scope.dataOrdineMultiplo  = null;
+        $mdDialog.hide();
+        $scope.RefreshListaOrdini();
+      }); 
+    }
+  }
+
   $scope.ModificaOrdine = function(Ordine)
   { 
     $scope.EditingOn                   = true; 
@@ -525,7 +669,7 @@ SIRIOApp.filter('OrdineByFiltro',function()
               return(ListaOrdini);
            var ListaFiltrata = [];
            TitoloFiltro = TitoloFiltro.toUpperCase();
-           
+          
            var OrdineOk = function(Ordine)
            {  
               var Result = true;
@@ -535,14 +679,49 @@ SIRIOApp.filter('OrdineByFiltro',function()
                     Result = false;
               return(Result);
            }
+          
+           ListaOrdini.forEach(function(Ordine)
+           { 
+             if(OrdineOk(Ordine)) 
+                ListaFiltrata.push(Ordine)                       
+           });
+
+           return(ListaFiltrata); 
+         }
+});
+
+SIRIOApp.filter('MultiploCaricoPopupByFiltro',function()
+{
+  return function(ListaTitoliPopup,NomeFiltro,CodiceFiltro)
+         {
+           if(NomeFiltro == '' && CodiceFiltro == '') 
+             return(ListaTitoliPopup);
+           var ListaFiltrata = [];
+           NomeFiltro = NomeFiltro.toUpperCase();
+           CodiceFiltro = CodiceFiltro.toUpperCase();
            
-            ListaOrdini.forEach(function(Ordine)
-            { 
-              if(OrdineOk(Ordine)) 
-                 ListaFiltrata.push(Ordine)                       
-            });
-            
-            return(ListaFiltrata);
+           var TitoloOk = function(Titolo)
+           {  
+              var Result = true;
+              
+              if(NomeFiltro != '')              
+                if(Titolo.Nome.toUpperCase().indexOf(NomeFiltro) < 0)
+                   Result = false;
+              
+              if(CodiceFiltro != '')
+                 if(Titolo.Codice.toUpperCase().indexOf(CodiceFiltro) < 0)
+                   Result = false; 
+              
+              return(Result);
+           }
+           
+           ListaTitoliPopup.forEach(function(Titolo)
+           { 
+             if(TitoloOk(Titolo)) 
+                ListaFiltrata.push(Titolo)                       
+           });
+           
+           return(ListaFiltrata);
            
          }
 });

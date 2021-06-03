@@ -1727,7 +1727,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
   } 
 }]);
 
-
 SIRIOApp.filter('TitoliMultipliPopupByFiltro',function()
 {
   return function(ListaTitoliPopup,NomeFiltro,CodiceFiltro,AutoreFiltro)

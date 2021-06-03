@@ -1,0 +1,43 @@
+<md-dialog>
+ <form ng-cloak name="PopupForm">
+   <md-toolbar>
+     <div class="md-toolbar-tools">
+       <h2 style="font-weight:bold;color:white;">ADOZIONI ISTITUTO</h2>
+     </div>
+   </md-toolbar>
+
+   <md-dialog-content>
+     <input type="checkbox" ng-model="AdozioniGestite" ng-change="VisualizzaAdozioni(thisIstituto)" style="margin-left:25px;margin-right:2px;margin-top:30px;width:2%;">
+     <label style="margin-left:5px;margin-right:2px;margin-top:27px;">ADOZIONI GESTITE</label> 
+
+     <div class="md-dialog-content" style="width:800px;">  
+         <p style="font-weight:bold;text-align:center;" ng-if="IstitutoListaAdozioni.length == 0">NESSUNA ADOZIONE REGISTRATA</p>
+         <table style="text-align:center;width:750px;" md-row-select="GridOptionsAdoz.rowSelection" multiple="{{GridOptionsAdoz.multiSelect}}">
+          <tr>
+            <th>CLASSE</th>
+            <th>CODICE - TITOLO - EDITORE - PREZZO</th>
+          </tr>
+          <tr ng-repeat="classe in IstitutoListaAdozioni | limitTo : GridOptionsAdoz.query.limit : (GridOptionsAdoz.query.page - 1) * GridOptionsAdoz.query.limit">
+            <td>{{classe.NomeClasse}} {{classe.CombinazioneClasse}}</td>
+            <td style="text-align:center;" ng-bind-html="GetTitoliClasseIstituto(classe)"></td>
+          </tr>
+        </table>
+        <md-table-pagination md-limit="GridOptionsAdoz.query.limit" 
+                             md-limit-options="GridOptionsAdoz.limitOptions" 
+                             md-page="GridOptionsAdoz.query.page" 
+                             md-total="{{IstitutoListaAdozioni.length}}" 
+                             md-page-select="GridOptionsAdoz.pageSelect" 
+                             md-boundary-links="GridOptionsAdoz.boundaryLinks" 
+                             md-on-paginate="logPagination"
+                             style="width:750px;"
+                             ng-if="IstitutoListaAdozioni.length > 0"></md-table-pagination>
+     </div>
+   </md-dialog-content>
+
+   <md-dialog-actions layout="row">
+     <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ChiudiPopupAdozioni()">
+      CHIUDI
+     </md-button>
+   </md-dialog-actions>
+ </form>
+</md-dialog>

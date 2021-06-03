@@ -7,8 +7,14 @@
     </md-toolbar>
 
     <md-dialog-content>
-      <div class="md-dialog-content">
-        
+          <div class="md-dialog-content">
+            <md-input-container class="containerSelect" style="width:30%;"><label>ANNO</label>
+            <md-select ng-model="AnnoRicercaSpedizioni" ng-change="RefreshListaSpedizioni()" class="mdb-select" type="text" name="Anno">
+            <md-optgroup>
+              <md-option ng-repeat="Anno in ListaAnni" ng-value="Anno">{{Anno}}</md-option>
+            </md-optgroup>
+            </md-select>
+          </md-input-container>
           <p style="font-weight:bold;text-align:center;width:1000px;" ng-if="ListaSpedizioniDoc.length == 0">NESSUNA SPEDIZIONE REGISTRATA</p>
           <table style="text-align:center;width:1000px;" md-row-select="GridOptions3.rowSelection" multiple="{{GridOptions3.multiSelect}}" ng-if="ListaSpedizioniDoc.length > 0">  
           <tr>

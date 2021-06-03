@@ -57,13 +57,13 @@
   <script src="js/adoptionDeadlinePageController.js"></script>
 </head>
 <body ng-app="SIRIOApp">
-  <md-toolbar layout-padding ng-controller="headerController" md-theme="{{ActualTheme}}">
+  <md-toolbar style="padding:8px;" ng-controller="headerController" md-theme="{{ActualTheme}}">
       <div class="md-toolbar-tools">
         <img src="img/Pagina43LogoTop.png" style="padding-top:2px;width:200px;height:auto;">
         <span flex></span>
         <div layout="column">
            <br/>
-           <span class="md-caption" style="color:white;font-weight:bold;text-align:right;padding-right:7px;">Versione {{appVersion}}</span>
+           <span class="md-caption" style="color:white;font-weight:bold;text-align:right;padding-right:7px;">{{currentUserLogged}}&nbsp &nbsp•••••&nbsp &nbsp Versione {{appVersion}}</span>
         </div>
       </div>
       <div ng-if="LoginEffettuato" layout="row">
@@ -85,7 +85,45 @@
            </md-button>
         </div>
       </div>
-  </md-toolbar>
+      <br>
+      <div ng-show="LoginEffettuato" style="border-top: 5px solid white; padding-top: 15px; border-radius: 5px;">
+       <div>
+         <md-button name="Utenti" class="MainButton" ng-if="IsAdministrator()" ng-click="ApriListaUtenti()"  style="padding: 0px;">
+         <img src="img/user.png" class="invert MainIcon">
+           UTENTI
+         </md-button>
+         <md-button name="Istituti" class="MainButton" ng-click="ApriListaIstituti()"  style="padding: 0px;">
+         <img src="img/school.png" class="invert MainIcon">
+           ISTITUTI
+         </md-button>
+         <md-button name="Docenti" class="MainButton" ng-click="ApriListaDocenti()"  style="padding: 0px;">
+         <img src="img/teacher.png" class="invert MainIcon">        
+           DOCENTI
+         </md-button>
+         <md-button name="Titoli" class="MainButton" ng-click="ApriListaTitoli()"  style="padding: 0px;">
+         <img src="img/book.png" class="invert MainIcon">
+           TITOLI
+         </md-button>
+         <md-button name="OrdiniInIngresso" class="MainButton" ng-click="ApriListaOrdiniIngresso()"  style="padding: 0px;">
+         <img src="img/order.png" class="invert MainIcon" style="width:15px;height:auto;">
+           CARICHI
+         </md-button>
+         <md-button name="Configurazioni" class="MainButton" ng-if="IsAdministrator()" ng-click="ApriListaConfigurazioni()"  style="padding: 0px;">
+         <img src="img/config.png" class="invert MainIcon">
+           CONFIG
+         </md-button>
+         <md-button name="RicercaSpedizioni" class="MainButton" ng-click="ApriListaSpedizioni()"  style="padding: 0px;">
+         <img src="img/deliveryStart.png" class="invert MainIcon" style="width:30px;height:auto;">
+           SPEDIZIONI
+         </md-button>
+         <md-button name="Comunicazioni" class="MainButton" ng-if="IsAdministrator()" ng-click="ApriGestioneComunicazioni()"  style="padding: 0px;">
+         <img src="img/communication.png" class="invert MainIcon">
+           COMUNICAZIONI
+         </md-button>
+       </div>
+      </div>
+   </md-toolbar>
+ </md-toolbar>
   <md-content layout-padding ui-view>
   </md-content>
 </body>

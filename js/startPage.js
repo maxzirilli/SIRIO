@@ -6,7 +6,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http,$mdDial
   ScopeHeaderController.CheckButtons();
   $scope.MostraListaSpedizioni = false;  
   
-  $scope.ApriListaUtenti = function()
+  /*$scope.ApriListaUtenti = function()
   {    
     $state.go("userListPage"); 
   }  
@@ -20,21 +20,31 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http,$mdDial
   {    
     $state.go("teacherListPage"); 
   } 
-  
-  $scope.ApriListaOrdiniIngresso = function()
-  {    
-    $state.go("orderEntryPage"); 
-  } 
 
   $scope.ApriListaTitoli = function()
   {    
     $state.go("titleListPage"); 
-  }   
+  }  
+
+  $scope.ApriListaOrdiniIngresso = function()
+  {    
+    $state.go("orderEntryPage"); 
+  } 
   
   $scope.ApriListaConfigurazioni = function()
   {    
     $state.go("configurationsListPage"); 
   } 
+
+  $scope.ApriListaSpedizioni = function()
+  {    
+    $state.go("deliveryListPage"); 
+  } 
+
+  $scope.ApriGestioneComunicazioni = function()
+  {
+    $state.go("communicationPage");
+  }*/
   
   $scope.ApriCsvIstitutiUpload = function()
   {    
@@ -50,11 +60,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http,$mdDial
   {    
     $state.go("csvTeacherPage"); 
   }
-  
-  $scope.ApriListaSpedizioni = function()
-  {    
-    $state.go("deliveryListPage"); 
-  } 
   
   $scope.ApriPaginaEtichette = function ()
   {
@@ -89,11 +94,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http,$mdDial
   $scope.ApriGestioneInventario = function()
   {
     $state.go("inventoryManagementPage");
-  }
-
-  $scope.ApriGestioneComunicazioni = function()
-  {
-    $state.go("communicationPage");
   }
 
   $scope.CheckAdozioniInScadenza = function()

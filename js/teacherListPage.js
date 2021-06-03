@@ -22,9 +22,19 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   $scope.NomeFiltro                        = '';
   $scope.CoordMateriaFiltro                = false;
   $scope.OldPagina                         = 0;
+  $scope.AdozioniGestite                   = true;
   $scope.ListaGiorni                       = [{Numero : 0, Descrizione : 'LUNEDI'},{Numero : 1, Descrizione : 'MARTEDI'},{Numero : 2, Descrizione : 'MERCOLEDI'},{Numero : 3, Descrizione : 'GIOVEDI'},
                                               {Numero : 4, Descrizione : 'VENERDI'},{Numero : 5, Descrizione : 'SABATO'},{Numero : 6, Descrizione : 'DOMENICA'}];
   $scope.ListaOrariTabella                 = [];
+  $scope.ListaAnni                         = [];
+  currentYear = new Date().getFullYear();    
+  earliestYear = 2020; 
+  while (currentYear >= earliestYear)
+  {
+    $scope.ListaAnni.push(currentYear);
+    currentYear--;
+  }
+  $scope.AnnoRicercaSpedizioni             = $scope.ListaAnni[0];
 
   $scope.AbilitaInvioMultiplo              = function()
                                             {
@@ -68,10 +78,10 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                          limitSelect     : true,
                          pageSelect      : true,
                          query           : {
-                                             limit: 10,
+                                             limit: 50,
                                              page: 1
                                            },
-                         limitOptions    : [10, 20, 30]
+                         limitOptions    : [25, 50, 75, 100]
                        };
   
   $scope.GridOptions2 = {
@@ -121,6 +131,22 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                                             },
                           limitOptions    : [10, 20, 30]
                         };
+
+   $scope.GridOptionsAdoz = {
+                              rowSelection    : false,
+                              multiSelect     : true,
+                              autoSelect      : true,
+                              decapitate      : false,
+                              largeEditDialog : false,
+                              boundaryLinks   : false,
+                              limitSelect     : true,
+                              pageSelect      : true,
+                              query           : {
+                                                  limit: 10,
+                                                  page: 1
+                                                },
+                              limitOptions    : [10, 20, 30]
+                            };
   
   SystemInformation.GetSQL('Subject',{}, function(Results)
   {
@@ -299,6 +325,80 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
     }
     else $scope.IstitutoFiltrato = -1;
     $scope.RefreshListaDocenti();
+  }
+
+  $scope.VisualizzaAdozioni = function (ChiaveIstituto)
+  {
+    $scope.thisIstituto = ChiaveIstituto;
+    SystemInformation.GetSQL('Institute', {CHIAVE : ChiaveIstituto}, function(Results)
+    {
+      IstitutoListaAdozioni = SystemInformation.FindResults(Results,$scope.AdozioniGestite ? 'GetHandledAdoptionListInstitute' : 'GetAdoptionListInstitute');
+      if(IstitutoListaAdozioni != undefined)
+      {
+        $scope.IstitutoListaAdozioni = [];
+        
+        var ClassKey = -1;
+        for(let i = 0;i < IstitutoListaAdozioni.length;i ++)
+        {
+            if(IstitutoListaAdozioni[i].CLASSE != ClassKey)
+            {
+               $scope.IstitutoListaAdozioni.push({
+                                                    ClasseChiave       : IstitutoListaAdozioni[i].CLASSE,
+                                                    NomeClasse         : IstitutoListaAdozioni[i].ANNO_CLASSE + IstitutoListaAdozioni[i].SEZIONE_CLASSE,
+                                                    CombinazioneClasse : IstitutoListaAdozioni[i].COMBINAZIONE_CLASSE == null ? 'N.D' :  IstitutoListaAdozioni[i].COMBINAZIONE_CLASSE,
+                                                    ListaTitoliClasse  : []
+                                                 }) 
+            }
+            $scope.IstitutoListaAdozioni[$scope.IstitutoListaAdozioni.length-1].ListaTitoliClasse.push({
+                                                                                                         Titolo         : IstitutoListaAdozioni[i].NOME_TITOLO,
+                                                                                                         Codice         : IstitutoListaAdozioni[i].CODICE_TITOLO,
+                                                                                                         Editore        : IstitutoListaAdozioni[i].EDITORE_TITOLO == undefined ? 'N.D.' : IstitutoListaAdozioni[i].EDITORE_TITOLO,
+                                                                                                         Prezzo         : (IstitutoListaAdozioni[i].PREZZO_TITOLO == '' || IstitutoListaAdozioni[i].PREZZO_TITOLO == null) ? 'N.D.' : IstitutoListaAdozioni[i].PREZZO_TITOLO + '€',
+                                                                                                         EditoreGestito : $scope.AdozioniGestite ? 'GESTITO' : IstitutoListaAdozioni[i].CHIAVE_EDITORE == null ? 'NON GESTITO' : 'GESTITO' 
+                                                                                                       })
+            ClassKey =  IstitutoListaAdozioni[i].CLASSE; 
+        }
+        
+           $mdDialog.show({ 
+                            controller          : AdozioniIstitutoController,
+                            templateUrl         : "template/adoptionInstitutePopup.html",
+                            //targetEvent         : null,
+                            scope               : $scope,
+                            preserveScope       : true,
+                            clickOutsideToClose : true
+                          })
+                   .then(function(answer) 
+                   {}, 
+                   function() 
+                   {});
+      }       
+      else SystemInformation.ApplyOnError('Modello adozioni non conforme',''); 
+    },$scope.AdozioniGestite ? 'SQLDettaglioAdozioniGestite' : 'SQLDettaglioAdozioni'); 
+  }
+
+  function AdozioniIstitutoController($scope,$mdDialog)
+  {    
+    $scope.ChiudiPopupAdozioni = function()
+    {
+      $mdDialog.hide();
+    }
+  
+    $scope.GetTitoliClasseIstituto = function(Classe)
+    {
+      var Result = '';
+      if(Classe.ListaTitoliClasse.length == 0) Result = 'NESSUN TITOLO ADOTTATO'
+      else
+      {
+         for(let i = 0;i < Classe.ListaTitoliClasse.length;i ++)
+         {
+           if(Classe.ListaTitoliClasse[i].EditoreGestito == 'GESTITO')
+              Result += '<p style="Background-color:FF77E8;">' + Classe.ListaTitoliClasse[i].Codice + ' - ' + Classe.ListaTitoliClasse[i].Titolo + ' - ' + Classe.ListaTitoliClasse[i].Editore + ' - ' + Classe.ListaTitoliClasse[i].Prezzo + '</p>'
+           else Result += '<p>' + Classe.ListaTitoliClasse[i].Codice + ' - ' + Classe.ListaTitoliClasse[i].Titolo + ' - ' + Classe.ListaTitoliClasse[i].Editore + ' - ' + Classe.ListaTitoliClasse[i].Prezzo + '</p>'
+  
+         }
+      }
+      return($sce.trustAsHtml(Result.substr(0,Result.length)));
+    }
   }
 
   $scope.CreaPdfListaDocenti = function (ChiaveIstituto)
@@ -730,7 +830,8 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                                     CoordMateria_1      : DocentiInfoLista[i].COORD_MATERIA_1 == undefined ? -1 : DocentiInfoLista[i].COORD_MATERIA_1,
                                     CoordMateria_2      : DocentiInfoLista[i].COORD_MATERIA_2 == undefined ? -1 : DocentiInfoLista[i].COORD_MATERIA_2,
                                     CoordMateria_3      : DocentiInfoLista[i].COORD_MATERIA_3 == undefined ? -1 : DocentiInfoLista[i].COORD_MATERIA_3,
-                                    SpedizioniAssegnate : parseInt(DocentiInfoLista[i].NR_SPEDIZIONI)
+                                    SpedizioniTotali    : parseInt(DocentiInfoLista[i].NR_SPED_TOT),
+                                    SpedizioniThisAnno  : parseInt(DocentiInfoLista[i].NR_SPED_LAST_ANNO)
                                   };
           }
           else
@@ -2036,10 +2137,10 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
       $scope.ListaSpedizioniDoc       = [];    
       if($scope.IsAdministrator())
       {
-         SystemInformation.GetSQL('Delivery',{CHIAVE : Docente.Chiave},function(Results)
+         SystemInformation.GetSQL('Delivery',{CHIAVE : Docente.Chiave,ANNO : $scope.AnnoRicercaSpedizioni},function(Results)
          {
-           $scope.ListaSpedizioniDoc    = SystemInformation.FindResults(Results,'TeacherDeliveryListAdm');
-           ListaSpedizioniDocDettaglio  = SystemInformation.FindResults(Results,'TeacherDeliveryListAdmDettaglio');
+           $scope.ListaSpedizioniDoc   = SystemInformation.FindResults(Results,'TeacherDeliveryListAdm');
+           ListaSpedizioniDocDettaglio = SystemInformation.FindResults(Results,'TeacherDeliveryListAdmDettaglio');
 
            if($scope.ListaSpedizioniDoc != undefined && ListaSpedizioniDocDettaglio != undefined)
            {
@@ -2069,10 +2170,10 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
       }
       else
       {
-         SystemInformation.GetSQL('Delivery',{CHIAVE : Docente.Chiave},function(Results)
+         SystemInformation.GetSQL('Delivery',{CHIAVE : Docente.Chiave, ANNO : $scope.AnnoRicercaSpedizioni},function(Results)
          {
-           $scope.ListaSpedizioniDoc           = SystemInformation.FindResults(Results,'TeacherDeliveryListPrm');
-           ListaSpedizioniDocDettaglio  = SystemInformation.FindResults(Results,'TeacherDeliveryListPrmDettaglio');
+           $scope.ListaSpedizioniDoc   = SystemInformation.FindResults(Results,'TeacherDeliveryListPrm');
+           ListaSpedizioniDocDettaglio = SystemInformation.FindResults(Results,'TeacherDeliveryListPrmDettaglio');
            if($scope.ListaSpedizioniDoc != undefined && ListaSpedizioniDocDettaglio != undefined)
            { 
               $scope.ListaSpedizioniDoc.forEach(function(Spedizione){Spedizione.DettagliTitoli = []});       

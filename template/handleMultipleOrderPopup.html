@@ -1,0 +1,38 @@
+<md-dialog>
+ <form ng-cloak name="PopupMultipliForm">
+   <md-toolbar>
+     <div class="md-toolbar-tools">
+       <h2 style="font-weight:bold;color:white;">GESTIONE CARICO MULTIPLO</h2>
+     </div>
+   </md-toolbar>
+
+   <md-dialog-content>
+     <label style="font-weight:bold;padding-left: 10px;">DATA : </label>
+     <md-input-container style="padding:10px;">
+       <input ng-model="dataOrdineMultiplo" type="date" name="Data"> 
+     </md-input-container>
+     <div class="md-dialog-content" ng-repeat="titolo in ListaTitoliToHandle" style="padding-left: 10px;padding-top: 0px;padding-right: 0px;padding-bottom: 0px;">
+       <div layout="column" style="width: 1000px;">
+         <p style="font-weight:bold;">{{titolo.NOME_TITOLO}} - ISBN : {{titolo.ISBN_TITOLO}}</p>
+         <div layout="row">
+           <md-input-container style="margin-right: 10px;width:10%;"><label>QUANTITA</label>         
+             <input ng-model="titolo.QUANTITA" type="number" min=1 name="Quantita">                           
+           </md-input-container>
+           <md-input-container style="width:30%;">
+             <label>UBICAZIONE</label><input ng-model="titolo.UBICAZIONE" type="text" name="Ubicazione">
+           </md-input-container> 
+         </div> 
+       </div>       
+     </div>
+   </md-dialog-content>
+
+   <md-dialog-actions layout="row">
+     <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ConfermaMultiploCaricoPopup()">
+      CONFERMA
+     </md-button>
+     <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="AnnullaMultiploCaricoPopup()">
+      ANNULLA
+     </md-button>
+   </md-dialog-actions>
+ </form>
+</md-dialog>

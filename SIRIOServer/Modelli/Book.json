@@ -30,7 +30,7 @@
   "SelectSQLFilter"     : [
                             {
                               "Name" : "BookListFilter",
-                              "SQL"  : "SELECT titoli.CHIAVE,titoli.TITOLO,titoli.CODICE_ISBN,titoli.POS_MAGAZZINO FROM titoli WHERE EDITORE IN (SELECT DESCRIZIONE FROM case_editrici WHERE DESCRIZIONE = titoli.EDITORE) ORDER BY TITOLO"
+                              "SQL"  : "SELECT titoli.CHIAVE,titoli.TITOLO,titoli.CODICE_ISBN,titoli.POS_MAGAZZINO,titoli.QUANTITA_MGZN FROM titoli WHERE EDITORE IN (SELECT DESCRIZIONE FROM case_editrici WHERE DESCRIZIONE = titoli.EDITORE) ORDER BY TITOLO"
                             }
                           ],  
   

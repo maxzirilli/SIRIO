@@ -1,5 +1,5 @@
 // Inizializzazioni
-const VERSIONE_ATTUALE = '1.29.34';
+const VERSIONE_ATTUALE = '1.30.35';
 
 SIRIOApp.config(['$qProvider', function ($qProvider)
 {
@@ -194,6 +194,51 @@ SIRIOApp.controller("headerController",['$scope','$rootScope','SystemInformation
    $scope.LoginEffettuato = false;
    $scope.VisButtonHome = false;
    $scope.VisButtonChangePassword = false;
+
+   $scope.ApriListaUtenti = function()
+   {    
+     $state.go("userListPage"); 
+   }  
+   
+   $scope.ApriListaIstituti = function()
+   {    
+     $state.go("instituteListPage"); 
+   }
+   
+   $scope.ApriListaDocenti = function()
+   {    
+     $state.go("teacherListPage"); 
+   } 
+
+   $scope.ApriListaTitoli = function()
+   {    
+     $state.go("titleListPage"); 
+   }  
+
+   $scope.ApriListaOrdiniIngresso = function()
+   {    
+     $state.go("orderEntryPage"); 
+   } 
+   
+   $scope.ApriListaConfigurazioni = function()
+   {    
+     $state.go("configurationsListPage"); 
+   } 
+
+   $scope.ApriListaSpedizioni = function()
+   {    
+     $state.go("deliveryListPage"); 
+   } 
+
+   $scope.ApriGestioneComunicazioni = function()
+   {
+     $state.go("communicationPage");
+   }
+
+   $scope.IsAdministrator = function ()
+   {
+     return SystemInformation.UserInformation.Ruolo == RUOLO_AMMINISTRATORE;
+   }
    
    $scope.CheckVersions = function()
    {
@@ -232,6 +277,7 @@ SIRIOApp.controller("headerController",['$scope','$rootScope','SystemInformation
 SIRIOApp.run(['$rootScope','SystemInformation','$state','$http',function($rootScope,SystemInformation,$state,$http)
 {
    $rootScope.appVersion = VERSIONE_ATTUALE;
+   $rootScope.currentUserLogged = '';
    $http.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
    SystemInformation.GetInformation(
        function()

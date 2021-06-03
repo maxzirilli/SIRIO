@@ -205,7 +205,12 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
              let Result = Self.FindResults(Answer.data.Results,'UserInformation');
              if(Result != undefined)
              {
-                Self.UserInformation = { Ruolo : Result[0].ROLE, OrdinamentoDoc : Result[0].ORDINAMENTO_DOC };
+                Self.UserInformation = { 
+                                         Ruolo : Result[0].ROLE, 
+                                         OrdinamentoDoc : Result[0].ORDINAMENTO_DOC, 
+                                         Username : Result[0].USERNAME
+                                       };
+                $rootScope.currentUserLogged = 'UTENTE : ' + Self.UserInformation.Username.toUpperCase();
                 ScopeHeaderController.ChangeStatoLogin(true);
                 OnSuccess();
              }
@@ -244,6 +249,8 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
             Self.UserInformation = {};
             Self.HTTPError = '';
             Self.SubHTTPError = '';
+            $rootScope.viewToolbar = false;
+            $rootScope.currentUserLogged = '';
             $state.go('loginPage');
          }
          else Self.ApplyOnError(Self.HTTPError,Self.SubHTTPError); 

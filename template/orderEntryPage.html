@@ -1,8 +1,9 @@
 <div ng-controller="orderEntryPageController">
-  <div ng-if="!EditingOn && !StampaOn">
+  <div ng-if="!EditingOn && !StampaOn" layout="column">
     <div>
       <h2>CARICHI</h2>
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoOrdine()">NUOVO CARICO</md-button>
+      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoOrdineMultiplo()">NUOVO CARICO MULTIPLO</md-button>
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoOrdineCsv()">CARICO DA CSV</md-button>
       <md-button ng-click="ShowInfoCsv()" style="float:right;margin:5px;" title="INFO FORMATO CSV"><img src="img/smallinfo.png" style="width:30px;height:auto;"></md-button>
       <p ng-show="ViewInfoCsv" style="font-style:italic;font-weight:bold;">ISBN;QUANTITA; (Nessuna intestazione)</p>
@@ -14,7 +15,9 @@
       <md-input-container style="float:left;margin-left:20px;">  
         <label>AL</label><input ng-model="Data.DataRicercaAl" type="date" name="DataRicercaAl" ng-change="RefreshListaOrdini()">
       </md-input-container>
-      <md-input-container class="containerSelect" style="width:40%;margin-right:10px;">
+    </div>
+    <div>
+      <md-input-container class="containerSelect" style="width:40%;margin-top:0px;">
         <label>Titolo</label>
         <md-autocomplete
                     md-input-name="Titolo"
@@ -33,7 +36,7 @@
         <md-not-found>
           Nessuna corrispondenza
         </md-not-found>
-      </md-input-container>      
+      </md-input-container>
     </div>
     <div ng-if="ListaOrdini.length != 0">
       <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  

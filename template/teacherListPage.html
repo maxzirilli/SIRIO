@@ -28,6 +28,7 @@
     <div layout="row" style="margin-top:0px;">    
 
       <img src="img/printPDF.png" ng-show="IstitutoFiltrato != -1 && searchTextIstituto != ''" style="margin-top:15px;margin-right:10px;width:3%;height:3%;" title="LISTA DOCENTI" ng-click="CreaPdfListaDocenti(IstitutoFiltrato)">
+      <img src="img/adoption.png" ng-show="IstitutoFiltrato != -1 && searchTextIstituto != ''" style="margin-top:15px;margin-right:10px;width:3%;height:3%;" title="ADOZIONI ISTITUTO" ng-click="VisualizzaAdozioni(IstitutoFiltrato)">
 
       <md-input-container class="containerSelect" style="width:30%;margin-right:10px;">
         <label>ISTITUTO</label>
@@ -89,9 +90,6 @@
      </md-input-container>
     </div>    
     <div ng-if="ListaDocenti.length != 0">
-      <!--<label style="font-weight:bold;" ng-if="ListaIstitutiTitolo.length != 0">TITOLO IN ADOZIONE PRESSO I SEGUENTI ISTITUTI:</label>
-      <br>
-      <p ng-if="ListaIstitutiTitolo.length != 0">{{ListaIstitutiTitolo}}</p>-->
       <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
         <tr>
           <th ng-if="IsAdministrator()"></th>
@@ -109,8 +107,9 @@
           <td ng-if="Docente.Nascosto == 'T' && IsAdministrator()"><img src="img/notHide.png" style="width:30px;height:auto;" title="RENDI VISIBILE DOCENTE" ng-click="RendiVisibileDocente(Docente)"></td>     
           <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA DOCENTE" ng-click="ModificaDocente(Docente)"></td>
           <td><img src="img/delivery.png" style="width:30px;height:auto;" title="NUOVA SPEDIZIONE" ng-click="NuovaSpedizione(Docente.Chiave)"></td>
-          <td ng-if="Docente.SpedizioniAssegnate != 0"><img src="img/deliveryList.png" style="width:30px;height:auto;" title="LISTA SPEDIZIONI" ng-click="ListaSpedizioni(Docente)"></td>
-          <td ng-if="Docente.SpedizioniAssegnate == 0"><img src="img/deliveryList.png" style="width:30px;height:auto;filter:grayscale(100%);" title="NESSUNA SPEDIZIONE ASSOCIATA"></td>
+          <td ng-if="Docente.SpedizioniTotali != 0 && Docente.SpedizioniThisAnno > 0"><img src="img/deliveryList.png" style="width:30px;height:auto;" title="LISTA SPEDIZIONI" ng-click="ListaSpedizioni(Docente)"></td>
+          <td ng-if="Docente.SpedizioniTotali == 0"><img src="img/deliveryList.png" style="width:30px;height:auto;filter:grayscale(100%);" title="NESSUNA SPEDIZIONE ASSOCIATA"></td>
+          <td ng-if="Docente.SpedizioniTotali != 0 && Docente.SpedizioniThisAnno == 0"><img src="img/deliveryList.png" style="width:30px;height:auto;filter:hue-rotate(200deg);" title="NESSUNA SPEDIZIONE NELL'ANNO IN CORSO" ng-click="ListaSpedizioni(Docente)"></td>
           <td ng-if="Docente.Email != 'Non disponibile'"><img src="img/email.png" style="width:30px;height:auto;" title="INVIA MAIL"  ng-click="InvioMail(Docente)"></td>
           <td ng-if="Docente.Email == 'Non disponibile'"><img src="img/email.png" style="width:30px;height:auto;filter:grayscale(100%);" title="MAIL NON DISPONIBILE"></td>       
           <td>{{Docente.RagioneSociale}}</td>

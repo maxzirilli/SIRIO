@@ -2,7 +2,7 @@
   "SelectSQLDocenteAdmin"        : [                     
                                      {
                                        "Name" : "TeacherDeliveryListAdm",
-                                       "SQL"  : "SELECT spedizioni.CHIAVE,spedizioni.DATA FROM spedizioni WHERE DOCENTE=:CHIAVE ORDER BY DATA DESC"
+                                       "SQL"  : "SELECT spedizioni.CHIAVE,spedizioni.DATA FROM spedizioni WHERE DOCENTE=:CHIAVE AND YEAR(spedizioni.DATA ) = :ANNO ORDER BY DATA DESC"
                                      },
                                      {
                                        "Name" : "TeacherDeliveryListAdmDettaglio",
@@ -12,11 +12,11 @@
   "SelectSQLDocentePromotore"    : [                     
                                      {
                                        "Name" : "TeacherDeliveryListPrm",
-                                       "SQL"  : "SELECT spedizioni.CHIAVE,spedizioni.DATA FROM spedizioni WHERE DOCENTE=:CHIAVE AND PROMOTORE=#KeyAccount ORDER BY DATA DESC"
+                                       "SQL"  : "SELECT spedizioni.CHIAVE,spedizioni.DATA FROM spedizioni WHERE DOCENTE=:CHIAVE AND (PROMOTORE=#KeyAccount OR PROMOTORE IN (SELECT CHIAVE FROM utenti WHERE ROLE <> 1)) AND YEAR(spedizioni.DATA) = :ANNO ORDER BY DATA DESC"
                                      },
                                      {
                                        "Name" : "TeacherDeliveryListPrmDettaglio",
-                                       "SQL"  : "SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.CODICE_ISBN FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS CODICE FROM dettaglio_spedizioni WHERE SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE DOCENTE=:CHIAVE AND PROMOTORE=#KeyAccount)"
+                                       "SQL"  : "SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.CODICE_ISBN FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS CODICE FROM dettaglio_spedizioni WHERE SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE DOCENTE=:CHIAVE AND (PROMOTORE=#KeyAccount OR PROMOTORE IN (SELECT CHIAVE FROM utenti WHERE ROLE <> 1)))"
                                      }
                                    ],
   
