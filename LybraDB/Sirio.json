@@ -1,10 +1,12 @@
 {
  "Version": {
   "Major": 1,
-  "Minor": 19,
+  "Minor": 20,
   "Release": 7
  },
  "Storia": [
+  "Versione 1.20.7   10 Giugno 2021 - Tommaso Martinoli",
+  "                  - NEW: Aggiunto campo nascosta nella tabelle materie_insegnamento",
   "Versione 1.19.7   24 Maggio 2021 - Tommaso Martinoli",
   "                  - NEW: Aggiunta unique key in tabella titoli per prevenire inserimento duplicati con stesso codice isbn e titolo",
   "Versione 1.18.7   09 Marzo 2021 - Tommaso Martinoli",
@@ -588,6 +590,15 @@
      "Commento": "",
      "DefaultValue": "NULL",
      "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "NASCOSTA",
+     "IsNullable": true,
+     "DataType": "tinyint(4)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": "0",
+     "SQLAfterAddedColumn": null
     }
    ],
    "PrimaryKey": {
@@ -1135,15 +1146,7 @@
      "RefField": "CHIAVE"
     }
    ],
-   "UniqueKeys": [
-    {
-     "Campi": [
-      "CODICE_ISBN",
-      "TITOLO"
-     ],
-     "Nome": "TITOLO_UNIVOCO"
-    }
-   ],
+   "UniqueKeys": [],
    "Indexes": [],
    "Triggers": [
     {

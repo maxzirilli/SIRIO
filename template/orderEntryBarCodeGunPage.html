@@ -1,0 +1,44 @@
+<div ng-controller="orderEntryPageController" ng-cloak md-theme="{{ActualTheme}}" style="height:75%">
+ <h2>GESTIONE CARICO RAPIDO</h2>
+ <md-input-container>
+  <label>DATA CARICO</label><input ng-model="CaricoRapido.DATA" type="date" name="DataCarico">
+ </md-input-container>
+
+ <div layout="row" style="padding-bottom:0px;">
+  <md-input-container class="containerSelect" style="width:33%;height:20px;"><label>CODICE ISBN DEL TITOLO</label>
+    <input ng-model="CodiceBippatoVisible" ng-keyup="AggiungiTitolo($event)">
+  </md-input-container>
+  <img title="SVUOTA CAMPO" src="img/deleteCross.png" style="height:30px;margin-top:20px;margin-left:10px;" ng-click="ResetIsbnInput()">
+ </div>
+
+  <div>
+   <div layout="row" style="width:100%;" layout-align="end start">
+     <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ConfermaCaricoRapido()" ng-disabled="ListaCaricoRapido.length == 0">CONFERMA</md-button>
+     <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ChiudiCaricoRapido()">ANNULLA</md-button>
+   </div>
+    <table style="width:100%;text-align:center;" md-row-select="GridOptions_3.rowSelection" multiple="{{GridOptions_3.multiSelect}}">  
+      <tr>
+        <th></th>
+        <th>ISBN</th>
+        <th>TITOLO</th>
+        <th>QUANTITA</th>
+        <th>UBICAZIONE</th>
+      </tr>  
+      <tr ng-repeat="Titolo in ListaCaricoRapido | limitTo : GridOptions_3.query.limit : (GridOptions_3.query.page - 1) * GridOptions_3.query.limit">
+        <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA INSERIMENTO" ng-click="EliminaTitolo(Titolo)"></td> 
+        <td>{{Titolo.Codice}}</td>
+        <td>{{Titolo.Nome}}</td>
+        <td><input type=number ng-model="Titolo.Quantita"></td>
+        <td><input type=text ng-model="Titolo.Posizione"></td>
+       </tr>    
+    </table>
+    <md-table-pagination md-limit="GridOptions_3.query.limit" 
+                         md-limit-options="GridOptions_3.limitOptions" 
+                         md-page="GridOptions_3.query.page" 
+                         md-total="{{ListaCaricoRapido.length}}" 
+                         md-page-select="GridOptions_3.pageSelect" 
+                         md-boundary-links="GridOptions_3.boundaryLinks" 
+                         md-on-paginate="logPagination"></md-table-pagination>
+    </div>
+  </div>
+</div>

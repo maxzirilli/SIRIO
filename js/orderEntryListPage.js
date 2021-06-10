@@ -1,6 +1,5 @@
 SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$state','$rootScope','$filter','$mdDialog','ZConfirm',function($scope,SystemInformation,$state,$rootScope,$filter,$mdDialog,ZConfirm)
 {
-
   $scope.EditingOn             = false;
   $scope.ViewInfoCsv           = false;
   $scope.TitoloFiltro          = -1;
@@ -13,7 +12,13 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
   TmpDate.setDate(TmpDate.getDate() - 30);
   //$scope.DataRicercaDal   = new Date(TmpDate);
   var AnnoCorrente = new Date().getFullYear();
-  $scope.Data.DataRicercaDal   = new Date(AnnoCorrente, 0, 1)  
+  $scope.Data.DataRicercaDal   = new Date(AnnoCorrente, 0, 1);
+  
+  $scope.CodiceBippato       = '',
+  $scope.CaricoRapido        = {};
+  $scope.CaricoRapido.DATA   = new Date();
+  $scope.CaricoRapido.CHIAVE = -1;
+  $scope.ListaCaricoRapido   = []; 
   
   ScopeHeaderController.CheckButtons();
 
@@ -36,8 +41,9 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
                                   Posizione    : TitoliInfoLista[i].POS_MAGAZZINO == null ? '' : TitoliInfoLista[i].POS_MAGAZZINO,
                                   DaAggiungere : false
                                 }
-       $scope.ListaTitoli  = TitoliInfoLista;
-       $scope.ListaTitoliF = TitoliInfoLista;
+       $scope.ListaTitoli        = TitoliInfoLista;
+       $scope.ListaTitoliF       = TitoliInfoLista;
+       $scope.ListaTitoliCaricoR = TitoliInfoLista;
     }
     else SystemInformation.ApplyOnError('Modello titoli non conforme','');   
   },'SelectSQLFilter');
@@ -71,6 +77,11 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
     }).join(''); 
     return decodeURIComponent(percentEncodedStr);
   } 
+
+  $scope.NuovoOrdineRapido = function()
+  {
+    $state.go("orderEntryBarCodeGunPage");
+  }
 
   $scope.ConvertiData = function (Dati)
   {
@@ -108,6 +119,22 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
                                             },
                           limitOptions    : [10, 20, 30]
                         };
+
+ $scope.GridOptions_3 = {
+                         rowSelection    : false,
+                         multiSelect     : true,
+                         autoSelect      : true,
+                         decapitate      : false,
+                         largeEditDialog : false,
+                         boundaryLinks   : false,
+                         limitSelect     : true,
+                         pageSelect      : true,
+                         query           : {
+                                             limit: 10,
+                                             page: 1
+                                           },
+                         limitOptions    : [10, 20, 30]
+                       };
     
   $scope.CVSLoaded = function(fileInfo)
   { 
@@ -128,12 +155,12 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
         
         var CreaOrdine = function()
         {
-          while (i < CsvSplitted.length - 1)          
+          while (i < CsvSplitted.length)          
           {
             let RecordOrdine  = CsvSplitted[i++].split(";");
             RecordOrdine[0]   = RecordOrdine[0].trim();
             RecordOrdine[1]   = RecordOrdine[1].trim();
-            //RecordOrdine[2]   = RecordOrdine[2].trim(); //AGGIUNTA PRIMO CSV PER UBICAZIONI (PRIMA NON PRESENTE)          
+            //RecordOrdine[2]   = RecordOrdine[2].trim(); //SERVIVA PER AGGIORNARE LE UBICAZIONI DA CSV          
             let TitoloCorrisp = $scope.ListaTitoli.find(function(ATitolo) {return(ATitolo.Codice == RecordOrdine[0]);});
             if (TitoloCorrisp == undefined)
             {
@@ -151,30 +178,20 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
               $ObjQuery.Operazioni.push({ 
                                           Query     : 'InsertOrderEntryTest',
                                           Parametri : { 
-                                                        //CHIAVE    : -1,
                                                         DataCarico       : new Date(),                                        
                                                         TitoloCarico     : TitoloCorrisp.Chiave,
                                                         QuantitaCarico   : RecordOrdine[1],
-                                                        UbicazioneCarico : TitoloCorrisp.Posizione
-                                                        //UBICAZIONE : RecordOrdine[2]  //AGGIUNTA PRIMO CSV PER UBICAZIONI (PRIMA NON PRESENTE)                                                                                                         
+                                                        UbicazioneCarico : TitoloCorrisp.Posizione //RecordOrdine[2]
                                                       },
-                                          //ResetKeys :[1]
                                         });
               
               ListaCarico.push({                                
                                  Quantita   : RecordOrdine[1],
                                  Codice     : RecordOrdine[0],
                                  Nome       : TitoloCorrisp.Nome,
-                                 Posizione  : TitoloCorrisp.Posizione == null ? 'N.D.' : TitoloCorrisp.Posizione
-                                 //Posizione  :  RecordOrdine[2] //AGGIUNTA PRIMO CSV PER UBICAZIONI (PRIMA NON PRESENTE)                               
+                                 Posizione  : TitoloCorrisp.Posizione == null ? 'N.D.' : TitoloCorrisp.Posizione //RecordOrdine[2]
                                })                                        
             }                                              
-            /*if($ObjQuery.Operazioni.length == 10)
-            {
-              SystemInformation.PostSQL('OrderEntry',$ObjQuery,CreaOrdine,false,true);  
-              $ObjQuery.Operazioni = [];
-              return;
-            }*/
           }
           if($ObjQuery.Operazioni.length != 0)
              SystemInformation.PostSQL('OrderEntry',$ObjQuery,function() 
@@ -601,7 +618,6 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
          ZCustomAlert($mdDialog,'ATTENZIONE','DATI MANCANTI');      
      var $ObjQuery   = { Operazioni : [] };          
      var ParamOrdine = {
-                         //CHIAVE     : $scope.OrdineInEditing.Chiave,
                          DataCarico       : $scope.OrdineInEditing.Data,
                          TitoloCarico     : $scope.OrdineInEditing.Titolo,
                          QuantitaCarico   : $scope.OrdineInEditing.Quantita,
@@ -655,7 +671,127 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
       });  
     }
     ZConfirm.GetConfirmBox('AVVISO',"Eliminare l\'ordine di " + Ordine.Quantita + " " + Ordine.Nome_Titolo + " ?",EliminaOrd,function(){});
-  }  
+  } 
+  
+  /////////////////////////////////////////////GESTIONE RAPIDA
+
+  $scope.ResetIsbnInput = function()
+  {
+    $scope.CodiceBippatoVisible = '';
+  } 
+
+  $scope.AggiungiTitolo = function(KeyPressed)
+  {
+    $scope.CodiceBippato = $scope.CodiceBippatoVisible;
+    
+    if($scope.CodiceFocused == undefined)
+       $scope.CodiceFocused = {Chiave : -1, Codice : -1, Titolo : -1, Nome : '', Quantita : 0, Posizione : ''};
+
+    if(KeyPressed.keyCode == 13)
+    {
+      if($scope.CodiceFocused.Codice == $scope.CodiceBippato)
+      {
+         var TitoloInLista = $scope.ListaCaricoRapido.findIndex(function(ACodice){return(ACodice.Codice == $scope.CodiceBippato);});
+         if(TitoloInLista != -1)
+            $scope.ListaCaricoRapido[TitoloInLista].Quantita++
+         $scope.CodiceBippato = $scope.CodiceFocused.Codice;
+      }
+      else
+      {
+           var TitoloTrovato = $scope.ListaTitoliCaricoR.findIndex(function(ACodice){return(ACodice.Codice == $scope.CodiceBippato);});
+           if(TitoloTrovato == -1)
+           {
+             ZCustomAlert($mdDialog,'ATTENZIONE',"NESSUN TITOLO IN MAGAZZINO ASSOCIATO A QUESTO TITOLO! SI CONSIGLIA DI CONTROLLARE IL DATABASE O DI VERIFICARE L'INSERIMENTO DEL CODICE!")
+             $scope.CodiceBippato = '';
+             $scope.CodiceFocused == undefined;
+             return
+           }
+           else
+           {
+              var TitoloInLista = $scope.ListaCaricoRapido.findIndex(function(ACodice){return(ACodice.Codice == $scope.CodiceBippato);});
+              if(TitoloInLista != -1)
+              {
+                 $scope.ListaCaricoRapido[TitoloInLista].Quantita++               
+                 $scope.CodiceBippato = $scope.ListaCarico[TitoloInLista].Codice;
+              }
+              else
+              { 
+                 $scope.CodiceFocused             = {Chiave : -1,Codice : 0, Nome : '', Quantita : 0, Posizione : ''};
+                 $scope.CodiceFocused.Titolo      = $scope.ListaTitoliCaricoR[TitoloTrovato].Chiave;
+                 $scope.CodiceFocused.Codice      = $scope.CodiceBippato;
+                 $scope.CodiceFocused.Nome        = $scope.ListaTitoliCaricoR[TitoloTrovato].Nome;
+                 $scope.CodiceFocused.Posizione   = $scope.ListaTitoliCaricoR[TitoloTrovato].Posizione;
+                 $scope.CodiceFocused.Quantita    = 1;
+                 if($scope.CodiceBippato != -1)
+                 {
+                   $scope.ListaCaricoRapido.unshift($scope.CodiceFocused); //PUSH
+                 }
+                 $scope.CodiceBippato = $scope.CodiceFocused.Codice;
+              }
+            }
+      }
+      $scope.CodiceBippatoVisible = '';
+    }  
+  }
+
+  $scope.EliminaTitolo = function(Titolo)
+  {
+    var EliminaTit = function()
+    {
+      TitoloCorrispondente = $scope.ListaCaricoRapido.findIndex(function(ATitolo){return(ATitolo.Titolo == Titolo.Titolo);});     
+      $scope.ListaCaricoRapido.splice(TitoloCorrispondente,1)
+
+      if($scope.CodiceBippato == Titolo.Codice)
+      {
+         $scope.CodiceBippato = '';
+         $scope.CodiceFocused = undefined;
+      }       
+    }
+    ZConfirm.GetConfirmBox('AVVISO',"Eliminare il titolo  >>" + Titolo.Nome + "<< dal carico attuale?",EliminaTit,function(){});      
+  }
+
+  $scope.ConfermaCaricoRapido = function()
+  {
+    if ($scope.CaricoRapido.DATA == '' || $scope.CaricoRapido.DATA == undefined)
+    {    
+        ZCustomAlert($mdDialog,'ATTENZIONE','DATA CARICO NON CORRETTA!');
+        return         
+    }
+    else
+    {
+      $ObjQuery = { Operazioni : [] };
+      for(let i = 0; i < $scope.ListaCaricoRapido.length;i ++)
+          $ObjQuery.Operazioni.push({ 
+                                      Query     : 'InsertOrderEntryTest',
+                                      Parametri : { 
+                                                    DataCarico       : $scope.CaricoRapido.DATA,                                        
+                                                    TitoloCarico     : $scope.ListaCaricoRapido[i].Titolo,
+                                                    QuantitaCarico   : $scope.ListaCaricoRapido[i].Quantita,
+                                                    UbicazioneCarico : $scope.ListaCaricoRapido[i].Posizione
+                                                  },
+                                    });      
+      SystemInformation.PostSQL('OrderEntry',$ObjQuery,function(Answer)
+      {
+        $ObjQuery.Operazioni      = [];
+        $scope.CaricoRapido       = {};
+        $scope.ListaCaricoRapido  = [];
+        $scope.CodiceBippato      = '';
+        $scope.CodiceFocused      = undefined;
+        $state.go("orderEntryPage");
+      });
+    } 
+  }
+
+  $scope.ChiudiCaricoRapido = function()
+  {
+    $scope.CaricoRapido       = {};
+    $scope.ListaCaricoRapido  = [];
+    $scope.CodiceBippato      = '';
+    $scope.CodiceFocused      = undefined;
+    $state.go("orderEntryPage");
+  }
+
+  /////////////////////////////////////////////
   
   $scope.RefreshListaOrdini();
 

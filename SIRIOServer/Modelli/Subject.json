@@ -2,10 +2,17 @@
   "SelectSQL" : [
                   { 
                     "Name" : "SubjectInfoList",
-                    "SQL"  : "SELECT * FROM materie_insegnamento ORDER BY materie_insegnamento.DESCRIZIONE" 
+                    "SQL"  : "SELECT * FROM materie_insegnamento WHERE NASCOSTA <> 1 ORDER BY materie_insegnamento.DESCRIZIONE" 
                   }
                 ],
-                
+
+  "SelectAllSQL" : [
+                     { 
+                       "Name" : "SubjectInfoListAll",
+                       "SQL"  : "SELECT * FROM materie_insegnamento ORDER BY materie_insegnamento.DESCRIZIONE" 
+                     }
+                   ],
+             
   "EditSQL"   : [   
                   {
                     "Name" : "InsertSubject",
@@ -30,6 +37,14 @@
                   {
                     "Name" : "DeleteSubject",
                     "SQL"  : "DELETE FROM materie_insegnamento WHERE CHIAVE=:CHIAVE"
+                  },
+                  {
+                    "Name" : "MergeSubjects",
+                    "SQL"  : "CALL UNISCI_NASCONDI_MATERIA(:OldMateria,:NewMateria) "
+                  },
+                  {
+                    "Name" : "UnhideSubject",
+                    "SQL"  : "UPDATE materie_insegnamento SET NASCOSTA = 0 WHERE CHIAVE =:CHIAVE"
                   }
                 ]        
 }

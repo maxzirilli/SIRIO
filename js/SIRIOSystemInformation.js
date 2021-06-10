@@ -210,7 +210,7 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
                                          OrdinamentoDoc : Result[0].ORDINAMENTO_DOC, 
                                          Username : Result[0].USERNAME
                                        };
-                $rootScope.currentUserLogged = 'UTENTE : ' + Self.UserInformation.Username.toUpperCase();
+                $rootScope.currentUserLogged = 'UTENTE : ' + Self.UserInformation.Username.toUpperCase() + ' -';
                 ScopeHeaderController.ChangeStatoLogin(true);
                 OnSuccess();
              }

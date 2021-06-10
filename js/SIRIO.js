@@ -1,5 +1,5 @@
 // Inizializzazioni
-const VERSIONE_ATTUALE = '1.30.35';
+const VERSIONE_ATTUALE = '1.31.36';
 
 SIRIOApp.config(['$qProvider', function ($qProvider)
 {
@@ -181,6 +181,12 @@ SIRIOApp.config(['$stateProvider','$urlRouterProvider','$mdAriaProvider',functio
     {
         templateUrl: "template/adoptionDeadlinePage.html",
         url: '/adoptionDeadlinePage'
+    })
+
+    $stateProvider.state('orderEntryBarCodeGunPage', 
+    {
+        templateUrl: "template/orderEntryBarCodeGunPage.html",
+        url: '/orderEntryBarCodeGunPage'
     })
 
     $urlRouterProvider.otherwise('loginPage');

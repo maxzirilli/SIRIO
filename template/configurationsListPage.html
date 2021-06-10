@@ -170,12 +170,15 @@
       <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
         <tr>
           <th></th>
+          <th></th>
           <th></th> 
           <th style="font-weight:bold;">MATERIA</th>
         </tr>  
         <tr ng-repeat="materia in ListaMaterie | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{materia.Chiave}}>
           <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA MATERIA" ng-click="EliminaMateria(materia)"></td> 
-          <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA MATERIA" ng-click="ModificaMateria($event,materia)"></td>        
+          <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA MATERIA" ng-click="ModificaMateria($event,materia)"></td> 
+          <td ng-if="!(materia.Nascosta)"><img src="img/hide.png" style="width:30px;height:auto;" title="UNISCI E NASCONDI MATERIA" ng-click="UnisciMateria(materia.Chiave,materia.Descrizione)"></td>
+          <td ng-if="materia.Nascosta"><img src="img/notHide.png" style="width:30px;height:auto;" title="RENDI VISIBILE MATERIA" ng-click="RendiVisibileMateria(materia.Chiave,materia.Descrizione)"></td>       
           <td>{{materia.Descrizione | uppercase}}</td>
         </tr>    
       </table>

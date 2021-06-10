@@ -169,18 +169,19 @@ $scope.GridOptions_8 = {
   {
     SystemInformation.GetSQL('Subject', {}, function(Results)  
     {
-      SubjectInfoList = SystemInformation.FindResults(Results,'SubjectInfoList');
+      SubjectInfoList = SystemInformation.FindResults(Results,'SubjectInfoListAll');
       if(SubjectInfoList != undefined)
       { 
          for(let i = 0;i < SubjectInfoList.length;i ++)
          SubjectInfoList[i] = {
                                 Chiave      : SubjectInfoList[i].CHIAVE,
-                                Descrizione : SubjectInfoList[i].DESCRIZIONE
+                                Descrizione : SubjectInfoList[i].DESCRIZIONE,
+                                Nascosta    : SubjectInfoList[i].NASCOSTA == 1 ? true : false
                               }
          $scope.ListaMaterie = SubjectInfoList
       }
       else SystemInformation.ApplyOnError('Modello materie non conforme','');   
-    });
+    },'SelectAllSQL');
   }
   
   $scope.RefreshListaTipologie = function ()
@@ -333,6 +334,120 @@ $scope.GridOptions_8 = {
   }
  
   //MATERIE  
+
+  $scope.RendiVisibileMateria = function(ChiaveMateria,NomeMateria)
+  {
+     var ConfermaVisibilita = function()
+     {
+        var $ObjQuery = { Operazioni : [] };         
+        $ObjQuery.Operazioni.push({
+                                    Query     : 'UnhideSubject',
+                                    Parametri : {CHIAVE : ChiaveMateria}
+                                  }); 
+        
+        SystemInformation.PostSQL('Subject',$ObjQuery,function(Answer)
+        {
+          $scope.RefreshListaMaterie(); 
+        });
+     }
+     ZConfirm.GetConfirmBox('AVVISO',"Rendere visibile nuovamente la materia?" + NomeMateria + " ?",ConfermaVisibilita,function(){});
+
+  }
+
+  $scope.UnisciMateria = function(MateriaOld,MateriaOldDescrizione)
+  {
+     $mdDialog.show({ 
+      controller          : DialogControllerUnisciMaterie,
+      templateUrl         : "template/hideSubjectPopup.html",
+      targetEvent         : MateriaOld,
+      scope               : $scope,
+      preserveScope       : true,
+      clickOutsideToClose : true,
+      locals              : {MateriaOld,MateriaOldDescrizione}
+    })
+    .then(function(answer) 
+    {}, 
+    function() 
+    {});
+  }
+
+  function DialogControllerUnisciMaterie($scope,$mdDialog,MateriaOld,MateriaOldDescrizione)
+  {
+    $scope.MateriaOldDescrizione = MateriaOldDescrizione; 
+    $scope.ListaMaterieF         = [];
+    $scope.ListaMaterieF         = Array.from($scope.ListaMaterie);
+    for(let i = 0;i < $scope.ListaMaterieF.length;i ++)
+        if($scope.ListaMaterieF[i].Chiave == MateriaOld)
+           $scope.ListaMaterieF.splice(i, 1);
+           
+
+    $scope.queryMateria = function(searchTextMat)
+    {
+       searchTextMat = searchTextMat.toUpperCase();
+       return($scope.ListaMaterieF.grep(function(Elemento) 
+       { 
+         return(Elemento.Descrizione.toUpperCase().indexOf(searchTextMat) != -1);
+       }));
+    }
+    
+    $scope.selectedItemChangeMateria = function(itemMat)
+    {
+      if(itemMat != undefined)
+      {
+        $scope.MateriaScelta     = itemMat.Chiave;
+        $scope.MateriaSceltaNome = itemMat.Descrizione;
+      }
+      else $scope.MateriaScelta  = -1;
+    }
+    
+    $scope.hide = function() 
+    {
+      $mdDialog.hide();
+    };
+
+    $scope.AnnullaPopup = function() 
+    { 
+      $scope.ListaMaterieF         = [];
+      $scope.MateriaOldDescrizione = '';
+      $scope.MateriaScelta         = -1;
+      $scope.MateriaSceltaNome     = '';
+      $mdDialog.cancel();
+    };
+
+    $scope.ConfermaPopup = function()
+    {
+      if($scope.MateriaScelta == -1) 
+      { 
+        ZCustomAlert($mdDialog,'ATTENZIONE','NESSUNA MATERIA SELEZIONATA!');      
+        return
+      }
+      else
+      {
+        var ConfermaPassaggio = function()          
+        {
+           var $ObjQuery = {Operazioni:[]}
+           ParametriUnione = {
+                               OldMateria : parseInt(MateriaOld), 
+                               NewMateria : parseInt($scope.MateriaScelta) 
+                             }
+           $ObjQuery.Operazioni.push({
+                                       Query     : 'MergeSubjects',
+                                       Parametri : ParametriUnione
+                                     });
+           SystemInformation.PostSQL('Subject',$ObjQuery,function(Answer)
+           {
+             $scope.ListaMaterieF         = [];
+             $scope.MateriaOldDescrizione = '';
+             $scope.MateriaScelta         = -1;
+             $scope.MateriaSceltaNome     = '';
+             $mdDialog.hide();
+             $scope.RefreshListaMaterie();                 
+           });
+        }
+        ZConfirm.GetConfirmBox('AVVISO',"Cliccando CONFERMA la materia " + $scope.MateriaOldDescrizione + " sarà sostituita ovunque dalla materia " + $scope.MateriaSceltaNome + ".Confermi?",ConfermaPassaggio,function(){});              
+     }   
+    }
+  }
 
   $scope.ModificaMateria = function (ev,Materia) 
   {    
