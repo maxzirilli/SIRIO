@@ -8,12 +8,12 @@
 
     <md-dialog-content>
       <div class="md-dialog-content">
-        <h4 style="margin-bottom:5px;">VISUALIZZAZIONE GRUPPI:</h4> 
+        <h4 style="margin-bottom:5px;">VISUALIZZAZIONE GRUPPI :</h4> 
         <md-radio-group ng-model="CheckGruppi" layout="row" style="padding:5px;">
           <md-radio-button value="T">TUTTI</md-radio-button>
           <md-radio-button value="G">SELEZIONA GRUPPI</md-radio-button>
         </md-radio-group>
-        <h4 ng-show="Tipo=='P'" style="margin-bottom:5px;">VISUALIZZAZIONE QUANTITA':</h4>
+        <h4 ng-show="Tipo=='P'" style="margin-bottom:5px;margin-top: 5px;">VISUALIZZAZIONE QUANTITA':</h4>
         <md-radio-group ng-show="Tipo=='P'" ng-model="CheckNegativi" layout="row" style="padding-bottom:10px;">
           <md-radio-button value="T">POSITIVI/NEGATIVI</md-radio-button>
           <md-radio-button value="N">SOLO NEGATIVI</md-radio-button>
@@ -33,10 +33,24 @@
           <md-table-pagination md-limit="GridOptions_2.query.limit" 
                              md-limit-options="GridOptions_2.limitOptions" 
                              md-page="GridOptions_2.query.page" 
-                             md-total="{{ListaGruppiiPopup.length}}" 
+                             md-total="{{ListaGruppiPopup.length}}" 
                              md-page-select="GridOptions_2.pageSelect" 
                              md-boundary-links="GridOptions_2.boundaryLinks" 
                              md-on-paginate="logPagination"></md-table-pagination>
+         </div>
+         <div ng-show="IsAdministrator">
+           <h4 ng-show="Tipo=='P'" style="margin-bottom:5px;margin-top: 5px;">SELEZIONE PROMOTORE :</h4>
+           <md-radio-group ng-model="CheckPromotori" ng-change="PromotoreScelto = -1" layout="row" style="padding-bottom:10px;">
+             <md-radio-button value="T">TUTTI</md-radio-button>
+             <md-radio-button value="N">SELEZIONA PROMOTORE</md-radio-button>
+           </md-radio-group> 
+           <md-input-container class="containerSelect" style="width:100%;margin-right:10px;" ng-show="CheckPromotori == 'N'"><label>PROMOTORE</label>
+             <md-select ng-model="PromotoreScelto" ng-change="GetNomePromotore()" placeholder="PROMOTORE" class="mdb-select" type="text" name="PromotoreScelto">
+             <md-optgroup>
+               <md-option ng-repeat="promotore in ListaPromotori" ng-value="promotore.Chiave">{{promotore.Nome}}</md-option>
+             </md-optgroup>
+             </md-select>
+           </md-input-container>  
          </div>
       </div>
     </md-dialog-content>

@@ -59,7 +59,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     $state.go("deliveryAdvancedManagementPage");
   }
 
-  function CreaDocumentoCumulativo(CumulativoTitoli,NomeDocumento)
+  function CreaDocumentoCumulativo(CumulativoTitoli,NomeDocumento,NomePromotore)
   {           
     var WBook = {
                   SheetNames : [],
@@ -170,7 +170,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     var DataCumulativo = DataGiorno.toString() + '/' + DataMese.toString() +  '/' + DataAnno.toString();
 
     var wbout = XLSX.write(WBook, {bookType:'xlsx', bookSST:true, type: 'binary'});
-    saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}), NomeDocumento + DataCumulativo + ".xlsx");
+    saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}), NomeDocumento + DataCumulativo + $scope.PromotoreSceltoNome + ".xlsx");
   }
 
   function CreaDocumentoCumulativoOrd(CumulativoTitoli)
@@ -235,10 +235,27 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
 
   function DialogControllerSelezioneGruppi($scope,$mdDialog,Tipo)
   {
-    $scope.ListaGruppiToAdd   = [];
-    $scope.CheckGruppi        = 'G';
-    $scope.CheckNegativi      = 'N';
-    $scope.Tipo               = Tipo;
+    $scope.ListaGruppiToAdd    = [];
+    $scope.CheckGruppi         = 'G';
+    $scope.CheckNegativi       = 'N';
+    $scope.CheckPromotori      = 'T';
+    $scope.PromotoreScelto     = -1;
+    $scope.PromotoreSceltoNome = '';
+    $scope.Tipo                = Tipo;
+
+    $scope.GetNomePromotore = function()
+    {
+       if($scope.PromotoreScelto != -1)
+       {
+          var Promotore = $scope.ListaPromotori.find(function(AProm){return (AProm.Chiave == $scope.PromotoreScelto);});
+          if(Promotore != undefined)
+          {
+             $scope.PromotoreSceltoNome = Promotore.Nome;
+             $scope.PromotoreSceltoNome =  $scope.PromotoreSceltoNome.replace(" ", "_").toUpperCase();
+          }
+          else $scope.PromotoreSceltoNome = '';
+       }     
+    }
     
     $scope.hide = function() 
     {
@@ -247,6 +264,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
 
     $scope.AnnullaPopup = function() 
     {
+      $scope.PromotoreScelto     = -1;
+      $scope.PromotoreSceltoNome = '';
       for(let i = 0;i < $scope.ListaGruppiPopup.length;i ++)
           $scope.ListaGruppiPopup[i].DaAggiungere = false;          
       $scope.ListaGruppiToAdd  = [];
@@ -255,6 +274,11 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
 
     $scope.ConfermaPopup = function()
     { 
+      if($scope.CheckPromotori == 'T')
+      {
+         $scope.PromotoreScelto     = -1;
+         $scope.PromotoreSceltoNome = '';
+      } 
       ContatoreGruppi = 0; 
       for(let j = 0;j < $scope.ListaGruppiPopup.length;j ++)
       {
@@ -339,9 +363,10 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
                            };
       
       if(ArrayGruppi.length > 0 && $scope.CheckGruppi == 'G')
-      {
          ParamPrenotati.ChiaveGruppi = ArrayGruppi.toString() 
-      }
+
+      if($scope.PromotoreScelto != -1 || $scope.PromotoreScelto != undefined)
+         ParamPrenotati.PromotoreScelto = $scope.PromotoreScelto;
 
       SystemInformation.GetSQL('Delivery',ParamPrenotati,function(Results)
       {
@@ -437,9 +462,10 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
                             };
 
       if(ArrayGruppi.length > 0 && $scope.CheckGruppi == 'G')
-      {
         ParamConsegnati.ChiaveGruppi = ArrayGruppi.toString() 
-      }
+      
+      if($scope.PromotoreScelto != -1 || $scope.PromotoreScelto != undefined)
+         ParamConsegnati.PromotoreScelto = $scope.PromotoreScelto;
       
       SystemInformation.GetSQL('Delivery',ParamConsegnati,function(Results)
       {
