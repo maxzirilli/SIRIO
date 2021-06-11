@@ -1,5 +1,5 @@
 // Inizializzazioni
-const VERSIONE_ATTUALE = '1.31.36';
+const VERSIONE_ATTUALE = '1.32.37';
 
 SIRIOApp.config(['$qProvider', function ($qProvider)
 {
@@ -71,8 +71,8 @@ SIRIOApp.config(['$stateProvider','$urlRouterProvider','$mdAriaProvider',functio
     
     $stateProvider.state('titleListPage', 
     {
-    templateUrl: "template/titleListPage.html",
-    url: '/titleListPage'
+        templateUrl: "template/titleListPage.html",
+        url: '/titleListPage'
     });
     
     $stateProvider.state('configurationsListPage', 
@@ -193,7 +193,7 @@ SIRIOApp.config(['$stateProvider','$urlRouterProvider','$mdAriaProvider',functio
 }]);
 
 var ScopeHeaderController = undefined;
-SIRIOApp.controller("headerController",['$scope','$rootScope','SystemInformation','$state',function($scope,$rootScope,SystemInformation,$state)
+SIRIOApp.controller("headerController",['$scope','SystemInformation','$state','$location',function($scope,SystemInformation,$state,$location)
 {
    var Self = this;
    ScopeHeaderController = $scope;
@@ -244,6 +244,12 @@ SIRIOApp.controller("headerController",['$scope','$rootScope','SystemInformation
    $scope.IsAdministrator = function ()
    {
      return SystemInformation.UserInformation.Ruolo == RUOLO_AMMINISTRATORE;
+   }
+
+   $scope.checkCurrentPage = function(aPage)
+   {
+      var path = $location.path();
+      return (path != aPage);
    }
    
    $scope.CheckVersions = function()

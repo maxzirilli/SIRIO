@@ -126,6 +126,10 @@
                               "SQL"  : "CALL CLEAR_INVENTARIO_ALL()"
                             },
                             {
+                             "Name" : "ResetGroupInventory",
+                             "SQL"  : "CALL CLEAR_INVENTARIO_GRUPPO(:ChiaveEditore)"
+                            },
+                            {
                               "Name" : "UpdateBookFromInventory",
                               "SQL"  : "CALL UPDATE_TITOLI_FROM_INVENTARIO(:ChiaveTitolo,:QuantitaTitolo,:QuantitaVolanteTitolo,#PosizioneMagazzinoTitolo)"
                             },

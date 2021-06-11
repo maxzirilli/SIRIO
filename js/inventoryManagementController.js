@@ -22,6 +22,22 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
                                            },
                          limitOptions    : [10, 20, 30]
                        };
+
+  $scope.GridOptions_2 = {
+                           rowSelection    : false,
+                           multiSelect     : true,
+                           autoSelect      : true,
+                           decapitate      : false,
+                           largeEditDialog : false,
+                           boundaryLinks   : false,
+                           limitSelect     : true,
+                           pageSelect      : true,
+                           query           : {
+                                               limit: 10,
+                                               page: 1
+                                             },
+                           limitOptions    : [10, 20, 30]
+                         };
    
   $scope.IsAdministrator = function ()
   {
@@ -103,7 +119,6 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
       else SystemInformation.ApplyOnError('Modello titoli magazzino non conforme','');
     },'SelectTitoliInventarioSQL')  
   }    
-
 
   $scope.InventarioMagazzinoPdf = function()
   {
@@ -248,23 +263,126 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
 
   $scope.ResetInventario = function()
   {
+    $scope.SelezioneGruppiInventario = function ()
+    {
+        $mdDialog.show({ 
+                        controller          : DialogControllerSelezioneGruppiInventario,
+                        templateUrl         : "template/inventoryGroupSelect.html",
+                        scope               : $scope,
+                        preserveScope       : true,
+                        clickOutsideToClose : true,
+                      })
+        .then(function(answer) 
+        {
+        }, 
+        function() 
+        {
+        });
+    }
+
+    function DialogControllerSelezioneGruppiInventario($scope,$mdDialog)
+    {
+      $scope.ListaGruppiToAdd    = [];
+      $scope.CheckGruppi         = 'G';
+      
+      $scope.hide = function() 
+      {
+        $mdDialog.hide();
+      };
+  
+      $scope.AnnullaPopup = function() 
+      {
+        for(let i = 0;i < $scope.ListaGruppiPopup.length;i ++)
+            $scope.ListaGruppiPopup[i].DaAggiungere = false;          
+        $scope.ListaGruppiToAdd  = [];
+        $mdDialog.cancel();
+      };
+  
+      $scope.ConfermaPopup = function()
+      { 
+        var ContatoreGruppi = 0; 
+        for(let j = 0;j < $scope.ListaGruppiPopup.length;j ++)
+        {
+          if($scope.ListaGruppiPopup[j].DaAggiungere)
+          {
+             $scope.ListaGruppiToAdd.push($scope.ListaGruppiPopup[j].Chiave);
+             ContatoreGruppi++; 
+             $scope.ListaGruppiPopup[j].DaAggiungere = false; 
+          }
+        }
+        if(ContatoreGruppi == 0 && $scope.CheckGruppi == 'G')
+        {
+           ZCustomAlert($mdDialog,'ATTENZIONE','NESSUN GRUPPO SELEZIONATO')
+        }
+        else
+        {
+          $mdDialog.hide();
+          SecondaConferma($scope.ListaGruppiToAdd)  
+        }   
+        
+      }
+    }
+
     var PrimaConferma = function()
     {
-      ZConfirm.GetConfirmBox('AVVISO',"SEI SICURO DI ESEGUIRE IL RESET DELL'INVENTARIO? L'OPERAZIONE E' IRREVERSIBILE!",SecondaConferma,function(){});      
+      ZConfirm.GetConfirmBox('AVVISO',"SEI SICURO DI ESEGUIRE IL RESET DELL'INVENTARIO? L'OPERAZIONE E' IRREVERSIBILE!",SelezionaGruppiEditore,function(){});      
     }
-    var SecondaConferma = function()
-    {      
-      $ObjQuery = { Operazioni : [] };
-      $ObjQuery.Operazioni.push({
-                                  Query     : 'ResetAllInventory',
-                                  Parametri : {}
-                                })
-      SystemInformation.PostSQL('Book',$ObjQuery,function(Answer)
+    
+    var SelezionaGruppiEditore = function()
+    {
+      $scope.ListaGruppiPopup = [];
+      SystemInformation.GetSQL('PublisherGroup', {}, function(Results)  
       {
-        ZCustomAlert($mdDialog,'AVVISO','I MAGAZZINI SONO STATI STATO RESETTATI CON SUCCESSO!');
-        $ObjQuery = {};
-      })   
+        GruppiInfoList = SystemInformation.FindResults(Results,'GroupInfoList');
+        if(GruppiInfoList != undefined)
+        { 
+           for(let i = 0;i < GruppiInfoList.length;i ++)
+           GruppiInfoList[i] = {
+                                 Chiave       : GruppiInfoList[i].CHIAVE,
+                                 Descrizione  : GruppiInfoList[i].DESCRIZIONE,
+                                 DaAggiungere : true
+                               }
+           $scope.ListaGruppiPopup = GruppiInfoList;
+           $scope.SelezioneGruppiInventario();
+        } 
+        else SystemInformation.ApplyOnError('Modello gruppi case editrici non conforme','');   
+      });
     }
+    
+    var SecondaConferma = function()
+    {  
+      $ObjQuery = { Operazioni : [] };
+      
+      if($scope.ListaGruppiToAdd.length > 0 && $scope.CheckGruppi == 'G')
+      {
+        for(let i = 0;i < $scope.ListaGruppiToAdd.length;i ++)
+        {
+           $ObjQuery.Operazioni.push({
+                                       Query     : 'ResetGroupInventory',
+                                       Parametri : { ChiaveEditore : parseInt($scope.ListaGruppiToAdd[i]) }
+                                     })
+           SystemInformation.PostSQL('Book',$ObjQuery,function(Answer)
+           {
+             $ObjQuery = {};
+             if(i == $scope.ListaGruppiToAdd.length - 1)
+                ZCustomAlert($mdDialog,'AVVISO','I MAGAZZINI DEI GRUPPI SELEZIONATI SONO STATI STATO RESETTATI CON SUCCESSO!');
+           })
+        }
+      }
+      else
+      {
+        $ObjQuery.Operazioni.push({
+                                    Query     : 'ResetAllInventory',
+                                    Parametri : {}
+                                  })
+        SystemInformation.PostSQL('Book',$ObjQuery,function(Answer)
+        {
+          ZCustomAlert($mdDialog,'AVVISO','I MAGAZZINI SONO STATI STATO RESETTATI CON SUCCESSO!');
+          $ObjQuery = {};
+        })
+      }   
+    }
+
     ZConfirm.GetConfirmBox('AVVISO','Questa operazione eseguirà il reset di tutte le quantità dei titoli nel magazzino e nel magazzino volante. Confermi?',PrimaConferma,function(){});      
   } 
 
@@ -416,81 +534,85 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
 
   $scope.ConfermaGestioneInventario = function()
   {
-     $ObjQuery = {Operazioni : [] }
-     for(let i = 0;i < $scope.ListaCodiciToHandle.length;i ++)
-     {
-         ParametriInserimento = {
-                                  ChiaveTitolo             : $scope.ListaCodiciToHandle[i].Chiave,
-                                  QuantitaTitolo           : $scope.ListaCodiciToHandle[i].QuantitaMgzn,
-                                  QuantitaVolanteTitolo    : $scope.ListaCodiciToHandle[i].QuantitaMgznVol,
-                                  PosizioneMagazzinoTitolo : $scope.ListaCodiciToHandle[i].Ubicazione
-                                }
-         $ObjQuery.Operazioni.push({
-                                     Query     : "UpdateBookFromInventory",
-                                     Parametri : ParametriInserimento
-                                   })
-     }
-     SystemInformation.PostSQL('Book',$ObjQuery,function(Answer)
-     {
-       ZCustomAlert($mdDialog,'AVVISO','AGGIORNAMENTO DEL MAGAZZINO COMPLETATO CON SUCCESSO!')
-      
-       /*$scope.ListaCodiciToHandle.sort(function(a,b)
-       {
-         let TitoloA = a.Nome;
-         let TitoloB = b.Nome;
-         return (TitoloA < TitoloB) ? -1 : (TitoloA > TitoloB) ? 1 : 0;
-       });*/       
-
-       var Data           = new Date();
-       var DataAnno       = Data.getFullYear();
-       var DataMese       = Data.getMonth()+1; 
-       var DataGiorno     = Data.getDate();
-       var DataInventario = DataGiorno.toString() + '/' + DataMese.toString() +  '/' + DataAnno.toString();
-       var WBook = {
-                     SheetNames : [],
-                     Sheets     : {}
-                   };
-                     
-       var SheetName   = 'INVENTARIO (DA CODICE) - ' + DataInventario;
-       var BodySheet   = {};               
-       BodySheet       = {};
-       BodySheet['A1'] = SystemInformation.GetCellaIntestazione('ISBN');
-       BodySheet['B1'] = SystemInformation.GetCellaIntestazione('TITOLO');
-       BodySheet['C1'] = SystemInformation.GetCellaIntestazione('QUANTITA MAGAZZINO');
-       BodySheet['D1'] = SystemInformation.GetCellaIntestazione('QUANTITA MAGAZZINO VOLANTE');
-       BodySheet['E1'] = SystemInformation.GetCellaIntestazione('UBICAZIONE');
-       
+    var InventarioConfermato = function()
+    {
+       $ObjQuery = {Operazioni : [] }
        for(let i = 0;i < $scope.ListaCodiciToHandle.length;i ++)
-       {                
-           BodySheet['A' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',$scope.ListaCodiciToHandle[i].Codice);
-           BodySheet['B' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',$scope.ListaCodiciToHandle[i].Nome);
-           BodySheet['C' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',$scope.ListaCodiciToHandle[i].QuantitaMgzn.toString());
-           BodySheet['D' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',$scope.ListaCodiciToHandle[i].QuantitaMgznVol.toString());
-           BodySheet['E' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',$scope.ListaCodiciToHandle[i].Ubicazione);
-       }   
-       
-       BodySheet["!cols"] = [             
-                             {wpx: 300},
-                             {wpx: 300},
-                             {wpx: 300},
-                             {wpx: 300},
-                             {wpx: 300}
-                           ];
-       
-       BodySheet['!ref'] = 'A1:E1' + parseInt($scope.ListaCodiciToHandle.length + 1);
-       
-       WBook.SheetNames.push(SheetName);
-       WBook.Sheets[SheetName] = BodySheet;            
-       
-       var wbout = XLSX.write(WBook, {bookType:'xlsx', bookSST:true, type: 'binary'});
-       saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}),"InventarioDaCodiceXLS" + DataInventario + ".xlsx");            
-       
-       $scope.SvuotaInventarioTemporaneo();
-       $scope.ListaCodiciToHandle = [];
-       $scope.CodiceBippato       = '';
-       $scope.CodiceFocused       = undefined;
-       $state.go("startPage")
-     })
+       {
+           ParametriInserimento = {
+                                    ChiaveTitolo             : $scope.ListaCodiciToHandle[i].Chiave,
+                                    QuantitaTitolo           : $scope.ListaCodiciToHandle[i].QuantitaMgzn,
+                                    QuantitaVolanteTitolo    : $scope.ListaCodiciToHandle[i].QuantitaMgznVol,
+                                    PosizioneMagazzinoTitolo : $scope.ListaCodiciToHandle[i].Ubicazione
+                                  }
+           $ObjQuery.Operazioni.push({
+                                       Query     : "UpdateBookFromInventory",
+                                       Parametri : ParametriInserimento
+                                     })
+       }
+       SystemInformation.PostSQL('Book',$ObjQuery,function(Answer)
+       {
+         ZCustomAlert($mdDialog,'AVVISO','AGGIORNAMENTO DEL MAGAZZINO COMPLETATO CON SUCCESSO!')
+        
+         /*$scope.ListaCodiciToHandle.sort(function(a,b)
+         {
+           let TitoloA = a.Nome;
+           let TitoloB = b.Nome;
+           return (TitoloA < TitoloB) ? -1 : (TitoloA > TitoloB) ? 1 : 0;
+         });*/       
+
+         var Data           = new Date();
+         var DataAnno       = Data.getFullYear();
+         var DataMese       = Data.getMonth()+1; 
+         var DataGiorno     = Data.getDate();
+         var DataInventario = DataGiorno.toString() + '/' + DataMese.toString() +  '/' + DataAnno.toString();
+         var WBook = {
+                       SheetNames : [],
+                       Sheets     : {}
+                     };
+                       
+         var SheetName   = 'INVENTARIO (DA CODICE) - ' + DataInventario;
+         var BodySheet   = {};               
+         BodySheet       = {};
+         BodySheet['A1'] = SystemInformation.GetCellaIntestazione('ISBN');
+         BodySheet['B1'] = SystemInformation.GetCellaIntestazione('TITOLO');
+         BodySheet['C1'] = SystemInformation.GetCellaIntestazione('QUANTITA MAGAZZINO');
+         BodySheet['D1'] = SystemInformation.GetCellaIntestazione('QUANTITA MAGAZZINO VOLANTE');
+         BodySheet['E1'] = SystemInformation.GetCellaIntestazione('UBICAZIONE');
+         
+         for(let i = 0;i < $scope.ListaCodiciToHandle.length;i ++)
+         {                
+             BodySheet['A' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',$scope.ListaCodiciToHandle[i].Codice);
+             BodySheet['B' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',$scope.ListaCodiciToHandle[i].Nome);
+             BodySheet['C' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',$scope.ListaCodiciToHandle[i].QuantitaMgzn.toString());
+             BodySheet['D' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',$scope.ListaCodiciToHandle[i].QuantitaMgznVol.toString());
+             BodySheet['E' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',$scope.ListaCodiciToHandle[i].Ubicazione);
+         }   
+         
+         BodySheet["!cols"] = [             
+                               {wpx: 300},
+                               {wpx: 300},
+                               {wpx: 300},
+                               {wpx: 300},
+                               {wpx: 300}
+                             ];
+         
+         BodySheet['!ref'] = 'A1:E1' + parseInt($scope.ListaCodiciToHandle.length + 1);
+         
+         WBook.SheetNames.push(SheetName);
+         WBook.Sheets[SheetName] = BodySheet;            
+         
+         var wbout = XLSX.write(WBook, {bookType:'xlsx', bookSST:true, type: 'binary'});
+         saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}),"InventarioDaCodiceXLS" + DataInventario + ".xlsx");            
+         
+         $scope.SvuotaInventarioTemporaneo();
+         $scope.ListaCodiciToHandle = [];
+         $scope.CodiceBippato       = '';
+         $scope.CodiceFocused       = undefined;
+         $state.go("startPage")
+       })
+    }
+    ZConfirm.GetConfirmBox('ATTENZIONE',"CONFERMARE L'INVENTARIO ESEGUITO? L'OPERAZIONE E' IRREVERSIBILE!",InventarioConfermato,function(){});
   }
 
   $scope.GetInventarioSalvato();
