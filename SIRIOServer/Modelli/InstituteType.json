@@ -5,6 +5,13 @@
                     "SQL"  : "SELECT * FROM tipologie_istituto ORDER BY tipologie_istituto.DESCRIZIONE" 
                   }
                 ],
+
+  "SelectGroups" : [
+                     {
+                       "Name" : "InstituteGroupInfo",
+                       "SQL" : "SELECT * FROM istituti_gruppi ORDER BY DESCRIZIONE"
+                     }
+                   ],
                 
   "EditSQL"   : [   
                   {

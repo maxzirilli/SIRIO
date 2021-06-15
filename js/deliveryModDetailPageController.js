@@ -620,7 +620,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                          "NOME_TITOLO"   : '',
                          "ISBN_TITOLO"   : '',
                          "QUANTITA"      : 1,
-                         "STATO"         : null,
+                         "STATO"         : 'P',
                          "QUANTITA_MGZN" : null,
                          "QUANTITA_DISP" : 0,
                          "Nuovo"         : true,
@@ -1867,6 +1867,36 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
               }
 
           }
+
+          var ListaTitoliNonSpedibili = [];
+          
+          for(let i = 0; i < $scope.ListaTitoliSpedizione.length;i ++)
+          {
+             var SecondSpedizione = {};
+             var QuantitaToBook   = 0;
+
+             if(!$scope.SpedizioneMultipla)
+             {
+                if(($scope.ListaTitoliSpedizione[i].QUANTITA > $scope.ListaTitoliSpedizione[i].QUANTITA_DISP) && $scope.ListaTitoliSpedizione[i].STATO == 'S')
+                {
+                    QuantitaToBook                           = $scope.ListaTitoliSpedizione[i].QUANTITA - $scope.ListaTitoliSpedizione[i].QUANTITA_DISP;
+                    $scope.ListaTitoliSpedizione[i].QUANTITA = $scope.ListaTitoliSpedizione[i].QUANTITA_DISP;
+                    Object.assign(SecondSpedizione, $scope.ListaTitoliSpedizione[i]);                    
+                    SecondSpedizione.QUANTITA                = QuantitaToBook;
+                    SecondSpedizione.STATO                   = 'P';
+                    $scope.ListaTitoliSpedizione.push(SecondSpedizione);
+                    ListaTitoliNonSpedibili.push('\n' + $scope.ListaTitoliSpedizione[i].NOME_TITOLO + ' (' + $scope.ListaTitoliSpedizione[i].ISBN_TITOLO + ')');
+                }
+             }
+             else
+             {
+               if((($scope.ListaTitoliSpedizione[i].QUANTITA * $scope.NumeroDocenti) > $scope.ListaTitoliSpedizione[i].QUANTITA_DISP) && $scope.ListaTitoliSpedizione[i].STATO == 'S')
+               { 
+                    $scope.ListaTitoliSpedizione[i].STATO = 'P';
+                    ListaTitoliNonSpedibili.push($scope.ListaTitoliSpedizione[i].NOME_TITOLO + ' (' + $scope.ListaTitoliSpedizione[i].ISBN_TITOLO + ')');
+               }
+             }
+          } 
           
           var DaSpedireEsistenti = [];
           var ChiediEtichetta = false;
@@ -1879,10 +1909,19 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                  DaSpedireEsistenti.push($scope.ListaTitoliSpedizione[i].CHIAVE)
           }
           if(ContatoreDaSpedire > 0)
-            ChiediEtichetta = true;              
+            ChiediEtichetta = true;
+            
+          if(ListaTitoliNonSpedibili.length != 0 && ChiediEtichetta == false)
+             ZCustomAlert($mdDialog,'ATTENZIONE',"I SEGUENTI TITOLI NON POSSONO ESSERE SEGNATI COME DA SPEDIRE, E SONO STATI SEGNATI COME PRENOTATI (LA QUANTITA'' DISPONIBILE NON COPRE LA QUANTITA'' RICHIESTA)! " + ListaTitoliNonSpedibili.toString());
 
-          if(ChiediEtichetta) // && !$scope.SpedizioneMultipla)
-             ZConfirm.GetConfirmBox('AVVISO',"LA SPEDIZIONE CONTIENE ALCUNI TITOLI DA SPEDIRE,VUOI CREARE ORA L'ETICHETTA?",SalvaEStampa,SalvaSpedizione);
+          if(ChiediEtichetta)
+          {
+             var StringaConfirm = '';
+             if(ListaTitoliNonSpedibili.length != 0)
+                StringaConfirm = "I SEGUENTI TITOLI NON POSSONO ESSERE SEGNATI COME DA SPEDIRE, E SONO STATI SEGNATI COME PRENOTATI (LA QUANTITA' DISPONIBILE NON COPRE LA QUANTITA' RICHIESTA) : " + ListaTitoliNonSpedibili.toString() + '. \n\n' + "LA SPEDIZIONE CONTIENE ALCUNI TITOLI DA SPEDIRE,VUOI CREARE ORA L'ETICHETTA?"
+             else StringaConfirm = "LA SPEDIZIONE CONTIENE ALCUNI TITOLI DA SPEDIRE,VUOI CREARE ORA L'ETICHETTA?"; 
+             ZConfirm.GetConfirmBox('AVVISO',StringaConfirm,SalvaEStampa,SalvaSpedizione);
+          }       
           else SalvaSpedizione();
       }      
     }    

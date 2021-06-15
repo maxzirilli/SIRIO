@@ -1,0 +1,39 @@
+<md-dialog style="width: 500px;">
+  <form ng-cloak name="PopupMateria">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2 style="font-weight:bold;color:white;">MODIFICA MATERIA</h2>
+      </div>
+    </md-toolbar>
+
+    <md-input-container style="width:80%;padding:0px;margin-left:20px;">
+      <label>DESCRIZIONE</label><input ng-model="MateriaInEditing.Descrizione" type="text">
+    </md-input-container>
+
+    <div layout="row">
+       <input style="margin-left: 20px;" type="checkbox" ng-model="MateriaInEditing.ListaGruppi[0].Checked">
+       <label style="margin-left: 10px;">{{MateriaInEditing.ListaGruppi[0].Descrizione | uppercase}}</label> 
+    </div>
+    <div layout="row">
+       <input style="margin-left: 20px;" type="checkbox" ng-model="MateriaInEditing.ListaGruppi[1].Checked">
+       <label style="margin-left: 10px;">{{MateriaInEditing.ListaGruppi[1].Descrizione | uppercase}}</label> 
+    </div>
+    <div layout="row">
+       <input style="margin-left: 20px;" type="checkbox" ng-model="MateriaInEditing.ListaGruppi[2].Checked">
+       <label style="margin-left: 10px;">{{MateriaInEditing.ListaGruppi[2].Descrizione | uppercase}}</label> 
+    </div>
+    <div layout="row">
+       <input style="margin-left: 20px;" type="checkbox" ng-model="MateriaInEditing.ListaGruppi[3].Checked">
+       <label style="margin-left: 10px;">{{MateriaInEditing.ListaGruppi[3].Descrizione | uppercase}}</label> 
+    </div>
+
+    <md-dialog-actions layout="row">
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ConfermaPopupMateria(MateriaInEditing)">
+       CONFERMA
+      </md-button>
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="AnnullaPopupMateria()">
+       ANNULLA
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

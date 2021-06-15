@@ -186,7 +186,7 @@
             <th>DISPONIBILITA</th>
             <th>DA SPEDIRE</th>
           </tr>  
-          <tr ng-repeat="Titolo in ListaTitoliSpedizione | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Titolo.Chiave}}>
+          <tr ng-repeat="Titolo in ListaTitoliSpedizione track by (Titolo.CHIAVE + $index) | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Titolo.Chiave}}>
             <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA TITOLO" ng-click="EliminaTitolo(Titolo)"></td> 
             <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA TITOLO" ng-click="ModificaTitolo(Titolo)"></td>
             <td>{{Titolo.NOME_TITOLO | uppercase}}</td>

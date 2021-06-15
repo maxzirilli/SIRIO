@@ -1,4 +1,4 @@
-SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','ZConfirm','ZPrompt','ZSelect', function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm,ZPrompt,ZSelect)
+SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','ZConfirm','ZPrompt','ZSelect','$sce', function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm,ZPrompt,ZSelect,$sce)
 { 
   $scope.ListaConfigurazioni        = ['COMBINAZIONI CLASSI','CASE EDITRICI GESTITE','DATI PAGINA 43',"GRUPPI CASE EDITRICI","LUOGHI DISPONIBILITA' DOCENTI",'MATERIE','PROVINCE GESTITE','TIPOLOGIE ISTITUTI GESTITE','TIPOLOGIE ISTITUTI ESCLUSE'];
   $scope.ConfigurazioneSelezionata  = 0;
@@ -34,6 +34,11 @@ SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformat
   $scope.ListaGruppi               = [];
   $scope.GruppoInEditing           = {};
   $scope.NuovoGruppo               = false;
+
+  $scope.ListaGruppiIstituti       = [];
+ 
+  $scope.TuttiGruppi               = true;
+  $scope.PopupGruppiSelect         = [];
   
   ScopeHeaderController.CheckButtons(); 
   
@@ -164,24 +169,71 @@ $scope.GridOptions_8 = {
                                             },
                           limitOptions    : [10, 20, 30]
                        };
+
+  $scope.GetListaGruppiIstituti = function()
+  {
+    SystemInformation.GetSQL('InstituteType', {}, function(Results)  
+    {
+      GroupsInfoList = SystemInformation.FindResults(Results,'InstituteGroupInfo');
+      if(GroupsInfoList != undefined)
+      { 
+         for(let i = 0;i < GroupsInfoList.length;i ++)
+         GroupsInfoList[i] = {
+                               Chiave      : GroupsInfoList[i].CHIAVE,
+                               Descrizione : GroupsInfoList[i].DESCRIZIONE,
+                               Checked     : false
+                             }
+         $scope.ListaGruppiIstituti = GroupsInfoList;
+      }
+      else SystemInformation.ApplyOnError('Modello gruppi istituti non conforme','');   
+    },'SelectGroups');
+  }
                            
   $scope.RefreshListaMaterie = function ()
   {
     SystemInformation.GetSQL('Subject', {}, function(Results)  
     {
       SubjectInfoList = SystemInformation.FindResults(Results,'SubjectInfoListAll');
-      if(SubjectInfoList != undefined)
+      SubjectGroups   = SystemInformation.FindResults(Results,'SubjectGroups');
+  
+      if(SubjectInfoList != undefined && SubjectGroups != undefined)
       { 
          for(let i = 0;i < SubjectInfoList.length;i ++)
          SubjectInfoList[i] = {
-                                Chiave      : SubjectInfoList[i].CHIAVE,
-                                Descrizione : SubjectInfoList[i].DESCRIZIONE,
-                                Nascosta    : SubjectInfoList[i].NASCOSTA == 1 ? true : false
+                                Chiave           : SubjectInfoList[i].CHIAVE,
+                                Descrizione      : SubjectInfoList[i].DESCRIZIONE,
+                                Nascosta         : SubjectInfoList[i].NASCOSTA == 1 ? true : false,
+                                GruppiIstOld     : [],
+                                GruppiIstStringa : []
                               }
-         $scope.ListaMaterie = SubjectInfoList
+         $scope.ListaMaterie = SubjectInfoList;
+
+         for(let i = 0;i < SubjectGroups.length;i ++)
+         {
+           for(let j = 0;j < $scope.ListaMaterie.length;j ++)
+           {
+               if(SubjectGroups[i].MATERIA == $scope.ListaMaterie[j].Chiave)
+               {
+                  $scope.ListaMaterie[j].GruppiIstOld.push(parseInt(SubjectGroups[i].GRUPPO_IST));
+                  $scope.ListaMaterie[j].GruppiIstStringa.push(SubjectGroups[i].DESCR_GRUPPO)
+               }
+           }
+         }
       }
       else SystemInformation.ApplyOnError('Modello materie non conforme','');   
     },'SelectAllSQL');
+  }
+
+  $scope.GetStringaGruppiMaterie = function(materia)
+  {
+    var Stringa = 'TUTTI';
+    if(materia.GruppiIstStringa.length != 4)
+    {
+       Stringa = '';
+       for(let i = 0; i < materia.GruppiIstStringa.length;i ++)
+           Stringa += materia.GruppiIstStringa[i] + '</br>';
+    }
+    return($sce.trustAsHtml(Stringa));
   }
   
   $scope.RefreshListaTipologie = function ()
@@ -303,8 +355,9 @@ $scope.GridOptions_8 = {
       { 
          for(let i = 0;i < GruppiInfoList.length;i ++)
          GruppiInfoList[i] = {
-                               Chiave      : GruppiInfoList[i].CHIAVE,
-                               Descrizione : GruppiInfoList[i].DESCRIZIONE
+                               Chiave      : parseInt(GruppiInfoList[i].CHIAVE),
+                               Descrizione : GruppiInfoList[i].DESCRIZIONE,
+                               Checked     : false
                              }
          $scope.ListaGruppi = GruppiInfoList
       } 
@@ -449,76 +502,139 @@ $scope.GridOptions_8 = {
     }
   }
 
-  $scope.ModificaMateria = function (ev,Materia) 
-  {    
-    ModificaMat = function(Answer)
+  $scope.ModificaMateria = function(Materia)
+  {
+      $mdDialog.show({ 
+                      controller          : DialogModificaMateria,
+                      templateUrl         : "template/subjectPopup.html",
+                      scope               : $scope,
+                      preserveScope       : true,
+                      clickOutsideToClose : true,
+                      locals              : {Materia}
+                    })
+      .then(function(answer) 
+      {
+      }, 
+      function() 
+      {
+      });
+  }
+
+  function DialogModificaMateria(Materia)
+  {
+    if ($scope.MateriaInEditing.Chiave != -1 || $scope.MateriaInEditing == undefined)
+        $scope.MateriaInEditing = {
+                                    Chiave       : Materia.Chiave,
+                                    Descrizione  : Materia.Descrizione,
+                                    GruppiIstOld : Materia.GruppiIstOld,
+                                    ListaGruppi  : Array.from($scope.ListaGruppiIstituti)
+                                  }
+
+    if($scope.MateriaInEditing.GruppiIstOld.length != 0)
     {
-      MateriaInEditing = Answer;
-      if (MateriaInEditing === '') $scope.RefreshListaMaterie()
-      else 
-      {       
-        var ParamMateria = {
-                            CHIAVE      : Materia.Chiave,
-                            DESCRIZIONE : MateriaInEditing.toUpperCase()
-                          }
-        $scope.ConfermaMateria(ParamMateria);
+       for(let i = 0;i < $scope.MateriaInEditing.GruppiIstOld.length;i ++)
+       {
+           for(let j = 0;j < $scope.MateriaInEditing.ListaGruppi.length;j ++)
+               if ($scope.MateriaInEditing.GruppiIstOld[i] == $scope.MateriaInEditing.ListaGruppi[j].Chiave)
+                   $scope.MateriaInEditing.ListaGruppi[j].Checked = true;
+       }
+    }
+    else for(let i = 0;i < $scope.MateriaInEditing.ListaGruppi.length;i ++)
+                   $scope.MateriaInEditing.ListaGruppi[i].Checked = true;
+
+
+    $scope.AnnullaPopupMateria = function()
+    {
+      $mdDialog.hide();
+      $scope.MateriaInEditing = {};
+    }
+    
+
+    $scope.ConfermaPopupMateria = function(Materia)
+    {
+      MateriaExist = $scope.ListaMaterie.find(function(AMateria){return ((AMateria.Descrizione == Materia.Descrizione) && (AMateria.Chiave != Materia.Chiave));});
+      if(MateriaExist)
+         ZCustomAlert($mdDialog,'ATTENZIONE','Materia già esistente!')
+      else
+      {
+         var $ObjQuery     = { Operazioni : [] };     
+         if(Materia.Chiave == -1)     
+         {           
+           $ObjQuery.Operazioni.push({
+                                       Query     : 'InsertSubject',
+                                       Parametri : {
+                                                     DESCRIZIONE : Materia.Descrizione.xSQL(),
+                                                   }
+                                     });
+           
+           for(let i = 0;i < Materia.ListaGruppi.length;i ++)
+           {
+               if(Materia.ListaGruppi[i].Checked)
+                  $ObjQuery.Operazioni.push({
+                                              Query     : 'InsertSubjectGroupAfterInsert',
+                                              Parametri : {
+                                                            GRUPPO : Materia.ListaGruppi[i].Chiave
+                                                          }
+                                            });
+           }
+         }
+         else
+         {
+           $ObjQuery.Operazioni.push({
+                                       Query     : 'UpdateSubject',
+                                       Parametri : {
+                                                     CHIAVE      : Materia.Chiave,
+                                                     DESCRIZIONE : Materia.Descrizione.xSQL(),
+                                                   }
+                                     });
+
+           for(let i = 0;i < Materia.ListaGruppi.length;i ++)
+           {
+               var Trovato = Materia.GruppiIstOld.find(function(AGruppo){return (AGruppo == Materia.ListaGruppi[i].Chiave);});
+               if(Trovato == undefined && Materia.ListaGruppi[i].Checked)
+               {
+                   $ObjQuery.Operazioni.push({
+                                               Query     : 'InsertSubjectGroup',
+                                               Parametri : {
+                                                             MATERIA    : Materia.Chiave,
+                                                             GRUPPO_IST : Materia.ListaGruppi[i].Chiave
+                                                           }
+                                             });
+               }
+               if(Trovato != undefined && !Materia.ListaGruppi[i].Checked)
+               {
+                  $ObjQuery.Operazioni.push({
+                                              Query     : 'DeleteSubjectGroup',
+                                              Parametri : {
+                                                            MATERIA    : Materia.Chiave,
+                                                            GRUPPO_IST : Materia.ListaGruppi[i].Chiave
+                                                          }
+                                            });
+               }
+           }
+         };
+      
+         SystemInformation.PostSQL('Subject',$ObjQuery,function(Answer)
+         {
+           $ObjQuery               = {};
+           $scope.MateriaInEditing = {};
+           $mdDialog.hide();
+           $scope.RefreshListaMaterie();
+         });
       }
     }
-    ZPrompt.GetPromptBox('MODIFICA INSERIMENTO','MODIFICA MATERIA: ',Materia.Descrizione,ModificaMat,function(){});  
-  };
+  }
 
   $scope.NuovaMateria = function (ev) 
   {
-    var CreaMat = function(Answer)
-    {
-      MateriaInEditing = Answer;
-      if (MateriaInEditing === '') $scope.RefreshListaMaterie()
-      else 
-      {       
-        var ParamMateria = {
-                            CHIAVE      : -1,
-                            DESCRIZIONE : MateriaInEditing.toUpperCase(),
-                            ORDINAMENTO : ORDINAMENTO_MATERIA
-                           }
-        $scope.ConfermaMateria(ParamMateria);
-      }   
-    }
-    ZPrompt.GetPromptBox('NUOVO INSERIMENTO','NUOVA MATERIA: ',"",CreaMat,function(){});  
+    $scope.MateriaInEditing = {
+                                Chiave       : -1,
+                                Descrizione  : '',
+                                GruppiIstOld : [],
+                                ListaGruppi  : Array.from($scope.ListaGruppiIstituti)
+                              }
+    $scope.ModificaMateria($scope.MateriaInEditing)
   };
-  
-  $scope.ConfermaMateria = function (param)
-  { 
-    MateriaExist = $scope.ListaMaterie.find(function(AMateria){return (AMateria.Descrizione == param.DESCRIZIONE);});
-    if(MateriaExist)
-       ZCustomAlert($mdDialog,'ATTENZIONE','Materia già esistente!')
-    else
-    {
-       var $ObjQuery     = { Operazioni : [] };     
-       var NuovaMateria = (param.CHIAVE == -1);
-       param.DESCRIZIONE = param.DESCRIZIONE.xSQL();
-       if(NuovaMateria)     
-       {           
-         $ObjQuery.Operazioni.push({
-                                     Query     : 'InsertSubject',
-                                     Parametri : param
-                                   }); 
-       }
-       else
-       {
-         $ObjQuery.Operazioni.push({
-                                     Query     : 'UpdateSubject',
-                                     Parametri : param
-                                   });
-       };
-    
-       SystemInformation.PostSQL('Subject',$ObjQuery,function(Answer)
-       {
-         if(param.CHIAVE == -1)
-            param.CHIAVE = Answer.NewKey1;
-         $scope.RefreshListaMaterie();
-       });
-    }    
-  }
   
   $scope.EliminaMateria = function(Materia)
   {
@@ -527,6 +643,11 @@ $scope.GridOptions_8 = {
       var $ObjQuery = { Operazioni : [] };
       var ParamMateria = { CHIAVE : Materia.Chiave };
        
+      $ObjQuery.Operazioni.push({
+                                  Query     : 'DeleteAllGroupSubject',
+                                  Parametri : ParamMateria
+                                });     
+
       $ObjQuery.Operazioni.push({
                                   Query     : 'DeleteSubject',
                                   Parametri : ParamMateria
@@ -1265,6 +1386,7 @@ $scope.GridOptions_8 = {
     $state.go('startPage');
   }
   
+  $scope.GetListaGruppiIstituti();
   $scope.RefreshListaCombinazioni();
   $scope.RefreshListaCase();
   $scope.GetDatiDitta();

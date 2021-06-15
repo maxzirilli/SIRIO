@@ -10,13 +10,17 @@
                      { 
                        "Name" : "SubjectInfoListAll",
                        "SQL"  : "SELECT * FROM materie_insegnamento ORDER BY materie_insegnamento.DESCRIZIONE" 
+                     },
+                     { 
+                       "Name" : "SubjectGroups",
+                       "SQL"  : "SELECT *,(SELECT DESCRIZIONE FROM istituti_gruppi WHERE CHIAVE = materie_istituti.GRUPPO_IST) AS DESCR_GRUPPO FROM materie_istituti" 
                      }
                    ],
-             
+        
   "EditSQL"   : [   
                   {
                     "Name" : "InsertSubject",
-                    "SQL"  : "INSERT INTO materie_insegnamento (CHIAVE,DESCRIZIONE,ORDINAMENTO) VALUES (:NewKey1,#DESCRIZIONE,:ORDINAMENTO)"
+                    "SQL"  : "INSERT INTO materie_insegnamento (CHIAVE,DESCRIZIONE) VALUES (:NewKey1,#DESCRIZIONE)"
                   }, 
                   {
                     "Name" : "UpdateSubject",
@@ -45,6 +49,22 @@
                   {
                     "Name" : "UnhideSubject",
                     "SQL"  : "UPDATE materie_insegnamento SET NASCOSTA = 0 WHERE CHIAVE =:CHIAVE"
+                  },
+                 {
+                    "Name" : "InsertSubjectGroupAfterInsert",
+                    "SQL"  : "INSERT IGNORE INTO materie_istituti (MATERIA,GRUPPO_IST) VALUES (:NewKey1,:GRUPPO_IST)"
+                  },
+                  {
+                    "Name" : "InsertSubjectGroup",
+                    "SQL"  : "INSERT IGNORE INTO materie_istituti (MATERIA,GRUPPO_IST) VALUES (:MATERIA,:GRUPPO_IST)"
+                  },
+                  {
+                    "Name" : "DeleteSubjectGroup", 
+                    "SQL"  : "DELETE FROM materie_istituti WHERE MATERIA =:MATERIA AND GRUPPO_IST =:GRUPPO_IST"
+                  },
+                  {
+                    "Name" : "DeleteAllGroupSubject",
+                    "SQL"  : "DELETE FROM materie_istituti WHERE MATERIA =:CHIAVE"
                   }
                 ]        
 }
