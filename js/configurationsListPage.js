@@ -231,7 +231,7 @@ $scope.GridOptions_8 = {
     {
        Stringa = '';
        for(let i = 0; i < materia.GruppiIstStringa.length;i ++)
-           Stringa += materia.GruppiIstStringa[i] + '</br>';
+           Stringa += materia.GruppiIstStringa[i] + ' </br>';
     }
     return($sce.trustAsHtml(Stringa));
   }
