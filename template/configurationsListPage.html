@@ -229,11 +229,13 @@
           <th></th>
           <th></th> 
           <th style="font-weight:bold;">TIPOLOGIA</th>
+          <th style="font-weight:bold;">ISTITUTI</th>
         </tr>  
         <tr ng-repeat="tipologia in ListaTipologie | limitTo : GridOptions_2.query.limit : (GridOptions_2.query.page - 1) * GridOptions_2.query.limit" id={{tipologia.Chiave}}>
           <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA TIPOLOGIA" ng-click="EliminaTipologia(tipologia)"></td> 
           <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA TIPOLOGIA" ng-click="ModificaTipologia(tipologia)"></td>        
           <td>{{tipologia.Descrizione | uppercase}}</td>
+          <td ng-bind-html="GetStringaGruppiTipologie(tipologia)"></td>
         </tr>    
       </table>
       <md-table-pagination md-limit="GridOptions_2.query.limit" 

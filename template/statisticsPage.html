@@ -1,0 +1,144 @@
+<div ng-controller="statisticsPageController">
+  <h2>STATISTICHE</h2>
+  <div layout="column" layout-align="center center" ng-show="RegistrazioneInCorso">
+    <label style="background-color:orange;display:block;font-size:30px;text-align:center;font-weight:bold;color:white;padding:50px;margin:50px;width:100%;">SALVATAGGIO ADOZIONI IN CORSO...</label>
+  </div>
+  <div layout="column" ng-show="!RegistrazioneInCorso">
+    <div layout="row">
+      <md-input-container class="containerSelect" style="width:20%;margin-right:10px;"><label>STATISTICA 1</label>
+        <md-select ng-model="PrimaData" placeholder="STATISTICA 1" class="mdb-select" type="text" name="Statistica1">
+        <md-optgroup>
+          <md-option ng-value="-1">ATTUALE</md-option>  
+          <md-option ng-repeat="data in ListaDate" ng-value="data.DataStatistica">{{data.DataFormattata}}</md-option>
+        </md-optgroup>
+        </md-select>
+      </md-input-container>
+      <md-input-container class="containerSelect" style="width:20%;margin-right:10px;"><label>STATISTICA 2</label>
+        <md-select ng-model="SecondaData" placeholder="STATISTICA 2" class="mdb-select" type="text" name="Statistica2">
+        <md-optgroup>
+          <md-option ng-repeat="data in ListaDate" ng-value="data.DataStatistica">{{data.DataFormattata}}</md-option>
+        </md-optgroup>
+        </md-select>
+      </md-input-container>
+      <md-button class="md-raised md-accent" style="font-weight:bold;height: 20px;" ng-show="ListaDate.length > 0" ng-click="EliminaStatistica()">ELIMINA STATISTICA SELEZIONATA</md-button>
+    </div>
+    <div layout="row">
+      <md-input-container class="containerSelect" style="width:30%;margin-right:10px;">
+        <label>ISTITUTO</label>
+        <md-autocomplete
+                    md-input-name="Istituto"
+                    md-autofocus="true"
+                    md-no-cache="true"
+                    md-selected-item-change = "selectedItemChangeIstituto(item)"
+                    md-search-text="searchTextIstituto"
+                    md-items="item in queryIstituto(searchTextIstituto)"
+                    md-item-text="item.Nome"
+                    md-require-match="true"
+                    md-clear-button="true">
+        <md-item-template>
+          <span md-highlight-text="searchText">{{item.Nome}}</span>
+        </md-item-template>
+        <md-not-found>
+          Nessuna corrispondenza
+        </md-not-found>
+     </md-input-container>
+      <md-input-container class="containerSelect" style="width:20%;margin-right:10px;"><label>TIPO SCUOLA</label>
+        <md-select ng-model="GruppoIstitutoFiltro" placeholder="TIPO SCUOLA" class="mdb-select" type="text" name="GruppoIstitutoFiltro">
+        <md-optgroup>
+          <md-option ng-value="-1">QUALSIASI</md-option>  
+          <md-option ng-repeat="gruppo in ListaGruppiIstituti" ng-value="gruppo.Chiave">{{gruppo.Descrizione | uppercase}}</md-option>
+        </md-optgroup>
+        </md-select>
+      </md-input-container>
+      <md-input-container class="containerSelect" style="width:20%;margin-right:10px;"><label>PROVINCIA</label>
+        <md-select ng-model="ProvinciaFiltro" placeholder="PROVINCIA" class="mdb-select" type="text" name="ProvinciaFiltro">
+        <md-optgroup>
+          <md-option ng-value="-1">QUALSIASI</md-option>  
+          <md-option ng-repeat="provincia in ListaProvince" ng-value="provincia.Chiave">{{provincia.Nome}}</md-option>
+        </md-optgroup>
+        </md-select>
+      </md-input-container>
+    </div>
+    <div layout="row">
+      <md-input-container class="containerSelect" style="width:30%;margin-right:10px;">
+        <label>TITOLO</label>
+        <md-autocomplete
+                    md-input-name="Titolo"
+                    md-autofocus="true"
+                    md-no-cache="true"
+                    md-selected-item-change = "selectedItemChangeTitolo(item)"
+                    md-search-text="searchTextTit"
+                    md-items="item in queryTitolo(searchTextTit)"
+                    md-item-text="item.Nome"
+                    md-require-match="true"
+                    md-clear-button="true">
+        <md-item-template>
+          <span md-highlight-text="searchText">ISBN : {{item.Codice}} - {{item.Nome}}</span>
+        </md-item-template>
+        <md-not-found>
+          Nessuna corrispondenza
+        </md-not-found>
+      </md-input-container>
+      <md-input-container class="containerSelect" style="width:20%;float:left;margin-right:10px;"><label>MATERIA</label>
+        <md-select ng-model="MateriaFiltro" ng-change="GridOptions.query.page = 1" placeholder="MATERIA" class="mdb-select" type="text" name="MateriaFiltro">
+        <md-optgroup>
+          <md-option ng-value="-1">QUALSIASI</md-option>  
+          <md-option ng-repeat="materia in ListaMaterie" ng-value="materia.Chiave">{{materia.Materia}}</md-option>
+        </md-optgroup>
+        </md-select>
+      </md-input-container>
+      <md-input-container class="containerSelect" style="width:20%;margin-right:10px;"><label>PROMOTORE</label>
+        <md-select ng-model="PromotoreFiltro" placeholder="PROMOTORE" class="mdb-select" type="text" name="PromotoreFiltro">
+        <md-optgroup>
+          <md-option ng-value="-1">QUALSIASI</md-option>  
+          <md-option ng-repeat="promotore in ListaPromotori" ng-value="promotore.Chiave">{{promotore.RagioneSociale | uppercase}}</md-option>
+        </md-optgroup>
+        </md-select>
+      </md-input-container>
+      <md-input-container class="containerSelect" style="width:20%;margin-right:10px;"><label>GRUPPO EDITORIALE</label>
+        <md-select ng-model="GruppoEditorialeFiltro" placeholder="GRUPPO EDITORIALE" class="mdb-select" type="text" name="GruppoEditorialeFiltro">
+        <md-optgroup>
+          <md-option ng-value="-1">QUALSIASI</md-option>  
+          <md-option ng-repeat="gruppoEditoriale in ListaGruppiEditoriali" ng-value="gruppoEditoriale.Chiave">{{gruppoEditoriale.Descrizione | uppercase}}</md-option>
+        </md-optgroup>
+        </md-select>
+      </md-input-container>
+    </div>
+    <div>
+      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="EsportaStatisticaXls()">ESPORTAZIONE STATISTICA XLS</md-button>
+      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="GeneraStatistica()">GENERA STATISTICA</md-button>
+      <md-button class="md-raised md-accent" style="float:left;font-weight:bold;" ng-show="RegistraAdozVisible" ng-click="RegistraStatoAdozioni()">REGISTRA STATO ATTUALE</md-button>
+    </div>
+  </div>
+
+
+  <div>
+    <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
+      <tr>
+        <th>COD.IST</th>
+        <th>ISTITUTO</th> 
+        <th>COD.ISBN</th>
+        <th>TITOLO</th>  
+        <th>VALORE ADOZIONI (€)</th>              
+        <th>N° CLASSI 1</th>
+        <th>N° CLASSI 2</th>
+      </tr>  
+      <tr ng-repeat="Elemento in ListaStatistica | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Utente.Chiave}}>
+        <td class="off">{{Elemento.CodiceIstituto}}</td> 
+        <td class="off">{{Elemento.NomeIstituto}}</td> 
+        <td class="off">{{Elemento.CodiceTitolo}}</td> 
+        <td class="off">{{Elemento.NomeTitolo}}</td> 
+        <td class="off">{{Elemento.ValoreAdozioni}}</td>
+        <td class="off">{{Elemento.NrClassi}}</td> 
+        <td class="off">{{Elemento.NrClassiPrec}}</td>   
+      </tr>    
+    </table>
+    <md-table-pagination md-limit="GridOptions.query.limit" 
+                         md-limit-options="GridOptions.limitOptions" 
+                         md-page="GridOptions.query.page" 
+                         md-total="{{ListaStatistica.length}}" 
+                         md-page-select="GridOptions.pageSelect" 
+                         md-boundary-links="GridOptions.boundaryLinks" 
+                         md-on-paginate="logPagination"></md-table-pagination>
+  </div>
+</div>

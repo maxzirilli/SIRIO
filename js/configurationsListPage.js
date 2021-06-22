@@ -170,6 +170,30 @@ $scope.GridOptions_8 = {
                           limitOptions    : [10, 20, 30]
                        };
 
+  $scope.GetStringaGruppiMaterie = function(materia)
+  {
+    var Stringa = 'TUTTI';
+    if(materia.GruppiIstStringa.length != 4)
+    {
+       Stringa = '';
+       for(let i = 0; i < materia.GruppiIstStringa.length;i ++)
+           Stringa += materia.GruppiIstStringa[i] + ' </br>';
+    }
+    return($sce.trustAsHtml(Stringa));
+  }
+
+  $scope.GetStringaGruppiTipologie = function(tipologia)
+  {
+    var Stringa = 'TUTTI';
+    if(tipologia.GruppiIstStringa.length != 4)
+    {
+       Stringa = '';
+       for(let i = 0; i < tipologia.GruppiIstStringa.length;i ++)
+           Stringa += tipologia.GruppiIstStringa[i] + ' </br>';
+    }
+    return($sce.trustAsHtml(Stringa));
+  }
+
   $scope.GetListaGruppiIstituti = function()
   {
     SystemInformation.GetSQL('InstituteType', {}, function(Results)  
@@ -223,35 +247,38 @@ $scope.GridOptions_8 = {
       else SystemInformation.ApplyOnError('Modello materie non conforme','');   
     },'SelectAllSQL');
   }
-
-  $scope.GetStringaGruppiMaterie = function(materia)
-  {
-    var Stringa = 'TUTTI';
-    if(materia.GruppiIstStringa.length != 4)
-    {
-       Stringa = '';
-       for(let i = 0; i < materia.GruppiIstStringa.length;i ++)
-           Stringa += materia.GruppiIstStringa[i] + ' </br>';
-    }
-    return($sce.trustAsHtml(Stringa));
-  }
   
   $scope.RefreshListaTipologie = function ()
   {
     SystemInformation.GetSQL('InstituteType', {}, function(Results)  
     {
       TypeInfoList = SystemInformation.FindResults(Results,'InstituteTypeInfoList');
-      if(TypeInfoList != undefined)
+      TypeGroups   = SystemInformation.FindResults(Results,'InstituteTypeGroups');
+      if(TypeInfoList != undefined && TypeGroups != undefined)
       { 
          for(let i = 0;i < TypeInfoList.length;i ++)
          TypeInfoList[i] = {
-                             Chiave      : TypeInfoList[i].CHIAVE,
-                             Descrizione : TypeInfoList[i].DESCRIZIONE
+                             Chiave           : TypeInfoList[i].CHIAVE,
+                             Descrizione      : TypeInfoList[i].DESCRIZIONE,
+                             GruppiIstOld     : [],
+                             GruppiIstStringa : []
                            }
-         $scope.ListaTipologie = TypeInfoList
+         $scope.ListaTipologie = TypeInfoList;
+         
+         for(let i = 0;i < TypeGroups.length;i ++)
+         {
+           for(let j = 0;j < $scope.ListaTipologie.length;j ++)
+           {
+               if(TypeGroups[i].TIPOLOGIA == $scope.ListaTipologie[j].Chiave)
+               {
+                  $scope.ListaTipologie[j].GruppiIstOld.push(parseInt(TypeGroups[i].GRUPPO_IST));
+                  $scope.ListaTipologie[j].GruppiIstStringa.push(TypeGroups[i].DESCR_GRUPPO)
+               }
+           }
+         }
       }      
       else SystemInformation.ApplyOnError('Modello tipologie non conforme','');   
-    });
+    },'SelectAllSQL');
   }
   
   $scope.RefreshListaTipologieEscluse = function ()
@@ -542,13 +569,17 @@ $scope.GridOptions_8 = {
     else for(let i = 0;i < $scope.MateriaInEditing.ListaGruppi.length;i ++)
                    $scope.MateriaInEditing.ListaGruppi[i].Checked = true;
 
-
     $scope.AnnullaPopupMateria = function()
     {
       $mdDialog.hide();
       $scope.MateriaInEditing = {};
     }
-    
+
+    $scope.SelezionaDeselezionaGruppi = function(Check)
+    {
+      for(let i = 0;i < $scope.MateriaInEditing.ListaGruppi.length;i ++)
+          $scope.MateriaInEditing.ListaGruppi[i].Checked = Check;
+    }
 
     $scope.ConfermaPopupMateria = function(Materia)
     {
@@ -557,70 +588,75 @@ $scope.GridOptions_8 = {
          ZCustomAlert($mdDialog,'ATTENZIONE','Materia già esistente!')
       else
       {
-         var $ObjQuery     = { Operazioni : [] };     
-         if(Materia.Chiave == -1)     
-         {           
-           $ObjQuery.Operazioni.push({
-                                       Query     : 'InsertSubject',
-                                       Parametri : {
-                                                     DESCRIZIONE : Materia.Descrizione.xSQL(),
-                                                   }
-                                     });
-           
-           for(let i = 0;i < Materia.ListaGruppi.length;i ++)
-           {
-               if(Materia.ListaGruppi[i].Checked)
-                  $ObjQuery.Operazioni.push({
-                                              Query     : 'InsertSubjectGroupAfterInsert',
-                                              Parametri : {
-                                                            GRUPPO : Materia.ListaGruppi[i].Chiave
-                                                          }
-                                            });
-           }
-         }
+         if(!Materia.ListaGruppi[0].Checked && !Materia.ListaGruppi[1].Checked && !Materia.ListaGruppi[2].Checked && !Materia.ListaGruppi[3].Checked)
+            ZCustomAlert($mdDialog,'ATTENZIONE','Non è stata assegnato nessun gruppo di istituti alla materia selezionata!')
          else
          {
-           $ObjQuery.Operazioni.push({
-                                       Query     : 'UpdateSubject',
-                                       Parametri : {
-                                                     CHIAVE      : Materia.Chiave,
-                                                     DESCRIZIONE : Materia.Descrizione.xSQL(),
-                                                   }
-                                     });
+            var $ObjQuery = { Operazioni : [] };     
+            if(Materia.Chiave == -1)     
+            {           
+              $ObjQuery.Operazioni.push({
+                                          Query     : 'InsertSubject',
+                                          Parametri : {
+                                                        DESCRIZIONE : Materia.Descrizione.xSQL(),
+                                                      }
+                                        });
+              
+              for(let i = 0;i < Materia.ListaGruppi.length;i ++)
+              {
+                  if(Materia.ListaGruppi[i].Checked)
+                     $ObjQuery.Operazioni.push({
+                                                 Query     : 'InsertSubjectGroupAfterInsert',
+                                                 Parametri : {
+                                                               GRUPPO : Materia.ListaGruppi[i].Chiave
+                                                             }
+                                               });
+              }
+            }
+            else
+            {
+              $ObjQuery.Operazioni.push({
+                                          Query     : 'UpdateSubject',
+                                          Parametri : {
+                                                        CHIAVE      : Materia.Chiave,
+                                                        DESCRIZIONE : Materia.Descrizione.xSQL(),
+                                                      }
+                                        });
 
-           for(let i = 0;i < Materia.ListaGruppi.length;i ++)
-           {
-               var Trovato = Materia.GruppiIstOld.find(function(AGruppo){return (AGruppo == Materia.ListaGruppi[i].Chiave);});
-               if(Trovato == undefined && Materia.ListaGruppi[i].Checked)
-               {
-                   $ObjQuery.Operazioni.push({
-                                               Query     : 'InsertSubjectGroup',
-                                               Parametri : {
-                                                             MATERIA    : Materia.Chiave,
-                                                             GRUPPO_IST : Materia.ListaGruppi[i].Chiave
-                                                           }
-                                             });
-               }
-               if(Trovato != undefined && !Materia.ListaGruppi[i].Checked)
-               {
-                  $ObjQuery.Operazioni.push({
-                                              Query     : 'DeleteSubjectGroup',
-                                              Parametri : {
-                                                            MATERIA    : Materia.Chiave,
-                                                            GRUPPO_IST : Materia.ListaGruppi[i].Chiave
-                                                          }
-                                            });
-               }
-           }
-         };
-      
-         SystemInformation.PostSQL('Subject',$ObjQuery,function(Answer)
-         {
-           $ObjQuery               = {};
-           $scope.MateriaInEditing = {};
-           $mdDialog.hide();
-           $scope.RefreshListaMaterie();
-         });
+              for(let i = 0;i < Materia.ListaGruppi.length;i ++)
+              {
+                  var Trovato = Materia.GruppiIstOld.find(function(AGruppo){return (AGruppo == Materia.ListaGruppi[i].Chiave);});
+                  if(Trovato == undefined && Materia.ListaGruppi[i].Checked)
+                  {
+                      $ObjQuery.Operazioni.push({
+                                                  Query     : 'InsertSubjectGroup',
+                                                  Parametri : {
+                                                                MATERIA    : Materia.Chiave,
+                                                                GRUPPO_IST : Materia.ListaGruppi[i].Chiave
+                                                              }
+                                                });
+                  }
+                  if(Trovato != undefined && !Materia.ListaGruppi[i].Checked)
+                  {
+                     $ObjQuery.Operazioni.push({
+                                                 Query     : 'DeleteSubjectGroup',
+                                                 Parametri : {
+                                                               MATERIA    : Materia.Chiave,
+                                                               GRUPPO_IST : Materia.ListaGruppi[i].Chiave
+                                                             }
+                                               });
+                  }
+              }
+            };
+         
+            SystemInformation.PostSQL('Subject',$ObjQuery,function(Answer)
+            {
+              $ObjQuery               = {};
+              $scope.MateriaInEditing = {};
+              $mdDialog.hide();
+              $scope.RefreshListaMaterie();
+            });
+         }
       }
     }
   }
@@ -676,9 +712,178 @@ $scope.GridOptions_8 = {
     ZConfirm.GetConfirmBox('AVVISO','ELIMINARE LA MATERIA: ' + Materia.Descrizione + ' ?',EliminaMat,function(){});      
   }
   
-  //TIPOLOGIE  
+  //TIPOLOGIE 
+
+  $scope.ModificaTipologia = function(Tipologia)
+  {
+      $mdDialog.show({ 
+                      controller          : DialogModificaTipologia,
+                      templateUrl         : "template/instituteTypePopup.html",
+                      scope               : $scope,
+                      preserveScope       : true,
+                      clickOutsideToClose : true,
+                      locals              : {Tipologia}
+                    })
+      .then(function(answer) 
+      {
+      }, 
+      function() 
+      {
+      });
+  }
+
+  function DialogModificaTipologia(Tipologia)
+  {
+    if ($scope.TipologiaInEditing.Chiave != -1 || $scope.TipologiaInEditing == undefined)
+        $scope.TipologiaInEditing = {
+                                    Chiave       : Tipologia.Chiave,
+                                    Descrizione  : Tipologia.Descrizione,
+                                    GruppiIstOld : Tipologia.GruppiIstOld,
+                                    ListaGruppi  : Array.from($scope.ListaGruppiIstituti)
+                                  }
+
+    if($scope.TipologiaInEditing.GruppiIstOld.length != 0)
+    {
+       for(let i = 0;i < $scope.TipologiaInEditing.GruppiIstOld.length;i ++)
+       {
+           for(let j = 0;j < $scope.TipologiaInEditing.ListaGruppi.length;j ++)
+               if ($scope.TipologiaInEditing.GruppiIstOld[i] == $scope.TipologiaInEditing.ListaGruppi[j].Chiave)
+                   $scope.TipologiaInEditing.ListaGruppi[j].Checked = true;
+       }
+    }
+    else for(let i = 0;i < $scope.TipologiaInEditing.ListaGruppi.length;i ++)
+                   $scope.TipologiaInEditing.ListaGruppi[i].Checked = true;
+
+
+    $scope.AnnullaPopupTipologia = function()
+    {
+      $mdDialog.hide();
+      $scope.TipologiaInEditing = {};
+    }
+    
+    $scope.SelezionaDeselezionaGruppi = function(Check)
+    {
+      for(let i = 0;i < $scope.TipologiaInEditing.ListaGruppi.length;i ++)
+          $scope.TipologiaInEditing.ListaGruppi[i].Checked = Check;
+    }
+
+    $scope.ConfermaPopupTipologia = function(Tipologia)
+    {
+      TipologiaExist = $scope.ListaTipologie.find(function(ATipologia){return ((ATipologia.Descrizione == Tipologia.Descrizione) && (ATipologia.Chiave != Tipologia.Chiave));});
+      if(TipologiaExist)
+         ZCustomAlert($mdDialog,'ATTENZIONE','Tipologia già esistente!')
+      else
+      {
+         if(!Tipologia.ListaGruppi[0].Checked && !Tipologia.ListaGruppi[1].Checked && !Tipologia.ListaGruppi[2].Checked && !Tipologia.ListaGruppi[3].Checked)
+            ZCustomAlert($mdDialog,'ATTENZIONE','Non è stata assegnato nessun gruppo di istituti alla tipologia selezionata!')
+         else
+         {
+            var $ObjQuery = { Operazioni : [] };     
+            if(Tipologia.Chiave == -1)     
+            {           
+              $ObjQuery.Operazioni.push({
+                                          Query     : 'InsertInstituteType',
+                                          Parametri : {
+                                                        DESCRIZIONE : Tipologia.Descrizione.xSQL(),
+                                                      }
+                                        });
+              
+              for(let i = 0;i < Tipologia.ListaGruppi.length;i ++)
+              {
+                  if(Tipologia.ListaGruppi[i].Checked)
+                     $ObjQuery.Operazioni.push({
+                                                 Query     : 'InsertInstituteGroupAfterInsert',
+                                                 Parametri : {
+                                                               GRUPPO : Tipologia.ListaGruppi[i].Chiave
+                                                             }
+                                               });
+              }
+            }
+            else
+            {
+              $ObjQuery.Operazioni.push({
+                                          Query     : 'UpdateInstituteType',
+                                          Parametri : {
+                                                        CHIAVE      : Tipologia.Chiave,
+                                                        DESCRIZIONE : Tipologia.Descrizione.xSQL(),
+                                                      }
+                                        });
+
+              for(let i = 0;i < Tipologia.ListaGruppi.length;i ++)
+              {
+                  var Trovato = Tipologia.GruppiIstOld.find(function(AGruppo){return (AGruppo == Tipologia.ListaGruppi[i].Chiave);});
+                  if(Trovato == undefined && Tipologia.ListaGruppi[i].Checked)
+                  {
+                      $ObjQuery.Operazioni.push({
+                                                  Query     : 'InsertInstituteGroup',
+                                                  Parametri : {
+                                                                TIPOLOGIA  : Tipologia.Chiave,
+                                                                GRUPPO_IST : Tipologia.ListaGruppi[i].Chiave
+                                                              }
+                                                });
+                  }
+                  if(Trovato != undefined && !Tipologia.ListaGruppi[i].Checked)
+                  {
+                     $ObjQuery.Operazioni.push({
+                                                 Query     : 'DeleteInstituteGroup',
+                                                 Parametri : {
+                                                               TIPOLOGIA  : Tipologia.Chiave,
+                                                               GRUPPO_IST : Tipologia.ListaGruppi[i].Chiave
+                                                             }
+                                               });
+                  }
+              }
+            };
+         
+            SystemInformation.PostSQL('InstituteType',$ObjQuery,function(Answer)
+            {
+              $ObjQuery                 = {};
+              $scope.TipologiaInEditing = {};
+              $mdDialog.hide();
+              $scope.RefreshListaTipologie();
+            });
+         }
+      }
+    }
+  }
+
+  $scope.NuovaTipologia = function (ev) 
+  {
+    $scope.TipologiaInEditing = {
+                                  Chiave       : -1,
+                                  Descrizione  : '',
+                                  GruppiIstOld : [],
+                                  ListaGruppi  : Array.from($scope.ListaGruppiIstituti)
+                                }
+    $scope.ModificaTipologia($scope.TipologiaInEditing)
+  };
   
-  $scope.ModificaTipologia = function (Tipologia)
+  $scope.EliminaTipologia = function(Tipologia)
+  {
+    var EliminaTipo = function()
+    {
+      var $ObjQuery      = { Operazioni : [] };
+      var ParamTipologia = { CHIAVE : Tipologia.Chiave };
+       
+      $ObjQuery.Operazioni.push({
+                                  Query     : 'DeleteAllGroupInstitute',
+                                  Parametri : ParamTipologia
+                                });     
+
+      $ObjQuery.Operazioni.push({
+                                  Query     : 'DeleteInstituteType',
+                                  Parametri : ParamTipologia
+                                });
+                                                                
+      SystemInformation.PostSQL('InstituteType',$ObjQuery,function(Answer)
+      {
+        $scope.RefreshListaTipologie();
+      });  
+    }
+    ZConfirm.GetConfirmBox('AVVISO','ELIMINARE LA TIPOLOGIA: ' + Tipologia.Descrizione + ' ?',EliminaTipo,function(){});      
+  } 
+  
+  /*$scope.ModificaTipologia = function (Tipologia)
   {
     var ModificaTip = function(Answer)
     {
@@ -760,7 +965,7 @@ $scope.GridOptions_8 = {
                                   Parametri : ParamTipologia
                                 });*/
       
-      $ObjQuery.Operazioni.push({
+      /*$ObjQuery.Operazioni.push({
                                   Query     : 'DeleteInstituteType',
                                   Parametri : ParamTipologia
                                 });
@@ -771,7 +976,7 @@ $scope.GridOptions_8 = {
       });  
     }
     ZConfirm.GetConfirmBox('AVVISO','ELIMINARE LA TIPOLOGIA: ' + Tipologia.Descrizione + ' ?',EliminaTip,function(){});      
-  }
+  }*/
   
   //TIPOLOGIE ESCLUSE  
   

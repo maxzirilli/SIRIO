@@ -1,13 +1,13 @@
 SIRIOApp.controller("userListPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','ZConfirm', function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
 { 
 
-  $scope.ListaUtenti     = [];
-  $scope.EditingOn       = false;
-  $scope.UtenteInEditing = {};
-  $scope.NuovoUtente     = false;
-  $scope.MyKey           = [];
+  $scope.ListaUtenti      = [];
+  $scope.EditingOn        = false;
+  $scope.UtenteInEditing  = {};
+  $scope.NuovoUtente      = false;
+  $scope.MyKey            = [];
   $scope.ListaOrdinamenti = [{Sigla:'A',Descrizione:"ALFABETICO"},{Sigla:'M',Descrizione:"MATERIA"}];
-  $scope.NrMedioAlunni  = 20;
+  $scope.NrMedioAlunni    = 20;  //VIENE COMUNQUE POI SOVRASCRITTO
   
   ScopeHeaderController.CheckButtons();
   
@@ -26,6 +26,11 @@ SIRIOApp.controller("userListPageController",['$scope','SystemInformation','$sta
                                            },
                          limitOptions    : [10, 20, 30]
     };
+
+  $scope.GestioneStatistica = function()
+  {
+    $state.go('statisticsPage');
+  }
   
   $scope.RefreshListaUtenti = function ()
   {
@@ -196,7 +201,7 @@ SIRIOApp.controller("userListPageController",['$scope','SystemInformation','$sta
        }
        BodySheet['C' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',StatisticaFinale[i].CodiceTitolo);
        BodySheet['D' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',(StatisticaFinale[i].NumeroAdozioniIst*StatisticaFinale[i].PrezzoTitolo*$scope.NrMedioAlunni).toString());
-       TotaleIst = TotaleIst + (StatisticaFinale[i].NumeroAdozioniIst*StatisticaFinale[i].PrezzoTitolo*$scope.NrMedioAlunni);
+       TotaleIst  = TotaleIst + (StatisticaFinale[i].NumeroAdozioniIst*StatisticaFinale[i].PrezzoTitolo*$scope.NrMedioAlunni);
        TotalePrmt = TotalePrmt + (StatisticaFinale[i].NumeroAdozioniIst*StatisticaFinale[i].PrezzoTitolo*$scope.NrMedioAlunni);      
        j++;
 
@@ -305,9 +310,9 @@ SIRIOApp.controller("userListPageController",['$scope','SystemInformation','$sta
 
             for(let i = 0;i < StatisticaTmp.length;i ++)
             StatisticaTmp[i] = {
-                                 ChiavePromotore   :  parseInt(StatisticaTmp[i].PROMOTORE),
+                                 ChiavePromotore   : parseInt(StatisticaTmp[i].PROMOTORE),
                                  NomePromotore     : StatisticaTmp[i].RAGIONE_SOCIALE,
-                                 ChiaveIstituto    :  parseInt(StatisticaTmp[i].CHIAVE_ISTITUTO),
+                                 ChiaveIstituto    : parseInt(StatisticaTmp[i].CHIAVE_ISTITUTO),
                                  NomeIstituto      : StatisticaTmp[i].NOME_ISTITUTO,
                                  CodiceTitolo      : StatisticaTmp[i].CODICE_ISBN,
                                  NomeTitolo        : StatisticaTmp[i].TITOLO,

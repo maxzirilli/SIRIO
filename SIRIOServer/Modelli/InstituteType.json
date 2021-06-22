@@ -12,6 +12,17 @@
                        "SQL" : "SELECT * FROM istituti_gruppi ORDER BY DESCRIZIONE"
                      }
                    ],
+
+  "SelectAllSQL" : [
+                     { 
+                       "Name" : "InstituteTypeInfoList",
+                       "SQL"  : "SELECT * FROM tipologie_istituto ORDER BY tipologie_istituto.DESCRIZIONE" 
+                     },
+                     { 
+                       "Name" : "InstituteTypeGroups",
+                       "SQL"  : "SELECT *,(SELECT DESCRIZIONE FROM istituti_gruppi WHERE CHIAVE = tipologie_gruppi_istituti.GRUPPO_IST) AS DESCR_GRUPPO FROM tipologie_gruppi_istituti" 
+                     }
+                   ],
                 
   "EditSQL"   : [   
                   {
@@ -29,6 +40,22 @@
                   {
                     "Name" : "DeleteInstituteType",
                     "SQL"  : "DELETE FROM tipologie_istituto WHERE CHIAVE=:CHIAVE"
+                  },
+                  {
+                    "Name" : "InsertInstituteGroupAfterInsert",
+                    "SQL"  : "INSERT IGNORE INTO tipologie_gruppi_istituti (TIPOLOGIA,GRUPPO_IST) VALUES (:NewKey1,:GRUPPO_IST)"
+                  },
+                  {
+                    "Name" : "InsertInstituteGroup",
+                    "SQL"  : "INSERT IGNORE INTO tipologie_gruppi_istituti (TIPOLOGIA,GRUPPO_IST) VALUES (:TIPOLOGIA,:GRUPPO_IST)"
+                  },
+                  {
+                    "Name" : "DeleteInstituteGroup", 
+                    "SQL"  : "DELETE FROM tipologie_gruppi_istituti WHERE TIPOLOGIA =:TIPOLOGIA AND GRUPPO_IST =:GRUPPO_IST"
+                  },
+                  {
+                    "Name" : "DeleteAllGroupInstitute",
+                    "SQL"  : "DELETE FROM tipologie_gruppi_istituti WHERE TIPOLOGIA =:CHIAVE"
                   }
                 ]        
 }

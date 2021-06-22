@@ -50,7 +50,7 @@
                     "Name" : "UnhideSubject",
                     "SQL"  : "UPDATE materie_insegnamento SET NASCOSTA = 0 WHERE CHIAVE =:CHIAVE"
                   },
-                 {
+                  {
                     "Name" : "InsertSubjectGroupAfterInsert",
                     "SQL"  : "INSERT IGNORE INTO materie_istituti (MATERIA,GRUPPO_IST) VALUES (:NewKey1,:GRUPPO_IST)"
                   },

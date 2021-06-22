@@ -189,6 +189,12 @@ SIRIOApp.config(['$stateProvider','$urlRouterProvider','$mdAriaProvider',functio
         url: '/orderEntryBarCodeGunPage'
     })
 
+    $stateProvider.state('statisticsPage', 
+    {
+        templateUrl: "template/statisticsPage.html",
+        url: '/statisticsPage'
+    })
+
     $urlRouterProvider.otherwise('loginPage');
 }]);
 

@@ -10,6 +10,10 @@
       <label>DESCRIZIONE</label><input ng-model="MateriaInEditing.Descrizione" type="text">
     </md-input-container>
 
+    <div layout="row" layout-align="start start" style="margin-bottom:10px;">
+       <md-button ng-click="SelezionaDeselezionaGruppi(true)"><img src="img/checkAll.png" style="width:20px;height:auto;margin-left:10px;" title="SELEZIONA TUTTI"></md-button>
+       <md-button ng-click="SelezionaDeselezionaGruppi(false)"><img src="img/unCheckAll.png" style="width:20px;height:auto;margin-left:10px;" title="SELEZIONA TUTTI"></md-button>
+    </div>
     <div layout="row">
        <input style="margin-left: 20px;" type="checkbox" ng-model="MateriaInEditing.ListaGruppi[0].Checked">
        <label style="margin-left: 10px;">{{MateriaInEditing.ListaGruppi[0].Descrizione | uppercase}}</label> 

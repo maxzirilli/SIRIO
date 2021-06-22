@@ -1,0 +1,30 @@
+{  
+  "SelectSQL"       : [
+                        {
+                          "Name" : "GetCurrentAdoptionState",
+                          "SQL"  : "SELECT * FROM adozioni_attuali"
+                        }
+                      ],
+
+  "SelecteDates"     : [
+                         {
+                           "Name" : "GetAllDates",
+                           "SQL"  : "SELECT DATA FROM statistiche GROUP BY DATA ORDER BY DATA DESC"
+                         }
+                       ],
+                      
+  "EditSQL"          : [
+                         {
+                           "Name" : "SaveStatisticRow",
+                           "SQL"  : "INSERT INTO statistiche (ISTITUTO,TITOLO,NR_CLASSI,DATA) VALUES (:ISTITUTO,:TITOLO,:NR_CLASSI,#DATA)"
+                         },
+                         {
+                           "Name" : "DeleteTodayStatistic",
+                           "SQL"  : "DELETE FROM statistiche WHERE DATA = CURDATE()"
+                         },
+                         {
+                           "Name" : "DeleteStatistic",
+                           "SQL"  : "DELETE FROM statistiche WHERE DATA = #DATA"
+                         }
+                       ]
+}
