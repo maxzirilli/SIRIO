@@ -21,6 +21,7 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
   $scope.PrimaData              = -1;
   $scope.SecondaData            = null;
   $scope.RegistrazioneInCorso   = false;
+  $scope.StatisticaPresente     = true;
   ScopeHeaderController.CheckButtons();
   
   $scope.GridOptions = {
@@ -89,6 +90,12 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
                                              Descrizione : ListaGruppiEditorialiTmp[i].DESCRIZIONE
                                            }
          $scope.ListaGruppiEditoriali = ListaGruppiEditorialiTmp
+         if($scope.ListaDate.length > 0)
+         {
+           $scope.SecondaData = $scope.ListaDate[0].DataStatistica;
+           $scope.GeneraStatistica();
+         }
+         else $scope.StatisticaPresente = false;
       } 
       else SystemInformation.ApplyOnError('Modello gruppi editoriali non conforme','');   
     });
@@ -224,7 +231,7 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
     });
   }
 
-  $scope.GetDate = function (onlyDate)
+  $scope.GetDate = function()
   {
      SystemInformation.GetSQL('Statistics', {}, function(Results)  
      {
@@ -243,14 +250,13 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
          /*if($scope.ListaDate.length == 0)
             $scope.SecondaData = null
          else $scope.SecondaData = $scope.ListaDate[0].DataStatistica;*/
-         if(!onlyDate)
-            $scope.GetPromotori();     
+         $scope.GetPromotori();     
        }
        else SystemInformation.ApplyOnError('Modello date statistiche precedenti conforme','');   
      },'SelecteDates');
   }
 
-  $scope.GetAdozioniAttuali = function(onlyDate)
+  $scope.GetAdozioniAttuali = function()
   {
     SystemInformation.GetSQL('Statistics', {}, function(Results)  
     {
@@ -276,7 +282,7 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
         $scope.ListaStatistica = TmpStatistica;
         $scope.ListaStatistica.sort((a, b) => a.CodiceTitolo < b.CodiceTitolo ? -1 : 1).sort((a, b) => a.NomeTitolo < b.NomeTitolo ? -1 : 1).sort((a, b) => a.CodiceIstituto < b.CodiceIstituto ? -1 : 1).sort((a, b) => a.NomeIstituto < b.NomeIstituto ? -1 : 1);
 
-        $scope.GetDate(onlyDate);
+        $scope.GetDate();
       }
       else SystemInformation.ApplyOnError('Modello stato adozioni attuale non conforme','');   
     });
@@ -338,7 +344,7 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
        SystemInformation.PostSQL('Statistics',$ObjQuery,function(Answer)
        {
           ZCustomAlert($mdDialog,'OK!',"LA STATISTICA SELEZIONATA E' STATA ELIMINATA");
-          $scope.GetAdozioniAttuali(false);
+          $scope.GetAdozioniAttuali();
        });
     };
     if($scope.SecondaData != null)
@@ -446,14 +452,15 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
          {
            $ObjQuery = {Operazioni : []};
            ZCustomAlert($mdDialog,'OK!',"LO STATO DELLE ADOZIONI ATTUALI E' STATO SALVATO CORRETTAMENTE.");
-           $scope.GetAdozioniAttuali(true);
+           $scope.GetAdozioniAttuali();
            $scope.RegistrazioneInCorso = false;
+           $scope.StatisticaPresente   = true;
          });
        });
      }
      ZConfirm.GetConfirmBox('AVVISO','Sei sicuro di voler registrare lo stato attuale delle adozioni?',RegistraDati,function(){});
   }
 
-  $scope.GetAdozioniAttuali(false);
+  $scope.GetAdozioniAttuali();
 
 }]);
