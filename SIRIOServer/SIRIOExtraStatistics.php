@@ -1,6 +1,7 @@
 <?php 
       include_once 'SIRIOCfg.php';
       include_once 'SIRIODef.php';
+      include_once 'SIRIOGlobale.php';
       include_once PATH_LIBRERIE . 'ZAdvQuery.php';
       
       header("Content-Type: application/json;charset=ISO-8859-15");
@@ -26,63 +27,54 @@
               }
             }
 
-            private function GetSQLFromView($Where)
-            {
-              return("SELECT istituti.CHIAVE AS CHIAVE_ISTITUTO,
-                             istituti.NOME AS NOME_ISTITUTO,
-                             istituti.CODICE AS CODICE_ISTITUTO,
-                             adozioni_titolo.TITOLO AS CHIAVE_TITOLO,
-                             titoli.TITOLO  AS NOME_TITOLO,
-                             titoli.CODICE_ISBN AS CODICE_TITOLO,
-                             titoli.PREZZO AS PREZZO_TITOLO,
-                             COUNT(CLASSE) AS NR_CLASSI
-                        FROM adozioni_titolo,titoli,istituti,classi "
-                     .$Where.
-                  " GROUP BY CHIAVE_ISTITUTO,CHIAVE_TITOLO
-                    ORDER BY CHIAVE_ISTITUTO,CHIAVE_TITOLO");
-            }
-
             private function GetSQLFromStatistic($Where)
             {
               return("SELECT istituti.CHIAVE AS CHIAVE_ISTITUTO,
-                             istituti.NOME AS NOME_ISTITUTO,
-                             istituti.CODICE AS CODICE_ISTITUTO,
+                             istituti.NOME AS NOME_ISTITUTO,    
                              statistiche.TITOLO AS CHIAVE_TITOLO,
                              titoli.TITOLO  AS NOME_TITOLO,
+                             titoli.EDITORE AS EDITORE_TITOLO,
                              titoli.CODICE_ISBN AS CODICE_TITOLO,
                              titoli.PREZZO AS PREZZO_TITOLO,
+                             case_editrici.CHIAVE AS CHIAVE_EDITORE_TITOLO,
+                             case_editrici.GRUPPO AS GRUPPO,
                              statistiche.NR_CLASSI
-                        FROM statistiche,titoli,istituti "
+                        FROM statistiche,titoli LEFT OUTER JOIN case_editrici ON (case_editrici.DESCRIZIONE = titoli.EDITORE),
+                             istituti 
+                       WHERE statistiche.TITOLO = titoli.CHIAVE
+                         AND statistiche.ISTITUTO = istituti.CHIAVE" 
                      .$Where.
-                    " ORDER BY CHIAVE_ISTITUTO,CHIAVE_TITOLO");
+                     " ORDER BY CHIAVE_ISTITUTO,CHIAVE_TITOLO");
             }
 
             private function CreateTmpRow($Elemento)
             {
-              $RigaTmp                 = new stdClass();
-              $RigaTmp->ChiaveTitolo   = $Elemento ['CHIAVE_TITOLO'];
-              $RigaTmp->CodiceTitolo   = $Elemento ['CODICE_TITOLO']; 
-              $RigaTmp->NomeTitolo     = $Elemento ['NOME_TITOLO'];
-              $RigaTmp->PrezzoTitolo   = $Elemento ['PREZZO_TITOLO'];
-              $RigaTmp->ChiaveIstituto = $Elemento ['CHIAVE_ISTITUTO']; 
-              $RigaTmp->NomeIstituto   = $Elemento ['NOME_ISTITUTO']; 
-              $RigaTmp->CodiceIstituto = $Elemento ['CODICE_ISTITUTO']; 
-              $RigaTmp->NumeroClassi   = $Elemento ['NR_CLASSI']; 
+              $RigaTmp                      = new stdClass();
+              $RigaTmp->ChiaveTitolo        = $Elemento ['CHIAVE_TITOLO'];
+              $RigaTmp->CodiceTitolo        = $Elemento ['CODICE_TITOLO'];
+              $RigaTmp->EditoreTitolo       = $Elemento ['EDITORE_TITOLO']; 
+              $RigaTmp->NomeTitolo          = $Elemento ['NOME_TITOLO'];
+              $RigaTmp->PrezzoTitolo        = $Elemento ['PREZZO_TITOLO'];
+              $RigaTmp->ChiaveEditoreTitolo = $Elemento ['CHIAVE_EDITORE_TITOLO'];
+              $RigaTmp->ChiaveIstituto      = $Elemento ['CHIAVE_ISTITUTO']; 
+              $RigaTmp->NomeIstituto        = $Elemento ['NOME_ISTITUTO']; 
+              $RigaTmp->NumeroClassi        = $Elemento ['NR_CLASSI']; 
               return $RigaTmp;
             }
 
             private function CreateFinalRow($Elemento)
             {
-               $RigaTmp        = new stdClass();
-               $RigaTmp->K_TIT = $Elemento->ChiaveTitolo;
-               $RigaTmp->C_TIT = $Elemento->CodiceTitolo; 
-               $RigaTmp->N_TIT = $Elemento->NomeTitolo;
-               $RigaTmp->P_TIT = $Elemento->PrezzoTitolo;
-               $RigaTmp->K_IST = $Elemento->ChiaveIstituto; 
-               $RigaTmp->N_IST = $Elemento->NomeIstituto;
-               $RigaTmp->C_IST = $Elemento->CodiceIstituto;
-               $RigaTmp->CLS_A = 0;
-               $RigaTmp->CLS_B = 0;
+               $RigaTmp          = new stdClass();
+               $RigaTmp->K_TIT   = $Elemento->ChiaveTitolo;
+               $RigaTmp->C_TIT   = $Elemento->CodiceTitolo;
+               $RigaTmp->E_TIT   = $Elemento->EditoreTitolo; 
+               $RigaTmp->N_TIT   = $Elemento->NomeTitolo;
+               $RigaTmp->P_TIT   = $Elemento->PrezzoTitolo;
+               $RigaTmp->K_E_TIT = $Elemento->ChiaveEditoreTitolo;
+               $RigaTmp->K_IST   = $Elemento->ChiaveIstituto; 
+               $RigaTmp->N_IST   = $Elemento->NomeIstituto;
+               $RigaTmp->CLS_A   = 0;
+               $RigaTmp->CLS_B   = 0;
                return $RigaTmp;
             }
 
@@ -124,7 +116,16 @@
                }
                if($ListaParametri->FiltroGruppoEd != -1)
                {
-                 $Condizione = "titoli.EDITORE IN (SELECT DESCRIZIONE FROM case_editrici WHERE GRUPPO =".$ListaParametri->FiltroGruppoEd.")";
+                  if($ListaParametri->FiltroGruppoEd == -2)
+                     $Condizione = "case_editrici.DESCRIZIONE IS NOT NULL";
+                  else if($ListaParametri->FiltroGruppoEd == -3)
+                          $Condizione = "case_editrici.DESCRIZIONE IS NULL";
+                  else $Condizione = "titoli.EDITORE = case_editrici.DESCRIZIONE AND case_editrici.GRUPPO =".$ListaParametri->FiltroGruppoEd;
+                  array_push($CondizioniWhere,$Condizione);
+               }
+               if($ListaParametri->FiltroVolUniciPrimi == "T")
+               {
+                 $Condizione = "(titoli.VOLUME = 0 OR titoli.VOLUME = 1)";
                  array_push($CondizioniWhere,$Condizione);
                }
                if($PrimaOSeconda == 1)
@@ -144,13 +145,8 @@
                   }
                }
 
-               $Condizione = "statistiche.TITOLO = titoli.CHIAVE";
-               array_push($CondizioniWhere,$Condizione);
-               $Condizione = "statistiche.ISTITUTO = istituti.CHIAVE";
-               array_push($CondizioniWhere,$Condizione);
-
                for($i = 0;$i < Count($CondizioniWhere);$i++)
-                   $AStringa = $AStringa.($i == 0 ? " WHERE " : " AND ").$CondizioniWhere[$i];
+                    $AStringa .= " AND ".$CondizioniWhere[$i];
                return $AStringa;
             }
 
@@ -200,21 +196,26 @@
                   }
                   if($Parametri->FiltroGruppoEd != -1)
                   {
-                    $Condizione = "titoli.EDITORE IN (SELECT DESCRIZIONE FROM case_editrici WHERE GRUPPO =".$Parametri->FiltroGruppoEd.")";
+                     if($Parametri->FiltroGruppoEd != -1)
+                     {
+                       if($Parametri->FiltroGruppoEd == -2)
+                          $Condizione = "case_editrici.DESCRIZIONE IS NOT NULL ";
+                       else if($Parametri->FiltroGruppoEd == -3)
+                               $Condizione = "case_editrici.DESCRIZIONE IS NULL ";
+                       else $Condizione = "titoli.EDITORE = case_editrici.DESCRIZIONE AND case_editrici.GRUPPO =".$Parametri->FiltroGruppoEd;
+                       array_push($CondizioniWhere,$Condizione);
+                     }
+                  }
+                  if($Parametri->FiltroVolUniciPrimi == "T")
+                  {
+                    $Condizione = "( titoli.VOLUME = 0 OR titoli.VOLUME = 1 )";
                     array_push($CondizioniWhere,$Condizione);
                   }
-
-                  $Condizione = "adozioni_titolo.titolo = titoli.CHIAVE";
-                  array_push($CondizioniWhere,$Condizione);
-                  $Condizione = "adozioni_titolo.CLASSE = classi.CHIAVE";
-                  array_push($CondizioniWhere,$Condizione);
-                  $Condizione = "classi.ISTITUTO = istituti.CHIAVE";
-                  array_push($CondizioniWhere,$Condizione);
                   
                   for($i = 0;$i < Count($CondizioniWhere);$i++)
-                      $StringaWhere = $StringaWhere.($i == 0 ? " WHERE " : " AND ").$CondizioniWhere[$i];
+                      $StringaWhere .=  " AND " . $CondizioniWhere[$i];
 
-                  $SQLBody = $this->GetSQLFromView($StringaWhere);
+                  $SQLBody = Global_GetSqlAdozioniAttuali($StringaWhere);
                }
                else 
                {
@@ -230,7 +231,6 @@
                      array_push($PrimaStatistica,$RigaTmp);
                    }
                }  
-
   
                //SECONDA STATISTICA 
                $StringaWhere = "";
@@ -296,6 +296,18 @@
                   $Riga->CLS_B  = $SecondaStatistica[$IndexSecondo]->NumeroClassi; 
                   array_push($JSONAnswer->StatisticaFinale,$Riga); 
                   $IndexSecondo++;
+               }
+               
+               if($Parametri->FiltroNuoveAdozioni == "T")
+               {
+                 for($i = 0;$i < Count($JSONAnswer->StatisticaFinale);$i++)
+                 {
+                   if($JSONAnswer->StatisticaFinale[$i]->CLS_B > 0)
+                   {
+                      array_splice($JSONAnswer->StatisticaFinale,$i,1);
+                      $i--;
+                   }
+                 }
                }
             }     
       }
