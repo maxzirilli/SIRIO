@@ -155,7 +155,7 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
         
         var CreaOrdine = function()
         {
-          while (i < CsvSplitted.length)          
+          while (i < CsvSplitted.length - 1)          
           {
             let RecordOrdine  = CsvSplitted[i++].split(";");
             RecordOrdine[0]   = RecordOrdine[0].trim();
