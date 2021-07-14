@@ -617,7 +617,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
   
   SystemInformation.GetSQL('Accessories',{}, function(Results)
   {
-    ListaProvinceAllTmp = SystemInformation.FindResults(Results,'ProvinceListAllOnlyHandled');
+    ListaProvinceAllTmp = SystemInformation.FindResults(Results,'ProvinceListAll');
     if (ListaProvinceAllTmp != undefined) 
     {
       for(let i = 0; i < ListaProvinceAllTmp.length; i++)
