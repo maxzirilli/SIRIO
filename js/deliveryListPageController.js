@@ -365,7 +365,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
       if(ArrayGruppi.length > 0 && $scope.CheckGruppi == 'G')
          ParamPrenotati.ChiaveGruppi = ArrayGruppi.toString() 
 
-      if($scope.PromotoreScelto != -1 || $scope.PromotoreScelto != undefined)
+      if($scope.PromotoreScelto != -1  && $scope.PromotoreScelto != undefined)
          ParamPrenotati.PromotoreScelto = $scope.PromotoreScelto;
 
       SystemInformation.GetSQL('Delivery',ParamPrenotati,function(Results)
@@ -464,7 +464,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
       if(ArrayGruppi.length > 0 && $scope.CheckGruppi == 'G')
         ParamConsegnati.ChiaveGruppi = ArrayGruppi.toString() 
       
-      if($scope.PromotoreScelto != -1 || $scope.PromotoreScelto != undefined)
+      if($scope.PromotoreScelto != -1 && $scope.PromotoreScelto != undefined)
          ParamConsegnati.PromotoreScelto = $scope.PromotoreScelto;
       
       SystemInformation.GetSQL('Delivery',ParamConsegnati,function(Results)
