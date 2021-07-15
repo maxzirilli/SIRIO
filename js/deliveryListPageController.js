@@ -208,7 +208,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     }
 
     var blob = new Blob([OrdText], {type: "text/plain;charset=utf-8"});
-    saveAs(blob, "CumulativoDeAgostini" + Data + ".Ord");   
+    saveAs(blob, "CumulativoDeAgostini" + Data + ".ord");   
   
   }
 

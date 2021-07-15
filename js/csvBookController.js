@@ -32,15 +32,27 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
         {
           while (i < CsvSplitted.length - 1)          
           { 
-            let RecordTitolo    = CsvSplitted[i++].SplitCSVWithDoublequotes();
-            RecordTitolo[8]     = RecordTitolo[8].trim();
-            RecordTitolo[9]     = RecordTitolo[9].trim();
-            RecordTitolo[8]     = RecordTitolo[8].trim();
-            RecordTitolo[7]     = RecordTitolo[7].trim();
-            RecordTitolo[11]    = RecordTitolo[11].trim();
-            RecordTitolo[0]     = RecordTitolo[0].trim();
-            RecordTitolo[5]     = RecordTitolo[5].trim();
-            RecordTitolo[4]     = RecordTitolo[4].trim();        
+            let RecordTitolo = CsvSplitted[i++].SplitCSVWithDoublequotes();
+            RecordTitolo[8]  = RecordTitolo[8].trim();
+            RecordTitolo[9]  = RecordTitolo[9].trim();
+            RecordTitolo[8]  = RecordTitolo[8].trim();
+            RecordTitolo[7]  = RecordTitolo[7].trim();
+            RecordTitolo[11] = RecordTitolo[11].trim();
+            RecordTitolo[0]  = RecordTitolo[0].trim();
+            RecordTitolo[5]  = RecordTitolo[5].trim();
+            RecordTitolo[4]  = RecordTitolo[4].trim();
+            RecordTitolo[13] = RecordTitolo[13].trim();
+            RecordTitolo[14] = RecordTitolo[14].trim();
+            RecordTitolo[15] = RecordTitolo[15].trim();
+
+            if(i == 2)
+            {
+               $ObjQuery.Operazioni.push({ 
+                                           Query     : 'EmptyAdozioni_IstitutiTitoli',
+                                            Parametri : {}
+                                         });
+            }
+
             $ObjQuery.Operazioni.push({ 
                                         Query     : 'UpdateDatabaseBook',
                                         Parametri : {                                                      
@@ -55,10 +67,13 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
                                                       AnnoTitolo              : RecordTitolo[1].xSQL(),
                                                       SezioneTitolo           : RecordTitolo[2].xSQL(),                                                      
                                                       DescrizioneCombinazione : RecordTitolo[4].xSQL(),
-                                                      PrezzoTitolo            : RecordTitolo[12].xSQL()                                                      
+                                                      PrezzoTitolo            : RecordTitolo[12].xSQL(),
+                                                      NuovaAdozioneTitolo     : (RecordTitolo[13].xSQL()).toUpperCase() == 'SI' ? 1 : 0,
+                                                      DaAcquistareTitolo      : (RecordTitolo[14].xSQL()).toUpperCase() == 'SI' ? 1 : 0,
+                                                      ConsigliatoTitolo       : (RecordTitolo[15].xSQL()).toUpperCase() == 'SI' ? 1 : 0,                                                      
                                                     }
                                                     
-                                      });                                       
+                                      });                                      
               $scope.Contatore++;
             if($ObjQuery.Operazioni.length == 10)
             {
@@ -72,7 +87,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
              { 
                $scope.Contatore = 0;
                ZCustomAlert($mdDialog,'OK','UPLOAD ESEGUITO')                                                               
-             },false,true)                                                                 
+             },false,true)                                                              
         }
         SendDieciTitoli();
       }  
