@@ -40,9 +40,11 @@
                              case_editrici.GRUPPO AS GRUPPO,
                              statistiche.NR_CLASSI
                         FROM statistiche,titoli LEFT OUTER JOIN case_editrici ON (case_editrici.DESCRIZIONE = titoli.EDITORE),
-                             istituti 
+                             istituti,tipologie_gruppi_istituti,istituti_gruppi
                        WHERE statistiche.TITOLO = titoli.CHIAVE
-                         AND statistiche.ISTITUTO = istituti.CHIAVE" 
+                         AND statistiche.ISTITUTO = istituti.CHIAVE
+                         AND tipologie_gruppi_istituti.GRUPPO_IST = istituti_gruppi.CHIAVE
+                         AND istituti.TIPOLOGIA = tipologie_gruppi_istituti.TIPOLOGIA" 
                      .$Where.
                      " ORDER BY CHIAVE_ISTITUTO,CHIAVE_TITOLO");
             }
@@ -91,8 +93,10 @@
                } 
                if($ListaParametri->FiltroGruppoIst != -1)
                {
-                 $Condizione = "istituti.TIPOLOGIA IN (SELECT TIPOLOGIA FROM tipologie_gruppi_istituti WHERE GRUPPO_IST =".$ListaParametri->FiltroGruppoIst.")";
-                 array_push($CondizioniWhere,$Condizione);
+                  if($ListaParametri->FiltroGruppoIst == -2)
+                     $Condizione = "istituti_gruppi.LICEO = 1";
+                  else $Condizione = "tipologie_gruppi_istituti.GRUPPO_IST =" .$ListaParametri->FiltroGruppoIst;                    
+                  array_push($CondizioniWhere,$Condizione);
                } 
                if($ListaParametri->FiltroProvincia != -1)
                {
@@ -171,7 +175,9 @@
                   } 
                   if($Parametri->FiltroGruppoIst != -1)
                   {
-                    $Condizione = "istituti.TIPOLOGIA IN (SELECT TIPOLOGIA FROM tipologie_gruppi_istituti WHERE GRUPPO_IST =".$Parametri->FiltroGruppoIst.")";
+                    if($Parametri->FiltroGruppoIst == -2)
+                       $Condizione = "istituti_gruppi.LICEO = 1";
+                    else $Condizione = "tipologie_gruppi_istituti.GRUPPO_IST =" .$Parametri->FiltroGruppoIst;                    
                     array_push($CondizioniWhere,$Condizione);
                   }  
                   if($Parametri->FiltroProvincia != -1)

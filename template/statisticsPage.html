@@ -48,7 +48,8 @@
       <md-input-container class="containerSelect" style="width:20%;margin-right:10px;"><label>TIPO SCUOLA</label>
         <md-select ng-model="GruppoIstitutoFiltro" placeholder="TIPO SCUOLA" class="mdb-select" type="text" name="GruppoIstitutoFiltro">
         <md-optgroup>
-          <md-option ng-value="-1">QUALSIASI</md-option>  
+          <md-option ng-value="-1">QUALSIASI</md-option>
+          <md-option ng-value="-2">SOLO SS2</md-option>   
           <md-option ng-repeat="gruppo in ListaGruppiIstituti" ng-value="gruppo.Chiave">{{gruppo.Descrizione | uppercase}}</md-option>
         </md-optgroup>
         </md-select>

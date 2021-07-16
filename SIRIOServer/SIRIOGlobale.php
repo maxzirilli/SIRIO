@@ -19,15 +19,13 @@
                                  COUNT(CLASSE) AS NR_CLASSI")
                           .
                           " FROM adozioni_titolo,titoli LEFT OUTER JOIN case_editrici ON (case_editrici.DESCRIZIONE = titoli.EDITORE),
-                                 istituti,classi 
+                                 istituti,classi,tipologie_gruppi_istituti,istituti_gruppi
                            WHERE adozioni_titolo.TITOLO = titoli.CHIAVE
+                             AND istituti.TIPOLOGIA = tipologie_gruppi_istituti.TIPOLOGIA
+                             AND tipologie_gruppi_istituti.GRUPPO_IST = istituti_gruppi.CHIAVE
                              AND adozioni_titolo.CLASSE = classi.CHIAVE
                              AND classi.ISTITUTO = istituti.CHIAVE 
-                             AND classi.ANNO = (SELECT MIN(C.ANNO)
- 					                                            FROM classi C,adozioni_titolo A
-                                                 WHERE C.ISTITUTO = istituti.CHIAVE
-                                                   AND A.CLASSE = C.CHIAVE
-                                                   AND A.TITOLO = titoli.CHIAVE)"
+                             AND adozioni_titolo.DA_ACQUISTARE = 1"
                         .$Where.
                       " GROUP BY CHIAVE_ISTITUTO,CHIAVE_TITOLO 
                         ORDER BY CHIAVE_ISTITUTO,CHIAVE_TITOLO";
