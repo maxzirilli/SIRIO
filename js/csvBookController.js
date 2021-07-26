@@ -65,8 +65,9 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
                                                       ConsigliatoTitolo       : (RecordTitolo[15].xSQL()).toUpperCase() == 'SI' ? 1 : 0,                                                      
                                                     }
                                                     
-                                      });                                      
-              $scope.Contatore++;
+                                      });            
+                                                                
+            $scope.Contatore++;
             if($ObjQuery.Operazioni.length == 10)
             {
               SystemInformation.PostSQL('Book',$ObjQuery,SendDieciTitoli,false,true);  
