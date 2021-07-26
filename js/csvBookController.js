@@ -45,14 +45,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
             RecordTitolo[14] = RecordTitolo[14].trim();
             RecordTitolo[15] = RecordTitolo[15].trim();
 
-            if(i == 2)
-            {
-               $ObjQuery.Operazioni.push({ 
-                                           Query     : 'EmptyAdozioni_IstitutiTitoli',
-                                            Parametri : {}
-                                         });
-            }
-
             $ObjQuery.Operazioni.push({ 
                                         Query     : 'UpdateDatabaseBook',
                                         Parametri : {                                                      

@@ -47,6 +47,7 @@
                          AND istituti.TIPOLOGIA = tipologie_gruppi_istituti.TIPOLOGIA" 
                      .$Where.
                      " ORDER BY CHIAVE_ISTITUTO,CHIAVE_TITOLO");
+                     
             }
 
             private function CreateTmpRow($Elemento)
@@ -252,17 +253,17 @@
                      array_push($SecondaStatistica,$RigaTmp);
                    }
                }
-               
+
                $IndexPrimo   = 0;
                $IndexSecondo = 0;
 
                while($IndexPrimo < count($PrimaStatistica) && $IndexSecondo < count($SecondaStatistica))
                {
-                 $Riga = $this->CreateFinalRow($PrimaStatistica[$IndexPrimo]);
-
+                 $Riga = null;
                  if(($PrimaStatistica[$IndexPrimo]->ChiaveTitolo == $SecondaStatistica[$IndexSecondo]->ChiaveTitolo) && 
                     ($PrimaStatistica[$IndexPrimo]->ChiaveIstituto == $SecondaStatistica[$IndexSecondo]->ChiaveIstituto))
                  {
+                    $Riga = $this->CreateFinalRow($PrimaStatistica[$IndexPrimo]);
                     $Riga->CLS_A  = $PrimaStatistica[$IndexPrimo]->NumeroClassi;
                     $Riga->CLS_B  = $SecondaStatistica[$IndexSecondo]->NumeroClassi; 
                     $IndexPrimo++;
@@ -272,12 +273,14 @@
                  {
                     if($this->ABeforeB($PrimaStatistica[$IndexPrimo],$SecondaStatistica[$IndexSecondo]))
                     {
+                       $Riga = $this->CreateFinalRow($PrimaStatistica[$IndexPrimo]);
                        $Riga->CLS_A  = $PrimaStatistica[$IndexPrimo]->NumeroClassi;
                        $Riga->CLS_B  = 0;
                        $IndexPrimo++;
                     }
                     else
                     {
+                       $Riga = $this->CreateFinalRow($SecondaStatistica[$IndexSecondo]);
                        $Riga->CLS_A  = 0;
                        $Riga->CLS_B  = $SecondaStatistica[$IndexSecondo]->NumeroClassi;  
                        $IndexSecondo++;
@@ -297,7 +300,7 @@
 
                while($IndexSecondo < count($SecondaStatistica))
                {
-                  $Riga         = $this->CreateFinalRow($PrimaStatistica[$IndexPrimo]);
+                  $Riga         = $this->CreateFinalRow($SecondaStatistica[$IndexPrimo]);
                   $Riga->CLS_A  = 0;
                   $Riga->CLS_B  = $SecondaStatistica[$IndexSecondo]->NumeroClassi; 
                   array_push($JSONAnswer->StatisticaFinale,$Riga); 
