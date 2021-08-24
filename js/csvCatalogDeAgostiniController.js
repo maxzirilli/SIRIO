@@ -28,7 +28,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
       
         var SendDieciTitoli = function()
         {
-          while (i < CsvSplitted.length)          
+          while (i < CsvSplitted.length - 1)          
           { 
             let RecordTitolo = CsvSplitted[i++].SplitCSVWithDoublequotes(';');
             RecordTitolo[0]  = RecordTitolo[0].trim(); 
@@ -38,7 +38,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
             RecordTitolo[4]  = RecordTitolo[4].trim(); 
             RecordTitolo[5]  = RecordTitolo[5].trim(); 
             RecordTitolo[6]  = RecordTitolo[6].trim();            
-            $ObjQuery.Operazioni.push({ 
+            $ObjQuery.Operazioni.push({  
                                         Query     : 'UpdateDatabaseBookCatalogDeAgostini',
                                         Parametri : {                                                      
                                                       CodiceTitolo       : RecordTitolo[0].xSQL(),

@@ -1,43 +1,4 @@
 <div ng-controller="startPageController" ng-cloak md-theme="{{ActualTheme}}" style="height:75%">
-  <!--<md-toolbar class="md-menu-toolbar">
-    <div layout="row">
-      <div>
-        <md-button name="Utenti" class="MainButton" ng-if="IsAdministrator()" ng-click="ApriListaUtenti()">
-        <img src="img/user.png" class="invert MainIcon">
-          UTENTI
-        </md-button>
-        <md-button name="Istituti" class="MainButton" ng-click="ApriListaIstituti()">
-        <img src="img/school.png" class="invert MainIcon">
-          ISTITUTI
-        </md-button>
-        <md-button name="Docenti" class="MainButton" ng-click="$rootScope.ApriListaDocenti()">
-        <img src="img/teacher.png" class="invert MainIcon">        
-          DOCENTI
-        </md-button>
-        <md-button name="Titoli" class="MainButton" ng-click="ApriListaTitoli()">
-        <img src="img/book.png" class="invert MainIcon">
-          TITOLI
-        </md-button>
-        <md-button name="OrdiniInIngresso" class="MainButton" ng-click="ApriListaOrdiniIngresso()">
-        <img src="img/order.png" class="invert MainIcon" style="width:15px;height:auto;">
-          CARICHI
-        </md-button>
-        <md-button name="Configurazioni" class="MainButton" ng-if="IsAdministrator()" ng-click="ApriListaConfigurazioni()">
-        <img src="img/config.png" class="invert MainIcon">
-          CONFIG
-        </md-button>
-        <md-button name="RicercaSpedizioni" class="MainButton" ng-click="ApriListaSpedizioni()">
-        <img src="img/deliveryStart.png" class="invert MainIcon" style="width:30px;height:auto;">
-          SPEDIZIONI
-        </md-button>
-        <md-button name="Comunicazioni" class="MainButton" ng-if="IsAdministrator()" ng-click="ApriGestioneComunicazioni()">
-        <img src="img/communication.png" class="invert MainIcon">
-          COMUNICAZIONI
-        </md-button>
-      </div>
-    </div>
-  </md-toolbar>-->
-
   <md-content>
     <div layout="row">
         <md-card style="text-align:center;width:60%;height:700px;" ng-if="CalendarioVisibile"> 
@@ -208,7 +169,7 @@
               <br>
               <p style="font-weight:bold;padding:0px;">CSV TITOLI GENERICO</p>
               <br>
-              <p style="font-style:italic;margin:0px;">Aggiornamento cataloghi DeAgostini</p>
+              <p style="font-style:italic;margin:0px;">Importazione titoli generica</p>
             </div>
             <div style="margin-left:5px;margin-right:5px;" flex=20>
               <md-button ng-click="ApriMailChimpUpload()"><img src="img/download.png" style="width:60px;height:auto;"></md-button>
