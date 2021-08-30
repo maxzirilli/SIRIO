@@ -8,6 +8,7 @@
                                  NOW() AS DATA " 
                          :
                          "SELECT istituti.CHIAVE AS CHIAVE_ISTITUTO,
+                                 istituti.CODICE AS CODICE_ISTITUTO,
                                  istituti.NOME AS NOME_ISTITUTO,    
                                  adozioni_titolo.TITOLO AS CHIAVE_TITOLO,
                                  titoli.TITOLO  AS NOME_TITOLO,

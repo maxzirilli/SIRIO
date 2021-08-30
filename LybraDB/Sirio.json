@@ -1,10 +1,12 @@
 {
  "Version": {
   "Major": 1,
-  "Minor": 24,
+  "Minor": 25,
   "Release": 8
  },
  "Storia": [
+  "Versione 1.25.8   30 Agosto 2021 - Tommaso Martinoli",
+  "                  - CHG: Con la procedura di importazione generica/ex-deagostini dei titoli non vengono più generati nuovi editori gestiti",
   "Versione 1.24.8   24 Agosto 2021 - Tommaso Martinoli",
   "                  - CHG: Con la procedura di importazione generica/ex-deagostini dei titoli viene sovrascritto anche il nome in caso di titolo già esistente",
   "Versione 1.23.8   26 Luglio 2021 - Massimiliano Zirilli",
@@ -2825,7 +2827,7 @@
    "Nome": "AGGIORNA_TITOLI_FROM_CATALOGHI_DEAGOSTINI",
    "Type": "PROCEDURE",
    "ReturnType": null,
-   "Body": "BEGIN\r\n\r\n  DECLARE NewKey INT;\r\n  DECLARE KeyMateria INT;\r\n  DECLARE KeyEditore INT;\r\n\r\n  SELECT MAX(CHIAVE)\r\n    FROM materie_insegnamento \r\n\tWHERE UPPER(DESCRIZIONE) = MateriaTitolo \r\n\t INTO KeyMateria;\r\n  \r\n  IF KeyMateria IS NULL THEN\r\n\t  UPDATE gen_key SET CHIAVE = CHIAVE + 1;\r\n\t  SELECT MAX(CHIAVE) FROM gen_key INTO KeyMateria; \r\n     INSERT INTO materie_insegnamento(CHIAVE,DESCRIZIONE) VALUES (KeyMateria,MateriaTitolo);\r\n  END IF;\r\n  \r\n  SELECT MAX(CHIAVE)\r\n    FROM  case_editrici \r\n   WHERE UPPER(DESCRIZIONE) = EditoreTitolo  \r\n    INTO KeyEditore;\r\n  \r\n  IF KeyEditore IS NULL THEN\r\n     UPDATE gen_key SET CHIAVE = CHIAVE + 1;\r\n     SELECT MAX(CHIAVE) FROM gen_key INTO KeyEditore; \r\n     INSERT INTO case_editrici(CHIAVE,DESCRIZIONE) VALUES (KeyEditore,EditoreTitolo);\r\n  END IF;\r\n  \r\n  IF (SELECT count(*) FROM titoli WHERE CODICE_ISBN = CodiceTitolo) > 0 THEN\r\n      UPDATE titoli \r\n\t\t   SET TITOLO = TitoloTitolo, EDITORE = EditoreTitolo, PREZZO = PrezzoTitolo, VOLUME = VolumeTitolo \r\n\t\t WHERE CODICE_ISBN = CodiceTitolo;\r\n  ELSE\r\n      UPDATE gen_key SET CHIAVE = CHIAVE + 1;\r\n      SELECT MAX(CHIAVE) FROM gen_key INTO NewKey; \r\n      INSERT INTO titoli (CHIAVE,CODICE_ISBN,TITOLO,SOTTOTITOLO,AUTORI,EDITORE,MATERIA,VOLUME,PREZZO) VALUES (NewKey,CodiceTitolo,TitoloTitolo,null,AutoreTitolo,EditoreTitolo,KeyMateria,VolumeTitolo,PrezzoTitolo);\r\n  END IF;\r\n\t  \r\nEND",
+   "Body": "BEGIN\r\n\r\n  DECLARE NewKey INT;\r\n  DECLARE KeyMateria INT;\r\n  DECLARE KeyEditore INT;\r\n\r\n  SELECT MAX(CHIAVE)\r\n    FROM materie_insegnamento \r\n\tWHERE UPPER(DESCRIZIONE) = MateriaTitolo \r\n\t INTO KeyMateria;\r\n  \r\n  IF KeyMateria IS NULL THEN\r\n\t  UPDATE gen_key SET CHIAVE = CHIAVE + 1;\r\n\t  SELECT MAX(CHIAVE) FROM gen_key INTO KeyMateria; \r\n     INSERT INTO materie_insegnamento(CHIAVE,DESCRIZIONE) VALUES (KeyMateria,MateriaTitolo);\r\n  END IF;\r\n  \r\n  SELECT MAX(CHIAVE)\r\n    FROM  case_editrici \r\n   WHERE UPPER(DESCRIZIONE) = EditoreTitolo  \r\n    INTO KeyEditore;\r\n  \r\n  IF (SELECT count(*) FROM titoli WHERE CODICE_ISBN = CodiceTitolo) > 0 THEN\r\n      UPDATE titoli \r\n\t\t   SET TITOLO = TitoloTitolo, EDITORE = EditoreTitolo, PREZZO = PrezzoTitolo, VOLUME = VolumeTitolo \r\n\t\t WHERE CODICE_ISBN = CodiceTitolo;\r\n  ELSE\r\n      UPDATE gen_key SET CHIAVE = CHIAVE + 1;\r\n      SELECT MAX(CHIAVE) FROM gen_key INTO NewKey; \r\n      INSERT INTO titoli (CHIAVE,CODICE_ISBN,TITOLO,SOTTOTITOLO,AUTORI,EDITORE,MATERIA,VOLUME,PREZZO) VALUES (NewKey,CodiceTitolo,TitoloTitolo,null,AutoreTitolo,EditoreTitolo,KeyMateria,VolumeTitolo,PrezzoTitolo);\r\n  END IF;\r\n\t  \r\nEND",
    "Parametri": [
     {
      "Nome": "CodiceTitolo",

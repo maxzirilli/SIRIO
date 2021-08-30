@@ -269,6 +269,28 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
      },'SelecteDates');
   }
 
+  $scope.OrdinaLista = function(a,b)
+  {
+      if(a.CodiceIstituto.trim() < b.CodiceIstituto.trim())
+         return -1;
+      else
+      {
+        if(a.CodiceIstituto.trim() > b.CodiceIstituto.trim())
+           return 1;
+        else 
+        {
+          if(a.NomeTitolo < b.NomeTitolo)
+             return -1;
+          else 
+          {
+            if(a.NomeTitolo > b.NomeTitolo)
+               return 1;
+            else return 0;
+          }
+        }
+      }                
+   }
+
   $scope.GetAdozioniAttuali = function()
   {
     SystemInformation.ExecuteExternalScript('SIRIOExtraGetRegisterCurrentAdoption',{ Registrazione : "F" },function(Answer) 
@@ -280,6 +302,7 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
         {
             TmpStatistica[i] = { 
                                  ChiaveIstituto : TmpStatistica[i].K_IST == undefined ? -1 : parseInt(TmpStatistica[i].K_IST),
+                                 CodiceIstituto : TmpStatistica[i].C_IST == undefined ? 'N.D.' : TmpStatistica[i].C_IST,
                                  EditoreTitolo  : TmpStatistica[i].E_TIT = undefined ? 'N.D.' : TmpStatistica[i].E_TIT,
                                  NomeIstituto   : TmpStatistica[i].N_IST == undefined ? 'N.D.' : TmpStatistica[i].N_IST,
                                  ChiaveTitolo   : TmpStatistica[i].K_TIT == undefined ? -1 : parseInt(TmpStatistica[i].K_TIT),
@@ -293,8 +316,9 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
             TmpStatistica[i].ValoreAdozioni = (parseFloat(TmpStatistica[i].PrezzoTitolo) * $scope.NrAlunni * TmpStatistica[i].NrClassi).toFixed(2).toString();
         }
         $scope.ListaStatistica = TmpStatistica;
-        $scope.ListaStatistica.sort((a, b) => a.CodiceTitolo < b.CodiceTitolo ? -1 : 1).sort((a, b) => a.NomeTitolo < b.NomeTitolo ? -1 : 1).sort((a, b) => a.CodiceIstituto < b.CodiceIstituto ? -1 : 1).sort((a, b) => a.NomeIstituto < b.NomeIstituto ? -1 : 1);
-
+        
+        $scope.ListaStatistica.sort($scope.OrdinaLista);
+        
         $scope.GetDate();
       }
     });
@@ -332,6 +356,7 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
         {
              ListaAdozioniGenerata[i] = { 
                                           ChiaveIstituto : ListaAdozioniGenerata[i].K_IST == undefined ? -1 : parseInt(ListaAdozioniGenerata[i].K_IST),
+                                          CodiceIstituto : ListaAdozioniGenerata[i].C_IST == undefined ? 'N.D.' : ListaAdozioniGenerata[i].C_IST,
                                           EditoreTitolo  : ListaAdozioniGenerata[i].E_TIT = undefined ? 'N.D.' : ListaAdozioniGenerata[i].E_TIT,
                                           NomeIstituto   : ListaAdozioniGenerata[i].N_IST == undefined ? 'N.D.' : ListaAdozioniGenerata[i].N_IST,
                                           ChiaveTitolo   : ListaAdozioniGenerata[i].K_TIT == undefined ? -1 : parseInt(ListaAdozioniGenerata[i].K_TIT),
@@ -351,7 +376,6 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
               CountClassi_1 += ListaAdozioniGenerata[i].NrClassi;
               CountClassi_2 += ListaAdozioniGenerata[i].NrClassiPrec;
         };
-        ListaAdozioniGenerata.sort((a, b) => a.CodiceTitolo < b.CodiceTitolo ? -1 : 1).sort((a, b) => a.NomeTitolo < b.NomeTitolo ? -1 : 1).sort((a, b) => a.CodiceIstituto < b.CodiceIstituto ? -1 : 1).sort((a, b) => a.NomeIstituto < b.NomeIstituto ? -1 : 1);
 
         $scope.DatiCumulativi.NrRigheTotali    = ListaAdozioniGenerata.length;
         $scope.DatiCumulativi.NrClassiTot_1    = CountClassi_1;
@@ -363,6 +387,8 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
         $scope.DatiCumulativi.NrClassiGestite  = CountClassiGestite; 
 
         $scope.ListaStatistica = ListaAdozioniGenerata;
+        $scope.ListaStatistica.sort($scope.OrdinaLista);
+
         $scope.CaricamentoInCorso = false;
       }); 
     }
@@ -442,12 +468,13 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
     var BodySheetFiltri    = {}; 
     
     BodySheet['A1'] = SystemInformation.GetCellaIntestazione('NOME ISTITUTO');
-    BodySheet['B1'] = SystemInformation.GetCellaIntestazione('CODICE ISBN');
-    BodySheet['C1'] = SystemInformation.GetCellaIntestazione('TITOLO');
-    BodySheet['D1'] = SystemInformation.GetCellaIntestazione('EDITORE');
-    BodySheet['E1'] = SystemInformation.GetCellaIntestazione('VALORE ADOZIONI');
-    BodySheet['F1'] = SystemInformation.GetCellaIntestazione('CLASSI 1');
-    BodySheet['G1'] = SystemInformation.GetCellaIntestazione('CLASSI 2');
+    BodySheet['B1'] = SystemInformation.GetCellaIntestazione('CODICE ISTITUTO');
+    BodySheet['C1'] = SystemInformation.GetCellaIntestazione('CODICE ISBN');
+    BodySheet['D1'] = SystemInformation.GetCellaIntestazione('TITOLO');
+    BodySheet['E1'] = SystemInformation.GetCellaIntestazione('EDITORE');
+    BodySheet['F1'] = SystemInformation.GetCellaIntestazione('VALORE ADOZIONI');
+    BodySheet['G1'] = SystemInformation.GetCellaIntestazione('CLASSI 1');
+    BodySheet['H1'] = SystemInformation.GetCellaIntestazione('CLASSI 2');
 
     BodySheetCum['A1'] = SystemInformation.GetCellaIntestazione('N° RIGHE');
     BodySheetCum['B1'] = SystemInformation.GetCellaIntestazione('N° CLASSI 1');
@@ -470,13 +497,14 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
 
     for(let i = 0;i < $scope.ListaStatistica.length;i ++)
     {
-          BodySheet['A' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s', $scope.ListaStatistica[i].NomeIstituto);          
-          BodySheet['B' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s', $scope.ListaStatistica[i].CodiceTitolo);
-          BodySheet['C' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s', $scope.ListaStatistica[i].NomeTitolo);
-          BodySheet['D' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s', $scope.ListaStatistica[i].EditoreTitolo);
-          BodySheet['E' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s', $scope.ListaStatistica[i].ValoreAdozioni.toString());
-          BodySheet['F' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s', $scope.ListaStatistica[i].NrClassi.toString());
-          BodySheet['G' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s', $scope.ListaStatistica[i].NrClassiPrec.toString());   
+          BodySheet['A' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s', $scope.ListaStatistica[i].NomeIstituto);
+          BodySheet['B' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s', $scope.ListaStatistica[i].CodiceIstituto);            
+          BodySheet['C' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s', $scope.ListaStatistica[i].CodiceTitolo);
+          BodySheet['D' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s', $scope.ListaStatistica[i].NomeTitolo);
+          BodySheet['E' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s', $scope.ListaStatistica[i].EditoreTitolo);
+          BodySheet['F' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s', $scope.ListaStatistica[i].ValoreAdozioni.toString());
+          BodySheet['G' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s', $scope.ListaStatistica[i].NrClassi.toString());
+          BodySheet['H' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s', $scope.ListaStatistica[i].NrClassiPrec.toString());   
     }
 
     BodySheetCum['A' + parseInt(2)] = SystemInformation.GetCellaDati('s', $scope.DatiCumulativi.NrRigheTotali.toString());          
@@ -524,7 +552,8 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
     BodySheetFiltri['K' + parseInt(2)] = SystemInformation.GetCellaDati('s', Data_2);     
 
     BodySheet["!cols"] = [ 
-                          {wpx: 250},            
+                          {wpx: 250},
+                          {wpx: 250},              
                           {wpx: 250},
                           {wpx: 350},
                           {wpx: 250},
@@ -556,7 +585,7 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
                                  {wpx: 200}
                                ];
 
-    BodySheet['!ref']       = 'A1:G1' + parseInt($scope.ListaStatistica.length + 1);
+    BodySheet['!ref']       = 'A1:H1' + parseInt($scope.ListaStatistica.length + 1);
     BodySheetCum['!ref']    = 'A1:F1' + 2;
     BodySheetFiltri['!ref'] = 'A1:K1' + 2;
 

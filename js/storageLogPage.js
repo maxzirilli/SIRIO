@@ -79,7 +79,8 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                  doc.setFontType('bold');
                  doc.setTextColor(255,0,0);
                  doc.text(60,20,'NESSUN MOVIMENTO NELLA DATA SELEZIONATA');
-                 document.getElementById('logPdf').src = doc.output('datauristring')
+                 //document.getElementById('logPdf').src = doc.output('datauristring')
+                 doc.save('storageLogPdf.pdf',{});
              }
              else
              {
@@ -138,7 +139,8 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                    doc.text(10,290,SystemInformation.VDocLogStorage);
                    doc.setFontSize(7);
                  } 
-                 document.getElementById('logPdf').src = doc.output('datauristring');
+                 //document.getElementById('logPdf').src = doc.output('datauristring');
+                 doc.save('storageLogPdf.pdf',{});
                  //doc.save('storageLogPdf.pdf',{});      
                  //$scope.TitoloFiltrato = undefined;                
              }
@@ -169,7 +171,8 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                  doc.setFontType('bold');
                  doc.setTextColor(255,0,0);
                  doc.text(60,20,'NESSUN MOVIMENTO NELLA DATA SELEZIONATA');
-                 document.getElementById('logPdf').src = doc.output('datauristring')
+                 //document.getElementById('logPdf').src = doc.output('datauristring')
+                 doc.save('storageLogPdf.pdf',{});
              }
              else
              {
@@ -264,7 +267,8 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                  doc.setFontType('bold');
                  doc.setTextColor(255,0,0);
                  doc.text(60,20,'NESSUN MOVIMENTO NELLA DATA SELEZIONATA');
-                 document.getElementById('logPdf').src = doc.output('datauristring')
+                 //document.getElementById('logPdf').src = doc.output('datauristring')ù
+                 doc.save('storageLogPdf.pdf',{});
              }
              else
              {  
@@ -353,7 +357,8 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                  doc.setFontType('bold');
                  doc.setTextColor(255,0,0);
                  doc.text(60,20,'NESSUN MOVIMENTO NELLA DATA SELEZIONATA');
-                 document.getElementById('logPdf').src = doc.output('datauristring')
+                 //document.getElementById('logPdf').src = doc.output('datauristring')
+                 doc.save('storageLogPdf.pdf',{});
              }
              else
              {   

@@ -30,6 +30,7 @@
             private function GetSQLFromStatistic($Where)
             {
               return("SELECT istituti.CHIAVE AS CHIAVE_ISTITUTO,
+                             istituti.CODICE AS CODICE_ISTITUTO,
                              istituti.NOME AS NOME_ISTITUTO,    
                              statistiche.TITOLO AS CHIAVE_TITOLO,
                              titoli.TITOLO  AS NOME_TITOLO,
@@ -60,6 +61,7 @@
               $RigaTmp->PrezzoTitolo        = $Elemento ['PREZZO_TITOLO'];
               $RigaTmp->ChiaveEditoreTitolo = $Elemento ['CHIAVE_EDITORE_TITOLO'];
               $RigaTmp->ChiaveIstituto      = $Elemento ['CHIAVE_ISTITUTO']; 
+              $RigaTmp->CodiceIstituto      = $Elemento ['CODICE_ISTITUTO']; 
               $RigaTmp->NomeIstituto        = $Elemento ['NOME_ISTITUTO']; 
               $RigaTmp->NumeroClassi        = $Elemento ['NR_CLASSI']; 
               return $RigaTmp;
@@ -75,6 +77,7 @@
                $RigaTmp->P_TIT   = $Elemento->PrezzoTitolo;
                $RigaTmp->K_E_TIT = $Elemento->ChiaveEditoreTitolo;
                $RigaTmp->K_IST   = $Elemento->ChiaveIstituto; 
+               $RigaTmp->C_IST   = $Elemento->CodiceIstituto;
                $RigaTmp->N_IST   = $Elemento->NomeIstituto;
                $RigaTmp->CLS_A   = 0;
                $RigaTmp->CLS_B   = 0;
@@ -300,7 +303,7 @@
 
                while($IndexSecondo < count($SecondaStatistica))
                {
-                  $Riga         = $this->CreateFinalRow($SecondaStatistica[$IndexPrimo]);
+                  $Riga         = $this->CreateFinalRow($SecondaStatistica[$IndexSecondo]);
                   $Riga->CLS_A  = 0;
                   $Riga->CLS_B  = $SecondaStatistica[$IndexSecondo]->NumeroClassi; 
                   array_push($JSONAnswer->StatisticaFinale,$Riga); 

@@ -146,6 +146,7 @@
   <div ng-show="ListaStatistica.length > 0 && !CaricamentoInCorso && !RegistrazioneInCorso">
     <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
       <tr>
+        <th>COD.ISTITUTO</th>
         <th>ISTITUTO</th> 
         <th>COD.ISBN</th>
         <th>TITOLO</th> 
@@ -156,6 +157,7 @@
         <th ng-show="StatisticaPresente">N° CLASSI 2</th>
       </tr>  
       <tr ng-repeat="Elemento in ListaStatistica | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Utente.Chiave}}>
+        <td>{{Elemento.CodiceIstituto}}</td>
         <td>{{Elemento.NomeIstituto}}</td> 
         <td>{{Elemento.CodiceTitolo}}</td> 
         <td>{{Elemento.NomeTitolo}}</td>
