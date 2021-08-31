@@ -279,11 +279,11 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
            return 1;
         else 
         {
-          if(a.NomeTitolo < b.NomeTitolo)
+          if(a.CodiceTitolo < b.CodiceTitolo)
              return -1;
           else 
           {
-            if(a.NomeTitolo > b.NomeTitolo)
+            if(a.CodiceTitolo > b.CodiceTitolo)
                return 1;
             else return 0;
           }
