@@ -243,8 +243,7 @@ $scope.GridOptions_2 = {
            if($scope.ListaTitoliFiltro[j].SommaPrenotati > $scope.ListaTitoliFiltro[j].Quantita)
            {
               $scope.CumulativoPossibile = false;
-              ListaNonSpedibili.push($scope.ListaTitoliFiltro[j].Nome)
-              //return
+              ListaNonSpedibili.push($scope.ListaTitoliFiltro[j].Nome);
            }
            else $scope.CumulativoPossibile = true;
        }
@@ -254,8 +253,8 @@ $scope.GridOptions_2 = {
           {
              $scope.ListaNonSpedibili += ListaNonSpedibili[l] + ' , ';
           }
-          $scope.ListaNonSpedibili = $scope.ListaNonSpedibili.substring(0,$scope.ListaNonSpedibili.length - 3);
-          $scope.VisualizzaNonSpedibili = true;          
+          $scope.ListaNonSpedibili      = $scope.ListaNonSpedibili.substring(0,$scope.ListaNonSpedibili.length - 3);
+          $scope.VisualizzaNonSpedibili = true;         
        }          
     }
   }

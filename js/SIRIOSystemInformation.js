@@ -291,7 +291,7 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
          {
            OnSuccess(Answer.data.Results);
          }
-         else Self.ApplyOnError(Self.HTTPError,Self.SubHTTPError);
+         else Self.ApplyOnError(Self.HTTPError,Self.SubHTTPError +  + Answer.data.OtherInformations != undefined ? ('INFO -> ' + Answer.data.OtherInformations) : '');
       })
       .catch(function(Error) 
       {
@@ -337,7 +337,7 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
          {
             if(alertMessages || Self.ForeignKeyError) 
                ZCustomAlert($mdDialog,'ATTENZIONE!',Self.MessaggioErroreSQL);//Self.HTTPError  + (Self.SubHTTPError != '' ? "\n" + Self.SubHTTPError : '') 
-            else Self.ApplyOnError(Self.HTTPError,Self.SubHTTPError); 
+            else Self.ApplyOnError(Self.HTTPError,Self.SubHTTPError + Answer.data.OtherInformations != undefined ? ('INFO -> ' + Answer.data.OtherInformations) : ''); 
          }
       })
       .catch(function(Error) 
