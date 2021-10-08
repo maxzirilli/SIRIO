@@ -173,7 +173,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}), NomeDocumento + DataCumulativo + $scope.PromotoreSceltoNome + ".xlsx");
   }
 
-  function CreaDocumentoCumulativoOrd(CumulativoTitoli)
+  function CreaDocumentoCumulativoOrd(CumulativoTitoli,Editore)
   { 
     var Data           = new Date();
     var DataAnno       = Data.getFullYear();
@@ -181,7 +181,9 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     var DataGiorno     = Data.getDate();
     Data               = DataGiorno.toString() + '-' + DataMese.toString() +  '-' + DataAnno.toString();
     var OrdText = "";
-    OrdText = "[codice]=999047\n[intest]=PAGINA43 snc\n[note]=\n[email]=info@pagina43.it\n[data]=" + Data + "\n";
+    
+    if(Editore == 'D')
+       OrdText = "[codice]=999047\n[intest]=PAGINA43 snc\n[note]=\n[email]=info@pagina43.it\n[data]=" + Data + "\n";
 
     var ListaTitoli  = [];
     for(let j = 0;j < CumulativoTitoli.length;j ++)
@@ -208,7 +210,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     }
 
     var blob = new Blob([OrdText], {type: "text/plain;charset=utf-8"});
-    saveAs(blob, "CumulativoDeAgostini" + Data + ".ord");   
+    saveAs(blob, (Editore == 'D' ? "CumulativoDeAgostini" : "CumulativoMondadori") + Data + ".ord");   
   
   }
 
@@ -516,6 +518,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
 
   function DialogControllerOrdPrenotati($scope,$mdDialog)
   {
+    $scope.CheckEditore         = 'D';
     $scope.DataRicercaAlPrnt    = new Date();
     let TmpDatePrnt             = new Date($scope.DataRicercaAlPrnt);
     TmpDatePrnt.setDate(TmpDatePrnt.getDate() - 30);
@@ -574,7 +577,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
                                               }
               CumulativoPrenotati = CumulativoPrenotatiTmp
               
-              CreaDocumentoCumulativoOrd(CumulativoPrenotati)
+              CreaDocumentoCumulativoOrd(CumulativoPrenotati,$scope.CheckEditore)
               $mdDialog.hide();
             }
         }

@@ -1,173 +1,175 @@
-{ 
-  "SelectSQL"    : [
-                     { 
-                       "Name" : "TeacherInfoList",
-                       "SQL"  : "SELECT docenti.CHIAVE,docenti.NASCOSTO,docenti.RAGIONE_SOCIALE,docenti.EMAIL,docenti.TITOLO,docenti.INDIRIZZO,docenti.COMUNE,docenti.CAP,docenti.PROVINCIA,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE = docenti.MATERIA_1) AS NOME_MATERIA1,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE = docenti.MATERIA_2) AS NOME_MATERIA2,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE = docenti.MATERIA_3) AS NOME_MATERIA3,(SELECT province_all.NOME FROM province_all WHERE CHIAVE = docenti.PROVINCIA) AS PROVINCIA_NOME,(SELECT COUNT(*) FROM spedizioni WHERE spedizioni.DOCENTE = docenti.CHIAVE) AS NR_SPED_TOT,(SELECT COUNT(*) FROM spedizioni WHERE spedizioni.DOCENTE = docenti.CHIAVE AND YEAR(spedizioni.DATA ) = YEAR(CURDATE())) AS NR_SPED_LAST_ANNO, docenti.MATERIA_1,docenti.MATERIA_2,docenti.MATERIA_3,docenti.COORD_MATERIA_1,docenti.COORD_MATERIA_2,docenti.COORD_MATERIA_3 FROM docenti {W~FiltroI~(docenti.CHIAVE IN (SELECT istituti_x_docenti.DOCENTE FROM istituti_x_docenti WHERE ISTITUTO = :FiltroI))~FiltroP~(docenti.CHIAVE IN (SELECT istituti_x_docenti.DOCENTE FROM istituti_x_docenti WHERE ISTITUTO IN (SELECT istituti.CHIAVE FROM istituti WHERE PROVINCIA = :FiltroP)))~FiltroT~(docenti.CHIAVE IN (SELECT DOCENTE FROM istituti_x_docenti WHERE ISTITUTO IN (SELECT ISTITUTO FROM classi WHERE CHIAVE IN (SELECT CLASSE FROM adozioni_titolo WHERE TITOLO=:FiltroT))))} ORDER BY docenti.RAGIONE_SOCIALE" 
-                     }
-                   ],
-                   
-   "SelectSQLDocSpedAdmin" : [
-                               {
-                                 "Name" : "TeacherInfoListSmallAdmin",
-                                 "SQL"  : "SELECT docenti.CHIAVE,docenti.RAGIONE_SOCIALE FROM docenti ORDER BY RAGIONE_SOCIALE ASC"
-                               }
-                             ],
-   "SelectSQLDocSpedPromotore" : [
-                                   {
-                                     "Name" : "TeacherInfoListSmallPromotore",
-                                     "SQL"  : "SELECT docenti.CHIAVE,docenti.RAGIONE_SOCIALE FROM docenti WHERE CHIAVE IN (SELECT DOCENTE FROM istituti_x_docenti WHERE ISTITUTO IN (SELECT CHIAVE FROM istituti WHERE PROMOTORE=#KeyAccount)) ORDER BY RAGIONE_SOCIALE ASC"
-                                   }
-                                 ],
-   
-    "SelectTeacherTransfer"     : [
-                                    {
-                                      "Name" : "TeacherSmallList",
-                                      "SQL"  : "SELECT docenti.CHIAVE,docenti.RAGIONE_SOCIALE FROM docenti ORDER BY RAGIONE_SOCIALE"
-                                    },
-                                    {
-                                      "Name" : "TeacherForInstitute",
-                                      "SQL"  : "SELECT *,(SELECT NOME FROM istituti WHERE CHIAVE=istituti_x_docenti.ISTITUTO) AS NOME_ISTITUTO FROM istituti_x_docenti ORDER BY istituti_x_docenti.DOCENTE"
-                                    }
-                                  ],
-                                  
-    "SelectMailchimpTeacher"    : [
-                                    {
-                                      "Name" : "TeacherMailList",
-                                      "SQL"  : "SELECT docenti.CHIAVE,SUBSTRING_INDEX(docenti.RAGIONE_SOCIALE, ' ', -1) AS NOME,docenti.RAGIONE_SOCIALE,docenti.EMAIL,docenti.COMUNE,(SELECT TARGA FROM province_all WHERE CHIAVE = docenti.PROVINCIA) AS TARGA_PROVINCIA,(SELECT DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE = docenti.MATERIA_1) AS MATERIA_1_NOME,(SELECT DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE = docenti.MATERIA_2) AS MATERIA_2_NOME, (SELECT DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE = docenti.MATERIA_3) AS MATERIA_3_NOME FROM docenti WHERE docenti.EMAIL IS NOT NULL AND TRIM(docenti.EMAIL) <> ''"
-                                    },
-                                    {
-                                      "Name" : "TeacherMailInstitute",
-                                      "SQL"  : "SELECT istituti_x_docenti.ISTITUTO,istituti_x_docenti.DOCENTE,(SELECT NOME FROM istituti WHERE CHIAVE = istituti_x_docenti.ISTITUTO) AS NOME_ISTITUTO,(SELECT CODICE FROM istituti WHERE CHIAVE = istituti_x_docenti.ISTITUTO) AS CODICE_ISTITUTO,(SELECT DESCRIZIONE FROM tipologie_istituto WHERE CHIAVE IN (SELECT istituti.TIPOLOGIA FROM istituti WHERE CHIAVE = istituti_x_docenti.ISTITUTO)) AS TIPO_ISTITUTO FROM istituti_x_docenti WHERE istituti_x_docenti.DOCENTE IN(SELECT CHIAVE FROM docenti WHERE EMAIL IS NOT NULL OR TRIM(EMAIL) <> '')  ORDER BY DOCENTE,ISTITUTO"
-                                    }
-                                  ],
-                   
-  "SQLDettaglio" : [
-                     { 
-                       "Name" : "TeacherDettaglio",
-                       "SQL"  : "SELECT docenti.*,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE materie_insegnamento.CHIAVE = docenti.MATERIA_1) AS NOME_MATERIA1,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE materie_insegnamento.CHIAVE = docenti.MATERIA_2) AS NOME_MATERIA2,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE materie_insegnamento.CHIAVE = docenti.MATERIA_3) AS NOME_MATERIA3 FROM docenti WHERE CHIAVE=:CHIAVE"
-                     },
-                     {
-                       "Name" : "TeacherInstitute",
-                       "SQL"  : "SELECT istituti.CHIAVE,istituti.INDIRIZZO,istituti.CAP,istituti.COMUNE,istituti.PROVINCIA,(SELECT province.NOME FROM province WHERE province.CHIAVE = istituti.PROVINCIA) AS PROVINCIA_NOME,(SELECT province_all.CHIAVE FROM province_all WHERE NOME=(SELECT province.NOME FROM province WHERE CHIAVE = istituti.PROVINCIA)) AS PROVINCIA_LISTA_ALL,istituti.CAP,istituti.NOME AS ISTITUTO FROM istituti_x_docenti,istituti WHERE DOCENTE=:CHIAVE AND istituti.CHIAVE = istituti_x_docenti.ISTITUTO ORDER BY ISTITUTO" 
-                     },
-                     {
-                       "Name" : "TeacherLesson",
-                       "SQL"  : "SELECT *,(SELECT ISTITUTO FROM classi WHERE CHIAVE = insegnamenti_docente.CLASSE) AS ISTITUTO,(SELECT classi.SEZIONE FROM classi WHERE classi.CHIAVE = insegnamenti_docente.CLASSE) AS SEZIONE,(SELECT classi.ANNO FROM classi WHERE classi.CHIAVE = insegnamenti_docente.CLASSE) AS ANNO,(SELECT DESCRIZIONE FROM classi_combinazioni WHERE CHIAVE IN (SELECT COMBINAZIONE FROM classi WHERE classi.CHIAVE = insegnamenti_docente.CLASSE)) AS COMBINAZIONE FROM insegnamenti_docente WHERE DOCENTE=:CHIAVE"
-                     },
-                     {
-                       "Name" : "TeacherAvailability",
-                       "SQL"  : "SELECT * FROM docenti_disponibilita WHERE DOCENTE=:CHIAVE"
-                     }                   
-                   ],
-  
-  "EditSQL"      : [  
-                     {
-                       "Name" : "InsertTeacher",
-                       "SQL"  : "INSERT INTO docenti (CHIAVE,RAGIONE_SOCIALE,TITOLO,TEL_PRIMO,TEL_SECONDO,TEL_TERZO,EMAIL,EMAIL_2,MATERIA_1,MATERIA_2,MATERIA_3,PIATTAFORMA,PIATTAFORMA_2,INDIRIZZO,COMUNE,CAP,PROVINCIA,NOTE,COORD_MATERIA_1,COORD_MATERIA_2,COORD_MATERIA_3) VALUES (:NewKey1,#RAGIONE_SOCIALE,#TITOLO,#TEL_PRIMO,#TEL_SECONDO,#TEL_TERZO,#EMAIL,#EMAIL_2,:MATERIA_1,:MATERIA_2,:MATERIA_3,#PIATTAFORMA,#PIATTAFORMA_2,#INDIRIZZO,#COMUNE,#CAP,:PROVINCIA,#NOTE,:COORD_MATERIA_1,:COORD_MATERIA_2,:COORD_MATERIA_3)"
-                     },
-                     {
-                       "Name" : "InsertTeacherLybro",
-                       "SQL"  : "INSERT INTO docenti (CHIAVE,RAGIONE_SOCIALE,TITOLO,TEL_PRIMO,TEL_SECONDO,TEL_TERZO,PIATTAFORMA,INDIRIZZO,COMUNE,CAP,PROVINCIA,LYBRO_KEY) VALUES (:NewKey1,#RAGIONE_SOCIALE,#TITOLO,#TEL_PRIMO,#TEL_SECONDO,#TEL_TERZO,#PIATTAFORMA,#INDIRIZZO,#COMUNE,#CAP,:PROVINCIA,:LYBRO_KEY)"
-                     },
-                     {
-                       "Name" : "UpdateSubjectTeacherLybro",
-                       "SQL"  : "CALL MATERIE_FROM_LYBRO(#MateriaLybro,#DocenteLKey)"
-                     },
-                     {
-                       "Name" : "InsertInstituteTeacher",
-                       "SQL"  : "INSERT INTO istituti_x_docenti (ISTITUTO,DOCENTE) VALUES (:ISTITUTO,:DOCENTE)"
-                     },
-                     {
-                       "Name" : "InsertInstituteTeacherAfterInsert",
-                       "SQL"  : "INSERT INTO istituti_x_docenti (ISTITUTO,DOCENTE) VALUES (:ISTITUTO,:NewKey1)"
-                     },
-                     {
-                       "Name" : "InsertLesson",
-                       "SQL"  : "INSERT INTO insegnamenti_docente (CHIAVE,MATERIA,CLASSE,DOCENTE) VALUES (:NewKey1,:MATERIA,:CLASSE,:DOCENTE)"
-                     },
-                     {
-                       "Name" : "InsertLessonAfterInsert",
-                       "SQL"  : "INSERT INTO insegnamenti_docente (CHIAVE,MATERIA,CLASSE,DOCENTE) VALUES (:NewKey2,:MATERIA,:CLASSE,:NewKey1)"
-                     },
-                     {
-                       "Name" : "InsertUpdateTeacherAvailability",
-                       "SQL"  : "INSERT INTO docenti_disponibilita (DOCENTE,ISTITUTO,GIORNO,LUOGO,ORA)VALUES(:DocenteDisp,:IstitutoDisp,:GiornoDisp,:LuogoDisp,:OraDisp)"
-                     },
-                     {
-                       "Name" : "InsertUpdateTeacherAvailabilityAfterInsert", 
-                       "SQL"  : "INSERT INTO docenti_disponibilita (DOCENTE,ISTITUTO,GIORNO,LUOGO,ORA)VALUES(:NewKey1,:IstitutoDisp,:GiornoDisp,:LuogoDisp,:OraDisp)"
-                     },                    
-                     {
-                       "Name" : "UpdateTeacher",
-                       "SQL"  : "UPDATE docenti SET RAGIONE_SOCIALE=#RAGIONE_SOCIALE,TITOLO=#TITOLO,TEL_PRIMO=#TEL_PRIMO,TEL_SECONDO=#TEL_SECONDO,TEL_TERZO=#TEL_TERZO,EMAIL=#EMAIL,EMAIL_2=#EMAIL_2,MATERIA_1=:MATERIA_1,MATERIA_2=:MATERIA_2,MATERIA_3=:MATERIA_3,PIATTAFORMA=#PIATTAFORMA,PIATTAFORMA_2=#PIATTAFORMA_2,INDIRIZZO=#INDIRIZZO,COMUNE=#COMUNE,CAP=#CAP,PROVINCIA=:PROVINCIA,NOTE=#NOTE,COORD_MATERIA_1=:COORD_MATERIA_1,COORD_MATERIA_2=:COORD_MATERIA_2,COORD_MATERIA_3=:COORD_MATERIA_3 WHERE CHIAVE=:CHIAVE"
-                     },
-                     {
-                       "Name" : "UpdateLesson",
-                       "SQL"  : "UPDATE insegnamenti_docente SET MATERIA=:MATERIA,CLASSE=:CLASSE WHERE CHIAVE=:CHIAVE"
-                     },
-                     {
-                       "Name" : "DeleteTeacherDeliveryBookAll",
-                       "SQL"  : "DELETE FROM dettaglio_spedizioni WHERE SPEDIZIONE IN (SELECT spedizioni.CHIAVE FROM spedizioni WHERE DOCENTE =:CHIAVE)"
-                     },
-                     {
-                       "Name" : "DeleteTeacherDelivery",
-                       "SQL"  : "DELETE FROM spedizioni WHERE DOCENTE=:CHIAVE"
-                     },
-                     {
-                       "Name" : "DeleteTeacherLesson",
-                       "SQL"  : "DELETE FROM insegnamenti_docente WHERE CHIAVE=:CHIAVE"
-                     },
-                     {
-                       "Name" : "DeleteTeacherAvailability",
-                       "SQL"  : "DELETE FROM docenti_disponibilita WHERE DOCENTE=:DocenteDisp AND LUOGO=:LuogoDisp AND GIORNO=:GiornoDisp AND ISTITUTO=:IstitutoDisp AND ORA=:OraDisp"
-                     },
-                     {
-                       "Name" : "DeleteTeacherAvailabilityAll",
-                       "SQL"  : "DELETE FROM docenti_disponibilita WHERE DOCENTE=:CHIAVE"
-                     },
-                     {
-                       "Name" : "DeleteLesson",
-                       "SQL"  : "DELETE FROM insegnamenti_docente WHERE CHIAVE=:CHIAVE"
-                     },
-                     {
-                       "Name" : "DeleteLessonAll",
-                       "SQL"  : "DELETE FROM insegnamenti_docente WHERE DOCENTE=:CHIAVE"
-                     },
-                     {
-                       "Name" : "DeleteLessonAfterDeleteInstitute",
-                       "SQL"  : "DELETE FROM insegnamenti_docente WHERE CLASSE IN (SELECT CHIAVE FROM classi WHERE ISTITUTO=:ISTITUTO) AND DOCENTE=:DOCENTE"
-                     },                     
-                     {
-                       "Name" : "DeleteAvailabilityAfterDeleteInstitute",
-                       "SQL"  : "DELETE FROM docenti_disponibilita WHERE ISTITUTO=:ISTITUTO AND DOCENTE=:DOCENTE"
-                     },                     
-                     {
-                       "Name" : "DeleteInstituteTeacher",
-                       "SQL"  : "DELETE FROM istituti_x_docenti WHERE DOCENTE=:DOCENTE AND ISTITUTO=:ISTITUTO"
-                     },
-                     {                     
-                       "Name" : "DeleteInstituteTeacherAll",
-                       "SQL"  : "DELETE FROM istituti_x_docenti WHERE DOCENTE=:CHIAVE"
-                     },
-                     {
-                       "Name" : "DeleteTeacher",
-                       "SQL"  : "DELETE FROM docenti WHERE CHIAVE=:CHIAVE"
-                     },
-                     {
-                       "Name" : "UpdateDatabaseInstituteFromTeacher",
-                       "SQL"  : "CALL LYBRO_AGGIORNA_ISTITUTI(#CodiceIstituto,#NomeIstituto,#IndirizzoIstituto,#ProvinciaIstituto,#ComuneIstituto,#CapIstituto,#EmailIstituto,#SitoWebIstituto,#PresideIstituto,#VicePresIstituto,#DirAmmIstituto,#Telefono1,#Referente1,#Telefono2,#Referente2,#Telefono3,#Referente3,#DocenteLybro)"
-                     },
-                     {
-                       "Name" : "UpdateTeacherMailFromMailChimp",
-                       "SQL"  : "CALL MAIL_FROM_MAILCHIMP(#MailDocente,#NomeDocente)"
-                     },
-                     {
-                       "Name" : "HideTeacher",
-                       "SQL"  : "UPDATE docenti SET NASCOSTO = 'T' WHERE CHIAVE=:DOCENTE"
-                     },
-                     {
-                      "Name" : "ShowTeacher",
-                      "SQL"  : "UPDATE docenti SET NASCOSTO = 'F' WHERE CHIAVE=:DOCENTE"
-                    }                                         
-                   ]        
+{
+	"RuoliAbilitati" : "",
+	"SelectSQL" : [
+		{
+			"Name" : "TeacherInfoList",
+			"SQL" : "SELECT docenti.CHIAVE,docenti.NASCOSTO,docenti.RAGIONE_SOCIALE,docenti.EMAIL,docenti.TITOLO,docenti.INDIRIZZO,docenti.COMUNE,docenti.CAP,docenti.PROVINCIA,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE = docenti.MATERIA_1) AS NOME_MATERIA1,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE = docenti.MATERIA_2) AS NOME_MATERIA2,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE = docenti.MATERIA_3) AS NOME_MATERIA3,(SELECT province_all.NOME FROM province_all WHERE CHIAVE = docenti.PROVINCIA) AS PROVINCIA_NOME,(SELECT COUNT(*) FROM spedizioni WHERE spedizioni.DOCENTE = docenti.CHIAVE) AS NR_SPED_TOT,(SELECT COUNT(*) FROM spedizioni WHERE spedizioni.DOCENTE = docenti.CHIAVE AND YEAR(spedizioni.DATA ) = YEAR(CURDATE())) AS NR_SPED_LAST_ANNO, docenti.MATERIA_1,docenti.MATERIA_2,docenti.MATERIA_3,docenti.COORD_MATERIA_1,docenti.COORD_MATERIA_2,docenti.COORD_MATERIA_3 FROM docenti {W~FiltroI~(docenti.CHIAVE IN (SELECT istituti_x_docenti.DOCENTE FROM istituti_x_docenti WHERE ISTITUTO = :FiltroI))~FiltroP~(docenti.CHIAVE IN (SELECT istituti_x_docenti.DOCENTE FROM istituti_x_docenti WHERE ISTITUTO IN (SELECT istituti.CHIAVE FROM istituti WHERE PROVINCIA = :FiltroP)))~FiltroT~(docenti.CHIAVE IN (SELECT DOCENTE FROM istituti_x_docenti WHERE ISTITUTO IN (SELECT ISTITUTO FROM classi WHERE CHIAVE IN (SELECT CLASSE FROM adozioni_titolo WHERE TITOLO=:FiltroT))))} ORDER BY docenti.RAGIONE_SOCIALE\n"
+		}
+	],
+	"SelectSQLDocSpedAdmin" : [
+		{
+			"Name" : "TeacherInfoListSmallAdmin",
+			"SQL" : "SELECT docenti.CHIAVE,docenti.RAGIONE_SOCIALE FROM docenti ORDER BY RAGIONE_SOCIALE ASC\n"
+		}
+	],
+	"SelectSQLDocSpedPromotore" : [
+		{
+			"Name" : "TeacherInfoListSmallPromotore",
+			"SQL" : "SELECT docenti.CHIAVE,docenti.RAGIONE_SOCIALE FROM docenti WHERE CHIAVE IN (SELECT DOCENTE FROM istituti_x_docenti WHERE ISTITUTO IN (SELECT CHIAVE FROM istituti WHERE PROMOTORE=#KeyAccount)) ORDER BY RAGIONE_SOCIALE ASC\n"
+		}
+	],
+	"SelectTeacherTransfer" : [
+		{
+			"Name" : "TeacherSmallList",
+			"SQL" : "SELECT docenti.CHIAVE,docenti.RAGIONE_SOCIALE FROM docenti ORDER BY RAGIONE_SOCIALE\n"
+		},
+		{
+			"Name" : "TeacherForInstitute",
+			"SQL" : "SELECT *,(SELECT NOME FROM istituti WHERE CHIAVE=istituti_x_docenti.ISTITUTO) AS NOME_ISTITUTO FROM istituti_x_docenti ORDER BY istituti_x_docenti.DOCENTE\n"
+		}
+	],
+	"SelectMailchimpTeacher" : [
+		{
+			"Name" : "TeacherMailList",
+			"SQL" : "SELECT docenti.CHIAVE,SUBSTRING_INDEX(docenti.RAGIONE_SOCIALE, ' ', -1) AS NOME,docenti.RAGIONE_SOCIALE,docenti.EMAIL,docenti.COMUNE,(SELECT TARGA FROM province_all WHERE CHIAVE = docenti.PROVINCIA) AS TARGA_PROVINCIA,(SELECT DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE = docenti.MATERIA_1) AS MATERIA_1_NOME,(SELECT DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE = docenti.MATERIA_2) AS MATERIA_2_NOME, (SELECT DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE = docenti.MATERIA_3) AS MATERIA_3_NOME FROM docenti WHERE docenti.EMAIL IS NOT NULL AND TRIM(docenti.EMAIL) <> ''\n"
+		},
+		{
+			"Name" : "TeacherMailInstitute",
+			"SQL" : "SELECT istituti_x_docenti.ISTITUTO,istituti_x_docenti.DOCENTE,(SELECT NOME FROM istituti WHERE CHIAVE = istituti_x_docenti.ISTITUTO) AS NOME_ISTITUTO,(SELECT CODICE FROM istituti WHERE CHIAVE = istituti_x_docenti.ISTITUTO) AS CODICE_ISTITUTO,(SELECT DESCRIZIONE FROM tipologie_istituto WHERE CHIAVE IN (SELECT istituti.TIPOLOGIA FROM istituti WHERE CHIAVE = istituti_x_docenti.ISTITUTO)) AS TIPO_ISTITUTO FROM istituti_x_docenti WHERE istituti_x_docenti.DOCENTE IN(SELECT CHIAVE FROM docenti WHERE EMAIL IS NOT NULL OR TRIM(EMAIL) <> '')  ORDER BY DOCENTE,ISTITUTO\n"
+		}
+	],
+	"SQLDettaglio" : [
+		{
+			"Name" : "TeacherDettaglio",
+			"SQL" : "SELECT docenti.*,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE materie_insegnamento.CHIAVE = docenti.MATERIA_1) AS NOME_MATERIA1,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE materie_insegnamento.CHIAVE = docenti.MATERIA_2) AS NOME_MATERIA2,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE materie_insegnamento.CHIAVE = docenti.MATERIA_3) AS NOME_MATERIA3 FROM docenti WHERE CHIAVE=:CHIAVE\n"
+		},
+		{
+			"Name" : "TeacherInstitute",
+			"SQL" : "SELECT istituti.CHIAVE,istituti.INDIRIZZO,istituti.CAP,istituti.COMUNE,istituti.PROVINCIA,(SELECT province.NOME FROM province WHERE province.CHIAVE = istituti.PROVINCIA) AS PROVINCIA_NOME,(SELECT province_all.CHIAVE FROM province_all WHERE NOME=(SELECT province.NOME FROM province WHERE CHIAVE = istituti.PROVINCIA)) AS PROVINCIA_LISTA_ALL,istituti.CAP,istituti.NOME AS ISTITUTO FROM istituti_x_docenti,istituti WHERE DOCENTE=:CHIAVE AND istituti.CHIAVE = istituti_x_docenti.ISTITUTO ORDER BY ISTITUTO\n"
+		},
+		{
+			"Name" : "TeacherLesson",
+			"SQL" : "SELECT *,(SELECT ISTITUTO FROM classi WHERE CHIAVE = insegnamenti_docente.CLASSE) AS ISTITUTO,(SELECT classi.SEZIONE FROM classi WHERE classi.CHIAVE = insegnamenti_docente.CLASSE) AS SEZIONE,(SELECT classi.ANNO FROM classi WHERE classi.CHIAVE = insegnamenti_docente.CLASSE) AS ANNO,(SELECT DESCRIZIONE FROM classi_combinazioni WHERE CHIAVE IN (SELECT COMBINAZIONE FROM classi WHERE classi.CHIAVE = insegnamenti_docente.CLASSE)) AS COMBINAZIONE FROM insegnamenti_docente WHERE DOCENTE=:CHIAVE\n"
+		},
+		{
+			"Name" : "TeacherAvailability",
+			"SQL" : "SELECT * FROM docenti_disponibilita WHERE DOCENTE=:CHIAVE\n"
+		}
+	],
+	"EditSQL" : [
+		{
+			"Name" : "InsertTeacher",
+			"SQL" : "INSERT INTO docenti (CHIAVE,RAGIONE_SOCIALE,TITOLO,TEL_PRIMO,TEL_SECONDO,TEL_TERZO,EMAIL,EMAIL_2,MATERIA_1,MATERIA_2,MATERIA_3,PIATTAFORMA,PIATTAFORMA_2,INDIRIZZO,COMUNE,CAP,PROVINCIA,NOTE,COORD_MATERIA_1,COORD_MATERIA_2,COORD_MATERIA_3) VALUES (:NewKey1,#RAGIONE_SOCIALE,#TITOLO,#TEL_PRIMO,#TEL_SECONDO,#TEL_TERZO,#EMAIL,#EMAIL_2,:MATERIA_1,:MATERIA_2,:MATERIA_3,#PIATTAFORMA,#PIATTAFORMA_2,#INDIRIZZO,#COMUNE,#CAP,:PROVINCIA,#NOTE,:COORD_MATERIA_1,:COORD_MATERIA_2,:COORD_MATERIA_3)\n"
+		},
+		{
+			"Name" : "InsertTeacherLybro",
+			"SQL" : "INSERT INTO docenti (CHIAVE,RAGIONE_SOCIALE,TITOLO,TEL_PRIMO,TEL_SECONDO,TEL_TERZO,PIATTAFORMA,INDIRIZZO,COMUNE,CAP,PROVINCIA,LYBRO_KEY) VALUES (:NewKey1,#RAGIONE_SOCIALE,#TITOLO,#TEL_PRIMO,#TEL_SECONDO,#TEL_TERZO,#PIATTAFORMA,#INDIRIZZO,#COMUNE,#CAP,:PROVINCIA,:LYBRO_KEY)\n"
+		},
+		{
+			"Name" : "UpdateSubjectTeacherLybro",
+			"SQL" : "CALL MATERIE_FROM_LYBRO(#MateriaLybro,#DocenteLKey)\n"
+		},
+		{
+			"Name" : "InsertInstituteTeacher",
+			"SQL" : "INSERT INTO istituti_x_docenti (ISTITUTO,DOCENTE) VALUES (:ISTITUTO,:DOCENTE)\n"
+		},
+		{
+			"Name" : "InsertInstituteTeacherAfterInsert",
+			"SQL" : "INSERT INTO istituti_x_docenti (ISTITUTO,DOCENTE) VALUES (:ISTITUTO,:NewKey1)\n"
+		},
+		{
+			"Name" : "InsertLesson",
+			"SQL" : "INSERT INTO insegnamenti_docente (CHIAVE,MATERIA,CLASSE,DOCENTE) VALUES (:NewKey1,:MATERIA,:CLASSE,:DOCENTE)\n"
+		},
+		{
+			"Name" : "InsertLessonAfterInsert",
+			"SQL" : "INSERT INTO insegnamenti_docente (CHIAVE,MATERIA,CLASSE,DOCENTE) VALUES (:NewKey2,:MATERIA,:CLASSE,:NewKey1)\n"
+		},
+		{
+			"Name" : "InsertUpdateTeacherAvailability",
+			"SQL" : "INSERT INTO docenti_disponibilita (DOCENTE,ISTITUTO,GIORNO,LUOGO,ORA)VALUES(:DocenteDisp,:IstitutoDisp,:GiornoDisp,:LuogoDisp,:OraDisp)\n"
+		},
+		{
+			"Name" : "InsertUpdateTeacherAvailabilityAfterInsert",
+			"SQL" : "INSERT INTO docenti_disponibilita (DOCENTE,ISTITUTO,GIORNO,LUOGO,ORA)VALUES(:NewKey1,:IstitutoDisp,:GiornoDisp,:LuogoDisp,:OraDisp)\n"
+		},
+		{
+			"Name" : "UpdateTeacher",
+			"SQL" : "UPDATE docenti SET RAGIONE_SOCIALE=#RAGIONE_SOCIALE,TITOLO=#TITOLO,TEL_PRIMO=#TEL_PRIMO,TEL_SECONDO=#TEL_SECONDO,TEL_TERZO=#TEL_TERZO,EMAIL=#EMAIL,EMAIL_2=#EMAIL_2,MATERIA_1=:MATERIA_1,MATERIA_2=:MATERIA_2,MATERIA_3=:MATERIA_3,PIATTAFORMA=#PIATTAFORMA,PIATTAFORMA_2=#PIATTAFORMA_2,INDIRIZZO=#INDIRIZZO,COMUNE=#COMUNE,CAP=#CAP,PROVINCIA=:PROVINCIA,NOTE=#NOTE,COORD_MATERIA_1=:COORD_MATERIA_1,COORD_MATERIA_2=:COORD_MATERIA_2,COORD_MATERIA_3=:COORD_MATERIA_3 WHERE CHIAVE=:CHIAVE\n"
+		},
+		{
+			"Name" : "UpdateLesson",
+			"SQL" : "UPDATE insegnamenti_docente SET MATERIA=:MATERIA,CLASSE=:CLASSE WHERE CHIAVE=:CHIAVE\n"
+		},
+		{
+			"Name" : "DeleteTeacherDeliveryBookAll",
+			"SQL" : "DELETE FROM dettaglio_spedizioni WHERE SPEDIZIONE IN (SELECT spedizioni.CHIAVE FROM spedizioni WHERE DOCENTE =:CHIAVE)\n"
+		},
+		{
+			"Name" : "DeleteTeacherDelivery",
+			"SQL" : "DELETE FROM spedizioni WHERE DOCENTE=:CHIAVE\n"
+		},
+		{
+			"Name" : "DeleteTeacherLesson",
+			"SQL" : "DELETE FROM insegnamenti_docente WHERE CHIAVE=:CHIAVE\n"
+		},
+		{
+			"Name" : "DeleteTeacherAvailability",
+			"SQL" : "DELETE FROM docenti_disponibilita WHERE DOCENTE=:DocenteDisp AND LUOGO=:LuogoDisp AND GIORNO=:GiornoDisp AND ISTITUTO=:IstitutoDisp AND ORA=:OraDisp\n"
+		},
+		{
+			"Name" : "DeleteTeacherAvailabilityAll",
+			"SQL" : "DELETE FROM docenti_disponibilita WHERE DOCENTE=:CHIAVE\n"
+		},
+		{
+			"Name" : "DeleteLesson",
+			"SQL" : "DELETE FROM insegnamenti_docente WHERE CHIAVE=:CHIAVE\n"
+		},
+		{
+			"Name" : "DeleteLessonAll",
+			"SQL" : "DELETE FROM insegnamenti_docente WHERE DOCENTE=:CHIAVE\n"
+		},
+		{
+			"Name" : "DeleteLessonAfterDeleteInstitute",
+			"SQL" : "DELETE FROM insegnamenti_docente WHERE CLASSE IN (SELECT CHIAVE FROM classi WHERE ISTITUTO=:ISTITUTO) AND DOCENTE=:DOCENTE\n"
+		},
+		{
+			"Name" : "DeleteAvailabilityAfterDeleteInstitute",
+			"SQL" : "DELETE FROM docenti_disponibilita WHERE ISTITUTO=:ISTITUTO AND DOCENTE=:DOCENTE\n"
+		},
+		{
+			"Name" : "DeleteInstituteTeacher",
+			"SQL" : "DELETE FROM istituti_x_docenti WHERE DOCENTE=:DOCENTE AND ISTITUTO=:ISTITUTO\n"
+		},
+		{
+			"Name" : "DeleteInstituteTeacherAll",
+			"SQL" : "DELETE FROM istituti_x_docenti WHERE DOCENTE=:CHIAVE\n"
+		},
+		{
+			"Name" : "DeleteTeacher",
+			"SQL" : "DELETE FROM docenti WHERE CHIAVE=:CHIAVE\n"
+		},
+		{
+			"Name" : "UpdateDatabaseInstituteFromTeacher",
+			"SQL" : "CALL LYBRO_AGGIORNA_ISTITUTI(#CodiceIstituto,#NomeIstituto,#IndirizzoIstituto,#ProvinciaIstituto,#ComuneIstituto,#CapIstituto,#EmailIstituto,#SitoWebIstituto,#PresideIstituto,#VicePresIstituto,#DirAmmIstituto,#Telefono1,#Referente1,#Telefono2,#Referente2,#Telefono3,#Referente3,#DocenteLybro)\n"
+		},
+		{
+			"Name" : "UpdateTeacherMailFromMailChimp",
+			"SQL" : "CALL MAIL_FROM_MAILCHIMP(#MailDocente,#NomeDocente)\n"
+		},
+		{
+			"Name" : "HideTeacher",
+			"SQL" : "UPDATE docenti SET NASCOSTO = 'T' WHERE CHIAVE=:DOCENTE\n"
+		},
+		{
+			"Name" : "ShowTeacher",
+			"SQL" : "UPDATE docenti SET NASCOSTO = 'F' WHERE CHIAVE=:DOCENTE\n"
+		}
+	],
+	"SearchTitolo" : [
+		{
+			"Name" : "SearchTitoloGestito",
+			"SQL" : "SELECT dettaglio_spedizioni.TITOLO\n  FROM dettaglio_spedizioni\n  JOIN spedizioni \n    ON spedizioni.CHIAVE = dettaglio_spedizioni.SPEDIZIONE\n WHERE spedizioni.DOCENTE = :DOCENTE\n   AND spedizioni.CHIAVE <> :SPEDIZIONE \n"
+		}
+]
 }

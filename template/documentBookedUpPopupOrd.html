@@ -2,7 +2,7 @@
   <form ng-cloak name="PopupCumulativoPrenotatiOrdForm">
     <md-toolbar>
       <div class="md-toolbar-tools">
-        <h2 style="font-weight:bold;color:white;">ORD "DEAGOSTINI" CUMULATIVO PRENOTATI</h2>
+        <h2 style="font-weight:bold;color:white;">ORD {{CheckEditore == 'D' ? 'DEAGOSTINI' : 'MONDADORI'}} CUMULATIVO PRENOTATI</h2>
       </div>
     </md-toolbar>
 
@@ -15,7 +15,13 @@
           <md-input-container style="float:left;margin-left:20px;">  
             <label>AL</label><input ng-model="DataRicercaAlPrnt" type="date" name="DataRicercaAlPrnt">
           </md-input-container>
-        </div>   
+        </div> 
+        <div>
+          <md-radio-group ng-model="CheckEditore" layout="row" style="padding:5px;">
+            <md-radio-button value="D">DEAGOSTINI</md-radio-button>
+            <md-radio-button value="M">MONDADORI</md-radio-button>
+          </md-radio-group>
+        </div>  
        </div>
        <div style="text-align:center;">
         <md-button ng-click="CreaOrdPrenotati()" title="GENERA ORD PRENOTATI"><img src="img/printOrd.png" style="width:100px;height:auto;"></md-button>
