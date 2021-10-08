@@ -161,6 +161,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
       for(let i = 0; i < ListaIstitutiTmp.length; i++)
           ListaIstitutiTmp[i] = {
                                    Chiave   : ListaIstitutiTmp[i].CHIAVE,
+                                   CodiceIstituto : ListaIstitutiTmp[i].CODICE,
                                    Istituto : ListaIstitutiTmp[i].NOME
                                  }
       $scope.ListaIstituti = ListaIstitutiTmp;
@@ -222,7 +223,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
      searchTextIstituto = searchTextIstituto.toUpperCase();
      return($scope.ListaIstituti.grep(function(Elemento) 
      { 
-       return(Elemento.Istituto.toUpperCase().indexOf(searchTextIstituto) != -1);
+       return(Elemento.Istituto.toUpperCase().indexOf(searchTextIstituto) != -1 || Elemento.CodiceIstituto.toUpperCase().indexOf(searchTextIstituto) != -1);
      }));
   }
   
@@ -514,7 +515,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                 var Qt = doc.getTextWidth(ListaCumulativo[k].Quantita);
                 doc.text(10 + Q + 1 - Qt,CoordY+10,ListaCumulativo[k].Quantita);
                 doc.text(20,CoordY+10,ListaCumulativo[k].Codice);
-                doc.text(45,CoordY+10,TroncaTesto(ListaCumulativo[k].Nome,65));
+                doc.text(45,CoordY+10,TroncaTesto(ListaCumulativo[k].Nome,50));
                 doc.text(160,CoordY+10,ListaCumulativo[k].Posizione);            
             }
             doc.addPage();
@@ -617,7 +618,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                doc.setFontType('bold');
                doc.setFontSize(9);
                doc.text(10,CoordY + 80,'CODICE ISBN');
-               doc.text(40,CoordY + 80,'AUTORE/TITOLO');
+               doc.text(40,CoordY + 80,'TITOLO');
                doc.text(120,CoordY + 80,'EDITORE');
                doc.text(150,CoordY + 80,'QUANTITA');
                doc.text(170,CoordY + 80,'POS.MAGAZZINO');
@@ -625,12 +626,11 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                doc.setFontType('normal');
                
                for (let j = 0;j < ListaSpedizioniToPrint[i].ListaTitoli.length;j ++)
-               {    
-                   doc.text(10,CoordY+90,ListaSpedizioniToPrint[i].ListaTitoli[j].CODICE_ISBN);
-                   doc.setFontSize(8);
-                   doc.text(40,CoordY+90,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].AUTORI,60) + ' / ');
-                   doc.text(40,CoordY+95,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].NOME_TITOLO,60));
-                   doc.text(120,CoordY+90,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].EDITORE,20));
+               {
+                   doc.setFontSize(8);    
+                   doc.text(10,CoordY+90,ListaSpedizioniToPrint[i].ListaTitoli[j].CODICE_ISBN);                  
+                   doc.text(40,CoordY+90,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].NOME_TITOLO,35));
+                   doc.text(120,CoordY+90,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].EDITORE,15));
                    var Q  = doc.getTextWidth('QUANTITA');
                    var Qt = doc.getTextWidth(ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA);
                    doc.text(150 + Q + 1 - Qt,CoordY+90,ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA);
@@ -971,7 +971,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                                               "POS_MGZN"    : ListaDaSpedireTmp[i].POS_MGZN == undefined ? 'N.D.' : ListaDaSpedireTmp[i].POS_MGZN,
                                               "AUTORI"      : ListaDaSpedireTmp[i].AUTORI == undefined ? 'N.D' : ListaDaSpedireTmp[i].AUTORI,
                                               "EDITORE"     : ListaDaSpedireTmp[i].EDITORE == undefined ? 'N.D' : ListaDaSpedireTmp[i].EDITORE,
-                                              "CODICE_ISBN" : ListaDaSpedireTmp[i].CODICE == undefined ? 'N.D' : ListaDaSpedireTmp[i].                   CODICE                                   
+                                              "CODICE_ISBN" : ListaDaSpedireTmp[i].CODICE == undefined ? 'N.D' : ListaDaSpedireTmp[i].CODICE                                   
                                              })                                
              }             
              ListaSpedizioniToPrint.push(Spedizione);
@@ -1056,7 +1056,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                 var Qt = doc.getTextWidth(ListaCumulativo[k].Quantita);
                 doc.text(10 + Q + 1 - Qt,CoordY+10,ListaCumulativo[k].Quantita);
                 doc.text(20,CoordY+10,ListaCumulativo[k].Codice);
-                doc.text(45,CoordY+10,TroncaTesto(ListaCumulativo[k].Nome,65));
+                doc.text(45,CoordY+10,TroncaTesto(ListaCumulativo[k].Nome,50));
                 doc.text(160,CoordY+10,ListaCumulativo[k].Posizione);            
             }
             
@@ -1151,7 +1151,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                   doc.setFontType('bold');
                   doc.setFontSize(9);
                   doc.text(10,CoordY + 80,'CODICE ISBN');
-                  doc.text(40,CoordY + 80,'AUTORE/TITOLO');
+                  doc.text(40,CoordY + 80,'TITOLO');
                   doc.text(120,CoordY + 80,'EDITORE');
                   doc.text(150,CoordY + 80,'QUANTITA');
                   doc.text(170,CoordY + 80,'POS.MAGAZZINO');
@@ -1159,12 +1159,11 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                   doc.setFontType('normal');
                   
                   for (let j = 0;j < ListaSpedizioniToPrint[i].ListaTitoli.length;j ++)
-                  {                       
-                      doc.text(10,CoordY+90,ListaSpedizioniToPrint[i].ListaTitoli[j].CODICE_ISBN);
-                      doc.setFontSize(8);
-                      doc.text(40,CoordY+90,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].AUTORI,60) + ' / ');
-                      doc.text(40,CoordY+95,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].NOME_TITOLO,60));
-                      doc.text(120,CoordY+90,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].EDITORE,20));
+                  {    
+                      doc.setFontSize(8);                   
+                      doc.text(10,CoordY+90,ListaSpedizioniToPrint[i].ListaTitoli[j].CODICE_ISBN);                     
+                      doc.text(40,CoordY+90,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].NOME_TITOLO,35));
+                      doc.text(120,CoordY+90,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].EDITORE,15));
                       var Q  = doc.getTextWidth('QUANTITA');
                       var Qt = doc.getTextWidth(ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA);
                       doc.text(150 + Q + 1 - Qt,CoordY+90,ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA);

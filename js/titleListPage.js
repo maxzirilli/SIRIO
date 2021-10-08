@@ -88,6 +88,7 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
        for(let i = 0; i < IstitutiInfoLista.length; i++)
            IstitutiInfoLista[i] = { 
                                     Chiave   : IstitutiInfoLista[i].CHIAVE,
+                                    CodiceIstituto : IstitutiInfoLista[i].CODICE,
                                     Istituto : IstitutiInfoLista[i].NOME
                                   }
        $scope.ListaIstitutiPopup = IstitutiInfoLista;
@@ -101,7 +102,7 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
      searchTextIstituto = searchTextIstituto.toUpperCase();
      return($scope.ListaIstituti.grep(function(Elemento) 
      { 
-       return(Elemento.Istituto.toUpperCase().indexOf(searchTextIstituto) != -1);
+       return(Elemento.Istituto.toUpperCase().indexOf(searchTextIstituto) != -1 || Elemento.CodiceIstituto.toUpperCase().indexOf(searchTextIstituto) != -1);
      }));
   }
   
@@ -341,175 +342,185 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
   
   $scope.ConfermaTitolo = function ()
   {
-    var $ObjQuery    = { Operazioni : [] };
-    var ParamTitolo  = {
-                         CHIAVE            : $scope.TitoloInEditing.Chiave,
-                         CODICE_ISBN       : $scope.TitoloInEditing.Codice.xSQL(),
-                         TITOLO            : $scope.TitoloInEditing.Titolo == '' ? null : $scope.TitoloInEditing.Titolo.xSQL(),
-                         SOTTOTITOLO       : $scope.TitoloInEditing.Sottotitolo == '' ? null : $scope.TitoloInEditing.Sottotitolo.xSQL(),
-                         MATERIA           : $scope.TitoloInEditing.Materia == -1 ? null : $scope.TitoloInEditing.Materia.xSQL(),
-                         AUTORI            : $scope.TitoloInEditing.Autori == '' ? null : $scope.TitoloInEditing.Autori.xSQL(),
-                         EDITORE           : $scope.TitoloInEditing.Editore == '' ? null : $scope.TitoloInEditing.Editore.xSQL(),
-                         VOLUME            : $scope.TitoloInEditing.Volume,
-                         POS_MAGAZZINO     : $scope.TitoloInEditing.Pos_Magazzino == '' ? null : $scope.TitoloInEditing.Pos_Magazzino.xSQL(),
-                         PREZZO            : $scope.TitoloInEditing.Prezzo == '' ? null : $scope.TitoloInEditing.Prezzo.xSQL(),
-                         QUANTITA_MGZN     : $scope.TitoloInEditing.Q_Mgzn,
-                         QUANTITA_MGZN_VOL : $scope.TitoloInEditing.Q_Mgzn_Vol,
-                         PRENOTAZ_NOVITA   : $scope.TitoloInEditing.PrenotazNovita                    
-                       }
-
-    var NuovoTitolo = ($scope.TitoloInEditing.Chiave == -1);
-    if(NuovoTitolo)     
-    {           
-      $ObjQuery.Operazioni.push({
-                                  Query     : 'InsertBook',
-                                  Parametri : ParamTitolo
-                                }); 
-    }
+    var IsIsbnDuplicato = false;
+    for(let i = 0 ; i < $scope.ListaTitoli.length; i ++)
+        if($scope.ListaTitoli[i].Codice == $scope.TitoloInEditing.Codice)
+           IsIsbnDuplicato = true;
+           
+    if(IsIsbnDuplicato)
+       ZCustomAlert($mdDialog,'ATTENZIONE',"ESISTE GIA' UN TITOLO CON QUESTO CODICE ISBN!");
     else
     {
-      ParamTitolo = {}
-      ParamTitolo = {
-                      ChiaveTitolo      : $scope.TitoloInEditing.Chiave,
-                      Codice            : $scope.TitoloInEditing.Codice.xSQL(),
-                      Titolo            : $scope.TitoloInEditing.Titolo == '' ? null : $scope.TitoloInEditing.Titolo.xSQL(),
-                      Sottotitolo       : $scope.TitoloInEditing.Sottotitolo == '' ? null : $scope.TitoloInEditing.Sottotitolo.xSQL(),
-                      Materia           : $scope.TitoloInEditing.Materia  == -1 ? null : $scope.TitoloInEditing.Materia.xSQL(),
-                      Autori            : $scope.TitoloInEditing.Autori == '' ? null : $scope.TitoloInEditing.Autori.xSQL(),
-                      Editore           : $scope.TitoloInEditing.Editore == '' ? null : $scope.TitoloInEditing.Editore.xSQL(),
-                      Volume            : $scope.TitoloInEditing.Volume,
-                      Prezzo            : $scope.TitoloInEditing.Prezzo == '' ? null : $scope.TitoloInEditing.Prezzo.xSQL(),
-                      PosMgzn           : $scope.TitoloInEditing.Pos_Magazzino == '' ? null : $scope.TitoloInEditing.Pos_Magazzino.xSQL(),
-                      QuantitaMgzn      : $scope.TitoloInEditing.Q_Mgzn,
-                      QuantitaMgznVol   : $scope.TitoloInEditing.Q_Mgzn_Vol,
-                      PrenotazNovita    : $scope.TitoloInEditing.PrenotazNovita 
-                    }                               
-      $ObjQuery.Operazioni.push({
-                                  Query     : 'UpdateBook',
-                                  Parametri : ParamTitolo
-                                });
-    };
+      var $ObjQuery    = { Operazioni : [] };
+      var ParamTitolo  = {
+                           CHIAVE            : $scope.TitoloInEditing.Chiave,
+                           CODICE_ISBN       : $scope.TitoloInEditing.Codice.xSQL(),
+                           TITOLO            : $scope.TitoloInEditing.Titolo == '' ? null : $scope.TitoloInEditing.Titolo.xSQL(),
+                           SOTTOTITOLO       : $scope.TitoloInEditing.Sottotitolo == '' ? null : $scope.TitoloInEditing.Sottotitolo.xSQL(),
+                           MATERIA           : $scope.TitoloInEditing.Materia == -1 ? null : $scope.TitoloInEditing.Materia.xSQL(),
+                           AUTORI            : $scope.TitoloInEditing.Autori == '' ? null : $scope.TitoloInEditing.Autori.xSQL(),
+                           EDITORE           : $scope.TitoloInEditing.Editore == '' ? null : $scope.TitoloInEditing.Editore.xSQL(),
+                           VOLUME            : $scope.TitoloInEditing.Volume,
+                           POS_MAGAZZINO     : $scope.TitoloInEditing.Pos_Magazzino == '' ? null : $scope.TitoloInEditing.Pos_Magazzino.xSQL(),
+                           PREZZO            : $scope.TitoloInEditing.Prezzo == '' ? null : $scope.TitoloInEditing.Prezzo.xSQL(),
+                           QUANTITA_MGZN     : $scope.TitoloInEditing.Q_Mgzn,
+                           QUANTITA_MGZN_VOL : $scope.TitoloInEditing.Q_Mgzn_Vol,
+                           PRENOTAZ_NOVITA   : $scope.TitoloInEditing.PrenotazNovita                    
+                         }
 
-    if (!NuovoTitolo && $scope.TitoloInEditing.ListaIstitutiTitEliminati.length != 0)
-    {
-       for(let j = 0; j < $scope.TitoloInEditing.ListaIstitutiTitEliminati.length ;j ++)
-       {
-         var ParamIstitutoTit = {
-                                  TITOLO   : $scope.TitoloInEditing.Chiave,
-                                  ISTITUTO : $scope.TitoloInEditing.ListaIstitutiTitEliminati[j].CHIAVE
-                                }
-         if ($scope.TitoloInEditing.ListaIstitutiTitEliminati[j].Eliminato)
-         { 
-           $ObjQuery.Operazioni.push({
-                                      Query     : 'DeleteAdoptionAfterDeleteInstitute',
-                                      Parametri : ParamIstitutoTit
-                                    });  
-           $ObjQuery.Operazioni.push({
-                                       Query     : 'DeleteInstituteBook',
-                                       Parametri : ParamIstitutoTit
-                                     });        
-         }
-       }
-       SystemInformation.PostSQL('Book',$ObjQuery,function(Answer)
-       {
-         $scope.TitoloInEditing.ListaIstitutiTitEliminati = [];
-         $ObjQuery.Operazioni = [];
-       });  
-    } 
-    
-    if (!NuovoTitolo && $scope.TitoloInEditing.ListaAdozioniEliminate.length != 0)
-    {
-       for(let j = 0; j < $scope.TitoloInEditing.ListaAdozioniEliminate.length ;j ++)
-       {
-         var ParamAdozione = {
-                               CHIAVE : $scope.TitoloInEditing.ListaAdozioniEliminate[j].CHIAVE
-                             }
-         if ($scope.TitoloInEditing.ListaAdozioniEliminate[j].Eliminato)
-         {
-          $ObjQuery.Operazioni.push({
-                                      Query     : 'DeleteAdoption',
-                                      Parametri : ParamAdozione
-                                    });
-         }
-       }
-       SystemInformation.PostSQL('Book',$ObjQuery,function(Answer)
-       {
-         $scope.TitoloInEditing.ListaAdozioniEliminate = [];
-         $ObjQuery.Operazioni = [];
-       });  
-    } 
-    
-    for(let i = 0; i < $scope.TitoloInEditing.ListaIstitutiTit.length;i ++)
-    { 
-      var ParamIstitutoTit = {
-                               TITOLO   : $scope.TitoloInEditing.Chiave,
-                               ISTITUTO : $scope.TitoloInEditing.ListaIstitutiTit[i].CHIAVE
-                             }    
-      
-      if(NuovoTitolo && !($scope.TitoloInEditing.ListaIstitutiTit[i].Eliminato))  
-      { 
+      var NuovoTitolo = ($scope.TitoloInEditing.Chiave == -1);
+      if(NuovoTitolo)     
+      {           
         $ObjQuery.Operazioni.push({
-                                    Query     : 'InsertInstituteBookAfterInsert',
-                                    Parametri : ParamIstitutoTit
-                                  });
+                                    Query     : 'InsertBook',
+                                    Parametri : ParamTitolo
+                                  }); 
       }
-      if(!NuovoTitolo && $scope.TitoloInEditing.ListaIstitutiTit[i].Nuovo && !($scope.TitoloInEditing.ListaIstitutiTit[i].Eliminato))
-      {  
+      else
+      {
+        ParamTitolo = {}
+        ParamTitolo = {
+                        ChiaveTitolo      : $scope.TitoloInEditing.Chiave,
+                        Codice            : $scope.TitoloInEditing.Codice.xSQL(),
+                        Titolo            : $scope.TitoloInEditing.Titolo == '' ? null : $scope.TitoloInEditing.Titolo.xSQL(),
+                        Sottotitolo       : $scope.TitoloInEditing.Sottotitolo == '' ? null : $scope.TitoloInEditing.Sottotitolo.xSQL(),
+                        Materia           : $scope.TitoloInEditing.Materia  == -1 ? null : $scope.TitoloInEditing.Materia.xSQL(),
+                        Autori            : $scope.TitoloInEditing.Autori == '' ? null : $scope.TitoloInEditing.Autori.xSQL(),
+                        Editore           : $scope.TitoloInEditing.Editore == '' ? null : $scope.TitoloInEditing.Editore.xSQL(),
+                        Volume            : $scope.TitoloInEditing.Volume,
+                        Prezzo            : $scope.TitoloInEditing.Prezzo == '' ? null : $scope.TitoloInEditing.Prezzo.xSQL(),
+                        PosMgzn           : $scope.TitoloInEditing.Pos_Magazzino == '' ? null : $scope.TitoloInEditing.Pos_Magazzino.xSQL(),
+                        QuantitaMgzn      : $scope.TitoloInEditing.Q_Mgzn,
+                        QuantitaMgznVol   : $scope.TitoloInEditing.Q_Mgzn_Vol,
+                        PrenotazNovita    : $scope.TitoloInEditing.PrenotazNovita 
+                      }                               
         $ObjQuery.Operazioni.push({
-                                    Query     : 'InsertInstituteBook',
-                                    Parametri : ParamIstitutoTit
+                                    Query     : 'UpdateBook',
+                                    Parametri : ParamTitolo
                                   });
-      }      
-    }
+      };
 
-    for (let i = 0;i < $scope.TitoloInEditing.ListaIstitutiTit.length;i ++)
-    {
-         for (let j = 0;j < $scope.TitoloInEditing.ListaIstitutiTit[i].Adozioni.length;j ++)
+      if (!NuovoTitolo && $scope.TitoloInEditing.ListaIstitutiTitEliminati.length != 0)
+      {
+         for(let j = 0; j < $scope.TitoloInEditing.ListaIstitutiTitEliminati.length ;j ++)
+         {
+           var ParamIstitutoTit = {
+                                    TITOLO   : $scope.TitoloInEditing.Chiave,
+                                    ISTITUTO : $scope.TitoloInEditing.ListaIstitutiTitEliminati[j].CHIAVE
+                                  }
+           if ($scope.TitoloInEditing.ListaIstitutiTitEliminati[j].Eliminato)
+           { 
+             $ObjQuery.Operazioni.push({
+                                        Query     : 'DeleteAdoptionAfterDeleteInstitute',
+                                        Parametri : ParamIstitutoTit
+                                      });  
+             $ObjQuery.Operazioni.push({
+                                         Query     : 'DeleteInstituteBook',
+                                         Parametri : ParamIstitutoTit
+                                       });        
+           }
+         }
+         SystemInformation.PostSQL('Book',$ObjQuery,function(Answer)
+         {
+           $scope.TitoloInEditing.ListaIstitutiTitEliminati = [];
+           $ObjQuery.Operazioni = [];
+         });  
+      } 
+      
+      if (!NuovoTitolo && $scope.TitoloInEditing.ListaAdozioniEliminate.length != 0)
+      {
+         for(let j = 0; j < $scope.TitoloInEditing.ListaAdozioniEliminate.length ;j ++)
          {
            var ParamAdozione = {
-                                 CHIAVE   : $scope.TitoloInEditing.ListaIstitutiTit[i].Adozioni[j].CHIAVE,
-                                 TITOLO   : $scope.TitoloInEditing.Chiave,
-                                 CLASSE   : $scope.TitoloInEditing.ListaIstitutiTit[i].Adozioni[j].CLASSE,
-                                 ISTITUTO : $scope.TitoloInEditing.ListaIstitutiTit[i].Adozioni[j].ISTITUTO          
+                                 CHIAVE : $scope.TitoloInEditing.ListaAdozioniEliminate[j].CHIAVE
                                }
-           if (NuovoTitolo && $scope.TitoloInEditing.ListaIstitutiTit[i].Adozioni[j].Nuovo)
-              $ObjQuery.Operazioni.push({
-                                          Query     : 'InsertAdoptionAfterInsert',
-                                          Parametri : ParamAdozione,
-                                          ResetKeys : [2]
-                                        });
-           
-           if (!NuovoTitolo && $scope.TitoloInEditing.ListaIstitutiTit[i].Adozioni[j].Nuovo)
-              $ObjQuery.Operazioni.push({
-                                          Query     : 'InsertAdoption',
-                                          Parametri : ParamAdozione,
-                                          ResetKeys : [1]
-                                        });
-           
-           if (!NuovoTitolo && $scope.TitoloInEditing.ListaIstitutiTit[i].Adozioni[j].Modificato)               
-              ParamAdozione = {
-                                CHIAVE : $scope.TitoloInEditing.ListaIstitutiTit[i].Adozioni[j].CHIAVE,
-                                CLASSE : $scope.TitoloInEditing.ListaIstitutiTit[i].Adozioni[j].CLASSE                               
-                              };
-              $ObjQuery.Operazioni.push({
-                                          Query     : 'UpdateAdoption',
-                                          Parametri : ParamAdozione
-                                        });
+           if ($scope.TitoloInEditing.ListaAdozioniEliminate[j].Eliminato)
+           {
+            $ObjQuery.Operazioni.push({
+                                        Query     : 'DeleteAdoption',
+                                        Parametri : ParamAdozione
+                                      });
+           }
          }
-    }         
+         SystemInformation.PostSQL('Book',$ObjQuery,function(Answer)
+         {
+           $scope.TitoloInEditing.ListaAdozioniEliminate = [];
+           $ObjQuery.Operazioni = [];
+         });  
+      } 
+      
+      for(let i = 0; i < $scope.TitoloInEditing.ListaIstitutiTit.length;i ++)
+      { 
+        var ParamIstitutoTit = {
+                                 TITOLO   : $scope.TitoloInEditing.Chiave,
+                                 ISTITUTO : $scope.TitoloInEditing.ListaIstitutiTit[i].CHIAVE
+                               }    
+        
+        if(NuovoTitolo && !($scope.TitoloInEditing.ListaIstitutiTit[i].Eliminato))  
+        { 
+          $ObjQuery.Operazioni.push({
+                                      Query     : 'InsertInstituteBookAfterInsert',
+                                      Parametri : ParamIstitutoTit
+                                    });
+        }
+        if(!NuovoTitolo && $scope.TitoloInEditing.ListaIstitutiTit[i].Nuovo && !($scope.TitoloInEditing.ListaIstitutiTit[i].Eliminato))
+        {  
+          $ObjQuery.Operazioni.push({
+                                      Query     : 'InsertInstituteBook',
+                                      Parametri : ParamIstitutoTit
+                                    });
+        }      
+      }
 
-    SystemInformation.PostSQL('Book',$ObjQuery,function(Answer)
-    {
-      $scope.TitoloInEditing.ListaIstitutiTit = [];
-      $scope.EditingOn = false;
-      /*if($scope.CheckOldIstituto)
+      for (let i = 0;i < $scope.TitoloInEditing.ListaIstitutiTit.length;i ++)
       {
-         $scope.IstitutoFiltro     = $scope.OldIstitutoFiltro;
-         $scope.searchTextIstituto = $scope.OldIstitutoNome;
-      }*/
-      $scope.RefreshListaTitoli();
-      $scope.GridOptions.query.page = $scope.OldPagina;
-    });    
+           for (let j = 0;j < $scope.TitoloInEditing.ListaIstitutiTit[i].Adozioni.length;j ++)
+           {
+             var ParamAdozione = {
+                                   CHIAVE   : $scope.TitoloInEditing.ListaIstitutiTit[i].Adozioni[j].CHIAVE,
+                                   TITOLO   : $scope.TitoloInEditing.Chiave,
+                                   CLASSE   : $scope.TitoloInEditing.ListaIstitutiTit[i].Adozioni[j].CLASSE,
+                                   ISTITUTO : $scope.TitoloInEditing.ListaIstitutiTit[i].Adozioni[j].ISTITUTO          
+                                 }
+             if (NuovoTitolo && $scope.TitoloInEditing.ListaIstitutiTit[i].Adozioni[j].Nuovo)
+                $ObjQuery.Operazioni.push({
+                                            Query     : 'InsertAdoptionAfterInsert',
+                                            Parametri : ParamAdozione,
+                                            ResetKeys : [2]
+                                          });
+             
+             if (!NuovoTitolo && $scope.TitoloInEditing.ListaIstitutiTit[i].Adozioni[j].Nuovo)
+                $ObjQuery.Operazioni.push({
+                                            Query     : 'InsertAdoption',
+                                            Parametri : ParamAdozione,
+                                            ResetKeys : [1]
+                                          });
+             
+             if (!NuovoTitolo && $scope.TitoloInEditing.ListaIstitutiTit[i].Adozioni[j].Modificato)               
+                ParamAdozione = {
+                                  CHIAVE : $scope.TitoloInEditing.ListaIstitutiTit[i].Adozioni[j].CHIAVE,
+                                  CLASSE : $scope.TitoloInEditing.ListaIstitutiTit[i].Adozioni[j].CLASSE                               
+                                };
+                $ObjQuery.Operazioni.push({
+                                            Query     : 'UpdateAdoption',
+                                            Parametri : ParamAdozione
+                                          });
+           }
+      }         
+
+      SystemInformation.PostSQL('Book',$ObjQuery,function(Answer)
+      {
+        $scope.TitoloInEditing.ListaIstitutiTit = [];
+        $scope.EditingOn = false;
+        /*if($scope.CheckOldIstituto)
+        {
+           $scope.IstitutoFiltro     = $scope.OldIstitutoFiltro;
+           $scope.searchTextIstituto = $scope.OldIstitutoNome;
+        }*/
+        $scope.RefreshListaTitoli();
+        $scope.GridOptions.query.page = $scope.OldPagina;
+      });  
+    }  
   }
   
   $scope.EliminaTitolo = function(Titolo)

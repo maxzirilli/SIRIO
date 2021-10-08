@@ -690,8 +690,9 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     {
       for(let i = 0; i < ListaIstitutiTmp.length; i++)
           ListaIstitutiTmp[i] = {
-                                   Chiave   : ListaIstitutiTmp[i].CHIAVE,
-                                   Istituto : ListaIstitutiTmp[i].NOME
+                                   Chiave         : ListaIstitutiTmp[i].CHIAVE,
+                                   CodiceIstituto : ListaIstitutiTmp[i].CODICE,
+                                   Istituto       : ListaIstitutiTmp[i].NOME
                                  }
       $scope.ListaIstituti = ListaIstitutiTmp;
     }
@@ -753,7 +754,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
      searchTextIstituto = searchTextIstituto.toUpperCase();
      return($scope.ListaIstituti.grep(function(Elemento) 
      { 
-       return(Elemento.Istituto.toUpperCase().indexOf(searchTextIstituto) != -1);
+       return(Elemento.Istituto.toUpperCase().indexOf(searchTextIstituto) != -1 || Elemento.CodiceIstituto.toUpperCase().indexOf(searchTextIstituto) != -1);
      }));
   }
   

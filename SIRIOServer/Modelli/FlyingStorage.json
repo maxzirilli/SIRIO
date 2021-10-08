@@ -1,51 +1,61 @@
 {
-   "SelectSQL"   : [
-                     {
-                       "Name" : "FlyingInfoList",
-                       "SQL"  : "SELECT *,(SELECT utenti.USERNAME from utenti WHERE CHIAVE = magazzino_volante.PROMOTORE) AS NOME_PROMOTORE FROM magazzino_volante ORDER BY DATA DESC"
-                     }
-                   ],
-  
-  "SQLDettaglio" : 
-                   [
-                     {
-                       "Name" : "FlyingDettaglio",
-                       "SQL"  : "SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE = dettaglio_magazzino_volante.TITOLO) AS NOME_TITOLO,(SELECT titoli.CODICE_ISBN FROM titoli WHERE CHIAVE = dettaglio_magazzino_volante.TITOLO) AS CODICE_TITOLO,(SELECT titoli.QUANTITA_MGZN FROM titoli WHERE CHIAVE = dettaglio_magazzino_volante.TITOLO) AS QUANTITA_MGZN_MAX FROM dettaglio_magazzino_volante WHERE MOVIMENTO=:CHIAVE"
-                     }
-                   ],
-  "EditSQL"      :
-                   [
-                     {
-                       "Name" : "InsertMovement",
-                       "SQL"  : "INSERT INTO magazzino_volante (CHIAVE,DATA,PROMOTORE) VALUES (:NewKey1,#DATA,#KeyAccount)"
-                     },
-                     {
-                       "Name" : "InsertMovementBook",
-                       "SQL"  : "INSERT INTO dettaglio_magazzino_volante (CHIAVE,MOVIMENTO,TITOLO,QUANTITA) VALUES (:NewKey1,:CHIAVE,:TITOLO,#QUANTITA)"
-                     },
-                     {
-                       "Name" : "InsertMovementBookAfterInsert",
-                       "SQL"  : "INSERT INTO dettaglio_magazzino_volante (CHIAVE,MOVIMENTO,TITOLO,QUANTITA) VALUES (:NewKey2,:NewKey1,:TITOLO,#QUANTITA)"
-                     },
-                     {
-                       "Name" : "UpdateMovement",
-                       "SQL"  : "UPDATE magazzino_volante SET DATA=#DATA WHERE CHIAVE=:CHIAVE"
-                     },
-                     {
-                       "Name" : "UpdateMovementBook",
-                       "SQL"  : "UPDATE dettaglio_magazzino_volante SET TITOLO=:TITOLO,QUANTITA=#QUANTITA WHERE CHIAVE=:CHIAVE"
-                     },
-                     {
-                       "Name" : "DeleteMovement",
-                       "SQL"  : "DELETE FROM magazzino_volante WHERE CHIAVE=:CHIAVE"
-                     },
-                     {
-                       "Name" : "DeleteMovementBook",
-                       "SQL"  : "DELETE FROM dettaglio_magazzino_volante WHERE CHIAVE=:CHIAVE"
-                     },
-                     {
-                       "Name" : "DeleteMovementBookAll",
-                       "SQL"  : "DELETE FROM dettaglio_magazzino_volante WHERE MOVIMENTO=:CHIAVE"
-                     }
-                   ]
+	"RuoliAbilitati" : "",
+	"SelectSQL" : [
+		{
+			"Name" : "FlyingInfoList",
+			"SQL" : "SELECT *,(SELECT utenti.USERNAME from utenti WHERE CHIAVE = magazzino_volante.PROMOTORE) AS NOME_PROMOTORE FROM magazzino_volante ORDER BY DATA DESC\n"
+		}
+	],
+	"SQLDettaglio" : [
+		{
+			"Name" : "FlyingDettaglio",
+			"SQL" : "SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE = dettaglio_magazzino_volante.TITOLO) AS NOME_TITOLO,(SELECT titoli.CODICE_ISBN FROM titoli WHERE CHIAVE = dettaglio_magazzino_volante.TITOLO) AS CODICE_TITOLO,(SELECT titoli.QUANTITA_MGZN FROM titoli WHERE CHIAVE = dettaglio_magazzino_volante.TITOLO) AS QUANTITA_MGZN_MAX FROM dettaglio_magazzino_volante WHERE MOVIMENTO=:CHIAVE\n"
+		}
+	],
+	"EditSQL" : [
+		{
+			"Name" : "InsertMovement",
+			"SQL" : "INSERT INTO magazzino_volante (CHIAVE,DATA,PROMOTORE) VALUES (:NewKey1,#DATA,#KeyAccount)\n"
+		},
+		{
+			"Name" : "InsertMovementBook",
+			"SQL" : "INSERT INTO dettaglio_magazzino_volante (CHIAVE,MOVIMENTO,TITOLO,QUANTITA) VALUES (:NewKey1,:CHIAVE,:TITOLO,#QUANTITA)\n"
+		},
+		{
+			"Name" : "InsertMovementBookAfterInsert",
+			"SQL" : "INSERT INTO dettaglio_magazzino_volante (CHIAVE,MOVIMENTO,TITOLO,QUANTITA) VALUES (:NewKey2,:NewKey1,:TITOLO,#QUANTITA)\n"
+		},
+		{
+			"Name" : "UpdateMovement",
+			"SQL" : "UPDATE magazzino_volante SET DATA=#DATA WHERE CHIAVE=:CHIAVE\n"
+		},
+		{
+			"Name" : "UpdateMovementBook",
+			"SQL" : "UPDATE dettaglio_magazzino_volante SET TITOLO=:TITOLO,QUANTITA=#QUANTITA WHERE CHIAVE=:CHIAVE\n"
+		},
+		{
+			"Name" : "DeleteMovement",
+			"SQL" : "DELETE FROM magazzino_volante WHERE CHIAVE=:CHIAVE\n"
+		},
+		{
+			"Name" : "DeleteMovementBook",
+			"SQL" : "DELETE FROM dettaglio_magazzino_volante WHERE CHIAVE=:CHIAVE\n"
+		},
+		{
+			"Name" : "DeleteMovementBookAll",
+			"SQL" : "DELETE FROM dettaglio_magazzino_volante WHERE MOVIMENTO=:CHIAVE\n"
+		}
+	],
+	"SelectTotale" : [
+		{
+			"Name" : "GetTotaleVolante",
+			"SQL" : "  SELECT SUM(dettaglio_magazzino_volante.QUANTITA) AS QUANTITA,\n\t titoli.CODICE_ISBN, titoli.TITOLO AS NOME\n    FROM dettaglio_magazzino_volante\n    JOIN titoli \n      ON titoli.CHIAVE = dettaglio_magazzino_volante.TITOLO\nGROUP BY dettaglio_magazzino_volante.TITOLO\nORDER BY titoli.TITOLO\n"
+		}
+	],
+	"SelectSQLAll" : [
+		{
+			"Name" : "SelectAllMovimenti",
+			"SQL" : "\tSELECT dettaglio_magazzino_volante.*, \n\t       magazzino_volante.DATA,\n\t\t\t magazzino_volante.PROMOTORE,\n\t\t\t utenti.USERNAME,\n\t\t\t titoli.TITOLO AS NOME,\n\t\t\t titoli.CODICE_ISBN\n\t  FROM dettaglio_magazzino_volante \n\t  JOIN titoli \n\t    ON titoli.CHIAVE = dettaglio_magazzino_volante.TITOLO\n\t  JOIN magazzino_volante \n\t    ON magazzino_volante.CHIAVE = dettaglio_magazzino_volante.MOVIMENTO\n\t  JOIN utenti \n\t    ON magazzino_volante.PROMOTORE = utenti.CHIAVE\n ORDER BY dettaglio_magazzino_volante.MOVIMENTO\n"
+		}
+]
 }

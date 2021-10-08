@@ -1,8 +1,11 @@
-SIRIOApp.controller("flyingStoragePageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','ZConfirm',function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
+SIRIOApp.controller("flyingStoragePageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','ZConfirm','$sce',function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm,$sce)
 {  
-  $scope.ListaVolante = [];
-  $scope.EditingOn    = false;
-  $scope.CodiceBippato = '',
+  $scope.ListaVolante        = [];
+  $scope.EditingOn           = false;
+  $scope.ViewTotaleMagazzino = false;
+  $scope.CodiceBippato       = '';
+  $scope.ListaTotaleVolante  = [];
+  $scope.TotaleLibri         = 0;
   
   ScopeHeaderController.CheckButtons();
 
@@ -36,13 +39,29 @@ $scope.GridOptions_2 = {
                                             },
                           limitOptions    : [10, 20, 30]
                       };
+
+  $scope.GridOptions_3 = {
+                          rowSelection    : false,
+                          multiSelect     : true,
+                          autoSelect      : true,
+                          decapitate      : false,
+                          largeEditDialog : false,
+                          boundaryLinks   : false,
+                          limitSelect     : true,
+                          pageSelect      : true,
+                          query           : {
+                                              limit: 20,
+                                              page: 1
+                                            },
+                          limitOptions    : [10, 20, 30]
+                      };
   
   $scope.ConvertiData = function (Dati)
   {
      return(ZFormatDateTime('dd/mm/yyyy',ZDateFromHTMLInput(Dati.DATA)));
   }
   
-  $scope.RefreshListaMovimenti = function ()
+ /* $scope.RefreshListaMovimenti = function ()
   {
     $scope.GridOptions.query.page = 1;
     SystemInformation.GetSQL('FlyingStorage',{},function(Results)
@@ -61,6 +80,56 @@ $scope.GridOptions_2 = {
       }
       else SystemInformation.ApplyOnError('Modello lista mag.volante non conforme','');    
     })
+  }*/
+
+  $scope.RefreshListaMovimenti = function ()
+  {
+    $scope.GridOptions.query.page = 1;
+    SystemInformation.GetSQL('FlyingStorage',{},function(Results)
+    {
+      ListaVolanteTmp = SystemInformation.FindResults(Results,'SelectAllMovimenti');
+      if(ListaVolanteTmp != undefined)
+      {
+        var ChiaveMov = -1;
+        for(let i = 0; i < ListaVolanteTmp.length;i ++)
+        {
+            if(ChiaveMov != ListaVolanteTmp[i].MOVIMENTO) 
+            {
+               $scope.ListaVolante.push({
+                                          CHIAVE         : ListaVolanteTmp[i].MOVIMENTO,
+                                          DATA           : ListaVolanteTmp[i].DATA,
+                                          PROMOTORE      : ListaVolanteTmp[i].PROMOTORE,
+                                          NOME_PROMOTORE : ListaVolanteTmp[i].USERNAME,
+                                          ListaTitoli    : []
+                                        })
+               ChiaveMov = ListaVolanteTmp[i].MOVIMENTO;
+            } 
+            $scope.ListaVolante[$scope.ListaVolante.length - 1].ListaTitoli.push({
+                                                                                   Quantita : ListaVolanteTmp[i].QUANTITA,
+                                                                                   Titolo   : ListaVolanteTmp[i].NOME,
+                                                                                   Codice   : ListaVolanteTmp[i].CODICE_ISBN
+                                                                                 })
+        } 
+        $scope.ListaVolante.sort(function(a,b)
+        {
+          var MovA = new Date(a.DATA);
+          var MovB = new Date(b.DATA);
+          return (MovA > MovB) ? -1 : (MovA < MovB) ? 1 : 0; 
+        });
+      }
+      else SystemInformation.ApplyOnError('Modello lista mag.volante non conforme','');    
+    },'SelectSQLAll')
+  }
+
+  $scope.GetTitoliMovimento = function(Movimento)
+  {
+     var Result = '';
+     for(let i = 0;i < Movimento.ListaTitoli.length;i ++)
+     {
+         Result += Movimento.ListaTitoli[i].Quantita + ' - ' + Movimento.ListaTitoli[i].Codice + ' - ' + Movimento.ListaTitoli[i].Titolo + '</br>';
+     }
+     
+     return($sce.trustAsHtml(Result.substr(0,Result.length)));
   }
 
   SystemInformation.GetSQL('Accessories', {}, function(Results)  
@@ -123,6 +192,37 @@ $scope.GridOptions_2 = {
       }
       else SystemInformation.ApplyOnError('Modello dettaglio movimento non conforme','');
     },'SQLDettaglio');
+  }
+
+  $scope.ApriVolante = function()
+  {
+    $scope.ViewTotaleMagazzino = true;
+    $scope.TotaleLibri         = 0;
+    $scope.ListaTotaleVolante  = [];
+    SystemInformation.GetSQL('FlyingStorage',{},function(Results)
+    {
+      ListaTitoliTmp = SystemInformation.FindResults(Results,'GetTotaleVolante');
+      if(ListaTitoliTmp != undefined)
+      {
+        for(let i = 0; i < ListaTitoliTmp.length;i ++)
+        {
+            ListaTitoliTmp[i] = {
+                                  Quantita : ListaTitoliTmp[i].QUANTITA,
+                                  Isbn     : ListaTitoliTmp[i].CODICE_ISBN,
+                                  Titolo   : ListaTitoliTmp[i].NOME
+                                }
+            $scope.TotaleLibri += parseInt(ListaTitoliTmp[i].Quantita);
+        }
+        $scope.ListaTotaleVolante = ListaTitoliTmp;  
+      }
+      else SystemInformation.ApplyOnError('Modello lista titoli mag.volante non conforme','');    
+    },'SelectTotale');
+  }
+
+  $scope.ChiudiVolante = function()
+  {
+    $scope.ViewTotaleMagazzino = false;
+    $scope.ListaTotaleVolante  = [];
   }
 
   $scope.ResetIsbnInput = function()

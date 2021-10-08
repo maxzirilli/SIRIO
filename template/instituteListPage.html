@@ -18,6 +18,9 @@
         <md-input-container class="containerSelect" style="width:20%;"><label>NOME</label>
           <input ng-model="NomeFiltro" ng-change="GridOptions.query.page = 1" type="search">
         </md-input-container>
+        <md-input-container class="containerSelect" style="width:20%;"><label>CODICE</label>
+          <input ng-model="CodiceFiltro" ng-change="GridOptions.query.page = 1" style="text-transform:uppercase" type="search">
+        </md-input-container>
         <md-input-container class="containerSelect" style="width:20%;margin-right:10px;" ng-show="IsAdministrator()"><label>PROMOTORE</label>
           <md-select ng-model="PromotoreFiltro" ng-change="GridOptions.query.page = 1" placeholder="PROMOTORE" class="mdb-select" type="text" name="PromotoreFiltro">
           <md-optgroup>
@@ -42,7 +45,7 @@
           <th>COMUNE</th>  
           <th ng-show="IsAdministrator()">PROMOTORE ASSEGNATO</th>      
         </tr>  
-        <tr ng-repeat="Istituto in ListaIstituti | IstitutoByFiltro : ProvinciaFiltro : NomeFiltro : NascostoFiltro : ComuneFiltro : PromotoreFiltro : IsAdministrator() | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Istituto.Chiave}}>
+        <tr ng-repeat="Istituto in ListaIstituti | IstitutoByFiltro : ProvinciaFiltro : NomeFiltro : CodiceFiltro : NascostoFiltro : ComuneFiltro : PromotoreFiltro : IsAdministrator() | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Istituto.Chiave}}>
           <td ng-if="IsAdministrator()"><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA ISTITUTO" ng-click="EliminaIstituto(Istituto)"></td> 
           <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA ISTITUTO" ng-click="ModificaIstituto(Istituto)"></td>        
           <td><img src="img/printPDF.png" style="width:30px;height:auto;" title="LISTA DOCENTI" ng-click="CreaPdfListaDocenti(Istituto.Chiave,Istituto.Nome,Istituto.Codice,Istituto.ProvinciaNome)"></td>        

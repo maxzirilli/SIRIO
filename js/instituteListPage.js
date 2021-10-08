@@ -14,7 +14,8 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
   $scope.ClasseCliccata     = [];
   $scope.IstitutiNascosti   = false;  
   $scope.ProvinciaFiltro    = -1;
-  $scope.NomeFiltro         = ''; 
+  $scope.NomeFiltro         = '';
+  $scope.CodiceFiltro       = ''; 
   $scope.NomeFiltroUnione   = '';
   $scope.ComuneFiltro       = '';
   //$scope.IstitutoDaUnire    = -1;
@@ -1228,13 +1229,14 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
 
 SIRIOApp.filter('IstitutoByFiltro',function()
 {
-  return function(ListaIstituti,ProvinciaFiltro,NomeFiltro,NascostoFiltro,ComuneFiltro,PromotoreFiltro,Admin)
+  return function(ListaIstituti,ProvinciaFiltro,NomeFiltro,CodiceFiltro,NascostoFiltro,ComuneFiltro,PromotoreFiltro,Admin)
          {
-           if(ProvinciaFiltro == -1 && NomeFiltro == '' && NascostoFiltro == true && ComuneFiltro == '' && ((parseInt(PromotoreFiltro) == -1 && Admin) || (parseInt(PromotoreFiltro) != -1 && !Admin))) return(ListaIstituti);
+           if(ProvinciaFiltro == -1 && NomeFiltro == '' && CodiceFiltro == '' && NascostoFiltro == true && ComuneFiltro == '' && ((parseInt(PromotoreFiltro) == -1 && Admin) || (parseInt(PromotoreFiltro) != -1 && !Admin))) return(ListaIstituti);
            var ListaFiltrata = [];
-           NomeFiltro = NomeFiltro.toUpperCase();
-           ComuneFiltro = ComuneFiltro.toUpperCase();
-           PromotoreFiltro = parseInt(PromotoreFiltro);
+           NomeFiltro        = NomeFiltro.toUpperCase();
+           ComuneFiltro      = ComuneFiltro.toUpperCase();
+           PromotoreFiltro   = parseInt(PromotoreFiltro);
+           CodiceFiltro      = CodiceFiltro.toUpperCase();
            
            var IstitutoOK = function(Istituto)
            {  
@@ -1242,6 +1244,10 @@ SIRIOApp.filter('IstitutoByFiltro',function()
               
               if(NomeFiltro != '')
                 if(Istituto.Nome.toUpperCase().indexOf(NomeFiltro) < 0)
+                   Result = false;
+              
+              if(CodiceFiltro != '')
+                if(Istituto.Codice.toUpperCase().indexOf(CodiceFiltro) < 0)
                    Result = false;
 
               if(ComuneFiltro != '')

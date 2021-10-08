@@ -12,7 +12,7 @@
         </md-optgroup>
         </md-select>
       </md-input-container>
-      <md-input-container class="containerSelect" style="width:40%;margin-right:10px;">
+      <md-input-container class="containerSelect" style="width:40%;margin-right:10px;" >
          <label>ISTITUTO</label>
          <md-autocomplete
                      md-input-name="Istituto"
@@ -25,7 +25,7 @@
                      md-require-match="true"
                      md-clear-button="true">
          <md-item-template>
-           <span md-highlight-text="searchText">{{item.Istituto}}</span>
+           <span md-highlight-text="searchText">CODICE : {{item.CodiceIstituto}} - {{item.Istituto}}</span>
          </md-item-template>
          <md-not-found>
            Nessuna corrispondenza

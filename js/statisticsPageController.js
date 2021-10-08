@@ -79,7 +79,7 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
      searchTextIstituto = searchTextIstituto.toUpperCase();
      return($scope.ListaIstituti.grep(function(Elemento) 
      { 
-       return(Elemento.Nome.toUpperCase().indexOf(searchTextIstituto) != -1);
+       return(Elemento.Nome.toUpperCase().indexOf(searchTextIstituto) != -1 || Elemento.Codice.toUpperCase().indexOf(searchTextIstituto) != -1);
      }));
   }
   
@@ -215,6 +215,7 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
          for(let i = 0; i < ListaIstitutiTmp.length; i++)     
              ListaIstitutiTmp[i] = { 
                                      Chiave : parseInt(ListaIstitutiTmp[i].CHIAVE),
+                                     Codice : ListaIstitutiTmp[i].CODICE,
                                      Nome   : ListaIstitutiTmp[i].NOME
                                    }    
          $scope.ListaIstituti = ListaIstitutiTmp;

@@ -12,9 +12,12 @@
         <md-input-container class="containerSelect" style="width:400px"><label>Filtra per nome...</label>
           <input ng-model="NomeFiltro" type="search">
         </md-input-container>
+        <md-input-container class="containerSelect" style="width:400px"><label>Filtra per codice...</label>
+          <input ng-model="CodiceFiltro" type="search" style="text-transform:uppercase">
+        </md-input-container>
         <md-input-container class="containerSelect" style="width:400px"><label style="width:400px">ISTITUTO</label>
           <md-select ng-model="IstitutoDaAssociare" class="mdb-select" type="text" name="istitutoDaAssociare">
-            <md-option ng-repeat="istituto in ListaIstitutiPopup | IstitutoByNomeFiltro: NomeFiltro" ng-value="{{istituto.Chiave}}">{{istituto.Istituto}}</md-option>
+            <md-option ng-repeat="istituto in ListaIstitutiPopup | IstitutoByNomeFiltro: NomeFiltro : CodiceFiltro" ng-value="{{istituto.Chiave}}">{{istituto.CodiceIstituto}} - {{istituto.Istituto}}</md-option>
           </md-select>
         </md-input-container>          
       </div>

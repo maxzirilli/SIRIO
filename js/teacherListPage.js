@@ -20,6 +20,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   $scope.GiorniSettimanaD                  = SystemInformation.GiorniSettimana;
   $scope.DisponibilitaInEditing            = [];
   $scope.NomeFiltro                        = '';
+  $scope.CodiceFiltro                      = '';
   $scope.CoordMateriaFiltro                = false;
   $scope.OldPagina                         = 0;
   $scope.AdozioniGestite                   = true;
@@ -189,11 +190,13 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
            if(IstitutiInfoLista[i].NR_DOCENTI > 0)
               ListaIstitutiAssegnati.push({
                                             Chiave   : IstitutiInfoLista[i].CHIAVE,
+                                            CodiceIstituto :  IstitutiInfoLista[i].CODICE,
                                             Istituto : IstitutiInfoLista[i].NOME
                                           });
        
            IstitutiInfoLista[i] = { 
                                     Chiave   : IstitutiInfoLista[i].CHIAVE,
+                                    CodiceIstituto :  IstitutiInfoLista[i].CODICE,
                                     Istituto : IstitutiInfoLista[i].NOME
                                   }
        }
@@ -212,6 +215,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
        for(let i = 0; i < IstitutiInfoListaP.length; i++)     
            IstitutiInfoListaP[i] = { 
                                     Chiave   : IstitutiInfoListaP[i].CHIAVE,
+                                    CodiceIstituto :  IstitutiInfoListaP[i].CODICE,
                                     Istituto : IstitutiInfoListaP[i].NOME
                                   }    
        $scope.ListaIstitutiPopup = IstitutiInfoListaP;
@@ -295,7 +299,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   $scope.selectedItemChangeTitolo = function(itemTit)
   {
     if(itemTit != undefined)
-      $scope.TitoloFiltro        = itemTit.Chiave;
+      $scope.TitoloFiltro = itemTit.Chiave;
     else
     {
       $scope.TitoloFiltro  = -1;
@@ -309,7 +313,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
      searchTextIstituto = searchTextIstituto.toUpperCase();
      return($scope.ListaIstituti.grep(function(Elemento) 
      { 
-       return(Elemento.Istituto.toUpperCase().indexOf(searchTextIstituto) != -1);
+       return(Elemento.Istituto.toUpperCase().indexOf(searchTextIstituto) != -1 || Elemento.CodiceIstituto.indexOf(searchTextIstituto) != -1);
      }));
   }
   
@@ -2408,12 +2412,13 @@ SIRIOApp.filter('DocenteByFiltro',function()
 
 SIRIOApp.filter('IstitutoByNomeFiltro',function()
 {  
-  return function(ListaIstitutiPopup,NomeFiltro)
+  return function(ListaIstitutiPopup,NomeFiltro,CodiceFiltro)
          {  
                     
-           if(NomeFiltro == '') return(ListaIstitutiPopup);
+           if(NomeFiltro == '' && CodiceFiltro == '') return(ListaIstitutiPopup);
            var ListaFiltrataI = [];
-           NomeFiltro = NomeFiltro.toUpperCase();
+           NomeFiltro   = NomeFiltro.toUpperCase();
+           CodiceFiltro = CodiceFiltro.toUpperCase();
            var IstitutoOK = function(istituto)
            {  
               var Result = true;
@@ -2421,6 +2426,11 @@ SIRIOApp.filter('IstitutoByNomeFiltro',function()
               if(NomeFiltro != '')
                 if(istituto.Istituto.toUpperCase().indexOf(NomeFiltro) < 0)
                    Result = false;
+
+              if(CodiceFiltro != '')
+                if(istituto.CodiceIstituto.toUpperCase().indexOf(CodiceFiltro) < 0)
+                   Result = false;
+
               return(Result);
            }
           

@@ -1,8 +1,9 @@
 <div ng-controller="flyingStoragePageController" ng-cloak md-theme="{{ActualTheme}}" style="height:75%">
-  <div ng-show="!EditingOn">
+  <div ng-show="!EditingOn && !ViewTotaleMagazzino">
      <div>
        <h2 style="float:left;margin-right:50px;">MAGAZZINO VOLANTE</h2>
        <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoMovimento()">INSERISCI NUOVO MOVIMENTO</md-button> 
+       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="ApriVolante()">VISUALIZZA MAGAZZINO</md-button>
      </div>    
      
      <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}" ng-if="ListaVolante.length > 0">  
@@ -10,13 +11,15 @@
          <th></th>
          <th></th> 
          <th>DATA</th>  
-         <th>PROMOTORE</th>        
+         <th>PROMOTORE</th>  
+         <th>QUANTITA / ISBN / TITOLO</th>      
        </tr>  
        <tr ng-repeat="Movimento in ListaVolante | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Movimento.CHIAVE}}> 
          <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA MOVIMENTO" ng-click="EliminaMovimento(Movimento)"></td> 
          <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA MOVIMENTO" ng-click="ModificaMovimento(Movimento)"></td>        
          <td>{{ConvertiData(Movimento)}}</td>  
-         <td>{{Movimento.NOME_PROMOTORE | uppercase}}</td>     
+         <td>{{Movimento.NOME_PROMOTORE | uppercase}}</td>   
+         <td style="text-align:left;" ng-bind-html="GetTitoliMovimento(Movimento)"></td>
        </tr>    
      </table>
      <md-table-pagination md-limit="GridOptions.query.limit" 
@@ -35,7 +38,7 @@
      </div>
   </div>
    
-  <div ng-show="EditingOn"> 
+  <div ng-show="EditingOn && !ViewTotaleMagazzino"> 
     <h2>CARICO VOLANTE</h2>
     <md-input-container>
       <label>DATA CARICO</label><input ng-model="MovimentoInEditing.DATA" type="date" name="DataCarico">
@@ -74,5 +77,40 @@
                             md-boundary-links="GridOptions_2.boundaryLinks" 
                             md-on-paginate="logPagination"></md-table-pagination>
        </div>
+  </div>
+
+    <div ng-show="!EditingOn && ViewTotaleMagazzino">
+     <div>
+       <h2 style="float:left;margin-right:50px;">LISTA MAGAZZINO VOLANTE <span ng-if="ListaTotaleVolante.length > 0"> (TOTALE : {{ TotaleLibri }} )</span></h2>
+       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="ChiudiVolante()">CHIUDI</md-button>
+     </div> 
+     <br>
+     
+     <table style="width:100%;text-align:center;" md-row-select="GridOptions_3.rowSelection" multiple="{{GridOptions_3.multiSelect}}" ng-if="ListaTotaleVolante.length > 0">  
+       <tr>
+         <th>QUANTITA</th>
+         <th>ISBN</th>
+         <th>TITOLO</th>      
+       </tr>  
+       <tr ng-repeat="Titolo in ListaTotaleVolante | limitTo : GridOptions_3.query.limit : (GridOptions_3.query.page - 1) * GridOptions_3.query.limit" id={{Titolo.Isbn}}>  
+         <td>{{Titolo.Quantita}}</td>  
+         <td>{{Titolo.Isbn}}</td>  
+         <td>{{Titolo.Titolo}}</td>     
+       </tr>    
+     </table>
+     <md-table-pagination md-limit="GridOptions_3.query.limit" 
+                          md-limit-options="GridOptions_3.limitOptions" 
+                          md-page="GridOptions_3.query.page" 
+                          md-total="{{ListaTotaleVolante.length}}" 
+                          md-page-select="GridOptions_3.pageSelect" 
+                          md-boundary-links="GridOptions_3.boundaryLinks" 
+                          md-on-paginate="logPagination" 
+                          ng-if="ListaTotaleVolante.length > 0"></md-table-pagination>
+     <br>
+     <br>
+     <br>
+     <div>
+       <p ng-if="ListaTotaleVolante.length == 0" style="text-align:center;font-weight:bold;font-style:italic;">NESSUN TITOLO PRESENTE</p>
+     </div>
   </div>
 </div>
