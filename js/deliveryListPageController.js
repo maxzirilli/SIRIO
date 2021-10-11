@@ -1,22 +1,26 @@
 SIRIOApp.controller("deliveryListPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','$sce','$filter','ZConfirm',
 function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConfirm)
 {
-  $scope.DaSpedireFiltro  = true;
-  $scope.PrenotataFiltro  = true;
-  $scope.ConsegnataFiltro = false;
-  $scope.ProvinciaFiltro  = -1;
-  $scope.PromotoreFiltro  = -1;
-  $scope.IstitutoFiltro   = -1;
-  $scope.DocenteFiltro    = -1;
-  ListaSpedizioni         = [];
-  $scope.TitoloFiltro     = -1;
-  $scope.ListaGruppi      = [];
-  $scope.DataRicercaAl    = new Date();
-  let TmpDate             = new Date($scope.DataRicercaAl);
+  $scope.DaSpedireFiltro     = true;
+  $scope.PrenotataFiltro     = true;
+  $scope.ConsegnataFiltro    = false;
+  $scope.ProvinciaFiltro     = -1;
+  $scope.PromotoreFiltro     = -1;
+  $scope.IstitutoFiltro      = -1;
+  $scope.DocenteFiltro       = -1;
+  ListaSpedizioni            = [];
+  $scope.TitoloFiltro        = -1;
+  $scope.ListaGruppi         = [];
+  $scope.StatisticaPromotori = [];
+  $scope.PromotoreFiltroStatistica  = -1;
+  $scope.TitoloFiltroStat   = -1;
+  $scope.StatisticaVisible   = false;
+  $scope.DataRicercaAl       = new Date();
+  let TmpDate                = new Date($scope.DataRicercaAl);
   TmpDate.setDate(TmpDate.getDate() - 7);
   //$scope.DataRicercaDal   = new Date(TmpDate);
   var AnnoCorrente = new Date().getFullYear();
-  $scope.DataRicercaDal   = new Date(AnnoCorrente, 0, 1)
+  $scope.DataRicercaDal = new Date(AnnoCorrente, 0, 1)
 
  
   ScopeHeaderController.CheckButtons(); 
@@ -498,11 +502,132 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     }
   }
 
+  $scope.ApriStatisticaPromotori = function(ev) 
+  {    
+      $mdDialog.show({ 
+                       controller          : DialogControllerStatisticaPromotori,
+                       templateUrl         : "template/documentPromotersStatisticsPopup.html",
+                       targetEvent         : ev,
+                       scope               : $scope,
+                       preserveScope       : true,
+                       clickOutsideToClose : true
+                     })
+      .then(function(answer) 
+      {
+      }, 
+      function() 
+      {
+      });
+  }
+
+  function DialogControllerStatisticaPromotori($scope,$mdDialog)
+  {
+    $scope.DataRicercaAlPromotori    = new Date();
+    let TmpDatePrmt                  = new Date($scope.DataRicercaAlPromotori);
+    TmpDatePrmt.setDate(TmpDatePrmt.getDate() - 30);
+    $scope.DataRicercaDalPromotori   = new Date(TmpDatePrmt);
+    $scope.PromotoreFiltroStatistica = -1;
+    $scope.TitoloFiltroStat          = -1;
+    $scope.StatisticaVisible         = false;
+    $scope.searchTextTitStat         = undefined;
+
+    $scope.hide = function() 
+    {
+      $scope.PromotoreFiltroStatistica = -1;
+      $scope.TitoloFiltroStat          = -1;
+      $scope.StatisticaVisible         = false;
+      $scope.searchTextTitStat         = undefined;
+      $mdDialog.hide();
+    };
+
+    $scope.AnnullaPopupStatisticaPromotori = function() 
+    {
+      $scope.DataRicercaAlPromotori    = new Date();
+      let TmpDatePrmt                  = new Date($scope.DataRicercaAlPromotori);
+      TmpDatePrmt.setDate(TmpDatePrmt.getDate() - 30);
+      $scope.DataRicercaDalPromotori    = new Date(TmpDatePrmt);
+      $scope.PromotoreFiltroStatistica = -1;
+      $scope.TitoloFiltroStat          = -1;
+      $scope.StatisticaVisible         = false;
+      $scope.searchTextTitStat         = undefined;
+      $mdDialog.cancel();
+    };
+
+    $scope.queryTitoloStat = function(searchTextTitStat)
+    {
+       searchTextTitStat = searchTextTitStat.toUpperCase();
+       return($scope.ListaTitoliFilter.grep(function(Elemento) 
+       { 
+         return(Elemento.Nome.toUpperCase().indexOf(searchTextTitStat) != -1 || Elemento.Codice.indexOf(searchTextTitStat) != -1);
+       }));
+    }
+    
+    $scope.selectedItemChangeTitoloStat = function(itemTitStat)
+    {
+      if(itemTitStat != undefined)
+         $scope.TitoloFiltroStat = itemTitStat.Chiave;
+      else $scope.TitoloFiltroStat  = -1;
+    }  
+
+    $scope.CreaStatisticaPromotori = function()
+    {                
+      if($scope.DataRicercaDalPromotori == undefined || $scope.DataRicercaAlPromotori == undefined)
+         return;
+      let TmpDatePrmt = new Date($scope.DataRicercaAlPromotori);
+      TmpDatePrmt.setDate($scope.DataRicercaAlPromotori.getDate() + 1);
+      
+      var ParamStatistica = {
+                               Dal : ZHTMLInputFromDate($scope.DataRicercaDalPromotori), 
+                               Al  : ZHTMLInputFromDate(TmpDatePrmt)
+                            };
+
+      SystemInformation.GetSQL('Statistics',ParamStatistica,function(Results)
+      {
+        $scope.StatisticaPromotori = [];
+        var StatisticaTmp = SystemInformation.FindResults(Results,'DeliveryCount');
+        if(StatisticaTmp != undefined)
+        {
+           $scope.StatisticaVisible = true;
+           var PromotoreTmp = '-1';
+           for(let i = 0; i < StatisticaTmp.length; i ++)
+           {
+               if(StatisticaTmp[i].PROMOTORE != undefined && StatisticaTmp[i].PROMOTORE != PromotoreTmp)
+               {
+                  StatisticaTmp[i] = {
+                                       Titolo          : StatisticaTmp[i].TITOLO == undefined ? 'N.D.' : StatisticaTmp[i].TITOLO,
+                                       ChiaveTitolo    : StatisticaTmp[i].CHIAVE_TITOLO,
+                                       Isbn            : StatisticaTmp[i].CODICE == undefined ? 'N.D.' : StatisticaTmp[i].CODICE,
+                                       Stato           : StatisticaTmp[i].STATO,
+                                       Totale          : StatisticaTmp[i].TOTALE,
+                                       ChiavePromotore : StatisticaTmp[i].CHIAVE_PROMOTORE,
+                                       Promotore       : StatisticaTmp[i].PROMOTORE == undefined ? 'N.D.' : StatisticaTmp[i].PROMOTORE,
+                                       Prenotati       : 0,
+                                       DaSpedire       : 0,
+                                       Consegnati      : 0
+                                     }
+                  $scope.StatisticaPromotori.push(StatisticaTmp[i]);
+               }
+               switch(StatisticaTmp[i].Stato)
+               {
+                 case 'P' : $scope.StatisticaPromotori[$scope.StatisticaPromotori.length - 1].Prenotati = StatisticaTmp[i].Totale;
+                            break;
+                 case 'S' : $scope.StatisticaPromotori[$scope.StatisticaPromotori.length - 1].DaSpedire = StatisticaTmp[i].Totale;
+                            break;
+                 case 'C' : $scope.StatisticaPromotori[$scope.StatisticaPromotori.length - 1].Consegnati = StatisticaTmp[i].Totale;
+                            break;
+               } 
+           }
+        }
+        else  SystemInformation.ApplyOnError('Modello statistica spedizioni/titoli per promotore non conforme','')
+      },'SelectDeliveryCount')
+    }
+  }
+
   $scope.ApriCumulativoPrenotatiOrd = function(ev)
   {    
       $mdDialog.show({ 
                        controller          : DialogControllerOrdPrenotati,
-                       templateUrl         : "template/documentBookedUpPopupOrd.html",
+                       templateUrl         : "template/documentBookedUpPopupOrd.html", 
                        targetEvent         : ev,
                        scope               : $scope,
                        preserveScope       : true,
@@ -617,6 +742,22 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
                                             },
                           limitOptions    : [10, 20, 30]
                         };
+                       
+  $scope.GridOptions_3 = {
+                          rowSelection    : false,
+                          multiSelect     : true,
+                          autoSelect      : true,
+                          decapitate      : false,
+                          largeEditDialog : false,
+                          boundaryLinks   : false,
+                          limitSelect     : true,
+                          pageSelect      : true,
+                          query           : {
+                                              limit: 20,
+                                              page: 1
+                                            },
+                          limitOptions    : [20, 40, 80]
+                        };       
   
   SystemInformation.GetSQL('Accessories',{}, function(Results)
   {
@@ -1290,9 +1431,7 @@ SIRIOApp.filter('SpedizioneByFiltro',function()
              if(ProvinciaFiltro == -1 && !PrenotataFiltro && !DaSpedireFiltro && !ConsegnataFiltro && PromotoreFiltro == -1 && IstitutoFiltro == -1 && DocenteFiltro == -1 && TitoloFiltro == -1) 
                 return(ListaSpedizioni);
              var ListaFiltrata = [];
-             ProvinciaFiltro = parseInt(ProvinciaFiltro);
-
-             
+             ProvinciaFiltro = parseInt(ProvinciaFiltro);         
              
              var SpedizioneOk = function(Spedizione)
              { 
@@ -1335,6 +1474,41 @@ SIRIOApp.filter('SpedizioneByFiltro',function()
               { 
                 if(SpedizioneOk(Spedizione)) 
                    ListaFiltrata.push(Spedizione)                       
+              });
+              
+              return(ListaFiltrata);
+           }
+         }
+});
+
+SIRIOApp.filter('StatisticaByFiltro',function()
+{
+  return function(StatisticaPromotori,PromotoreFiltroStatistica,TitoloFiltroStat)
+         {
+           if (StatisticaPromotori != undefined)
+           {  
+             if(PromotoreFiltroStatistica == -1 && TitoloFiltroStat == -1) 
+                return(StatisticaPromotori);
+             var ListaFiltrata = [];
+           
+             var StatisticaOk = function(statistica)
+             { 
+                var Result = true;
+                if(PromotoreFiltroStatistica != -1)
+                   if(statistica.ChiavePromotore != PromotoreFiltroStatistica)
+                      Result = false;
+
+                if(TitoloFiltroStat != -1)
+                   if(statistica.ChiaveTitolo != TitoloFiltroStat)
+                      Result = false;
+                     
+                return(Result);
+             }
+             
+              StatisticaPromotori.forEach(function(statistica)
+              { 
+                if(StatisticaOk(statistica)) 
+                   ListaFiltrata.push(statistica)                       
               });
               
               return(ListaFiltrata);

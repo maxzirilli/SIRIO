@@ -1,0 +1,96 @@
+<md-dialog>
+  <form ng-cloak name="PopupStatisticaPromotoriForm">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2 style="font-weight:bold;color:white;">STATISTICA SPEDIZIONI / PROMOTORI </h2>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content >
+      <div class="md-dialog-content" v-if="!VisualizzaStatistica" >
+      <div layout="row" style="justify-content: flex-end;width:1000px;">
+         <div style="justify-content: flex-end;">
+            <md-button ng-click="CreaStatisticaPromotori()" style="font-weight:bold;" class="md-raised md-accent" title="GENERA XLS PROMOTORI"> GENERA STATISTICA</md-button>
+         </div> 
+      </div>
+        <div layout="row">        
+          <md-input-container  layout-align="start center">
+            <label>DAL</label><input  ng-model="DataRicercaDalPromotori" type="date" name="DataRicercaDalPromotori">
+          </md-input-container>
+          <md-input-container  layout-align="start center" style="margin-left:20px;">  
+            <label>AL</label><input ng-model="DataRicercaAlPromotori" type="date" name="DataRicercaAlPromotori">
+          </md-input-container>
+        </div> 
+        <div layout="row">
+          <md-input-container><label style="width:100%;float:left;margin-bottom: 0px;">PROMOTORE</label>
+            <md-select ng-model="PromotoreFiltroStatistica" placeholder="Promotore" class="mdb-select" style="width:100%;float:left;" type="text" name="PromotoreFiltro">
+              <md-optgroup>
+                <md-option ng-value="-1">QUALSIASI</md-option>  
+                <md-option ng-repeat="promotore in ListaPromotori" ng-value="promotore.Chiave">{{promotore.Nome}}</md-option>
+              </md-optgroup>
+            </md-select>
+          </md-input-container>
+
+         <md-input-container class="containerSelect" style="width:100%;margin-left:20px;float:left;">
+         <label>TITOLO</label>
+         <md-autocomplete
+                     md-input-name="Titolo"
+                     md-autofocus="true"
+                     md-no-cache="true"
+                     md-selected-item-change = "selectedItemChangeTitoloStat(item)"
+                     md-search-text="searchTextTitStat"
+                     md-items="item in queryTitoloStat(searchTextTitStat)"
+                     md-item-text="item.Nome"
+                     md-require-match="true"
+                     md-clear-button="true">
+         <md-item-template>
+           <span md-highlight-text="searchText">ISBN : {{item.Codice}} - {{item.Nome}}</span>
+         </md-item-template>
+         <md-not-found>
+           Nessuna corrispondenza
+         </md-not-found>
+       </md-input-container>
+        </div>
+
+       </div>
+      <div class="md-dialog-content" v-if="VisualizzaStatistica">
+        <div ng-if="StatisticaPromotori.length != 0">
+          <table style="width:1000px;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
+          <tr>
+            <th>TITOLO</th>
+            <th>PROMOTORE</th>
+            <th>PRENOTATI</th>
+            <th>DA SPEDIRE</th>
+            <th>CONSEGNATI</th>
+          </tr>
+          <tr ng-repeat="Statistica in StatisticaPromotori | StatisticaByFiltro : PromotoreFiltroStatistica : TitoloFiltroStat | limitTo : GridOptions_3.query.limit : (GridOptions_3.query.page - 1) * GridOptions_3.query.limit">    
+            <td>{{ Statistica.Titolo }} - {{ Statistica.Codice }}</td>
+            <td>{{ Statistica.Promotore }}</td>
+            <td>{{ Statistica.Prenotati }}</td>
+            <td>{{ Statistica.DaSpedire }}</td>
+            <td>{{ Statistica.Consegnati }}</td>
+          </tr>
+          </table>
+          <md-table-pagination md-limit="GridOptions_3.query.limit" 
+                             md-limit-options="GridOptions_3.limitOptions" 
+                             md-page="GridOptions_3.query.page" 
+                             md-total="{{StatisticaPromotori.length}}" 
+                             md-page-select="GridOptions_3.pageSelect" 
+                             md-boundary-links="GridOptions_3.boundaryLinks" 
+                             md-on-paginate="logPagination"></md-table-pagination>
+        </div>
+        <br>
+        <br>
+       <!-- <div>
+          <p ng-if="StatisticaPromotori.length == 0" style="font-weight:bold;font-style:italic;text-align:center;">NESSUNA STATISTICA PRESENTE</p>  
+        </div>-->
+      </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="AnnullaPopupStatisticaPromotori()">
+       CHIUDI
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

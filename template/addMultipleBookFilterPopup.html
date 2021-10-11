@@ -34,7 +34,7 @@
             <th>GIACENZA</th>
             <th>DISPONIBILE</th>
           </tr>
-          <tr ng-repeat="Titolo in ListaTitoliPopup | TitoliMultipliPopupByFiltro : NomeFiltro : CodiceFiltro : AutoreFiltro | limitTo : GridOptions_3.query.limit : (GridOptions_3.query.page - 1) * GridOptions_3.query.limit" id={{Titolo.Chiave}}>
+          <tr ng-repeat="Titolo in ListaTitoliPopup | StatisticaByFiltro : ProvinciaFiltro  | TitoliMultipliPopupByFiltro : NomeFiltro : CodiceFiltro : AutoreFiltro | limitTo : GridOptions_3.query.limit : (GridOptions_3.query.page - 1) * GridOptions_3.query.limit" id={{Titolo.Chiave}}>
             <td><input type="checkbox" ng-model="Titolo.DaAggiungere"></td>
             <td ng-if="Titolo.Quantita <= 0"><img src="img/notAvailable.png" style="width:15px;height:auto;" title="NON IN MAGAZZINO"></td>
             <td ng-if="Titolo.Quantita > 0"><img src="img/available.png" style="width:15px;height:auto;" title="IN MAGAZZINO"></td>

@@ -1,30 +1,35 @@
-{  
-  "SelectSQL"       : [
-                        {
-                          "Name" : "GetCurrentAdoptionState",
-                          "SQL"  : "SELECT (SELECT ISTITUTO FROM classi WHERE CHIAVE = adozioni_titolo.CLASSE) AS K_IST,(SELECT NOME FROM istituti WHERE CHIAVE IN (SELECT ISTITUTO FROM classi WHERE CHIAVE = adozioni_titolo.CLASSE)) AS N_IST,(SELECT CODICE FROM istituti WHERE CHIAVE IN (SELECT ISTITUTO FROM classi WHERE CHIAVE = adozioni_titolo.CLASSE)) AS C_IST,adozioni_titolo.TITOLO AS K_TIT,(SELECT TITOLO FROM titoli WHERE CHIAVE = adozioni_titolo.TITOLO) AS N_TIT,(SELECT CODICE_ISBN FROM titoli WHERE CHIAVE = adozioni_titolo.TITOLO) AS C_TIT,(SELECT PREZZO FROM titoli WHERE CHIAVE = adozioni_titolo.TITOLO) AS P_TIT,COUNT(CLASSE) AS CLS FROM adozioni_titolo GROUP BY K_IST,K_TIT ORDER BY K_IST,K_TIT"
-                        }
-                      ],
-
-  "SelecteDates"     : [
-                         {
-                           "Name" : "GetAllDates",
-                           "SQL"  : "SELECT DATA FROM statistiche GROUP BY DATA ORDER BY DATA DESC"
-                         }
-                       ],
-                      
-  "EditSQL"          : [
-                         {
-                           "Name" : "SaveStatisticRow",
-                           "SQL"  : "INSERT INTO statistiche (ISTITUTO,TITOLO,NR_CLASSI,DATA) VALUES (:ISTITUTO,:TITOLO,:NR_CLASSI,#DATA)"
-                         },
-                         {
-                           "Name" : "DeleteTodayStatistic",
-                           "SQL"  : "DELETE FROM statistiche WHERE DATA = CURDATE()"
-                         },
-                         {
-                           "Name" : "DeleteStatistic",
-                           "SQL"  : "DELETE FROM statistiche WHERE DATA = #DATA"
-                         }
-                       ]
+{
+	"RuoliAbilitati" : "",
+	"SelectSQL" : [
+		{
+			"Name" : "GetCurrentAdoptionState",
+			"SQL" : "SELECT (SELECT ISTITUTO FROM classi WHERE CHIAVE = adozioni_titolo.CLASSE) AS K_IST,(SELECT NOME FROM istituti WHERE CHIAVE IN (SELECT ISTITUTO FROM classi WHERE CHIAVE = adozioni_titolo.CLASSE)) AS N_IST,(SELECT CODICE FROM istituti WHERE CHIAVE IN (SELECT ISTITUTO FROM classi WHERE CHIAVE = adozioni_titolo.CLASSE)) AS C_IST,adozioni_titolo.TITOLO AS K_TIT,(SELECT TITOLO FROM titoli WHERE CHIAVE = adozioni_titolo.TITOLO) AS N_TIT,(SELECT CODICE_ISBN FROM titoli WHERE CHIAVE = adozioni_titolo.TITOLO) AS C_TIT,(SELECT PREZZO FROM titoli WHERE CHIAVE = adozioni_titolo.TITOLO) AS P_TIT,COUNT(CLASSE) AS CLS FROM adozioni_titolo GROUP BY K_IST,K_TIT ORDER BY K_IST,K_TIT\n"
+		}
+	],
+	"SelecteDates" : [
+		{
+			"Name" : "GetAllDates",
+			"SQL" : "SELECT DATA FROM statistiche GROUP BY DATA ORDER BY DATA DESC\n"
+		}
+	],
+	"EditSQL" : [
+		{
+			"Name" : "SaveStatisticRow",
+			"SQL" : "INSERT INTO statistiche (ISTITUTO,TITOLO,NR_CLASSI,DATA) VALUES (:ISTITUTO,:TITOLO,:NR_CLASSI,#DATA)\n"
+		},
+		{
+			"Name" : "DeleteTodayStatistic",
+			"SQL" : "DELETE FROM statistiche WHERE DATA = CURDATE()\n"
+		},
+		{
+			"Name" : "DeleteStatistic",
+			"SQL" : "DELETE FROM statistiche WHERE DATA = #DATA\n"
+		}
+	],
+	"SelectDeliveryCount" : [
+		{
+			"Name" : "DeliveryCount",
+			"SQL" : "     SELECT dettaglio_spedizioni.STATO,utenti.USERNAME AS PROMOTORE,\n            titoli.TITOLO,dettaglio_spedizioni.TITOLO AS CHIAVE_TITOLO,titoli.CODICE_ISBN AS CODICE,utenti.CHIAVE AS CHIAVE_PROMOTORE,\n            SUM(dettaglio_spedizioni.QUANTITA) AS TOTALE\n       FROM dettaglio_spedizioni\n       JOIN spedizioni\n         ON spedizioni.CHIAVE = dettaglio_spedizioni.SPEDIZIONE\n       JOIN utenti \n         ON utenti.CHIAVE = spedizioni.PROMOTORE \n       JOIN titoli \n         ON dettaglio_spedizioni.TITOLO = titoli.CHIAVE   \n      WHERE DATA_ULTIMA_MODIFICA <= #Al\n        AND DATA_ULTIMA_MODIFICA >= #Dal\n   GROUP BY dettaglio_spedizioni.TITOLO,utenti.USERNAME\n   ORDER BY titoli.TITOLO,utenti.USERNAME\n\n\n"
+		}
+]
 }

@@ -23,6 +23,8 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
   this.VDocInventory         = 'VERSIONE DOCUMENTO 1.1 DEL 13/10/2020';
   this.VDocCarico            = 'VERSIONE DOCUMENTO 2.2 DEL 11/11/2020';
   this.VDocListaDocIst       = 'VERSIONE DOCUMENTO 2.3 DEL 04/03/2021';
+  
+  //this.LogoImmagine          = '';
 
   this.s2ab = function(s)
   {
@@ -31,6 +33,30 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
     for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
     return buf;
   }
+
+  /*this.Init = function()
+  {
+    var self = this;
+    var GetImageSrc = function()
+    {
+      var img = new Image();
+      img.onload = function()
+      {
+          var canvas = document.createElement('canvas');
+          document.body.appendChild(canvas);
+          canvas.width = img.width;
+          canvas.height = img.height;
+
+          var ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          var data = canvas.toDataURL('image/jpeg').slice('data:image/jpeg;base64,'.length);
+          data = atob(data);
+          self.LogoImmagine = data;
+      }
+      img.src = 'PawalikeLogo.jpeg';
+    }
+    GetImageSrc();
+  }*/
   
   this.GetCellaIntestazione = function(Valore)
   {
