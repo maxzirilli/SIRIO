@@ -552,7 +552,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
       var ParamPrenotati = {
                               Dal          : ZHTMLInputFromDate($scope.DataRicercaDalPrnt), 
                               Al           : ZHTMLInputFromDate(TmpDatePrnt),
-                              ChiaveGruppi : '286071' //CHIAVE DEAGOSTINI
+                              ChiaveGruppi : $scope.CheckEditore == 'D' ? '286071' : '286072'
                            };
 
       SystemInformation.GetSQL('Delivery',ParamPrenotati,function(Results)
