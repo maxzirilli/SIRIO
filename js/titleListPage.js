@@ -343,9 +343,12 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
   $scope.ConfermaTitolo = function ()
   {
     var IsIsbnDuplicato = false;
-    for(let i = 0 ; i < $scope.ListaTitoli.length; i ++)
-        if($scope.ListaTitoli[i].Codice == $scope.TitoloInEditing.Codice)
-           IsIsbnDuplicato = true;
+    if($scope.TitoloInEditing.Chiave == -1)
+    {
+       for(let i = 0 ; i < $scope.ListaTitoli.length; i ++)
+           if($scope.ListaTitoli[i].Codice == $scope.TitoloInEditing.Codice)
+              IsIsbnDuplicato = true;
+    }
            
     if(IsIsbnDuplicato)
        ZCustomAlert($mdDialog,'ATTENZIONE',"ESISTE GIA' UN TITOLO CON QUESTO CODICE ISBN!");

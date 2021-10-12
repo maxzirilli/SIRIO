@@ -95,13 +95,15 @@
             <th>ISBN</th>
             <th>TITOLO</th>
             <th>QUANTITA</th>
+            <th>DATA</th>
           </tr>
           <tr ng-repeat="Elemento in ListaSpedizioni | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" > 
-            <td style="font-weight:bold;text-align:left;" ng-if="Elemento.Tipo == 0" colspan="4">SPEDIZIONE DEL {{ConvertiData(Elemento)}} PRESSO {{Elemento.Presso}} {{Elemento.NomeIstituto == '' ? '' : '- ISTITUTO: '}}{{Elemento.NomeIstituto}}</td> <!--{{Elemento.Docente == 'N.D.' ? Elemento.Presso : Elemento.DocenteNome}}-->
+            <td style="font-weight:bold;text-align:left;" ng-if="Elemento.Tipo == 0" colspan="5">SPEDIZIONE DEL {{ConvertiData(Elemento)}} PRESSO {{Elemento.Presso}} {{Elemento.NomeIstituto == '' ? '' : '- ISTITUTO: '}}{{Elemento.NomeIstituto}}</td> <!--{{Elemento.Docente == 'N.D.' ? Elemento.Presso : Elemento.DocenteNome}}-->
             <td ng-if="Elemento.Tipo == 1"><input style="width:20px;height:20px;" type="checkbox" ng-change="CheckCumulativo()" ng-model="Elemento.Selezionato" style="margin-left:20px;margin-top:20px"></td>
             <td ng-if="Elemento.Tipo == 1">{{Elemento.Codice}}</td>
             <td ng-if="Elemento.Tipo == 1">{{Elemento.TitoloNome}}</td>
             <td ng-if="Elemento.Tipo == 1">{{Elemento.Quantita}}</td>
+            <td ng-if="Elemento.Tipo == 1">{{ConvertiData(Elemento)}}</td>
           </tr>
         </table>
         <md-table-pagination md-limit="GridOptions.query.limit" 

@@ -103,7 +103,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
     {    
       SystemInformation.GetSQL('Accessories',{}, function(Results)
       {
-        //ListaProvinceAllTmp = SystemInformation.FindResults(Results,'ProvinceListAllOnlyHandled');
         ListaProvinceAllTmp = SystemInformation.FindResults(Results,'ProvinceListAll');
 
         if (ListaProvinceAllTmp != undefined) 
@@ -1592,8 +1591,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                  }
 
              }
-
-
            
              var SalvaSpedizione = function()
              {
@@ -1970,7 +1967,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                  }
              }
              if(Result)
-                ZConfirm.GetConfirmBox('ATTENZIONE',"Questa spedizione contiene alcuni titoli già gestiti dal docente, procedere con il salvataggio della spedizione?",VaiAvanti,function(){});
+                ZConfirm.GetConfirmBox('ATTENZIONE',"Questa spedizione contiene alcuni titoli già gestiti dal docente, procedere con il salvataggio della spedizione?",VaiAvanti,function(){})
+             else VaiAvanti()
           }
           else VaiAvanti();
 

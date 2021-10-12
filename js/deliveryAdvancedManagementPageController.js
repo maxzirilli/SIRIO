@@ -380,7 +380,8 @@ $scope.GridOptions_2 = {
                                            Titolo          : ListaSpedizioniTmp[i].TITOLO,
                                            Quantita        : ListaSpedizioniTmp[i].QUANTITA == null ? 'N.D.' : ListaSpedizioniTmp[i].QUANTITA,
                                            QuantitaMgzn    : ListaSpedizioniTmp[i].QUANTITA_DISP,
-                                           Selezionato     : false
+                                           Selezionato     : false,
+                                           Data            : ListaSpedizioniTmp[i].DATA_ULTIMA_MODIFICA
                                         });
             if(!$scope.RicercaPerTitolo)
             {
@@ -439,7 +440,8 @@ $scope.GridOptions_2 = {
                                            Titolo          : ListaSpedizioniTmp[i].TITOLO,
                                            Quantita        : ListaSpedizioniTmp[i].QUANTITA == null ? 'N.D.' : ListaSpedizioniTmp[i].QUANTITA,
                                            QuantitaMgzn    : ListaSpedizioniTmp[i].QUANTITA_DISP,
-                                           Selezionato     : false
+                                           Selezionato     : false,
+                                           Data            : ListaSpedizioniTmp[i].DATA_ULTIMA_MODIFICA
                                         });
             if(!$scope.RicercaPerTitolo)
             {

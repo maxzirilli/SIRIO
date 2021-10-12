@@ -78,6 +78,8 @@
                                     $DettaglioSpedizione->NomeTitolo = $RowDettaglio['NOME_TITOLO']; 
                                     $DettaglioSpedizione->CodiceTitolo = $RowDettaglio['CODICE_TITOLO'];
                                     $DettaglioSpedizione->StatoTitolo = '';
+
+                                    $DettaglioSpedizione->Data = $RowDettaglio['DATA_ULTIMA_MODIFICA']; 
                                     
                                     switch($RowDettaglio['STATO'])
                                     {

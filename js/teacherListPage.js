@@ -2162,12 +2162,13 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                                         break;
                              case 'C' : ListaSpedizioniDocDettaglio[j].STATO = 'CONSEGNATO'
                                         break;
-                             default  : ListaSpedizioniDocDettaglio[j].STATO = 'N.D';                                       
                       }
                       if($scope.ListaSpedizioniDoc[i].CHIAVE == ListaSpedizioniDocDettaglio[j].SPEDIZIONE)
                          $scope.ListaSpedizioniDoc[i].DettagliTitoli.push(ListaSpedizioniDocDettaglio[j]);
                   }                        
               } 
+                            console.log($scope.ListaSpedizioniDoc)  ;       
+
            }
            else SystemInformation.ApplyOnError('Modello lista spedizioni docente non conforme','');       
          },'SelectSQLDocenteAdmin')
@@ -2193,13 +2194,12 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                              case 'S' : ListaSpedizioniDocDettaglio[j].STATO = 'DA SPEDIRE'
                                         break;
                              case 'C' : ListaSpedizioniDocDettaglio[j].STATO = 'CONSEGNATO'
-                                        break;
-                                        
+                                        break;              
                       }
                       if($scope.ListaSpedizioniDoc[i].CHIAVE == ListaSpedizioniDocDettaglio[j].SPEDIZIONE)
                          $scope.ListaSpedizioniDoc[i].DettagliTitoli.push(ListaSpedizioniDocDettaglio[j]);
                   }                        
-              }           
+              }
            }
            else SystemInformation.ApplyOnError('Modello lista spedizioni docente non conforme','');       
          },'SelectSQLDocentePromotore')       
@@ -2211,7 +2211,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
        var Result = '';
        for(let i = 0;i < Spedizione.DettagliTitoli.length;i ++)
        {
-           Result += Spedizione.DettagliTitoli[i].CODICE + ' - ' + Spedizione.DettagliTitoli[i].NOME_TITOLO + ' - ' + Spedizione.DettagliTitoli[i].STATO + '</br>';
+           Result += Spedizione.DettagliTitoli[i].CODICE + ' - ' + Spedizione.DettagliTitoli[i].NOME_TITOLO + ' - ' + Spedizione.DettagliTitoli[i].STATO + ' IN DATA ' + ZFormatDateTime('dd/mm/yyyy',ZDateFromHTMLInput(Spedizione.DettagliTitoli[i].DATA_ULTIMA_MODIFICA)) + '</br>';
        }
        
        return($sce.trustAsHtml(Result.substr(0,Result.length)));

@@ -306,7 +306,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                                           Titolo          : ListaSpedizioniTmp[i].TITOLO,
                                           Quantita        : ListaSpedizioniTmp[i].QUANTITA == undefined ? 'N.D.' : ListaSpedizioniTmp[i].QUANTITA,
                                           QuantitaMgzn    : ListaSpedizioniTmp[i].QUANTITA_DISP,
-                                          Selezionato     : false
+                                          Selezionato     : false,
+                                          Data            : ListaSpedizioniTmp[i].DATA_ULTIMA_MODIFICA
                                         });
             if(!$scope.RicercaPerTitolo)
             {
@@ -362,7 +363,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                                           Titolo          : ListaSpedizioniTmp[i].TITOLO,
                                           Quantita        : ListaSpedizioniTmp[i].QUANTITA == undefined ? 'N.D.' : ListaSpedizioniTmp[i].QUANTITA,
                                           Posizione       : ListaSpedizioniTmp[i].POS_MGZN == undefined ? 'N.D.' : ListaSpedizioniTmp[i].POS_MGZN,
-                                          Selezionato     : false
+                                          Selezionato     : false,
+                                          Data            : ListaSpedizioniTmp[i].DATA_ULTIMA_MODIFICA
                                         });
             if(!$scope.RicercaPerTitolo)
             {

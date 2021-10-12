@@ -49,7 +49,7 @@
 	"SelectTotale" : [
 		{
 			"Name" : "GetTotaleVolante",
-			"SQL" : "  SELECT SUM(dettaglio_magazzino_volante.QUANTITA) AS QUANTITA,\n\t titoli.CODICE_ISBN, titoli.TITOLO AS NOME\n    FROM dettaglio_magazzino_volante\n    JOIN titoli \n      ON titoli.CHIAVE = dettaglio_magazzino_volante.TITOLO\nGROUP BY dettaglio_magazzino_volante.TITOLO\nORDER BY titoli.TITOLO\n"
+			"SQL" : "  SELECT titoli.QUANTITA_MGZN_VOL AS QUANTITA,\n\t titoli.CODICE_ISBN, titoli.TITOLO AS NOME\n    FROM titoli\n   WHERE titoli.QUANTITA_MGZN_VOL > 0 \nORDER BY titoli.TITOLO\n"
 		}
 	],
 	"SelectSQLAll" : [

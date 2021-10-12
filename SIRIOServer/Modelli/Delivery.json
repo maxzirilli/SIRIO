@@ -1,217 +1,205 @@
-{ 
-  "SelectSQLDocenteAdmin"        : [                     
-                                     {
-                                       "Name" : "TeacherDeliveryListAdm",
-                                       "SQL"  : "SELECT spedizioni.CHIAVE,spedizioni.DATA FROM spedizioni WHERE DOCENTE=:CHIAVE AND YEAR(spedizioni.DATA ) = :ANNO ORDER BY DATA DESC"
-                                     },
-                                     {
-                                       "Name" : "TeacherDeliveryListAdmDettaglio",
-                                       "SQL"  : "SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.CODICE_ISBN FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS CODICE FROM dettaglio_spedizioni WHERE SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE DOCENTE=:CHIAVE)"
-                                     }
-                                   ],  
-  "SelectSQLDocentePromotore"    : [                     
-                                     {
-                                       "Name" : "TeacherDeliveryListPrm",
-                                       "SQL"  : "SELECT spedizioni.CHIAVE,spedizioni.DATA FROM spedizioni WHERE DOCENTE=:CHIAVE AND (PROMOTORE=#KeyAccount OR PROMOTORE IN (SELECT CHIAVE FROM utenti WHERE ROLE <> 1)) AND YEAR(spedizioni.DATA) = :ANNO ORDER BY DATA DESC"
-                                     },
-                                     {
-                                       "Name" : "TeacherDeliveryListPrmDettaglio",
-                                       "SQL"  : "SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.CODICE_ISBN FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS CODICE FROM dettaglio_spedizioni WHERE SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE DOCENTE=:CHIAVE AND (PROMOTORE=#KeyAccount OR PROMOTORE IN (SELECT CHIAVE FROM utenti WHERE ROLE <> 1)))"
-                                     }
-                                   ],
-  
-  "SelectKeyToSend"            : [
-                                   {
-                                     "Name" : "SmallNewToSend",
-                                     "SQL"  : "SELECT CHIAVE from dettaglio_spedizioni WHERE CHIAVE IN ?KeyToSearch AND STATO = 'S'"
-                                   }
-                                 ],
-
-  "SQLDettaglio"               : [                         
-                                    {
-                                      "Name" : "GenericDeliveryDettaglio",
-                                      "SQL"  : "SELECT *,(SELECT TITOLO FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT CODICE_ISBN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,CALCOLA_DISPONIBILITA(dettaglio_spedizioni.TITOLO) AS SPEDIBILE FROM dettaglio_spedizioni WHERE SPEDIZIONE=:CHIAVE"
-                                    }
-                                 ],  
-                   
-  "SQLPromotore"   : [
-                       {
-                         "Name" : "MyDeliveryList",
-                         "SQL"  : "SELECT *,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS NOME_DOCENTE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'S') AS NR_DA_SPEDIRE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'C') AS NR_CONSEGNATE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'P') AS NR_PRENOTATE FROM spedizioni WHERE PROMOTORE=#KeyAccount AND DATA >= #Dal AND DATA <= #Al ORDER BY DATA DESC"
-                       }
-                     ],                     
-  "SQLPromotoreDettaglio" : [                         
-                               {
-                                 "Name" : "MyDeliveryListDettaglio",
-                                 "SQL"  : "SELECT *,(SELECT TITOLO FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT CODICE_ISBN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,CALCOLA_DISPONIBILITA(dettaglio_spedizioni.TITOLO) AS SPEDIBILE FROM dettaglio_spedizioni WHERE SPEDIZIONE=:CHIAVE"
-                               }
-                            ],                                                        
-  "SQLAdmin"       : [
-                       {
-                         "Name" : "DeliveryListAll",
-                         "SQL"  : "SELECT *,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS NOME_DOCENTE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'S') AS NR_DA_SPEDIRE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'C') AS NR_CONSEGNATE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'P') AS NR_PRENOTATE FROM spedizioni WHERE DATA >= #Dal AND DATA <= #Al ORDER BY DATA DESC LIMIT 100"
-                       }                      
-                     ],
-  "SQLAdminDettaglio" : [                         
-                           {
-                             "Name" : "DeliveryListAllDettaglio",
-                             "SQL"  : "SELECT *,(SELECT TITOLO FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT CODICE_ISBN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,CALCOLA_DISPONIBILITA(dettaglio_spedizioni.TITOLO) AS SPEDIBILE FROM dettaglio_spedizioni WHERE SPEDIZIONE=:CHIAVE"
-                           }
-                        ],
-                     
-  "SQLPromotoreXls" : [
-                        {
-                          "Name" : "MyDeliveryListXls",
-                          "SQL"  : "SELECT spedizioni.CHIAVE,spedizioni.PRESSO,spedizioni.DOCENTE,(SELECT utenti.RAGIONE_SOCIALE FROM utenti WHERE CHIAVE = spedizioni.PROMOTORE) AS NOME_PROMOTORE,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE CHIAVE = spedizioni.DOCENTE) AS NOME_DOCENTE,spedizioni.INDIRIZZO,spedizioni.COMUNE,spedizioni.CAP,spedizioni.PROVINCIA,(SELECT NOME FROM province_all WHERE CHIAVE = spedizioni.PROVINCIA) AS NOME_PROVINCIA,spedizioni.DATA,(SELECT CODICE_ISBN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,(SELECT TITOLO FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,dettaglio_spedizioni.TITOLO,dettaglio_spedizioni.QUANTITA,dettaglio_spedizioni.STATO FROM spedizioni,dettaglio_spedizioni WHERE spedizioni.CHIAVE = dettaglio_spedizioni.SPEDIZIONE AND spedizioni.DATA >= #Dal AND spedizioni.DATA <= #Al AND PROMOTORE=#KeyAccount ORDER BY spedizioni.CHIAVE DESC,spedizioni.DATA DESC"
-                        }
-                      ],                     
-  "SQLAdminXls"     : [
-                        {
-                          "Name" : "DeliveryListAdminXls",
-                          "SQL"  : "SELECT spedizioni.CHIAVE,spedizioni.PRESSO,spedizioni.DOCENTE,(SELECT utenti.RAGIONE_SOCIALE FROM utenti WHERE CHIAVE = spedizioni.PROMOTORE) AS NOME_PROMOTORE,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE CHIAVE = spedizioni.DOCENTE) AS NOME_DOCENTE,spedizioni.INDIRIZZO,spedizioni.COMUNE,spedizioni.CAP,spedizioni.PROVINCIA,(SELECT NOME FROM province_all WHERE CHIAVE = spedizioni.PROVINCIA) AS NOME_PROVINCIA,spedizioni.DATA,(SELECT CODICE_ISBN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,(SELECT TITOLO FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,dettaglio_spedizioni.TITOLO,dettaglio_spedizioni.QUANTITA,dettaglio_spedizioni.STATO FROM spedizioni,dettaglio_spedizioni WHERE spedizioni.CHIAVE = dettaglio_spedizioni.SPEDIZIONE AND spedizioni.DATA >= #Dal AND spedizioni.DATA <= #Al ORDER BY spedizioni.CHIAVE DESC,spedizioni.DATA DESC"
-                        }
-                      ],
-
-  "SQLUltime20Promotore" : [
-                              {
-                                "Name" : "DeliveryListLastTwentyPrm",
-                                "SQL"  : "SELECT *,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS NOME_DOCENTE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'S') AS NR_DA_SPEDIRE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'C') AS NR_CONSEGNATE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'P') AS NR_PRENOTATE FROM spedizioni WHERE PROMOTORE=#KeyAccount ORDER BY DATA DESC LIMIT 20"
-                              }
-                           ],                           
-  "SQLUltime20PromotoreDettaglio" : [                         
-                                       {
-                                         "Name" : "DeliveryListLastTwentyPrmDettaglio",
-                                         "SQL"  : "SELECT *,(SELECT TITOLO FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT CODICE_ISBN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,CALCOLA_DISPONIBILITA(dettaglio_spedizioni.TITOLO) AS SPEDIBILE FROM dettaglio_spedizioni WHERE SPEDIZIONE=:CHIAVE"
-                                       }
-                                    ],                           
-  "SQLUltime20Admin"     : [
-                              {
-                                "Name" : "DeliveryListLastTwentyAdm",
-                                "SQL"  : "SELECT *,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS NOME_DOCENTE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'S') AS NR_DA_SPEDIRE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'C') AS NR_CONSEGNATE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'P') AS NR_PRENOTATE FROM spedizioni ORDER BY DATA DESC LIMIT 20"
-                              }
-                           ],                           
-  "SQLUltime20AdminDettaglio" : [                         
-                                   {
-                                     "Name" : "DeliveryListLastTwentyAdmDettaglio",
-                                     "SQL"  : "SELECT *,(SELECT TITOLO FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT CODICE_ISBN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,CALCOLA_DISPONIBILITA(dettaglio_spedizioni.TITOLO) AS SPEDIBILE FROM dettaglio_spedizioni WHERE SPEDIZIONE=:CHIAVE"
-                                   }
-                                ],
-
-  "SQLDettaglioSpedizioneDocente"  : [
-                                        {
-                                          "Name" : "TeacherDelivery",
-                                          "SQL"  : "SELECT *,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS NOME_DOCENTE FROM spedizioni WHERE CHIAVE=:CHIAVE"
-                                        },
-                                        {
-                                          "Name" : "TeacherDeliveryBook",
-                                          "SQL"  : "SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE titoli.CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.CODICE_ISBN FROM titoli WHERE titoli.CHIAVE = dettaglio_spedizioni.TITOLO) AS ISBN_TITOLO,(SELECT titoli.QUANTITA_MGZN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS QUANTITA_MGZN,CALCOLA_DISPONIBILITA_ALL(dettaglio_spedizioni.TITOLO) AS QUANTITA_DISP FROM dettaglio_spedizioni WHERE SPEDIZIONE=:CHIAVE"
-                                        }
-                                     ],
-   
-  "SQLDettaglioSpedizioneCasa"     : [
-                                       {
-                                         "Name" : "PublisherDelivery",
-                                         "SQL"  : "SELECT * FROM spedizioni WHERE CHIAVE=:CHIAVE AND PROMOTORE=#KeyAccount"                                      
-                                       },
-                                       {
-                                         "Name" : "PublisherDeliveryBook",
-                                         "SQL"  : "SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE titoli.CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.CODICE_ISBN FROM titoli WHERE titoli.CHIAVE = dettaglio_spedizioni.TITOLO) AS ISBN_TITOLO,(SELECT titoli.QUANTITA_MGZN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS QUANTITA_MGZN,CALCOLA_DISPONIBILITA_ALL(dettaglio_spedizioni.TITOLO) AS QUANTITA_DISP FROM dettaglio_spedizioni WHERE SPEDIZIONE=:CHIAVE"
-                                       }                                      
-                                     ],
-  
- "SQLDettaglioSpedizioneGenerico"  : [
-                                       {
-                                         "Name" : "DeliveryDettaglio",
-                                         "SQL"  : "SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE titoli.CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.CODICE_ISBN FROM titoli WHERE titoli.CHIAVE = dettaglio_spedizioni.TITOLO) AS ISBN_TITOLO,(SELECT titoli.QUANTITA_MGZN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS QUANTITA_MGZN FROM dettaglio_spedizioni WHERE SPEDIZIONE=:CHIAVE"
-                                       }
-                                     ],
-
- "SQLDettaglioSpedizioneAdvanced"  : [
-                                       {
-                                         "Name" : "DeliveryDettaglioAdv",
-                                         "SQL"  : "SELECT *,(SELECT titoli.CODICE_ISBN FROM titoli WHERE titoli.CHIAVE = dettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,(SELECT titoli.TITOLO FROM titoli WHERE titoli.CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.QUANTITA_MGZN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS QUANTITA_MGZN FROM dettaglio_spedizioni WHERE SPEDIZIONE=:CHIAVE AND TITOLO IN (SELECT CHIAVE FROM titoli WHERE QUANTITA_MGZN >= dettaglio_spedizioni.QUANTITA AND CHIAVE = dettaglio_spedizioni.TITOLO)"
-                                       }
-                                     ],
- 
- "SQLDettaglioTitoliDisponibiliAdmin"   : [
-                                            {
-                                              "Name" : "DettaglioDisponibiliAdmin",
-                                              "SQL"  : "SELECT spedizioni.CHIAVE,spedizioni.PRESSO,spedizioni.PROVINCIA,spedizioni.DOCENTE,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE CHIAVE=spedizioni.DOCENTE) AS NOME_DOCENTE,spedizioni.PROMOTORE,spedizioni.ISTITUTO,(SELECT NOME FROM istituti WHERE CHIAVE=spedizioni.ISTITUTO) AS NOME_ISTITUTO,spedizioni.DATA,dettaglio_spedizioni.CHIAVE AS CHIAVE_DETTAGLIO,dettaglio_spedizioni.SPEDIZIONE,dettaglio_spedizioni.TITOLO,dettaglio_spedizioni.QUANTITA,dettaglio_spedizioni.STATO,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.CODICE_ISBN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,CALCOLA_DISPONIBILITA_ALL(dettaglio_spedizioni.TITOLO) AS QUANTITA_DISP FROM spedizioni,dettaglio_spedizioni {W~FiltroMain~(spedizioni.CHIAVE = dettaglio_spedizioni.SPEDIZIONE AND dettaglio_spedizioni.STATO = 'P' AND spedizioni.DATA >= #Dal AND spedizioni.DATA <= #Al AND CALCOLA_DISPONIBILITA_ALL(dettaglio_spedizioni.TITOLO) > 0)~FiltroI~(dettaglio_spedizioni.SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE ISTITUTO=:FiltroI))~FiltroP~(dettaglio_spedizioni.SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE PROVINCIA=:FiltroP))~FiltroD~(dettaglio_spedizioni.SPEDIZIONE IN(SELECT CHIAVE FROM spedizioni WHERE DOCENTE=:FiltroD))~FiltroPr~(dettaglio_spedizioni.SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE PROMOTORE=:FiltroPr))~FiltroT~(dettaglio_spedizioni.TITOLO IN ?FiltroT)} ORDER BY spedizioni.CHIAVE,spedizioni.DATA DESC"
-                                            }
-                                          ],                                         
- "SQLDettaglioTitoliDisponibiliPromotore"   : [
-                                                {
-                                                  "Name" : "DettaglioDisponibiliPromotore",
-                                                  "SQL"  : "SELECT spedizioni.CHIAVE,spedizioni.PRESSO,spedizioni.PROVINCIA,spedizioni.DOCENTE,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE CHIAVE=spedizioni.DOCENTE) AS NOME_DOCENTE,spedizioni.PROMOTORE,spedizioni.ISTITUTO,(SELECT NOME FROM istituti WHERE CHIAVE=spedizioni.ISTITUTO) AS NOME_ISTITUTO,spedizioni.DATA,dettaglio_spedizioni.CHIAVE AS CHIAVE_DETTAGLIO,dettaglio_spedizioni.SPEDIZIONE,dettaglio_spedizioni.TITOLO,dettaglio_spedizioni.QUANTITA,dettaglio_spedizioni.STATO,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.CODICE_ISBN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,CALCOLA_DISPONIBILITA_ALL(dettaglio_spedizioni.TITOLO) AS QUANTITA_DISP FROM spedizioni,dettaglio_spedizioni {W~FiltroMain~(spedizioni.CHIAVE = dettaglio_spedizioni.SPEDIZIONE AND dettaglio_spedizioni.STATO = 'P' AND spedizioni.DATA >= #Dal AND spedizioni.DATA <= #Al AND spedizioni.PROMOTORE=#KeyAccount AND CALCOLA_DISPONIBILITA_ALL(dettaglio_spedizioni.TITOLO) > 0)~FiltroI~(dettaglio_spedizioni.SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE ISTITUTO=:FiltroI))~FiltroP~(dettaglio_spedizioni.SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE PROVINCIA=:FiltroP))~FiltroD~(dettaglio_spedizioni.SPEDIZIONE IN(SELECT CHIAVE FROM spedizioni WHERE DOCENTE=:FiltroD))~FiltroT~(dettaglio_spedizioni.TITOLO IN ?FiltroT)} ORDER BY spedizioni.CHIAVE,spedizioni.DATA DESC"
-                                                }
-                                              ],
-
- "SQLDettaglioTitoliToSendAdmin"   : [
-                                       {
-                                         "Name" : "DettaglioToSendAdmin",
-                                         "SQL"  : "SELECT spedizioni.*,(SELECT utenti.RAGIONE_SOCIALE FROM utenti WHERE CHIAVE = spedizioni.PROMOTORE) AS NOME_PROMOTORE,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS NOME_DOCENTE,(SELECT NOME FROM istituti WHERE CHIAVE=spedizioni.ISTITUTO) AS NOME_ISTITUTO,(SELECT docenti.TITOLO FROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS TITOLO_DOCENTE,(SELECT province_all.NOME FROM province_all WHERE CHIAVE = spedizioni.PROVINCIA) AS NOME_PROVINCIA,dettaglio_spedizioni.CHIAVE AS CHIAVE_DETTAGLIO,dettaglio_spedizioni.TITOLO,dettaglio_spedizioni.QUANTITA,dettaglio_spedizioni.SPEDIZIONE,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.POS_MAGAZZINO FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS POS_MGZN,(SELECT titoli.POS_MAGAZZINO FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS POS_MGZN,(SELECT titoli.CODICE_ISBN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,(SELECT titoli.AUTORI FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS AUTORI,(SELECT titoli.EDITORE FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS EDITORE FROM spedizioni,dettaglio_spedizioni {W~FiltroMain~(spedizioni.CHIAVE = dettaglio_spedizioni.SPEDIZIONE AND dettaglio_spedizioni.STATO = 'S' AND spedizioni.DATA >= #Dal AND spedizioni.DATA <= #Al)~FiltroI~(dettaglio_spedizioni.SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE ISTITUTO=:FiltroI))~FiltroP~(dettaglio_spedizioni.SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE PROVINCIA=:FiltroP))~FiltroD~(dettaglio_spedizioni.SPEDIZIONE IN(SELECT CHIAVE FROM spedizioni WHERE DOCENTE=:FiltroD))~FiltroT~(dettaglio_spedizioni.TITOLO IN ?FiltroT)~FiltroPr~(dettaglio_spedizioni.SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE PROMOTORE=:FiltroPr))} ORDER BY dettaglio_spedizioni.SPEDIZIONE,spedizioni.DATA DESC"
-                                       }
-                                     ],
-"SQLDettaglioTitoliToSendPrm"      : [
-                                       {
-                                         "Name" : "DettaglioToSendPromotore",
-                                         "SQL"  : "SELECT spedizioni.*,(SELECT utenti.RAGIONE_SOCIALE FROM utenti WHERE CHIAVE = spedizioni.PROMOTORE) AS NOME_PROMOTORE,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS NOME_DOCENTE,(SELECT NOME FROM istituti WHERE CHIAVE=spedizioni.ISTITUTO) AS NOME_ISTITUTO,(SELECT docenti.TITOLO FROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS TITOLO_DOCENTE,(SELECT province_all.NOME FROM province_all WHERE CHIAVE = spedizioni.PROVINCIA) AS NOME_PROVINCIA,dettaglio_spedizioni.CHIAVE AS CHIAVE_DETTAGLIO,dettaglio_spedizioni.TITOLO,dettaglio_spedizioni.QUANTITA,dettaglio_spedizioni.SPEDIZIONE,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.POS_MAGAZZINO FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS POS_MGZN,(SELECT titoli.POS_MAGAZZINO FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS POS_MGZN,(SELECT titoli.CODICE_ISBN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,(SELECT titoli.AUTORI FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS AUTORI,(SELECT titoli.EDITORE FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS EDITORE FROM spedizioni,dettaglio_spedizioni {W~FiltroMain~(spedizioni.CHIAVE = dettaglio_spedizioni.SPEDIZIONE AND dettaglio_spedizioni.STATO = 'S' AND spedizioni.DATA >= #Dal AND spedizioni.DATA <= #Al AND spedizioni.PROMOTORE=#KeyAccount)~FiltroI~(dettaglio_spedizioni.SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE ISTITUTO=:FiltroI))~FiltroP~(dettaglio_spedizioni.SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE PROVINCIA=:FiltroP))~FiltroD~(dettaglio_spedizioni.SPEDIZIONE IN(SELECT CHIAVE FROM spedizioni WHERE DOCENTE=:FiltroD))~FiltroT~(dettaglio_spedizioni.TITOLO IN ?FiltroT)} ORDER BY dettaglio_spedizioni.SPEDIZIONE,spedizioni.DATA DESC"
-                                       }
-                                     ],
-
-"SQLCumulativoPrenotati"           : [
-                                       {
-                                         "Name" : "BookedUpCumulative",
-                                         "SQL"  : "SELECT dettaglio_spedizioni.TITOLO,dettaglio_spedizioni.QUANTITA,(SELECT USERNAME FROM utenti WHERE CHIAVE IN (SELECT PROMOTORE FROM spedizioni WHERE CHIAVE = dettaglio_spedizioni.SPEDIZIONE)) AS NOME_PROMOTORE,(SELECT QUANTITA_MGZN FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS QUANTITA_MAGAZZINO,(SELECT PRENOTAZ_NOVITA FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS Q_PREN_NOVITA,(SELECT EDITORE FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS EDITORE_TITOLO,(SELECT DESCRIZIONE FROM gruppi_case_ed WHERE gruppi_case_ed.CHIAVE IN (SELECT GRUPPO FROM case_editrici WHERE case_editrici.DESCRIZIONE IN (SELECT titoli.EDITORE FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO))) AS GRUPPO_CASA,(SELECT CODICE_ISBN FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,(SELECT TITOLO FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS NOME_TITOLO FROM dettaglio_spedizioni WHERE STATO='P' AND dettaglio_spedizioni.DATA_ULTIMA_MODIFICA >= #Dal AND dettaglio_spedizioni.DATA_ULTIMA_MODIFICA <= #Al {w~PromotoreScelto~(dettaglio_spedizioni.SPEDIZIONE IN (SELECT CHIAVE from spedizioni WHERE CHIAVE = dettaglio_spedizioni.SPEDIZIONE AND PROMOTORE = :PromotoreScelto))~ChiaveGruppi~(SELECT CHIAVE FROM gruppi_case_ed WHERE DESCRIZIONE = (SELECT DESCRIZIONE FROM gruppi_case_ed WHERE gruppi_case_ed.CHIAVE IN (SELECT GRUPPO FROM case_editrici WHERE case_editrici.DESCRIZIONE IN (SELECT titoli.EDITORE FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO))) AND CHIAVE IN ?ChiaveGruppi)} ORDER BY GRUPPO_CASA,EDITORE_TITOLO,NOME_TITOLO"
-                                       }
-                                     ],
-"SQLCumulativoConsegnati"          : [
-                                       {
-                                         "Name" : "DeliveredCumulative",
-                                         "SQL"  : "SELECT dettaglio_spedizioni.TITOLO,dettaglio_spedizioni.QUANTITA,(SELECT EDITORE FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS EDITORE_TITOLO,(SELECT DESCRIZIONE FROM gruppi_case_ed WHERE gruppi_case_ed.CHIAVE IN (SELECT GRUPPO FROM case_editrici WHERE case_editrici.DESCRIZIONE IN (SELECT titoli.EDITORE FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO))) AS GRUPPO_CASA,(SELECT CODICE_ISBN FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,(SELECT TITOLO FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS NOME_TITOLO FROM dettaglio_spedizioni WHERE STATO='C' AND dettaglio_spedizioni.DATA_ULTIMA_MODIFICA >= #Dal AND dettaglio_spedizioni.DATA_ULTIMA_MODIFICA <= #Al {w~PromotoreScelto~(dettaglio_spedizioni.SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE CHIAVE = dettaglio_spedizioni.SPEDIZIONE AND PROMOTORE = :PromotoreScelto))~ChiaveGruppi~(SELECT CHIAVE FROM gruppi_case_ed WHERE DESCRIZIONE = (SELECT DESCRIZIONE FROM gruppi_case_ed WHERE gruppi_case_ed.CHIAVE IN (SELECT GRUPPO FROM case_editrici WHERE case_editrici.DESCRIZIONE IN (SELECT titoli.EDITORE FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO))) AND CHIAVE IN ?ChiaveGruppi)} ORDER BY GRUPPO_CASA,EDITORE_TITOLO,NOME_TITOLO"
-                                       }
-                                     ],
-
-  "EditSQL"      : [   
-                     {
-                       "Name" : "InsertDelivery",
-                       "SQL"  : "INSERT INTO spedizioni (CHIAVE,DOCENTE,PRESSO,INDIRIZZO,COMUNE,CAP,PROVINCIA,PROMOTORE,DATA,ISTITUTO)VALUES(:NewKey1,:DOCENTE,#PRESSO,#INDIRIZZO,#COMUNE,#CAP,:PROVINCIA,#KeyAccount,#DATA,:ISTITUTO)"
-                     },
-                     {
-                       "Name" : "InsertDeliveryBook",
-                       "SQL"  : "INSERT INTO dettaglio_spedizioni (CHIAVE,SPEDIZIONE,TITOLO,QUANTITA,STATO)VALUES(:NewKey1,:SPEDIZIONE,:TITOLO,#QUANTITA,#STATO)"
-                     },
-                     {
-                       "Name" : "InsertDeliveryBookAfterInsert",
-                       "SQL"  : "INSERT INTO dettaglio_spedizioni (CHIAVE,SPEDIZIONE,TITOLO,QUANTITA,STATO)VALUES(:NewKey2,:NewKey1,:TITOLO,#QUANTITA,#STATO)"
-                     },
-                     {
-                       "Name" : "UpdateDelivery",
-                       "SQL"  : "UPDATE spedizioni SET PRESSO=#PRESSO,INDIRIZZO=#INDIRIZZO,COMUNE=#COMUNE,CAP=#CAP,PROVINCIA=:PROVINCIA,DATA=#DATA,ISTITUTO=:ISTITUTO WHERE CHIAVE=:CHIAVE"
-                     },
-                     {
-                       "Name" : "UpdateDeliveryBook",
-                       "SQL"  : "UPDATE dettaglio_spedizioni SET TITOLO=#TITOLO,QUANTITA=#QUANTITA,STATO=#STATO WHERE CHIAVE=:CHIAVE"
-                     },
-                     {
-                       "Name" : "DeleteDelivery",
-                       "SQL"  : "DELETE FROM spedizioni WHERE CHIAVE=:CHIAVE"
-                     },
-                     {
-                       "Name" : "DeleteDeliveryBook",
-                       "SQL"  : "DELETE FROM dettaglio_spedizioni WHERE CHIAVE=:CHIAVE"
-                     }, 
-                     {
-                       "Name" : "DeleteDeliveryBookAll",
-                       "SQL"  : "DELETE FROM dettaglio_spedizioni WHERE SPEDIZIONE=:CHIAVE"
-                     },
-                     {
-                       "Name" : "ChangeDeliveryToSend",
-                       "SQL"  : "UPDATE dettaglio_spedizioni SET STATO='S' WHERE CHIAVE=:CHIAVE"
-                     },
-                     {
-                       "Name" : "ChangeDeliveryToSendAdvanced",
-                       "SQL"  : "UPDATE dettaglio_spedizioni SET STATO='S' WHERE CHIAVE IN ?ChiaveDettaglio"
-                     }                     
-                   ]        
+{
+	"RuoliAbilitati" : "",
+	"SelectSQLDocenteAdmin" : [
+		{
+			"Name" : "TeacherDeliveryListAdm",
+			"SQL" : "SELECT spedizioni.CHIAVE,spedizioni.DATA FROM spedizioni WHERE DOCENTE=:CHIAVE AND YEAR(spedizioni.DATA ) = :ANNO ORDER BY DATA DESC\n"
+		},
+		{
+			"Name" : "TeacherDeliveryListAdmDettaglio",
+			"SQL" : "SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.CODICE_ISBN FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS CODICE FROM dettaglio_spedizioni WHERE SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE DOCENTE=:CHIAVE)\n"
+		}
+	],
+	"SelectSQLDocentePromotore" : [
+		{
+			"Name" : "TeacherDeliveryListPrm",
+			"SQL" : "SELECT spedizioni.CHIAVE,spedizioni.DATA FROM spedizioni WHERE DOCENTE=:CHIAVE AND (PROMOTORE=#KeyAccount OR PROMOTORE IN (SELECT CHIAVE FROM utenti WHERE ROLE <> 1)) AND YEAR(spedizioni.DATA) = :ANNO ORDER BY DATA DESC\n"
+		},
+		{
+			"Name" : "TeacherDeliveryListPrmDettaglio",
+			"SQL" : "SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.CODICE_ISBN FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS CODICE FROM dettaglio_spedizioni WHERE SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE DOCENTE=:CHIAVE AND (PROMOTORE=#KeyAccount OR PROMOTORE IN (SELECT CHIAVE FROM utenti WHERE ROLE <> 1)))\n"
+		}
+	],
+	"SelectKeyToSend" : [
+		{
+			"Name" : "SmallNewToSend",
+			"SQL" : "SELECT CHIAVE from dettaglio_spedizioni WHERE CHIAVE IN ?KeyToSearch AND STATO = 'S'\n"
+		}
+	],
+	"SQLDettaglio" : [
+		{
+			"Name" : "GenericDeliveryDettaglio",
+			"SQL" : "SELECT *,(SELECT TITOLO FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT CODICE_ISBN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,CALCOLA_DISPONIBILITA(dettaglio_spedizioni.TITOLO) AS SPEDIBILE FROM dettaglio_spedizioni WHERE SPEDIZIONE=:CHIAVE\n"
+		}
+	],
+	"SQLPromotore" : [
+		{
+			"Name" : "MyDeliveryList",
+			"SQL" : "SELECT *,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS NOME_DOCENTE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'S') AS NR_DA_SPEDIRE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'C') AS NR_CONSEGNATE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'P') AS NR_PRENOTATE FROM spedizioni WHERE PROMOTORE=#KeyAccount AND DATA >= #Dal AND DATA <= #Al ORDER BY DATA DESC\n"
+		}
+	],
+	"SQLPromotoreDettaglio" : [
+		{
+			"Name" : "MyDeliveryListDettaglio",
+			"SQL" : "SELECT *,(SELECT TITOLO FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT CODICE_ISBN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,CALCOLA_DISPONIBILITA(dettaglio_spedizioni.TITOLO) AS SPEDIBILE FROM dettaglio_spedizioni WHERE SPEDIZIONE=:CHIAVE\n"
+		}
+	],
+	"SQLAdmin" : [
+		{
+			"Name" : "DeliveryListAll",
+			"SQL" : "SELECT *,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS NOME_DOCENTE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'S') AS NR_DA_SPEDIRE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'C') AS NR_CONSEGNATE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'P') AS NR_PRENOTATE FROM spedizioni WHERE DATA >= #Dal AND DATA <= #Al ORDER BY DATA DESC LIMIT 100\n"
+		}
+	],
+	"SQLAdminDettaglio" : [
+		{
+			"Name" : "DeliveryListAllDettaglio",
+			"SQL" : "SELECT *,(SELECT TITOLO FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT CODICE_ISBN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,CALCOLA_DISPONIBILITA(dettaglio_spedizioni.TITOLO) AS SPEDIBILE FROM dettaglio_spedizioni WHERE SPEDIZIONE=:CHIAVE\n"
+		}
+	],
+	"SQLPromotoreXls" : [
+		{
+			"Name" : "MyDeliveryListXls",
+			"SQL" : "SELECT spedizioni.CHIAVE,spedizioni.PRESSO,spedizioni.DOCENTE,(SELECT utenti.RAGIONE_SOCIALE FROM utenti WHERE CHIAVE = spedizioni.PROMOTORE) AS NOME_PROMOTORE,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE CHIAVE = spedizioni.DOCENTE) AS NOME_DOCENTE,spedizioni.INDIRIZZO,spedizioni.COMUNE,spedizioni.CAP,spedizioni.PROVINCIA,(SELECT NOME FROM province_all WHERE CHIAVE = spedizioni.PROVINCIA) AS NOME_PROVINCIA,spedizioni.DATA,(SELECT CODICE_ISBN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,(SELECT TITOLO FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,dettaglio_spedizioni.TITOLO,dettaglio_spedizioni.QUANTITA,dettaglio_spedizioni.STATO FROM spedizioni,dettaglio_spedizioni WHERE spedizioni.CHIAVE = dettaglio_spedizioni.SPEDIZIONE AND spedizioni.DATA >= #Dal AND spedizioni.DATA <= #Al AND PROMOTORE=#KeyAccount ORDER BY spedizioni.CHIAVE DESC,spedizioni.DATA DESC\n"
+		}
+	],
+	"SQLAdminXls" : [
+		{
+			"Name" : "DeliveryListAdminXls",
+			"SQL" : "SELECT spedizioni.CHIAVE,spedizioni.PRESSO,spedizioni.DOCENTE,(SELECT utenti.RAGIONE_SOCIALE FROM utenti WHERE CHIAVE = spedizioni.PROMOTORE) AS NOME_PROMOTORE,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE CHIAVE = spedizioni.DOCENTE) AS NOME_DOCENTE,spedizioni.INDIRIZZO,spedizioni.COMUNE,spedizioni.CAP,spedizioni.PROVINCIA,(SELECT NOME FROM province_all WHERE CHIAVE = spedizioni.PROVINCIA) AS NOME_PROVINCIA,spedizioni.DATA,(SELECT CODICE_ISBN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,(SELECT TITOLO FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,dettaglio_spedizioni.TITOLO,dettaglio_spedizioni.QUANTITA,dettaglio_spedizioni.STATO FROM spedizioni,dettaglio_spedizioni WHERE spedizioni.CHIAVE = dettaglio_spedizioni.SPEDIZIONE AND spedizioni.DATA >= #Dal AND spedizioni.DATA <= #Al ORDER BY spedizioni.CHIAVE DESC,spedizioni.DATA DESC\n"
+		}
+	],
+	"SQLUltime20Promotore" : [
+		{
+			"Name" : "DeliveryListLastTwentyPrm",
+			"SQL" : "SELECT *,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS NOME_DOCENTE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'S') AS NR_DA_SPEDIRE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'C') AS NR_CONSEGNATE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'P') AS NR_PRENOTATE FROM spedizioni WHERE PROMOTORE=#KeyAccount ORDER BY DATA DESC LIMIT 20\n"
+		}
+	],
+	"SQLUltime20PromotoreDettaglio" : [
+		{
+			"Name" : "DeliveryListLastTwentyPrmDettaglio",
+			"SQL" : "SELECT *,(SELECT TITOLO FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT CODICE_ISBN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,CALCOLA_DISPONIBILITA(dettaglio_spedizioni.TITOLO) AS SPEDIBILE FROM dettaglio_spedizioni WHERE SPEDIZIONE=:CHIAVE\n"
+		}
+	],
+	"SQLUltime20Admin" : [
+		{
+			"Name" : "DeliveryListLastTwentyAdm",
+			"SQL" : "SELECT *,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS NOME_DOCENTE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'S') AS NR_DA_SPEDIRE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'C') AS NR_CONSEGNATE,(SELECT COUNT(*) FROM dettaglio_spedizioni WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'P') AS NR_PRENOTATE FROM spedizioni ORDER BY DATA DESC LIMIT 20\n"
+		}
+	],
+	"SQLUltime20AdminDettaglio" : [
+		{
+			"Name" : "DeliveryListLastTwentyAdmDettaglio",
+			"SQL" : "SELECT *,(SELECT TITOLO FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT CODICE_ISBN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,CALCOLA_DISPONIBILITA(dettaglio_spedizioni.TITOLO) AS SPEDIBILE FROM dettaglio_spedizioni WHERE SPEDIZIONE=:CHIAVE\n"
+		}
+	],
+	"SQLDettaglioSpedizioneDocente" : [
+		{
+			"Name" : "TeacherDelivery",
+			"SQL" : "SELECT *,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS NOME_DOCENTE FROM spedizioni WHERE CHIAVE=:CHIAVE\n"
+		},
+		{
+			"Name" : "TeacherDeliveryBook",
+			"SQL" : "SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE titoli.CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.CODICE_ISBN FROM titoli WHERE titoli.CHIAVE = dettaglio_spedizioni.TITOLO) AS ISBN_TITOLO,(SELECT titoli.QUANTITA_MGZN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS QUANTITA_MGZN,CALCOLA_DISPONIBILITA_ALL(dettaglio_spedizioni.TITOLO) AS QUANTITA_DISP FROM dettaglio_spedizioni WHERE SPEDIZIONE=:CHIAVE\n"
+		}
+	],
+	"SQLDettaglioSpedizioneCasa" : [
+		{
+			"Name" : "PublisherDelivery",
+			"SQL" : "SELECT * FROM spedizioni WHERE CHIAVE=:CHIAVE AND PROMOTORE=#KeyAccount\n"
+		},
+		{
+			"Name" : "PublisherDeliveryBook",
+			"SQL" : "SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE titoli.CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.CODICE_ISBN FROM titoli WHERE titoli.CHIAVE = dettaglio_spedizioni.TITOLO) AS ISBN_TITOLO,(SELECT titoli.QUANTITA_MGZN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS QUANTITA_MGZN,CALCOLA_DISPONIBILITA_ALL(dettaglio_spedizioni.TITOLO) AS QUANTITA_DISP FROM dettaglio_spedizioni WHERE SPEDIZIONE=:CHIAVE\n"
+		}
+	],
+	"SQLDettaglioSpedizioneGenerico" : [
+		{
+			"Name" : "DeliveryDettaglio",
+			"SQL" : "SELECT *,(SELECT titoli.TITOLO FROM titoli WHERE titoli.CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.CODICE_ISBN FROM titoli WHERE titoli.CHIAVE = dettaglio_spedizioni.TITOLO) AS ISBN_TITOLO,(SELECT titoli.QUANTITA_MGZN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS QUANTITA_MGZN FROM dettaglio_spedizioni WHERE SPEDIZIONE=:CHIAVE\n"
+		}
+	],
+	"SQLDettaglioSpedizioneAdvanced" : [
+		{
+			"Name" : "DeliveryDettaglioAdv",
+			"SQL" : "SELECT *,(SELECT titoli.CODICE_ISBN FROM titoli WHERE titoli.CHIAVE = dettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,(SELECT titoli.TITOLO FROM titoli WHERE titoli.CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.QUANTITA_MGZN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS QUANTITA_MGZN FROM dettaglio_spedizioni WHERE SPEDIZIONE=:CHIAVE AND TITOLO IN (SELECT CHIAVE FROM titoli WHERE QUANTITA_MGZN >= dettaglio_spedizioni.QUANTITA AND CHIAVE = dettaglio_spedizioni.TITOLO)\n"
+		}
+	],
+	"SQLDettaglioTitoliDisponibiliAdmin" : [
+		{
+			"Name" : "DettaglioDisponibiliAdmin",
+			"SQL" : "SELECT spedizioni.CHIAVE,spedizioni.PRESSO,spedizioni.PROVINCIA,spedizioni.DOCENTE,(SELECT docenti.RAGIONE_SOCIALE \nFROM docenti WHERE CHIAVE=spedizioni.DOCENTE) AS NOME_DOCENTE,spedizioni.PROMOTORE,spedizioni.ISTITUTO,(SELECT NOME \nFROM istituti WHERE CHIAVE=spedizioni.ISTITUTO) AS NOME_ISTITUTO,spedizioni.DATA,dettaglio_spedizioni.CHIAVE AS \nCHIAVE_DETTAGLIO,dettaglio_spedizioni.SPEDIZIONE,dettaglio_spedizioni.TITOLO,dettaglio_spedizioni.QUANTITA,\ndettaglio_spedizioni.STATO,dettaglio_spedizioni.DATA_ULTIMA_MODIFICA,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE \n=dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.CODICE_ISBN FROM titoli WHERE CHIAVE = \ndettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,CALCOLA_DISPONIBILITA_ALL(dettaglio_spedizioni.TITOLO) AS \nQUANTITA_DISP FROM spedizioni,dettaglio_spedizioni {W~FiltroMain~(spedizioni.CHIAVE = \ndettaglio_spedizioni.SPEDIZIONE AND dettaglio_spedizioni.STATO = 'P' AND spedizioni.DATA >= #Dal AND \nspedizioni.DATA <= #Al AND CALCOLA_DISPONIBILITA_ALL(dettaglio_spedizioni.TITOLO) > 0)~FiltroI~\n(dettaglio_spedizioni.SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE ISTITUTO=:FiltroI))~FiltroP~\n(dettaglio_spedizioni.SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE PROVINCIA=:FiltroP))~FiltroD~\n(dettaglio_spedizioni.SPEDIZIONE IN(SELECT CHIAVE FROM spedizioni WHERE DOCENTE=:FiltroD))~FiltroPr~\n(dettaglio_spedizioni.SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE PROMOTORE=:FiltroPr))~FiltroT~\n(dettaglio_spedizioni.TITOLO IN ?FiltroT)} ORDER BY spedizioni.CHIAVE,spedizioni.DATA DESC\n"
+		}
+	],
+	"SQLDettaglioTitoliDisponibiliPromotore" : [
+		{
+			"Name" : "DettaglioDisponibiliPromotore",
+			"SQL" : "SELECT spedizioni.CHIAVE,spedizioni.PRESSO,spedizioni.PROVINCIA,spedizioni.DOCENTE,(SELECT docenti.RAGIONE_SOCIALE \nFROM docenti WHERE CHIAVE=spedizioni.DOCENTE) AS NOME_DOCENTE,spedizioni.PROMOTORE,spedizioni.ISTITUTO,(SELECT NOME \nFROM istituti WHERE CHIAVE=spedizioni.ISTITUTO) AS NOME_ISTITUTO,spedizioni.DATA,dettaglio_spedizioni.CHIAVE AS \nCHIAVE_DETTAGLIO,dettaglio_spedizioni.SPEDIZIONE,dettaglio_spedizioni.TITOLO,dettaglio_spedizioni.QUANTITA,\ndettaglio_spedizioni.STATO,dettaglio_spedizioni.DATA_ULTIMA_MODIFICA,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE \n=dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.CODICE_ISBN FROM titoli WHERE CHIAVE = \ndettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,CALCOLA_DISPONIBILITA_ALL(dettaglio_spedizioni.TITOLO) AS \nQUANTITA_DISP FROM spedizioni,dettaglio_spedizioni {W~FiltroMain~(spedizioni.CHIAVE = \ndettaglio_spedizioni.SPEDIZIONE AND dettaglio_spedizioni.STATO = 'P' AND spedizioni.DATA >= #Dal AND \nspedizioni.DATA <= #Al AND spedizioni.PROMOTORE=#KeyAccount AND CALCOLA_DISPONIBILITA_ALL\n(dettaglio_spedizioni.TITOLO) > 0)~FiltroI~(dettaglio_spedizioni.SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE \nISTITUTO=:FiltroI))~FiltroP~(dettaglio_spedizioni.SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE \nPROVINCIA=:FiltroP))~FiltroD~(dettaglio_spedizioni.SPEDIZIONE IN(SELECT CHIAVE FROM spedizioni WHERE \nDOCENTE=:FiltroD))~FiltroT~(dettaglio_spedizioni.TITOLO IN ?FiltroT)} ORDER BY spedizioni.CHIAVE,spedizioni.DATA \nDESC\n"
+		}
+	],
+	"SQLDettaglioTitoliToSendAdmin" : [
+		{
+			"Name" : "DettaglioToSendAdmin",
+			"SQL" : "SELECT spedizioni.*,(SELECT utenti.RAGIONE_SOCIALE FROM utenti WHERE CHIAVE = spedizioni.PROMOTORE) AS \nNOME_PROMOTORE,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS \nNOME_DOCENTE,(SELECT NOME FROM istituti WHERE CHIAVE=spedizioni.ISTITUTO) AS NOME_ISTITUTO,(SELECT docenti.TITOLO \nFROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS TITOLO_DOCENTE,\ndettaglio_spedizioni.DATA_ULTIMA_MODIFICA,\n(SELECT province_all.NOME FROM province_all WHERE CHIAVE = spedizioni.PROVINCIA) AS \nNOME_PROVINCIA,dettaglio_spedizioni.CHIAVE AS \nCHIAVE_DETTAGLIO,dettaglio_spedizioni.TITOLO,dettaglio_spedizioni.QUANTITA,dettaglio_spedizioni.SPEDIZIONE,(SELECT \ntitoli.TITOLO FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.POS_MAGAZZINO \nFROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS POS_MGZN,(SELECT titoli.POS_MAGAZZINO FROM titoli WHERE \nCHIAVE = dettaglio_spedizioni.TITOLO) AS POS_MGZN,(SELECT titoli.CODICE_ISBN FROM titoli WHERE CHIAVE = \ndettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,(SELECT titoli.AUTORI FROM titoli WHERE CHIAVE = \ndettaglio_spedizioni.TITOLO) AS AUTORI,(SELECT titoli.EDITORE FROM titoli WHERE CHIAVE = \ndettaglio_spedizioni.TITOLO) AS EDITORE FROM spedizioni,dettaglio_spedizioni {W~FiltroMain~(spedizioni.CHIAVE = \ndettaglio_spedizioni.SPEDIZIONE AND dettaglio_spedizioni.STATO = 'S' AND spedizioni.DATA >= #Dal AND \nspedizioni.DATA <= #Al)~FiltroI~(dettaglio_spedizioni.SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE \nISTITUTO=:FiltroI))~FiltroP~(dettaglio_spedizioni.SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE \nPROVINCIA=:FiltroP))~FiltroD~(dettaglio_spedizioni.SPEDIZIONE IN(SELECT CHIAVE FROM spedizioni WHERE \nDOCENTE=:FiltroD))~FiltroT~(dettaglio_spedizioni.TITOLO IN ?FiltroT)~FiltroPr~(dettaglio_spedizioni.SPEDIZIONE IN \n(SELECT CHIAVE FROM spedizioni WHERE PROMOTORE=:FiltroPr))} ORDER BY \ndettaglio_spedizioni.SPEDIZIONE,spedizioni.DATA DESC\n"
+		}
+	],
+	"SQLDettaglioTitoliToSendPrm" : [
+		{
+			"Name" : "DettaglioToSendPromotore",
+			"SQL" : "SELECT spedizioni.*,(SELECT utenti.RAGIONE_SOCIALE FROM utenti WHERE CHIAVE = spedizioni.PROMOTORE) AS \nNOME_PROMOTORE,(SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS \nNOME_DOCENTE,(SELECT NOME FROM istituti WHERE CHIAVE=spedizioni.ISTITUTO) AS NOME_ISTITUTO,(SELECT docenti.TITOLO \nFROM docenti WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS TITOLO_DOCENTE,\ndettaglio_spedizioni.DATA_ULTIMA_MODIFICA,\n(SELECT province_all.NOME FROM province_all WHERE CHIAVE = spedizioni.PROVINCIA) AS \nNOME_PROVINCIA,dettaglio_spedizioni.CHIAVE AS \nCHIAVE_DETTAGLIO,dettaglio_spedizioni.TITOLO,dettaglio_spedizioni.QUANTITA,dettaglio_spedizioni.SPEDIZIONE,(SELECT \ntitoli.TITOLO FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.POS_MAGAZZINO \nFROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS POS_MGZN,(SELECT titoli.POS_MAGAZZINO FROM titoli WHERE \nCHIAVE = dettaglio_spedizioni.TITOLO) AS POS_MGZN,(SELECT titoli.CODICE_ISBN FROM titoli WHERE CHIAVE = \ndettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,(SELECT titoli.AUTORI FROM titoli WHERE CHIAVE = \ndettaglio_spedizioni.TITOLO) AS AUTORI,(SELECT titoli.EDITORE FROM titoli WHERE CHIAVE = \ndettaglio_spedizioni.TITOLO) AS EDITORE FROM spedizioni,dettaglio_spedizioni {W~FiltroMain~(spedizioni.CHIAVE = \ndettaglio_spedizioni.SPEDIZIONE AND dettaglio_spedizioni.STATO = 'S' AND spedizioni.DATA >= #Dal AND \nspedizioni.DATA <= #Al AND spedizioni.PROMOTORE=#KeyAccount)~FiltroI~(dettaglio_spedizioni.SPEDIZIONE IN (SELECT \nCHIAVE FROM spedizioni WHERE ISTITUTO=:FiltroI))~FiltroP~(dettaglio_spedizioni.SPEDIZIONE IN (SELECT CHIAVE FROM \nspedizioni WHERE PROVINCIA=:FiltroP))~FiltroD~(dettaglio_spedizioni.SPEDIZIONE IN(SELECT CHIAVE FROM spedizioni \nWHERE DOCENTE=:FiltroD))~FiltroT~(dettaglio_spedizioni.TITOLO IN ?FiltroT)} ORDER BY \ndettaglio_spedizioni.SPEDIZIONE,spedizioni.DATA DESC\n"
+		}
+	],
+	"SQLCumulativoPrenotati" : [
+		{
+			"Name" : "BookedUpCumulative",
+			"SQL" : "SELECT dettaglio_spedizioni.TITOLO,dettaglio_spedizioni.QUANTITA,(SELECT USERNAME FROM utenti WHERE CHIAVE IN (SELECT PROMOTORE FROM spedizioni WHERE CHIAVE = dettaglio_spedizioni.SPEDIZIONE)) AS NOME_PROMOTORE,(SELECT QUANTITA_MGZN FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS QUANTITA_MAGAZZINO,(SELECT PRENOTAZ_NOVITA FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS Q_PREN_NOVITA,(SELECT EDITORE FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS EDITORE_TITOLO,(SELECT DESCRIZIONE FROM gruppi_case_ed WHERE gruppi_case_ed.CHIAVE IN (SELECT GRUPPO FROM case_editrici WHERE case_editrici.DESCRIZIONE IN (SELECT titoli.EDITORE FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO))) AS GRUPPO_CASA,(SELECT CODICE_ISBN FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,(SELECT TITOLO FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS NOME_TITOLO FROM dettaglio_spedizioni WHERE STATO='P' AND dettaglio_spedizioni.DATA_ULTIMA_MODIFICA >= #Dal AND dettaglio_spedizioni.DATA_ULTIMA_MODIFICA <= #Al {w~PromotoreScelto~(dettaglio_spedizioni.SPEDIZIONE IN (SELECT CHIAVE from spedizioni WHERE CHIAVE = dettaglio_spedizioni.SPEDIZIONE AND PROMOTORE = :PromotoreScelto))~ChiaveGruppi~(SELECT CHIAVE FROM gruppi_case_ed WHERE DESCRIZIONE = (SELECT DESCRIZIONE FROM gruppi_case_ed WHERE gruppi_case_ed.CHIAVE IN (SELECT GRUPPO FROM case_editrici WHERE case_editrici.DESCRIZIONE IN (SELECT titoli.EDITORE FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO))) AND CHIAVE IN ?ChiaveGruppi)} ORDER BY GRUPPO_CASA,EDITORE_TITOLO,NOME_TITOLO\n"
+		}
+	],
+	"SQLCumulativoConsegnati" : [
+		{
+			"Name" : "DeliveredCumulative",
+			"SQL" : "SELECT dettaglio_spedizioni.TITOLO,dettaglio_spedizioni.QUANTITA,(SELECT EDITORE FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS EDITORE_TITOLO,(SELECT DESCRIZIONE FROM gruppi_case_ed WHERE gruppi_case_ed.CHIAVE IN (SELECT GRUPPO FROM case_editrici WHERE case_editrici.DESCRIZIONE IN (SELECT titoli.EDITORE FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO))) AS GRUPPO_CASA,(SELECT CODICE_ISBN FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,(SELECT TITOLO FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO) AS NOME_TITOLO FROM dettaglio_spedizioni WHERE STATO='C' AND dettaglio_spedizioni.DATA_ULTIMA_MODIFICA >= #Dal AND dettaglio_spedizioni.DATA_ULTIMA_MODIFICA <= #Al {w~PromotoreScelto~(dettaglio_spedizioni.SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE CHIAVE = dettaglio_spedizioni.SPEDIZIONE AND PROMOTORE = :PromotoreScelto))~ChiaveGruppi~(SELECT CHIAVE FROM gruppi_case_ed WHERE DESCRIZIONE = (SELECT DESCRIZIONE FROM gruppi_case_ed WHERE gruppi_case_ed.CHIAVE IN (SELECT GRUPPO FROM case_editrici WHERE case_editrici.DESCRIZIONE IN (SELECT titoli.EDITORE FROM titoli WHERE CHIAVE=dettaglio_spedizioni.TITOLO))) AND CHIAVE IN ?ChiaveGruppi)} ORDER BY GRUPPO_CASA,EDITORE_TITOLO,NOME_TITOLO\n"
+		}
+	],
+	"EditSQL" : [
+		{
+			"Name" : "InsertDelivery",
+			"SQL" : "INSERT INTO spedizioni (CHIAVE,DOCENTE,PRESSO,INDIRIZZO,COMUNE,CAP,PROVINCIA,PROMOTORE,DATA,ISTITUTO)VALUES(:NewKey1,:DOCENTE,#PRESSO,#INDIRIZZO,#COMUNE,#CAP,:PROVINCIA,#KeyAccount,#DATA,:ISTITUTO)\n"
+		},
+		{
+			"Name" : "InsertDeliveryBook",
+			"SQL" : "INSERT INTO dettaglio_spedizioni (CHIAVE,SPEDIZIONE,TITOLO,QUANTITA,STATO)VALUES(:NewKey1,:SPEDIZIONE,:TITOLO,#QUANTITA,#STATO)\n"
+		},
+		{
+			"Name" : "InsertDeliveryBookAfterInsert",
+			"SQL" : "INSERT INTO dettaglio_spedizioni (CHIAVE,SPEDIZIONE,TITOLO,QUANTITA,STATO)VALUES(:NewKey2,:NewKey1,:TITOLO,#QUANTITA,#STATO)\n"
+		},
+		{
+			"Name" : "UpdateDelivery",
+			"SQL" : "UPDATE spedizioni SET PRESSO=#PRESSO,INDIRIZZO=#INDIRIZZO,COMUNE=#COMUNE,CAP=#CAP,PROVINCIA=:PROVINCIA,DATA=#DATA,ISTITUTO=:ISTITUTO WHERE CHIAVE=:CHIAVE\n"
+		},
+		{
+			"Name" : "UpdateDeliveryBook",
+			"SQL" : "UPDATE dettaglio_spedizioni SET TITOLO=#TITOLO,QUANTITA=#QUANTITA,STATO=#STATO WHERE CHIAVE=:CHIAVE\n"
+		},
+		{
+			"Name" : "DeleteDelivery",
+			"SQL" : "DELETE FROM spedizioni WHERE CHIAVE=:CHIAVE\n"
+		},
+		{
+			"Name" : "DeleteDeliveryBook",
+			"SQL" : "DELETE FROM dettaglio_spedizioni WHERE CHIAVE=:CHIAVE\n"
+		},
+		{
+			"Name" : "DeleteDeliveryBookAll",
+			"SQL" : "DELETE FROM dettaglio_spedizioni WHERE SPEDIZIONE=:CHIAVE\n"
+		},
+		{
+			"Name" : "ChangeDeliveryToSend",
+			"SQL" : "UPDATE dettaglio_spedizioni SET STATO='S' WHERE CHIAVE=:CHIAVE\n"
+		},
+		{
+			"Name" : "ChangeDeliveryToSendAdvanced",
+			"SQL" : "UPDATE dettaglio_spedizioni SET STATO='S' WHERE CHIAVE IN ?ChiaveDettaglio\n"
+		}
+]
 }
