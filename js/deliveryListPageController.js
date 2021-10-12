@@ -254,8 +254,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
        BodySheet['!ref'] = 'A1:B1' + parseInt(ListaTitoli.length + 1);
        
        BodySheet["!cols"] = [             
-                              {wpx: 150},
-                              {wpx: 150}
+                              {wpx: 130},
+                              {wpx: 50}
                             ];
        
        WBook.SheetNames.push(SheetName);
@@ -578,6 +578,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     $scope.TitoloFiltroStat          = -1;
     $scope.StatisticaVisible         = false;
     $scope.searchTextTitStat         = undefined;
+    $scope.StatisticaPromotori       = [];
 
     $scope.hide = function() 
     {

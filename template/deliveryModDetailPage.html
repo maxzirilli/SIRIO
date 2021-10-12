@@ -185,6 +185,7 @@
             <th>STATO</th>
             <th>DISPONIBILITA</th>
             <th>DA SPEDIRE</th>
+            <th>DATA</th>
           </tr>  
           <tr ng-repeat="Titolo in ListaTitoliSpedizione track by (Titolo.CHIAVE + $index) | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Titolo.Chiave}}>
             <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA TITOLO" ng-click="EliminaTitolo(Titolo)"></td> 
@@ -202,7 +203,8 @@
             
             <td ng-if="Titolo.QUANTITA <= Titolo.QUANTITA_DISP && Titolo.STATO == 'P'"><img src="img/toSend.png" style="width:20px;height:auto;" ng-click="PassaADaSpedire(Titolo)"></td>
             <td ng-if="Titolo.QUANTITA_DISP < Titolo.QUANTITA && Titolo.STATO == 'P'" title="TITOLO NON DISPONIBILE IN MAGAZZINO"><img src="img/notToSend.png" style="width:20px;height:auto;" class="off"></td>     
-            <td ng-if="Titolo.STATO != 'P'"></td>                       
+            <td ng-if="Titolo.STATO != 'P'"></td> 
+            <td>{{ConvertiData(Titolo.DATA)}}</td>                      
           </tr>    
         </table>
         <md-table-pagination md-limit="GridOptions.query.limit" 

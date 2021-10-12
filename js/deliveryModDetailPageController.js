@@ -11,6 +11,11 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
   
   ScopeHeaderController.CheckButtons();
 
+  $scope.ConvertiData = function (Data)
+  {
+     return(ZFormatDateTime('dd/mm/yyyy',ZDateFromHTMLInput(Data)));
+  }
+
   $scope.IndirizzoByIstituto = function (Istituto)
   {
     if(Istituto == -1)
@@ -458,7 +463,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                                                         "QUANTITA_DISP" : parseInt(DettaglioSpedizioneTitoloDoc[i].QUANTITA_DISP),
                                                         "Nuovo"         : false,
                                                         "Modificato"    : false,
-                                                        "Eliminato"     : false
+                                                        "Eliminato"     : false,
+                                                        "DATA"          : DettaglioSpedizioneTitoloDoc[i].DATA_ULTIMA_MODIFICA
                                                       }) 
                 }
                 SystemInformation.GetSQL('Teacher', {CHIAVE : $scope.ChiaveDocente}, function(Results)
@@ -572,7 +578,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                                                        "QUANTITA_DISP" : parseInt(DettaglioSpedizioneTitoloCasa[i].QUANTITA_DISP),                                                       
                                                        "Nuovo"         : false,
                                                        "Modificato"    : false,
-                                                       "Eliminato"     : false
+                                                       "Eliminato"     : false,
+                                                       "DATA"          : DettaglioSpedizioneTitoloCasa[i].DATA_ULTIMA_MODIFICA
                                                      }) 
                }
            }
@@ -652,7 +659,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                          "QUANTITA_DISP" : 0,
                          "Nuovo"         : true,
                          "Modificato"    : false,
-                         "Eliminato"     : false                                  
+                         "Eliminato"     : false,
+                         "DATA"          : new Date().toISOString().split('T')[0]                                
                       } 
                       
       if($scope.SpedizioneMultipla)
@@ -949,7 +957,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                                           "QUANTITA_DISP"     : $scope.ListaTitoliToHandle[i].QuantitaDisp,
                                           "Nuovo"             : true,
                                           "Modificato"        : false,
-                                          "Eliminato"         : false                                   
+                                          "Eliminato"         : false,
+                                          "DATA"              : new Date().toISOString().split('T')[0]                                    
                                         }
       }
 
@@ -1082,7 +1091,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                                                        "QUANTITA_DISP"     : TitoloCorrisp.QuantitaDisp,
                                                        "Nuovo"             : true,
                                                        "Modificato"        : false,
-                                                       "Eliminato"         : false   
+                                                       "Eliminato"         : false,
+                                                       "DATA"              : new Date().toISOString().split('T')[0]     
                                                      })
                 }
                 else 
@@ -1099,7 +1109,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                                                        "QUANTITA_DISP"     : TitoloCorrisp.QuantitaDisp,
                                                        "Nuovo"             : true,
                                                        "Modificato"        : false,
-                                                       "Eliminato"         : false   
+                                                       "Eliminato"         : false,
+                                                       "DATA"              : new Date().toISOString().split('T')[0]    
                                                      })
                    ListaEccedenza.push({
                                            QuantitaOltre : parseInt(RecordOrdine[1]) - TitoloCorrisp.QuantitaDisp,
