@@ -1,8 +1,0 @@
-[12-Oct-2021 09:49:53 Europe/Berlin]   SELECT SUM(dettaglio_magazzino_volante.QUANTITA_MGZN_VOL) AS QUANTITA,
-	 titoli.CODICE_ISBN, titoli.TITOLO AS NOME
-    FROM dettaglio_magazzino_volante
-    JOIN titoli 
-      ON titoli.CHIAVE = dettaglio_magazzino_volante.TITOLO
-GROUP BY dettaglio_magazzino_volante.TITOLO
-ORDER BY titoli.TITOLO
-

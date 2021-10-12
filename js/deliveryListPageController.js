@@ -177,45 +177,93 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}), NomeDocumento + DataCumulativo + $scope.PromotoreSceltoNome + ".xlsx");
   }
 
-  function CreaDocumentoCumulativoOrd(CumulativoTitoli,Editore)
+  function CreaDocumentoCumulativoFile(CumulativoTitoli,Editore)
   { 
     var Data           = new Date();
     var DataAnno       = Data.getFullYear();
     var DataMese       = Data.getMonth()+1; 
     var DataGiorno     = Data.getDate();
     Data               = DataGiorno.toString() + '-' + DataMese.toString() +  '-' + DataAnno.toString();
-    var OrdText = "";
+    var OrdText        = "";
     
     if(Editore == 'D')
+    {
        OrdText = "[codice]=999047\n[intest]=PAGINA43 snc\n[note]=\n[email]=info@pagina43.it\n[data]=" + Data + "\n";
 
-    var ListaTitoli  = [];
-    for(let j = 0;j < CumulativoTitoli.length;j ++)
-    {
-        TitoloGiaInserito = ListaTitoli.findIndex(function(ATitolo){return(ATitolo.Chiave == CumulativoTitoli[j].Chiave)})
-        if(TitoloGiaInserito == -1)
-            ListaTitoli.push(CumulativoTitoli[j])
-        else ListaTitoli[TitoloGiaInserito].Quantita += CumulativoTitoli[j].Quantita
-    }
-    for(let k = 0;k < ListaTitoli.length;k ++)
-    {
-        var InserisciTitolo = function()
-        { 
-          OrdText = OrdText + ListaTitoli[k].Codice + ' ' + Math.abs((parseInt(ListaTitoli[k].QuantitaMag) - parseInt(ListaTitoli[k].Quantita) + parseInt(ListaTitoli[k].QuantitaNovita))).toString() + "\n";        
-        }
+       var ListaTitoli  = [];
+       for(let j = 0;j < CumulativoTitoli.length;j ++)
+       {
+           TitoloGiaInserito = ListaTitoli.findIndex(function(ATitolo){return(ATitolo.Chiave == CumulativoTitoli[j].Chiave)})
+           if(TitoloGiaInserito == -1)
+               ListaTitoli.push(CumulativoTitoli[j])
+           else ListaTitoli[TitoloGiaInserito].Quantita += CumulativoTitoli[j].Quantita
+       }
+       for(let k = 0;k < ListaTitoli.length;k ++)
+       {
+           var InserisciTitolo = function()
+           { 
+             OrdText = OrdText + ListaTitoli[k].Codice + ' ' + Math.abs((parseInt(ListaTitoli[k].QuantitaMag) - parseInt(ListaTitoli[k].Quantita) + parseInt(ListaTitoli[k].QuantitaNovita))).toString() + "\n";        
+           }
 
-        if((parseInt(ListaTitoli[k].QuantitaMag) - parseInt(ListaTitoli[k].Quantita) + parseInt(ListaTitoli[k].QuantitaNovita)) < 0)
-            InserisciTitolo()
-        else
-        {
-          ListaTitoli.splice(k,1)
-          k--
-        } 
-    }
+           if((parseInt(ListaTitoli[k].QuantitaMag) - parseInt(ListaTitoli[k].Quantita) + parseInt(ListaTitoli[k].QuantitaNovita)) < 0)
+               InserisciTitolo()
+           else
+           {
+             ListaTitoli.splice(k,1)
+             k--
+           } 
+       }
 
-    var blob = new Blob([OrdText], {type: "text/plain;charset=utf-8"});
-    saveAs(blob, (Editore == 'D' ? "CumulativoDeAgostini" : "CumulativoMondadori") + Data + ".ord");   
-  
+       var blob = new Blob([OrdText], {type: "text/plain;charset=utf-8"});
+       saveAs(blob, "CumulativoDeAgostini" + Data + ".ord"); 
+    } 
+    if(Editore == 'M')
+    {
+       var WBook = {
+                      SheetNames : [],
+                      Sheets     : {}
+                   };
+
+       var SheetName          = "CUMULATIVO PRENOTATI";
+       var BodySheet          = {};
+
+       var ListaTitoli  = [];
+       for(let j = 0;j < CumulativoTitoli.length;j ++)
+       {
+           TitoloGiaInserito = ListaTitoli.findIndex(function(ATitolo){return(ATitolo.Chiave == CumulativoTitoli[j].Chiave)})
+           if(TitoloGiaInserito == -1)
+               ListaTitoli.push(CumulativoTitoli[j])
+           else ListaTitoli[TitoloGiaInserito].Quantita += CumulativoTitoli[j].Quantita
+       }
+       for(let k = 0;k < ListaTitoli.length;k ++)
+       {
+           var InserisciTitolo = function()
+           { 
+             BodySheet['A' + parseInt(k + 1)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Codice);
+             BodySheet['B' + parseInt(k + 1)] = SystemInformation.GetCellaDati('s',Math.abs((parseInt(ListaTitoli[k].QuantitaMag) - parseInt(ListaTitoli[k].Quantita) + parseInt(ListaTitoli[k].QuantitaNovita))).toString());
+           }
+
+           if((parseInt(ListaTitoli[k].QuantitaMag) - parseInt(ListaTitoli[k].Quantita) + parseInt(ListaTitoli[k].QuantitaNovita)) < 0)
+               InserisciTitolo()
+           else
+           {
+             ListaTitoli.splice(k,1)
+             k--
+           } 
+       }
+       BodySheet['!ref'] = 'A1:B1' + parseInt(ListaTitoli.length + 1);
+       
+       BodySheet["!cols"] = [             
+                              {wpx: 150},
+                              {wpx: 150}
+                            ];
+       
+       WBook.SheetNames.push(SheetName);
+       WBook.Sheets[SheetName]    = BodySheet;
+       
+       var wbout = XLSX.write(WBook, {bookType:'xlsx', bookSST:true, type: 'binary'});
+       saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}),  "CumulativoMondadori" + Data + ".xls")    
+    }
   }
 
   //STAMPA CUMULATIVO PRENOTATI
@@ -664,7 +712,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
       $mdDialog.cancel();
     };
 
-    $scope.CreaOrdPrenotati = function()
+    $scope.CreaFilePrenotati = function()
     {
       var CumulativoPrenotatiTmp = [];
       var CumulativoPrenotati    = [];
@@ -702,7 +750,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
                                               }
               CumulativoPrenotati = CumulativoPrenotatiTmp
               
-              CreaDocumentoCumulativoOrd(CumulativoPrenotati,$scope.CheckEditore)
+              CreaDocumentoCumulativoFile(CumulativoPrenotati,$scope.CheckEditore)
               $mdDialog.hide();
             }
         }
