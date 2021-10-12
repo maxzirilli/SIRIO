@@ -12,12 +12,31 @@
 
      <div class="md-dialog-content" style="width:800px;">  
          <p style="font-weight:bold;text-align:center;" ng-if="IstitutoListaAdozioni.length == 0">NESSUNA ADOZIONE REGISTRATA</p>
+         <br>
+         <div layout="row">
+           <md-input-container class="containerSelect" style="width:30%;margin-right:20px;"><label>ANNO</label>
+             <md-select ng-model="AnnoFiltro" placeholder="ANNO" class="mdb-select" type="text" name="AnnoFiltro">
+             <md-optgroup>
+               <md-option ng-value="-1">QUALSIASI</md-option>  
+               <md-option ng-repeat="anno in ListaAnni" ng-value="anno">{{anno}}</md-option>
+             </md-optgroup>
+             </md-select>
+           </md-input-container>
+           <md-input-container class="containerSelect" style="width:60%;"><label>COMBINAZIONE</label>
+             <md-select ng-model="CombinazioneFiltro" placeholder="COMBINAZIONE" class="mdb-select" type="text" name="CombinazioneFiltro">
+             <md-optgroup>
+               <md-option ng-value="-1">QUALSIASI</md-option>  
+               <md-option ng-repeat="combinazione in ListaCombinazioni" ng-value="combinazione">{{combinazione}}</md-option>
+             </md-optgroup>
+             </md-select>
+           </md-input-container>
+         </div>
          <table style="text-align:center;width:750px;" md-row-select="GridOptionsAdoz.rowSelection" multiple="{{GridOptionsAdoz.multiSelect}}">
           <tr>
             <th>CLASSE</th>
             <th>CODICE - TITOLO - EDITORE - PREZZO</th>
           </tr>
-          <tr ng-repeat="classe in IstitutoListaAdozioni | limitTo : GridOptionsAdoz.query.limit : (GridOptionsAdoz.query.page - 1) * GridOptionsAdoz.query.limit">
+          <tr ng-repeat="classe in IstitutoListaAdozioni | AdozioneByFiltroDoc : AnnoFiltro : CombinazioneFiltro | limitTo : GridOptionsAdoz.query.limit : (GridOptionsAdoz.query.page - 1) * GridOptionsAdoz.query.limit">
             <td>{{classe.NomeClasse}} {{classe.CombinazioneClasse}}</td>
             <td style="text-align:center;" ng-bind-html="GetTitoliClasseIstituto(classe)"></td>
           </tr>

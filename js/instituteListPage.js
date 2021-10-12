@@ -9,7 +9,6 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
   $scope.ListaSezioni       = ['A','B','C','D','E','F','G','H','I','L','M','N','O','P','Q','R','S','T','U','V','Z'];    
   $scope.Anno               = [1,2,3,4,5];
   $scope.ListaSezioniFinale = [];
-  //$scope.ArrayClassiGlobale = [];
   $scope.ArrayClassiFinale  = [];
   $scope.ClasseCliccata     = [];
   $scope.IstitutiNascosti   = false;  
@@ -18,10 +17,14 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
   $scope.CodiceFiltro       = ''; 
   $scope.NomeFiltroUnione   = '';
   $scope.ComuneFiltro       = '';
-  //$scope.IstitutoDaUnire    = -1;
   $scope.CheckOldProvincia  = false;
   $scope.OldPagina          = 0;
   $scope.PromotoreFiltro    = -1;
+
+  $scope.AnnoFiltro         = -1;
+  $scope.CombinazioneFiltro = -1;
+  $scope.ListaAnni          = [];
+  $scope.ListaCombinazioni  = [];
 
   $scope.IsAdministrator = function ()
   {
@@ -457,6 +460,12 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
   {
     $scope.OldPagina = $scope.GridOptions.query.page;
     $scope.EditingOn = true;    
+
+    $scope.AnnoFiltro         = -1;
+    $scope.CombinazioneFiltro = -1;
+    $scope.ListaCombinazioni  = [];
+    $scope.ListaAnni          = [];
+
     SystemInformation.GetSQL('Institute', {CHIAVE : istituto.Chiave}, function(Results)
     {
       IstitutoDettaglio       = SystemInformation.FindResults(Results, 'InstituteDettaglio');
@@ -499,10 +508,20 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
             {
                $scope.IstitutoInEditing.ListaAdozioniIstituto.push({
                                                                       ClasseChiave       : IstitutoListaAdozioni[i].CLASSE,
+                                                                      AnnoClasse         : IstitutoListaAdozioni[i].ANNO_CLASSE,
+                                                                      SezioneClasse      : IstitutoListaAdozioni[i].SEZIONE_CLASSE,
                                                                       NomeClasse         : IstitutoListaAdozioni[i].ANNO_CLASSE + IstitutoListaAdozioni[i].SEZIONE_CLASSE,
                                                                       CombinazioneClasse : IstitutoListaAdozioni[i].COMBINAZIONE_CLASSE == null ? 'N.D' :  IstitutoListaAdozioni[i].COMBINAZIONE_CLASSE,
                                                                       ListaTitoliClasse  : []
                                                                    }) 
+                                                                   
+              var CombinazioneExist = $scope.ListaCombinazioni.findIndex(function(ACombinazione){return(ACombinazione == IstitutoListaAdozioni[i].COMBINAZIONE_CLASSE);});
+              if(CombinazioneExist == -1)
+                 $scope.ListaCombinazioni.push(IstitutoListaAdozioni[i].COMBINAZIONE_CLASSE);
+
+              var AnnoExist = $scope.ListaAnni.findIndex(function(AAnno){return(AAnno == IstitutoListaAdozioni[i].ANNO_CLASSE);});
+              if(AnnoExist == -1)
+                 $scope.ListaAnni.push(IstitutoListaAdozioni[i].ANNO_CLASSE);
             }
             $scope.IstitutoInEditing.ListaAdozioniIstituto[$scope.IstitutoInEditing.ListaAdozioniIstituto.length-1].ListaTitoliClasse.push({
                                                                                                                                              Titolo         : IstitutoListaAdozioni[i].NOME_TITOLO,
@@ -513,6 +532,16 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                                                                                                                                            })
             ClassKey =  IstitutoListaAdozioni[i].CLASSE;                                                                                          
         }
+
+        $scope.ListaAnni.sort();
+        $scope.ListaCombinazioni.sort();
+        $scope.IstitutoInEditing.ListaAdozioniIstituto.sort((adozione_1, adozione_2) => {
+                                                                                          const compareCombinazione = adozione_1.CombinazioneClasse.localeCompare(adozione_2.CombinazioneClasse);
+                                                                                          const compareAnno         = adozione_1.AnnoClasse.localeCompare(adozione_2.AnnoClasse);
+                                                                                          const compareSezione      = adozione_1.SezioneClasse.localeCompare(adozione_2.SezioneClasse);
+
+                                                                                          return compareCombinazione || compareAnno || compareSezione;
+                                                                                        })
              
         if(IstitutoDettaglioClassi.length > 0)
         { 
@@ -1303,6 +1332,39 @@ SIRIOApp.filter('IstitutoByNomeFiltroUnione',function()
            { 
              if(IstitutoOK(Istituto)) 
                 ListaFiltrata.push(Istituto)                       
+           });
+            
+           return(ListaFiltrata);
+         }
+});
+
+SIRIOApp.filter('AdozioneByFiltro',function()
+{
+  return function(ListaAdozioniIstituto,AnnoFiltro,CombinazioneFiltro)
+         {
+           if(AnnoFiltro == -1 && CombinazioneFiltro == -1) 
+              return(ListaAdozioniIstituto);
+           var ListaFiltrata = [];
+           
+           var AdozioneOk = function(Adozione)
+           {  
+              var Result = true;
+              
+              if(AnnoFiltro != -1)
+                if(Adozione.AnnoClasse.toUpperCase().indexOf(AnnoFiltro) < 0)
+                   Result = false;
+              
+              if(CombinazioneFiltro != -1)
+                if(Adozione.CombinazioneClasse.toUpperCase().indexOf(CombinazioneFiltro) < 0)
+                   Result = false;
+              
+              return(Result);
+           }
+           
+           ListaAdozioniIstituto.forEach(function(Adozione)
+           { 
+             if(AdozioneOk(Adozione)) 
+                ListaFiltrata.push(Adozione)                       
            });
             
            return(ListaFiltrata);

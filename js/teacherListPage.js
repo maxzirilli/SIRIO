@@ -37,6 +37,11 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   }
   $scope.AnnoRicercaSpedizioni             = $scope.ListaAnni[0];
 
+  $scope.AnnoFiltro                        = -1;
+  $scope.CombinazioneFiltro                = -1;
+  $scope.ListaAnni                         = [];
+  $scope.ListaCombinazioni                 = [];
+
   $scope.AbilitaInvioMultiplo              = function()
                                             {
                                               let DocentiFiltrati = $filter('DocenteByFiltro')($scope.ListaDocenti,
@@ -334,6 +339,11 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   $scope.VisualizzaAdozioni = function (ChiaveIstituto)
   {
     $scope.thisIstituto = ChiaveIstituto;
+    $scope.AnnoFiltro         = -1;
+    $scope.CombinazioneFiltro = -1;
+    $scope.ListaCombinazioni  = [];
+    $scope.ListaAnni          = [];
+
     SystemInformation.GetSQL('Institute', {CHIAVE : ChiaveIstituto}, function(Results)
     {
       IstitutoListaAdozioni = SystemInformation.FindResults(Results,$scope.AdozioniGestite ? 'GetHandledAdoptionListInstitute' : 'GetAdoptionListInstitute');
@@ -348,10 +358,20 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
             {
                $scope.IstitutoListaAdozioni.push({
                                                     ClasseChiave       : IstitutoListaAdozioni[i].CLASSE,
+                                                    AnnoClasse         : IstitutoListaAdozioni[i].ANNO_CLASSE,
+                                                    SezioneClasse      : IstitutoListaAdozioni[i].SEZIONE_CLASSE,
                                                     NomeClasse         : IstitutoListaAdozioni[i].ANNO_CLASSE + IstitutoListaAdozioni[i].SEZIONE_CLASSE,
                                                     CombinazioneClasse : IstitutoListaAdozioni[i].COMBINAZIONE_CLASSE == null ? 'N.D' :  IstitutoListaAdozioni[i].COMBINAZIONE_CLASSE,
                                                     ListaTitoliClasse  : []
                                                  }) 
+
+              var CombinazioneExist = $scope.ListaCombinazioni.findIndex(function(ACombinazione){return(ACombinazione == IstitutoListaAdozioni[i].COMBINAZIONE_CLASSE);});
+              if(CombinazioneExist == -1)
+                 $scope.ListaCombinazioni.push(IstitutoListaAdozioni[i].COMBINAZIONE_CLASSE);
+
+              var AnnoExist = $scope.ListaAnni.findIndex(function(AAnno){return(AAnno == IstitutoListaAdozioni[i].ANNO_CLASSE);});
+              if(AnnoExist == -1)
+                 $scope.ListaAnni.push(IstitutoListaAdozioni[i].ANNO_CLASSE);
             }
             $scope.IstitutoListaAdozioni[$scope.IstitutoListaAdozioni.length-1].ListaTitoliClasse.push({
                                                                                                          Titolo         : IstitutoListaAdozioni[i].NOME_TITOLO,
@@ -362,6 +382,16 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                                                                                                        })
             ClassKey =  IstitutoListaAdozioni[i].CLASSE; 
         }
+
+        $scope.ListaAnni.sort();
+        $scope.ListaCombinazioni.sort();
+        $scope.IstitutoListaAdozioni.sort((adozione_1, adozione_2) => {
+                                                                        const compareCombinazione = adozione_1.CombinazioneClasse.localeCompare(adozione_2.CombinazioneClasse);
+                                                                        const compareAnno         = adozione_1.AnnoClasse.localeCompare(adozione_2.AnnoClasse);
+                                                                        const compareSezione      = adozione_1.SezioneClasse.localeCompare(adozione_2.SezioneClasse);
+
+                                                                        return compareCombinazione || compareAnno || compareSezione;
+                                                                      })
         
            $mdDialog.show({ 
                             controller          : AdozioniIstitutoController,
@@ -2443,4 +2473,37 @@ SIRIOApp.filter('IstitutoByNomeFiltro',function()
            
            return(ListaFiltrataI);
          }           
+});
+
+SIRIOApp.filter('AdozioneByFiltroDoc',function()
+{
+  return function(IstitutoListaAdozioni,AnnoFiltro,CombinazioneFiltro)
+         {
+           if(AnnoFiltro == -1 && CombinazioneFiltro == -1) 
+              return(IstitutoListaAdozioni);
+           var ListaFiltrata = [];
+           
+           var AdozioneOk = function(Adozione)
+           {  
+              var Result = true;
+              
+              if(AnnoFiltro != -1)
+                if(Adozione.AnnoClasse.toUpperCase().indexOf(AnnoFiltro) < 0)
+                   Result = false;
+              
+              if(CombinazioneFiltro != -1)
+                if(Adozione.CombinazioneClasse.toUpperCase().indexOf(CombinazioneFiltro) < 0)
+                   Result = false;
+              
+              return(Result);
+           }
+           
+           IstitutoListaAdozioni.forEach(function(Adozione)
+           { 
+             if(AdozioneOk(Adozione)) 
+                ListaFiltrata.push(Adozione)                       
+           });
+            
+           return(ListaFiltrata);
+         }
 });
