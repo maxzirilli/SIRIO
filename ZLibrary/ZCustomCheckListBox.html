@@ -1,0 +1,41 @@
+<md-dialog style="padding:5px;">
+  <form ng-cloak>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2 style="font-weight:bold;color:white;">{{TitoloCheckListBox}}</h2>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content style="width:500px;">
+      <div class="md-dialog-content">
+        <p style="font-weight:bold;width:400px;">{{TestoCheckListBox}}</p>
+      </div>
+      <table style="width:100%;text-align:center;" md-row-select="GridOptions_Ck.rowSelection" multiple="{{GridOptions_Ck.multiSelect}}">  
+        <tr>
+          <th></th> 
+          <th style="font-weight:bold;">{{IntestazioneCheckListBox}}</th>
+        </tr>  
+        <tr ng-repeat="elemento in ListaCheckListBox | limitTo : GridOptions_Ck.query.limit : (GridOptions_Ck.query.page - 1) * GridOptions_Ck.query.limit" id={{elemento.Chiave}}>
+          <td><input type="checkbox" ng-model="elemento.Selezionata" ng-click="ModificaValore(elemento)"></td>
+          <td>{{elemento.Descrizione}}</td>
+        </tr>    
+      </table>
+      <md-table-pagination md-limit="GridOptions_Ck.query.limit" 
+                           md-limit-options="GridOptions_Ck.limitOptions" 
+                           md-page="GridOptions_Ck.query.page" 
+                           md-total="{{ListaCheckListBox.length}}" 
+                           md-page-select="GridOptions_Ck.pageSelect" 
+                           md-boundary-links="GridOptions_Ck.boundaryLinks" 
+                           md-on-paginate="logPagination"></md-table-pagination>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row" layout-align="end center">
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="GoOnCheckListBox()">
+        SI
+      </md-button>
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="AnnullaCheckListBox()">
+        NO
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

@@ -19,8 +19,12 @@
                                  case_editrici.GRUPPO AS GRUPPO,
                                  COUNT(CLASSE) AS NR_CLASSI")
                           .
-                          " FROM adozioni_titolo,titoli LEFT OUTER JOIN case_editrici ON (case_editrici.DESCRIZIONE = titoli.EDITORE),
-                                 istituti,classi,tipologie_gruppi_istituti,istituti_gruppi
+                          " FROM adozioni_titolo,
+                                 titoli LEFT OUTER JOIN case_editrici ON (case_editrici.DESCRIZIONE = titoli.EDITORE),
+                                 istituti,
+                                 classi,
+                                 tipologie_gruppi_istituti,
+                                 istituti_gruppi
                            WHERE adozioni_titolo.TITOLO = titoli.CHIAVE
                              AND istituti.TIPOLOGIA = tipologie_gruppi_istituti.TIPOLOGIA
                              AND tipologie_gruppi_istituti.GRUPPO_IST = istituti_gruppi.CHIAVE

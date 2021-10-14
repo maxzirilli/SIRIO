@@ -1,153 +1,147 @@
-{ 
-  "SelectSQL"           : [
-                            { 
-                              "Name" : "BookInfoList",
-                              "SQL"  : "SELECT titoli.CHIAVE,(SELECT SUM(dettaglio_spedizioni.QUANTITA) FROM dettaglio_spedizioni WHERE TITOLO = titoli.CHIAVE AND STATO = 'P') AS QUANTITA_PREN,(SELECT SUM(dettaglio_spedizioni.QUANTITA) FROM dettaglio_spedizioni WHERE TITOLO = titoli.CHIAVE AND STATO = 'S') AS QUANTITA_SPED,titoli.CODICE_ISBN,titoli.TITOLO,titoli.EDITORE,titoli.MATERIA,titoli.POS_MAGAZZINO,titoli.AUTORI,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL, (SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE materie_insegnamento.CHIAVE = titoli.MATERIA) AS NOME_MATERIA FROM titoli {W~FiltroI~(titoli.CHIAVE IN (SELECT TITOLO FROM adozioni_titolo WHERE adozioni_titolo.CLASSE IN (SELECT CHIAVE from classi WHERE ISTITUTO = :FiltroI)))} ORDER BY titoli.TITOLO" 
-                            }
-                          ],
-
-  "SelectInventarioTemporaneo"  : [
-                                    {
-                                      "Name" : "SelectInventoryTemp",
-                                      "SQL"  : "SELECT *,(SELECT CHIAVE FROM titoli WHERE CODICE_ISBN = inventario_temporaneo.CODICE) AS CHIAVE_TITOLO,(SELECT TITOLO FROM titoli WHERE CODICE_ISBN = inventario_temporaneo.CODICE) AS NOME_TITOLO FROM inventario_temporaneo ORDER BY NOME_TITOLO"                                     
-                                    }
-                                  ],
-
-  "SelectAllTitoliInventario" : [
-                                  {
-                                    "Name" : "BookListInventoryAll",
-                                    "SQL"  : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL,titoli.POS_MAGAZZINO FROM titoli WHERE EDITORE IN (SELECT DESCRIZIONE FROM case_editrici WHERE DESCRIZIONE=titoli.EDITORE) ORDER BY TITOLO ASC"
-                                  }
-                                ],
-
-  "SelectSQLNoFilter"         : [
-                                  {
-                                    "Name" : "BookListNoFilter",
-                                    "SQL"  : "SELECT titoli.CHIAVE,titoli.TITOLO,titoli.CODICE_ISBN,titoli.EDITORE FROM titoli ORDER BY TITOLO"
-                                  }
-                                ], 
-                          
-  "SelectSQLFilter"     : [
-                            {
-                              "Name" : "BookListFilter",
-                              "SQL"  : "SELECT titoli.CHIAVE,titoli.TITOLO,titoli.CODICE_ISBN,titoli.POS_MAGAZZINO,titoli.QUANTITA_MGZN FROM titoli WHERE EDITORE IN (SELECT DESCRIZIONE FROM case_editrici WHERE DESCRIZIONE = titoli.EDITORE) ORDER BY TITOLO"
-                            }
-                          ],  
-  
-  "SelectInstituteList" : [
-                            {
-                              "Name" : "InstituteForBook",
-                              "SQL"  : "SELECT istituti.CHIAVE,istituti.NOME FROM istituti WHERE CHIAVE IN (SELECT ISTITUTO FROM istituti_x_titoli WHERE TITOLO=:FiltroT) ORDER BY NOME DESC"                              
-                            }
-                          ],
-
-  "SQLDettaglio"        : [
-                            {
-                              "Name" : "BookDettaglio",
-                              "SQL"  : "SELECT * FROM titoli WHERE CHIAVE=:CHIAVE"
-                            },
-                            {
-                              "Name" : "BookInstitute",
-                              "SQL"  : "SELECT istituti.CHIAVE,istituti.NOME AS ISTITUTO FROM istituti_x_titoli,istituti WHERE TITOLO=:CHIAVE AND istituti.CHIAVE = istituti_x_titoli.ISTITUTO" 
-                            },
-                            {
-                              "Name" : "BookAdoption",
-                              "SQL"  : "SELECT *,(SELECT classi.ANNO FROM classi WHERE classi.CHIAVE = adozioni_titolo.CLASSE) AS ANNO,(SELECT classi.SEZIONE FROM classi WHERE classi.CHIAVE = adozioni_titolo.CLASSE) AS SEZIONE,(SELECT DESCRIZIONE FROM classi_combinazioni WHERE CHIAVE IN (SELECT classi.COMBINAZIONE FROM classi WHERE classi.CHIAVE = adozioni_titolo.CLASSE)) AS COMBINAZIONE,(SELECT ISTITUTO FROM classi WHERE CHIAVE = adozioni_titolo.CLASSE) AS ISTITUTO FROM adozioni_titolo WHERE adozioni_titolo.TITOLO=:CHIAVE"
-                            }                     
-                          ],
-       
-  "EditSQL"             : [
-                            {
-                              "Name" : "InsertBook",
-                              "SQL"  : "INSERT INTO titoli (CHIAVE,CODICE_ISBN,TITOLO,SOTTOTITOLO,MATERIA,AUTORI,EDITORE,VOLUME,POS_MAGAZZINO,PREZZO,QUANTITA_MGZN,QUANTITA_MGZN_VOL) VALUES (:NewKey1,#CODICE_ISBN,#TITOLO,#SOTTOTITOLO,:MATERIA,#AUTORI,#EDITORE,#VOLUME,#POS_MAGAZZINO,#PREZZO,#QUANTITA_MGZN,#QUANTITA_MGZN_VOL)"
-                            },
-                            {
-                              "Name" : "InsertInstituteBook",
-                              "SQL"  : "INSERT INTO istituti_x_titoli (ISTITUTO,TITOLO) VALUES (:ISTITUTO,:TITOLO)"
-                            },
-                            {
-                              "Name" : "InsertInstituteBookAfterInsert",
-                              "SQL"  : "INSERT INTO istituti_x_titoli (ISTITUTO,TITOLO) VALUES (:ISTITUTO,:NewKey1)"
-                            },
-                            {
-                              "Name" : "InsertAdoption",
-                              "SQL"  : "INSERT INTO adozioni_titolo (CHIAVE,TITOLO,CLASSE) VALUES (:NewKey1,:TITOLO,:CLASSE)"
-                            },
-                            {
-                              "Name" : "InsertAdoptionAfterInsert",
-                              "SQL"  : "INSERT INTO adozioni_titolo (CHIAVE,TITOLO,CLASSE) VALUES (:NewKey2,:NewKey1,:CLASSE)"
-                            },                     
-                            {
-                              "Name" : "UpdateBook",
-                              "SQL"  : "CALL UPDATE_TITOLI_LOG_MAGAZZINI(:ChiaveTitolo,#Codice,#Titolo,#Sottotitolo,:Materia,#Autori,#Editore,:Volume,#Prezzo,#PosMgzn,:QuantitaMgzn,:QuantitaMgznVol,:PrenotazNovita)"
-                            },
-                            {
-                              "Name" : "UpdateAdoption",
-                              "SQL"  : "UPDATE adozioni_titolo SET CLASSE=:CLASSE WHERE CHIAVE=:CHIAVE"
-                            },
-                            {
-                              "Name" : "DeleteInstituteBook",
-                              "SQL"  : "DELETE FROM istituti_x_titoli WHERE TITOLO=:TITOLO AND ISTITUTO=:ISTITUTO"
-                            },
-                            {
-                              "Name" : "DeleteAdoptionAll",
-                              "SQL"  : "DELETE FROM adozioni_titolo WHERE TITOLO=:CHIAVE"
-                            },
-                            {                     
-                              "Name" : "DeleteInstituteBookAll",
-                              "SQL"  : "DELETE FROM istituti_x_titoli WHERE TITOLO=:CHIAVE"
-                            },
-                            {
-                              "Name" : "DeleteAdoption",
-                              "SQL"  : "DELETE FROM adozioni_titolo WHERE CHIAVE=:CHIAVE"
-                            },
-                            {
-                              "Name" : "DeleteAdoptionAfterDeleteInstitute",
-                              "SQL"  : "DELETE FROM adozioni_titolo WHERE TITOLO=:TITOLO AND CLASSE IN (SELECT CHIAVE FROM classi WHERE ISTITUTO=:ISTITUTO)"
-                            },
-                            {
-                              "Name" : "DeleteBook",
-                              "SQL"  : "DELETE FROM titoli WHERE CHIAVE=:CHIAVE"
-                            },
-                            {
-                              "Name" : "UpdateDatabaseBook",
-                              "SQL"  : "CALL AGGIORNA_TITOLI_ADOZIONI(#CodiceTitolo,#TitoloTitolo,#SottotitoloTitolo,#AutoriTitolo,#EditoreTitolo,:VolumeTitolo,#DescrizioneMateria,#IstitutoTitolo,#AnnoTitolo,#SezioneTitolo,#DescrizioneCombinazione,#PrezzoTitolo,:NuovaAdozioneTitolo,:DaAcquistareTitolo,:ConsigliatoTitolo)"
-                            },
-                            {
-                              "Name" : "DeleteAllAdoptionTab",
-                              "SQL"  : "DELETE FROM adozioni_titolo"
-                            },
-                            {
-                              "Name" : "UpdateDatabaseBookCatalogDeAgostini",
-                              "SQL"  : "CALL AGGIORNA_TITOLI_FROM_CATALOGHI_DEAGOSTINI(#CodiceTitolo,#TitoloTitolo,#MateriaTitolo,#EditoreTitolo,#AutoreTitolo,:VolumeTitolo,#PrezzoTitolo)"
-                            },
-                            {
-                              "Name" : "ResetAllInventory",
-                              "SQL"  : "CALL CLEAR_INVENTARIO_ALL()"
-                            },
-                            {
-                             "Name" : "ResetGroupInventory",
-                             "SQL"  : "CALL CLEAR_INVENTARIO_GRUPPO(:ChiaveEditore)"
-                            },
-                            {
-                              "Name" : "UpdateBookFromInventory",
-                              "SQL"  : "CALL UPDATE_TITOLI_FROM_INVENTARIO(:ChiaveTitolo,:QuantitaTitolo,:QuantitaVolanteTitolo,#PosizioneMagazzinoTitolo)"
-                            },
-                            {
-                              "Name" : "UpdateInventoryTemp",
-                              "SQL"  : "CALL UPDATE_INVENTARIO_TEMP(#CodiceTit,:QTit,:QVolTit,#UbcznTit)"
-                            },
-                            {
-                              "Name" : "DeleteInventoryTempBook",
-                              "SQL"  : "DELETE FROM inventario_temporaneo WHERE CODICE=#CODICE_CORRISP"
-                            },
-                            {
-                              "Name" : "ResetInventoryTempAll",
-                              "SQL"  : "DELETE FROM inventario_temporaneo"
-                            },
-                            {
-                              "Name" : "EmptyAdozioni_IstitutiTitoli",
-                              "SQL"  : "CALL EMPTY_ADOZIONI_ALL()"
-                            }
-                          ]
-}       
+{
+	"RuoliAbilitati" : "",
+	"SelectSQL" : [
+		{
+			"Name" : "BookInfoList",
+			"SQL" : "SELECT titoli.CHIAVE,(SELECT SUM(dettaglio_spedizioni.QUANTITA) FROM dettaglio_spedizioni WHERE TITOLO = titoli.CHIAVE AND STATO = 'P') AS QUANTITA_PREN,(SELECT SUM(dettaglio_spedizioni.QUANTITA) FROM dettaglio_spedizioni WHERE TITOLO = titoli.CHIAVE AND STATO = 'S') AS QUANTITA_SPED,titoli.CODICE_ISBN,titoli.TITOLO,titoli.EDITORE,titoli.MATERIA,titoli.POS_MAGAZZINO,titoli.AUTORI,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL, (SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE materie_insegnamento.CHIAVE = titoli.MATERIA) AS NOME_MATERIA FROM titoli {W~FiltroI~(titoli.CHIAVE IN (SELECT TITOLO FROM adozioni_titolo WHERE adozioni_titolo.CLASSE IN (SELECT CHIAVE from classi WHERE ISTITUTO = :FiltroI)))} ORDER BY titoli.TITOLO\n"
+		}
+	],
+	"SelectInventarioTemporaneo" : [
+		{
+			"Name" : "SelectInventoryTemp",
+			"SQL" : "SELECT *,(SELECT CHIAVE FROM titoli WHERE CODICE_ISBN = inventario_temporaneo.CODICE) AS CHIAVE_TITOLO,(SELECT TITOLO FROM titoli WHERE CODICE_ISBN = inventario_temporaneo.CODICE) AS NOME_TITOLO FROM inventario_temporaneo ORDER BY NOME_TITOLO\n"
+		}
+	],
+	"SelectAllTitoliInventario" : [
+		{
+			"Name" : "BookListInventoryAll",
+			"SQL" : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL,titoli.POS_MAGAZZINO FROM titoli WHERE EDITORE IN (SELECT DESCRIZIONE FROM case_editrici_amiche WHERE DESCRIZIONE=titoli.EDITORE) ORDER BY TITOLO ASC\n"
+		}
+	],
+	"SelectSQLNoFilter" : [
+		{
+			"Name" : "BookListNoFilter",
+			"SQL" : "SELECT titoli.CHIAVE,titoli.TITOLO,titoli.CODICE_ISBN,titoli.EDITORE FROM titoli ORDER BY TITOLO\n"
+		}
+	],
+	"SelectSQLFilter" : [
+		{
+			"Name" : "BookListFilter",
+			"SQL" : "SELECT titoli.CHIAVE,\n       titoli.TITOLO,\n       titoli.CODICE_ISBN,\n       titoli.POS_MAGAZZINO,\n       titoli.QUANTITA_MGZN\n  FROM titoli \n WHERE EDITORE IN (SELECT DESCRIZIONE FROM case_editrici_amiche WHERE DESCRIZIONE = titoli.EDITORE) \nORDER BY TITOLO\n"
+		}
+	],
+	"SelectInstituteList" : [
+		{
+			"Name" : "InstituteForBook",
+			"SQL" : "SELECT istituti.CHIAVE,istituti.NOME FROM istituti WHERE CHIAVE IN (SELECT ISTITUTO FROM istituti_x_titoli WHERE TITOLO=:FiltroT) ORDER BY NOME DESC\n"
+		}
+	],
+	"SQLDettaglio" : [
+		{
+			"Name" : "BookDettaglio",
+			"SQL" : "SELECT * FROM titoli WHERE CHIAVE=:CHIAVE\n"
+		},
+		{
+			"Name" : "BookInstitute",
+			"SQL" : "SELECT istituti.CHIAVE,istituti.NOME AS ISTITUTO FROM istituti_x_titoli,istituti WHERE TITOLO=:CHIAVE AND istituti.CHIAVE = istituti_x_titoli.ISTITUTO\n"
+		},
+		{
+			"Name" : "BookAdoption",
+			"SQL" : "SELECT *,(SELECT classi.ANNO FROM classi WHERE classi.CHIAVE = adozioni_titolo.CLASSE) AS ANNO,(SELECT classi.SEZIONE FROM classi WHERE classi.CHIAVE = adozioni_titolo.CLASSE) AS SEZIONE,(SELECT DESCRIZIONE FROM classi_combinazioni WHERE CHIAVE IN (SELECT classi.COMBINAZIONE FROM classi WHERE classi.CHIAVE = adozioni_titolo.CLASSE)) AS COMBINAZIONE,(SELECT ISTITUTO FROM classi WHERE CHIAVE = adozioni_titolo.CLASSE) AS ISTITUTO FROM adozioni_titolo WHERE adozioni_titolo.TITOLO=:CHIAVE\n"
+		}
+	],
+	"EditSQL" : [
+		{
+			"Name" : "InsertBook",
+			"SQL" : "INSERT INTO titoli (CHIAVE,CODICE_ISBN,TITOLO,SOTTOTITOLO,MATERIA,AUTORI,EDITORE,VOLUME,POS_MAGAZZINO,PREZZO,QUANTITA_MGZN,QUANTITA_MGZN_VOL) VALUES (:NewKey1,#CODICE_ISBN,#TITOLO,#SOTTOTITOLO,:MATERIA,#AUTORI,#EDITORE,#VOLUME,#POS_MAGAZZINO,#PREZZO,#QUANTITA_MGZN,#QUANTITA_MGZN_VOL)\n"
+		},
+		{
+			"Name" : "InsertInstituteBook",
+			"SQL" : "INSERT INTO istituti_x_titoli (ISTITUTO,TITOLO) VALUES (:ISTITUTO,:TITOLO)\n"
+		},
+		{
+			"Name" : "InsertInstituteBookAfterInsert",
+			"SQL" : "INSERT INTO istituti_x_titoli (ISTITUTO,TITOLO) VALUES (:ISTITUTO,:NewKey1)\n"
+		},
+		{
+			"Name" : "InsertAdoption",
+			"SQL" : "INSERT INTO adozioni_titolo (CHIAVE,TITOLO,CLASSE) VALUES (:NewKey1,:TITOLO,:CLASSE)\n"
+		},
+		{
+			"Name" : "InsertAdoptionAfterInsert",
+			"SQL" : "INSERT INTO adozioni_titolo (CHIAVE,TITOLO,CLASSE) VALUES (:NewKey2,:NewKey1,:CLASSE)\n"
+		},
+		{
+			"Name" : "UpdateBook",
+			"SQL" : "CALL UPDATE_TITOLI_LOG_MAGAZZINI(:ChiaveTitolo,#Codice,#Titolo,#Sottotitolo,:Materia,#Autori,#Editore,:Volume,#Prezzo,#PosMgzn,:QuantitaMgzn,:QuantitaMgznVol,:PrenotazNovita)\n"
+		},
+		{
+			"Name" : "UpdateAdoption",
+			"SQL" : "UPDATE adozioni_titolo SET CLASSE=:CLASSE WHERE CHIAVE=:CHIAVE\n"
+		},
+		{
+			"Name" : "DeleteInstituteBook",
+			"SQL" : "DELETE FROM istituti_x_titoli WHERE TITOLO=:TITOLO AND ISTITUTO=:ISTITUTO\n"
+		},
+		{
+			"Name" : "DeleteAdoptionAll",
+			"SQL" : "DELETE FROM adozioni_titolo WHERE TITOLO=:CHIAVE\n"
+		},
+		{
+			"Name" : "DeleteInstituteBookAll",
+			"SQL" : "DELETE FROM istituti_x_titoli WHERE TITOLO=:CHIAVE\n"
+		},
+		{
+			"Name" : "DeleteAdoption",
+			"SQL" : "DELETE FROM adozioni_titolo WHERE CHIAVE=:CHIAVE\n"
+		},
+		{
+			"Name" : "DeleteAdoptionAfterDeleteInstitute",
+			"SQL" : "DELETE FROM adozioni_titolo WHERE TITOLO=:TITOLO AND CLASSE IN (SELECT CHIAVE FROM classi WHERE ISTITUTO=:ISTITUTO)\n"
+		},
+		{
+			"Name" : "DeleteBook",
+			"SQL" : "DELETE FROM titoli WHERE CHIAVE=:CHIAVE\n"
+		},
+		{
+			"Name" : "UpdateDatabaseBook",
+			"SQL" : "CALL AGGIORNA_TITOLI_ADOZIONI(#CodiceTitolo,#TitoloTitolo,#SottotitoloTitolo,#AutoriTitolo,#EditoreTitolo,:VolumeTitolo,#DescrizioneMateria,#IstitutoTitolo,#AnnoTitolo,#SezioneTitolo,#DescrizioneCombinazione,#PrezzoTitolo,:NuovaAdozioneTitolo,:DaAcquistareTitolo,:ConsigliatoTitolo)\n"
+		},
+		{
+			"Name" : "DeleteAllAdoptionTab",
+			"SQL" : "DELETE FROM adozioni_titolo\n"
+		},
+		{
+			"Name" : "UpdateDatabaseBookCatalogDeAgostini",
+			"SQL" : "CALL AGGIORNA_TITOLI_FROM_CATALOGHI_DEAGOSTINI(#CodiceTitolo,#TitoloTitolo,#MateriaTitolo,#EditoreTitolo,#AutoreTitolo,:VolumeTitolo,#PrezzoTitolo)\n"
+		},
+		{
+			"Name" : "ResetAllInventory",
+			"SQL" : "CALL CLEAR_INVENTARIO_ALL()\n"
+		},
+		{
+			"Name" : "ResetGroupInventory",
+			"SQL" : "CALL CLEAR_INVENTARIO_GRUPPO(:ChiaveEditore)\n"
+		},
+		{
+			"Name" : "UpdateBookFromInventory",
+			"SQL" : "CALL UPDATE_TITOLI_FROM_INVENTARIO(:ChiaveTitolo,:QuantitaTitolo,:QuantitaVolanteTitolo,#PosizioneMagazzinoTitolo)\n"
+		},
+		{
+			"Name" : "UpdateInventoryTemp",
+			"SQL" : "CALL UPDATE_INVENTARIO_TEMP(#CodiceTit,:QTit,:QVolTit,#UbcznTit)\n"
+		},
+		{
+			"Name" : "DeleteInventoryTempBook",
+			"SQL" : "DELETE FROM inventario_temporaneo WHERE CODICE=#CODICE_CORRISP\n"
+		},
+		{
+			"Name" : "ResetInventoryTempAll",
+			"SQL" : "DELETE FROM inventario_temporaneo\n"
+		},
+		{
+			"Name" : "EmptyAdozioni_IstitutiTitoli",
+			"SQL" : "CALL EMPTY_ADOZIONI_ALL()\n"
+		}
+]
+}

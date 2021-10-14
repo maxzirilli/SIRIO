@@ -1,23 +1,45 @@
-{ 
-  "SelectSQL"  : [
-                   {
-                     "Name" : "GroupInfoList",
-                     "SQL"  : "SELECT * FROM gruppi_case_ed ORDER BY DESCRIZIONE"
-                   }
-                 ],
-                
-  "EditSQL"   : [   
-                  {
-                    "Name" : "InsertGroup",
-                    "SQL"  : "INSERT INTO gruppi_case_ed (CHIAVE,DESCRIZIONE) VALUES (:NewKey1,#DESCRIZIONE)"
-                  }, 
-                  {
-                    "Name" : "UpdateGroup",
-                    "SQL"  : "UPDATE gruppi_case_ed SET DESCRIZIONE=#DESCRIZIONE WHERE CHIAVE=:CHIAVE"
-                  },
-                  {
-                    "Name" : "DeleteGroup",
-                    "SQL"  : "DELETE FROM gruppi_case_ed WHERE CHIAVE=:CHIAVE"
-                  }
-                ]        
+{
+	"RuoliAbilitati" : "",
+	"SelectSQL" : [
+		{
+			"Name" : "GroupInfoList",
+			"SQL" : "  SELECT * \n    FROM gruppi_case_ed \nORDER BY DESCRIZIONE\n"
+		},
+		{
+			"Name" : "GroupProvinceList",
+			"SQL" : "SELECT *\n  FROM province_x_gruppi_editoriali\n"
+		}
+	],
+	"EditSQL" : [
+		{
+			"Name" : "InsertGroup",
+			"SQL" : "INSERT INTO gruppi_case_ed (CHIAVE,DESCRIZIONE,RIVALE) VALUES (:NewKey1,#DESCRIZIONE,'F')\n"
+		},
+		{
+			"Name" : "UpdateGroup",
+			"SQL" : "UPDATE gruppi_case_ed SET DESCRIZIONE=#DESCRIZIONE WHERE CHIAVE=:CHIAVE\n"
+		},
+		{
+			"Name" : "DeleteGroup",
+			"SQL" : "DELETE FROM gruppi_case_ed WHERE CHIAVE=:CHIAVE\n"
+		},
+		{
+			"Name" : "AddProvinceToGroup",
+			"SQL" : "INSERT INTO province_x_gruppi_editoriali\n       (PROVINCIA,GRUPPO)VALUES(:Provincia,:Gruppo)\n"
+		},
+		{
+			"Name" : "RemoveProvinceFromGroup",
+			"SQL" : "DELETE \n  FROM province_x_gruppi_editoriali\n WHERE GRUPPO =:Gruppo AND PROVINCIA =:Provincia\n"
+		},
+		{
+			"Name" : "HandleRivalState",
+			"SQL" : "UPDATE gruppi_case_ed\n   SET RIVALE =#Rivale\n WHERE CHIAVE =:Chiave\n"
+		}
+	],
+	"SelectSQLHandled" : [
+		{
+			"Name" : "GroupInfoListHandled",
+			"SQL" : "  SELECT * \n    FROM gruppi_case_ed \n   WHERE RIVALE = 'F'\nORDER BY DESCRIZIONE\n"
+		}
+]
 }

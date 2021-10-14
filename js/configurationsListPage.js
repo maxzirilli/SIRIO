@@ -1,4 +1,4 @@
-SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','ZConfirm','ZPrompt','ZSelect','$sce', function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm,ZPrompt,ZSelect,$sce)
+SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','ZConfirm','ZPrompt','ZSelect','ZCheckListBox','$sce', function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm,ZPrompt,ZSelect,ZCheckListBox,$sce)
 { 
   $scope.ListaConfigurazioni        = ['COMBINAZIONI CLASSI','CASE EDITRICI GESTITE','DATI PAGINA 43',"GRUPPI CASE EDITRICI","LUOGHI DISPONIBILITA' DOCENTI",'MATERIE','PROVINCE GESTITE','TIPOLOGIE ISTITUTI GESTITE','TIPOLOGIE ISTITUTI ESCLUSE'];
   $scope.ConfigurazioneSelezionata  = 0;
@@ -18,6 +18,8 @@ SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformat
   $scope.ListaProvince              = [];
   $scope.ProvinciaInEditing         = {};
   $scope.NuovaProvincia             = false;
+
+  ListaProvinceXGruppi              = [];
 
   $scope.ListaCombinazioni          = [];
   $scope.CombinazioneInEditing      = {};
@@ -311,7 +313,9 @@ $scope.GridOptions_8 = {
                                  Chiave      : ProvinceInfoList[i].CHIAVE,
                                  Descrizione : ProvinceInfoList[i].NOME
                                }
-         $scope.ListaProvince = ProvinceInfoList
+         $scope.ListaProvince        = ProvinceInfoList;
+         $scope.ListaProvinceXGruppi = ProvinceInfoList;
+         $scope.ListaProvinceXGruppi.forEach(function(Provincia){Provincia.Selezionata = false; Provincia.Nuova = true; Provincia.Eliminata = false; });
       }
       else SystemInformation.ApplyOnError('Modello province non conforme','');   
     });
@@ -342,12 +346,13 @@ $scope.GridOptions_8 = {
       CaseInfoList = SystemInformation.FindResults(Results,'PublisherInfoList');
       if(CaseInfoList != undefined)
       { 
-         for(let i = 0;i < CaseInfoList.length;i ++)
+         for(let i = 0; i < CaseInfoList.length; i ++)
          CaseInfoList[i] = {
                              Chiave       : CaseInfoList[i].CHIAVE,
                              Descrizione  : CaseInfoList[i].DESCRIZIONE,
                              GruppoChiave : CaseInfoList[i].GRUPPO == undefined ? -1 : CaseInfoList[i].GRUPPO,
-                             GruppoNome   : CaseInfoList[i].GRUPPO_NOME == undefined ? '' : CaseInfoList[i].GRUPPO_NOME
+                             GruppoNome   : CaseInfoList[i].GRUPPO_NOME == undefined ? '' : CaseInfoList[i].GRUPPO_NOME,
+                             GruppoRivale : CaseInfoList[i].GRUPPO_RIVALE == 'T' ? true : false
                            }
          $scope.ListaCase = CaseInfoList
       } 
@@ -377,16 +382,34 @@ $scope.GridOptions_8 = {
   {
     SystemInformation.GetSQL('PublisherGroup', {}, function(Results)  
     {
-      GruppiInfoList = SystemInformation.FindResults(Results,'GroupInfoList');
+      GruppiInfoList     = SystemInformation.FindResults(Results,'GroupInfoList');
+      GruppiProvinceList = SystemInformation.FindResults(Results,'GroupProvinceList');
+
       if(GruppiInfoList != undefined)
       { 
          for(let i = 0;i < GruppiInfoList.length;i ++)
          GruppiInfoList[i] = {
-                               Chiave      : parseInt(GruppiInfoList[i].CHIAVE),
-                               Descrizione : GruppiInfoList[i].DESCRIZIONE,
-                               Checked     : false
+                               Chiave        : parseInt(GruppiInfoList[i].CHIAVE),
+                               Descrizione   : GruppiInfoList[i].DESCRIZIONE,
+                               Rivale        : GruppiInfoList[i].RIVALE == 'F' ? false : true,
+                               ListaProvince : JSON.parse(JSON.stringify($scope.ListaProvinceXGruppi)),
+                               Checked       : false
                              }
          $scope.ListaGruppi = GruppiInfoList
+         
+         for(let i = 0; i < GruppiInfoList.length; i ++)
+             for(let j = 0; j < GruppiProvinceList.length; j ++)
+             {
+                if(GruppiProvinceList[j].GRUPPO == GruppiInfoList[i].Chiave)
+                {
+                   var ProvinciaTrovataIndex = GruppiInfoList[i].ListaProvince.findIndex(function(AProvincia){return(AProvincia.Chiave == GruppiProvinceList[j].PROVINCIA);}); 
+                   if(ProvinciaTrovataIndex != -1)
+                   {
+                      GruppiInfoList[i].ListaProvince[ProvinciaTrovataIndex].Nuova       = false;
+                      GruppiInfoList[i].ListaProvince[ProvinciaTrovataIndex].Selezionata = true;
+                   }
+                }
+             }
       } 
       else SystemInformation.ApplyOnError('Modello gruppi case editrici non conforme','');   
     });
@@ -1377,6 +1400,36 @@ $scope.GridOptions_8 = {
 
   //GRUPPI CASE EDITRICI  
  
+  $scope.GestisciRivale = function(Gruppo,isRivale)
+  {
+    var GestisciRivale = function()
+    {
+      var $ObjQuery   = { Operazioni : [] }; 
+      var ParamRivale = {
+                          Chiave : Gruppo.Chiave,
+                          Rivale : isRivale ? 'T' : 'F'
+                        }
+      $ObjQuery.Operazioni.push({
+                                  Query     : 'HandleRivalState',
+                                  Parametri : ParamRivale
+                                });
+
+      SystemInformation.PostSQL('PublisherGroup',$ObjQuery,function(Answer)
+      {
+        $scope.RefreshListaGruppi();
+      }); 
+    }
+
+    if(isRivale)
+    {
+       ZConfirm.GetConfirmBox('AVVISO','RENDERE IL GRUPPO ' + Gruppo.Descrizione + ' COME GESTITO DA UN AGENZIA RIVALE?',GestisciRivale,function(){});
+    }
+    else
+    {
+       ZConfirm.GetConfirmBox('AVVISO','RENDERE IL GRUPPO ' + Gruppo.Descrizione + ' COME GESTITO DA PAGINA43?',GestisciRivale,function(){});
+    }
+  }
+
   $scope.ModificaGruppo = function (Gruppo)
   {
     var ModificaGruppo = function(Answer)
@@ -1393,6 +1446,56 @@ $scope.GridOptions_8 = {
       }
     }   
     ZPrompt.GetPromptBox('MODIFICA INSERIMENTO','MODIFICA GRUPPO CASA EDITRICE: ',Gruppo.Descrizione,ModificaGruppo,function(){});         
+  }
+
+  $scope.GetProvinceGruppo = function(Gruppo)
+  {
+     var Result = '';
+     for(let i = 0;i < Gruppo.ListaProvince.length;i ++)
+     {
+        if(Gruppo.ListaProvince[i].Selezionata)
+           Result += Gruppo.ListaProvince[i].Descrizione + '</br>';
+     }
+     return($sce.trustAsHtml(Result.substr(0,Result.length)));
+  }
+
+  $scope.ModificaProvinceGruppo = function (Gruppo)
+  {
+    var ModificaProvinceGruppo = function(Answer)
+    {
+      var ProvinceGestite = Answer;
+      var $ObjQuery       = { Operazioni : [] };  
+
+      for(let i = 0; i < ProvinceGestite.length; i ++)
+      {
+          var Param = {
+                        Gruppo    : Gruppo.Chiave,
+                        Provincia : ProvinceGestite[i].Chiave
+                      }
+
+          if(ProvinceGestite[i].Selezionata)
+          {
+             if(ProvinceGestite[i].Nuova)
+                $ObjQuery.Operazioni.push({
+                                         Query     : 'AddProvinceToGroup',
+                                         Parametri : Param
+                                       });
+          }
+          else 
+          {
+            if(!ProvinceGestite[i].Nuova)
+               $ObjQuery.Operazioni.push({
+                                           Query     : 'RemoveProvinceFromGroup',
+                                           Parametri : Param
+                                         }); 
+          }
+      } 
+      SystemInformation.PostSQL('PublisherGroup',$ObjQuery,function(Answer)
+      {
+        $scope.RefreshListaGruppi();
+      }); 
+    } 
+    ZCheckListBox.GetCheckListBox('GESTISCI PROVINCE','MODIFICA PROVINCE CORRELATE: ','PROVINCIA',Gruppo.ListaProvince,ModificaProvinceGruppo,$scope.RefreshListaGruppi());         
   }
   
   $scope.NuovoGruppo = function ()

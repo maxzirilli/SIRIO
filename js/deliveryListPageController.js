@@ -29,7 +29,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
   {
     SystemInformation.GetSQL('PublisherGroup', {}, function(Results)  
     {
-      GruppiInfoList = SystemInformation.FindResults(Results,'GroupInfoList');
+      GruppiInfoList = SystemInformation.FindResults(Results,'GroupInfoListHandled');
       if(GruppiInfoList != undefined)
       { 
          for(let i = 0;i < GruppiInfoList.length;i ++)
@@ -42,7 +42,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
          $scope.ListaGruppiPopup = GruppiInfoList
       } 
       else SystemInformation.ApplyOnError('Modello gruppi case editrici non conforme','');   
-    });
+    },'SelectSQLHandled');
   }
   
   $scope.IsAdministrator = function ()
@@ -978,7 +978,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
      var Result = '';
      for(let i = 0;i < Spedizione.DettagliTitoli.length;i ++)
      {
-         Result += Spedizione.DettagliTitoli[i].CodiceTitolo + ' - ' + Spedizione.DettagliTitoli[i].NomeTitolo + ' - ' + Spedizione.DettagliTitoli[i].StatoTitolo + ' IN DATA ' + $scope.ConvertiData(Spedizione.DettagliTitoli[i]); + '</br>';
+         Result += Spedizione.DettagliTitoli[i].CodiceTitolo + ' - ' + Spedizione.DettagliTitoli[i].NomeTitolo + '</br><span style="font-weight:bold;">' + Spedizione.DettagliTitoli[i].StatoTitolo + ' IN DATA ' + $scope.ConvertiData(Spedizione.DettagliTitoli[i]) + '</span></br>';
      }
      
      return($sce.trustAsHtml(Result.substr(0,Result.length)));

@@ -55,7 +55,7 @@
         <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA CASA EDITRICE GESTITA" ng-click="ModificaCasa(casa)"></td>
         <td><img src="img/groups.png" style="width:30px;height:auto;" title="MODIFICA GRUPPO CASA EDITRICE GESTITA" ng-click="ModificaGruppoCasa(casa)"></td>         
         <td>{{casa.Descrizione}}</td>
-        <td>{{casa.GruppoNome}}</td>
+        <td>{{casa.GruppoNome}}<span ng-if="casa.GruppoRivale"> ⚔</span></td>
       </tr>    
     </table>
     <md-table-pagination md-limit="GridOptions_6.query.limit" 
@@ -119,12 +119,21 @@
       <tr>
         <th></th>
         <th></th> 
+        <th></th>
+        <th></th>
         <th style="font-weight:bold;">NOME</th>
+        <th style="font-weight:bold;">PROVINCE</th>
       </tr>  
       <tr ng-repeat="gruppo in ListaGruppi | limitTo : GridOptions_8.query.limit : (GridOptions_8.query.page - 1) * GridOptions_8.query.limit" id={{gruppo.Chiave}}>
         <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA GRUPPO" ng-click="EliminaGruppo(gruppo)"></td> 
-        <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA GRUPPO" ng-click="ModificaGruppo(gruppo)"></td>        
+        <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA GRUPPO" ng-click="ModificaGruppo(gruppo)"></td> 
+        <td><img src="img/provinceItaly.png" style="width:30px;height:auto;" title="MODIFICA PROVINCE" ng-click="ModificaProvinceGruppo(gruppo)"></td>       
+        
+        <td ng-if="!(gruppo.Rivale)"><img src="img/friend.png" style="width:30px;height:auto;" title="RENDI GRUPPO RIVALE" ng-click="GestisciRivale(gruppo,true)"></td>        
+        <td ng-if="gruppo.Rivale"><img src="img/rivals.png" style="width:30px;height:auto;" title=" RENDI GRUPPO GESTITO" ng-click="GestisciRivale(gruppo,false)"></td>  
+        
         <td>{{gruppo.Descrizione}}</td>
+        <td style="text-align:center;" ng-bind-html="GetProvinceGruppo(gruppo)"></td>></td>
       </tr>    
     </table>
     <md-table-pagination md-limit="GridOptions_8.query.limit" 

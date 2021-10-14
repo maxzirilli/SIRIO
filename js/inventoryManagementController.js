@@ -333,7 +333,7 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
       $scope.ListaGruppiPopup = [];
       SystemInformation.GetSQL('PublisherGroup', {}, function(Results)  
       {
-        GruppiInfoList = SystemInformation.FindResults(Results,'GroupInfoList');
+        GruppiInfoList = SystemInformation.FindResults(Results,'GroupInfoListHandled');
         if(GruppiInfoList != undefined)
         { 
            for(let i = 0;i < GruppiInfoList.length;i ++)
@@ -346,7 +346,7 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
            $scope.SelezioneGruppiInventario();
         } 
         else SystemInformation.ApplyOnError('Modello gruppi case editrici non conforme','');   
-      });
+      },'SelectSQLHandled');
     }
     
     var SecondaConferma = function()

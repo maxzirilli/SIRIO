@@ -6,46 +6,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http,$mdDial
   ScopeHeaderController.CheckButtons();
   $scope.MostraListaSpedizioni = false;  
   
-  /*$scope.ApriListaUtenti = function()
-  {    
-    $state.go("userListPage"); 
-  }  
-  
-  $scope.ApriListaIstituti = function()
-  {    
-    $state.go("instituteListPage"); 
-  }
-  
-  $scope.ApriListaDocenti = function()
-  {    
-    $state.go("teacherListPage"); 
-  } 
-
-  $scope.ApriListaTitoli = function()
-  {    
-    $state.go("titleListPage"); 
-  }  
-
-  $scope.ApriListaOrdiniIngresso = function()
-  {    
-    $state.go("orderEntryPage"); 
-  } 
-  
-  $scope.ApriListaConfigurazioni = function()
-  {    
-    $state.go("configurationsListPage"); 
-  } 
-
-  $scope.ApriListaSpedizioni = function()
-  {    
-    $state.go("deliveryListPage"); 
-  } 
-
-  $scope.ApriGestioneComunicazioni = function()
-  {
-    $state.go("communicationPage");
-  }*/
-  
   $scope.ApriCsvIstitutiUpload = function()
   {    
     $state.go("csvInstitutePage"); 

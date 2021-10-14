@@ -106,7 +106,8 @@
           <md-option ng-value="-1">QUALSIASI</md-option>
           <md-option ng-value="-2">GESTITI</md-option> 
           <md-option ng-value="-3">NON GESTITI</md-option> 
-          <md-option ng-repeat="gruppoEditoriale in ListaGruppiEditoriali" ng-value="gruppoEditoriale.Chiave">{{gruppoEditoriale.Descrizione | uppercase}}</md-option>
+          <md-option ng-value="-4">SOLO RIVALI</md-option> 
+          <md-option ng-repeat="gruppoEditoriale in ListaGruppiEditoriali" ng-value="gruppoEditoriale.Chiave">{{gruppoEditoriale.Descrizione | uppercase}}<span ng-if="gruppoEditoriale.Rivale"> ⚔</span></md-option>
         </md-optgroup>
         </md-select>
       </md-input-container>

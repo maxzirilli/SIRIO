@@ -100,6 +100,7 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
          for(let i = 0;i < ListaGruppiEditorialiTmp.length;i ++)
              ListaGruppiEditorialiTmp[i] = {
                                              Chiave      : parseInt(ListaGruppiEditorialiTmp[i].CHIAVE),
+                                             Rivale      : ListaGruppiEditorialiTmp[i].RIVALE == 'T' ? true : false,
                                              Descrizione : ListaGruppiEditorialiTmp[i].DESCRIZIONE
                                            }
          $scope.ListaGruppiEditoriali = ListaGruppiEditorialiTmp

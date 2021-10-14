@@ -1,10 +1,15 @@
 {
  "Version": {
   "Major": 1,
-  "Minor": 25,
+  "Minor": 26,
   "Release": 8
  },
  "Storia": [
+  "Versione 1.27.8   14 Ottobre 2021 - Tommaso Martinoli",
+  "                  - NEW: aggiunto campo Rivale nella tabella gruppi_case_ed",
+  "                  - NEW: aggiunte view case_editrici_amiche e case_editrici_nemiche",
+  "Versione 1.26.8   12 Ottobre 2021 - Tommaso Martinoli",
+  "                  - NEW: aggiunta tabella di correlazione province_x_gruppi_editoriali",
   "Versione 1.25.8   30 Agosto 2021 - Tommaso Martinoli",
   "                  - CHG: Con la procedura di importazione generica/ex-deagostini dei titoli non vengono più generati nuovi editori gestiti",
   "Versione 1.24.8   24 Agosto 2021 - Tommaso Martinoli",
@@ -152,6 +157,80 @@
      "SUCCESS"
     ]
    },
+   "ForeignKeys": [],
+   "UniqueKeys": [],
+   "Indexes": [],
+   "Triggers": []
+  },
+  {
+   "Nome": "case_editrici_amiche",
+   "Campi": [
+    {
+     "Nome": "CHIAVE",
+     "IsNullable": false,
+     "DataType": "int(11)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "DESCRIZIONE",
+     "IsNullable": true,
+     "DataType": "varchar(255)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": "NULL",
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "GRUPPO",
+     "IsNullable": true,
+     "DataType": "int(11)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": "NULL",
+     "SQLAfterAddedColumn": null
+    }
+   ],
+   "PrimaryKey": null,
+   "ForeignKeys": [],
+   "UniqueKeys": [],
+   "Indexes": [],
+   "Triggers": []
+  },
+  {
+   "Nome": "case_editrici_nemiche",
+   "Campi": [
+    {
+     "Nome": "CHIAVE",
+     "IsNullable": false,
+     "DataType": "int(11)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": null,
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "DESCRIZIONE",
+     "IsNullable": true,
+     "DataType": "varchar(255)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": "NULL",
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "GRUPPO",
+     "IsNullable": true,
+     "DataType": "int(11)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": "NULL",
+     "SQLAfterAddedColumn": null
+    }
+   ],
+   "PrimaryKey": null,
    "ForeignKeys": [],
    "UniqueKeys": [],
    "Indexes": [],
@@ -387,6 +466,15 @@
      "AutoIncrement": false,
      "Commento": "",
      "DefaultValue": "NULL",
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "RIVALE",
+     "IsNullable": true,
+     "DataType": "char(1)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": "'F'",
      "SQLAfterAddedColumn": null
     }
    ],
@@ -1032,6 +1120,47 @@
      "Nome": "FK_DOCENTI_PROVINCE_ALL",
      "Campo": "PROVINCIA",
      "RefTable": "province_all",
+     "RefField": "CHIAVE"
+    }
+   ],
+   "UniqueKeys": [],
+   "Indexes": [],
+   "Triggers": []
+  },
+  {
+   "Nome": "province_x_gruppi_editoriali",
+   "Campi": [
+    {
+     "Nome": "PROVINCIA",
+     "IsNullable": true,
+     "DataType": "int(11)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": "NULL",
+     "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "GRUPPO",
+     "IsNullable": true,
+     "DataType": "int(11)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": "NULL",
+     "SQLAfterAddedColumn": null
+    }
+   ],
+   "PrimaryKey": null,
+   "ForeignKeys": [
+    {
+     "Nome": "FK_PROVINCE_X_GRUPPI_EDITORIALI_GRUPPI_CASE_ED",
+     "Campo": "GRUPPO",
+     "RefTable": "gruppi_case_ed",
+     "RefField": "CHIAVE"
+    },
+    {
+     "Nome": "FK_PROVINCE_X_GRUPPI_EDITORIALI_PROVINCE",
+     "Campo": "PROVINCIA",
+     "RefTable": "province",
      "RefField": "CHIAVE"
     }
    ],
@@ -2827,7 +2956,7 @@
    "Nome": "AGGIORNA_TITOLI_FROM_CATALOGHI_DEAGOSTINI",
    "Type": "PROCEDURE",
    "ReturnType": null,
-   "Body": "BEGIN\r\n\r\n  DECLARE NewKey INT;\r\n  DECLARE KeyMateria INT;\r\n  DECLARE KeyEditore INT;\r\n\r\n  SELECT MAX(CHIAVE)\r\n    FROM materie_insegnamento \r\n\tWHERE UPPER(DESCRIZIONE) = MateriaTitolo \r\n\t INTO KeyMateria;\r\n  \r\n  IF KeyMateria IS NULL THEN\r\n\t  UPDATE gen_key SET CHIAVE = CHIAVE + 1;\r\n\t  SELECT MAX(CHIAVE) FROM gen_key INTO KeyMateria; \r\n     INSERT INTO materie_insegnamento(CHIAVE,DESCRIZIONE) VALUES (KeyMateria,MateriaTitolo);\r\n  END IF;\r\n  \r\n  SELECT MAX(CHIAVE)\r\n    FROM  case_editrici \r\n   WHERE UPPER(DESCRIZIONE) = EditoreTitolo  \r\n    INTO KeyEditore;\r\n  \r\n  IF (SELECT count(*) FROM titoli WHERE CODICE_ISBN = CodiceTitolo) > 0 THEN\r\n      UPDATE titoli \r\n\t\t   SET TITOLO = TitoloTitolo, EDITORE = EditoreTitolo, PREZZO = PrezzoTitolo, VOLUME = VolumeTitolo \r\n\t\t WHERE CODICE_ISBN = CodiceTitolo;\r\n  ELSE\r\n      UPDATE gen_key SET CHIAVE = CHIAVE + 1;\r\n      SELECT MAX(CHIAVE) FROM gen_key INTO NewKey; \r\n      INSERT INTO titoli (CHIAVE,CODICE_ISBN,TITOLO,SOTTOTITOLO,AUTORI,EDITORE,MATERIA,VOLUME,PREZZO) VALUES (NewKey,CodiceTitolo,TitoloTitolo,null,AutoreTitolo,EditoreTitolo,KeyMateria,VolumeTitolo,PrezzoTitolo);\r\n  END IF;\r\n\t  \r\nEND",
+   "Body": "BEGIN\r\n\r\n  DECLARE NewKey INT;\r\n  DECLARE KeyMateria INT;\r\n  DECLARE KeyEditore INT;\r\n\r\n  SELECT MAX(CHIAVE)\r\n    FROM materie_insegnamento \r\n\tWHERE UPPER(DESCRIZIONE) = MateriaTitolo \r\n\t INTO KeyMateria;\r\n  \r\n  IF KeyMateria IS NULL THEN\r\n\t  UPDATE gen_key SET CHIAVE = CHIAVE + 1;\r\n\t  SELECT MAX(CHIAVE) FROM gen_key INTO KeyMateria; \r\n     INSERT INTO materie_insegnamento(CHIAVE,DESCRIZIONE) VALUES (KeyMateria,MateriaTitolo);\r\n  END IF;\r\n  \r\n  SELECT MAX(CHIAVE)\r\n    FROM  case_editrici \r\n   WHERE UPPER(DESCRIZIONE) = EditoreTitolo  \r\n    INTO KeyEditore;\r\n  \r\n  IF KeyEditore IS NULL THEN\r\n     UPDATE gen_key SET CHIAVE = CHIAVE + 1;\r\n     SELECT MAX(CHIAVE) FROM gen_key INTO KeyEditore; \r\n     INSERT INTO case_editrici(CHIAVE,DESCRIZIONE) VALUES (KeyEditore,EditoreTitolo);\r\n  END IF;\r\n  \r\n  IF (SELECT count(*) FROM titoli WHERE CODICE_ISBN = CodiceTitolo) > 0 THEN\r\n      UPDATE titoli \r\n\t\t   SET TITOLO = TitoloTitolo, EDITORE = EditoreTitolo, PREZZO = PrezzoTitolo, VOLUME = VolumeTitolo \r\n\t\t WHERE CODICE_ISBN = CodiceTitolo;\r\n  ELSE\r\n      UPDATE gen_key SET CHIAVE = CHIAVE + 1;\r\n      SELECT MAX(CHIAVE) FROM gen_key INTO NewKey; \r\n      INSERT INTO titoli (CHIAVE,CODICE_ISBN,TITOLO,SOTTOTITOLO,AUTORI,EDITORE,MATERIA,VOLUME,PREZZO) VALUES (NewKey,CodiceTitolo,TitoloTitolo,null,AutoreTitolo,EditoreTitolo,KeyMateria,VolumeTitolo,PrezzoTitolo);\r\n  END IF;\r\n\t  \r\nEND",
    "Parametri": [
     {
      "Nome": "CodiceTitolo",

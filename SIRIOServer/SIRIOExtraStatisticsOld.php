@@ -88,86 +88,86 @@
                return $RigaTmp;
             }
 
-            private function GetWhereConditions($Parametri,$ParametriPrimaStatistica)
+            private function GetStatisticsWhere($ListaParametri,$PrimaOSeconda)
             {
                $CondizioniWhere = array();
-               $AStringa        = "";     
-               $Condizione      = new stdClass();
+               $AStringa        = "";
+               
+               $Condizione = new stdClass();
 
-               if($Parametri->FiltroPromotore != -1)
+               if($ListaParametri->FiltroPromotore != -1)
                {
-                 $Condizione = "istituti.PROMOTORE =".$Parametri->FiltroPromotore;
+                 $Condizione = "istituti.PROMOTORE =".$ListaParametri->FiltroPromotore;
                  array_push($CondizioniWhere,$Condizione);
                } 
 
-               if($Parametri->FiltroGruppoIst != -1)
+               if($ListaParametri->FiltroGruppoIst != -1)
                {
-                  if($Parametri->FiltroGruppoIst == -2)
+                  if($ListaParametri->FiltroGruppoIst == -2)
                      $Condizione = "istituti_gruppi.LICEO = 1";
-                  else $Condizione = "tipologie_gruppi_istituti.GRUPPO_IST =" .$Parametri->FiltroGruppoIst;                    
+                  else $Condizione = "tipologie_gruppi_istituti.GRUPPO_IST =" .$ListaParametri->FiltroGruppoIst;                    
                   array_push($CondizioniWhere,$Condizione);
                } 
 
-               if($Parametri->FiltroProvincia != -1)
+               if($ListaParametri->FiltroProvincia != -1)
                {
-                 $Condizione = "istituti.PROVINCIA =".$Parametri->FiltroProvincia;
+                 $Condizione = "istituti.PROVINCIA =".$ListaParametri->FiltroProvincia;
                  array_push($CondizioniWhere,$Condizione);
                } 
 
-               if($Parametri->FiltroTitolo != -1)
+               if($ListaParametri->FiltroTitolo != -1)
                {
-                 if($ParametriPrimaStatistica == -1)
-                    $Condizione = "adozioni_titolo.TITOLO =".$Parametri->FiltroTitolo;   
-                 else $Condizione = "statistiche.TITOLO =".$Parametri->FiltroTitolo;
+                 $Condizione = "statistiche.TITOLO =".$ListaParametri->FiltroTitolo;
                  array_push($CondizioniWhere,$Condizione);
                }
 
-               if($Parametri->FiltroIstituto != -1)
+               if($ListaParametri->FiltroIstituto != -1)
                {
-                 if($ParametriPrimaStatistica == -1)
-                    $Condizione = "istituti.CHIAVE =".$Parametri->FiltroIstituto;
-                 else $Condizione = "statistiche.ISTITUTO =".$Parametri->FiltroIstituto;
+                 $Condizione = "statistiche.ISTITUTO =".$ListaParametri->FiltroIstituto;
                  array_push($CondizioniWhere,$Condizione);
                }
 
-               if($Parametri->FiltroMateria != -1)
+               if($ListaParametri->FiltroMateria != -1)
                {
-                 $Condizione = "titoli.MATERIA =".$Parametri->FiltroMateria;
+                 $Condizione = "titoli.MATERIA =".$ListaParametri->FiltroMateria;
                  array_push($CondizioniWhere,$Condizione);
                }
 
-               switch($Parametri->FiltroGruppoEd)
+               switch($ListaParametri->FiltroGruppoEd)
                {
                  case -1 : break;
                  case -2 : array_push($CondizioniWhere,"case_editrici.CHIAVE IN (SELECT CHIAVE FROM case_editrici_amiche)");
                            array_push($CondizioniWhere,"istituti.PROVINCIA IN (SELECT PROVINCIA FROM province_x_gruppi_editoriali WHERE GRUPPO = case_editrici.GRUPPO)");
                            break;
-                 case -3 : array_push($CondizioniWhere,"(case_editrici.DESCRIZIONE IS NULL OR " . 
-                                                       "(case_editrici.CHIAVE IN (SELECT CHIAVE FROM case_editrici_nemiche)))");
+                 case -3 : array_push($CondizioniWhere,"case_editrici.DESCRIZIONE IS NULL OR " . 
+                                                       "(NOT (case_editrici.CHIAVE IN (SELECT CHIAVE FROM case_editrici_amiche))");
                            break;
                  case -4 : array_push($CondizioniWhere,"case_editrici.CHIAVE IN (SELECT CHIAVE FROM case_editrici_nemiche)");
                            break;
-                 default : array_push($CondizioniWhere,"titoli.EDITORE = case_editrici.DESCRIZIONE AND case_editrici.GRUPPO =" . $Parametri->FiltroGruppoEd);
-                           array_push($CondizioniWhere,"istituti.PROVINCIA IN (SELECT PROVINCIA FROM province_x_gruppi_editoriali WHERE GRUPPO = " . $Parametri->FiltroGruppoEd . ")");
+                 default : array_push($CondizioniWhere,"titoli.EDITORE = case_editrici.DESCRIZIONE AND case_editrici.GRUPPO =" . $ListaParametri->FiltroGruppoEd);
+                           array_push($CondizioniWhere,"istituti.PROVINCIA IN (SELECT PROVINCIA FROM province_x_gruppi_editoriali WHERE GRUPPO = " . $ListaParametri->FiltroGruppoEd . ")");
                            break;
                }
 
-               if($Parametri->FiltroVolUniciPrimi == "T")
+               if($ListaParametri->FiltroVolUniciPrimi == "T")
                {
                  $Condizione = "(titoli.VOLUME = 0 OR titoli.VOLUME = 1)";
                  array_push($CondizioniWhere,$Condizione);
                }
 
-               if($ParametriPrimaStatistica == 1)
+               if($PrimaOSeconda == 1)
                {
-                  $Condizione = "statistiche.DATA ='".$Parametri->PrimaStatistica."'";
-                  array_push($CondizioniWhere,$Condizione);
-               }
-               if($ParametriPrimaStatistica == 2)
-               {
-                  if($Parametri->SecondaStatistica != -1)
+                  if($ListaParametri->PrimaStatistica != -1)
                   {
-                    $Condizione = "statistiche.DATA ='".$Parametri->SecondaStatistica."'";
+                    $Condizione = "statistiche.DATA ='".$ListaParametri->PrimaStatistica."'";
+                    array_push($CondizioniWhere,$Condizione);
+                  }
+               }
+               else
+               {
+                  if($ListaParametri->SecondaStatistica != -1)
+                  {
+                    $Condizione = "statistiche.DATA ='".$ListaParametri->SecondaStatistica."'";
                     array_push($CondizioniWhere,$Condizione);
                   }
                }
@@ -184,15 +184,82 @@
                $SecondaStatistica            = array();
                $JSONAnswer->StatisticaFinale = array();
 
-               //PRIMA STATISTICA
+               //PRIMA STATISTICA                 
                if($Parametri->PrimaStatistica == -1)
                {
-                  $StringaWhere = $this->GetWhereConditions($Parametri,-1);
-                  $SQLBody      = Global_GetSqlAdozioniAttuali($StringaWhere);
+                  $CondizioniWhere = array();
+                  $StringaWhere    = "";
+
+                  $Condizione = new stdClass();
+                  
+                  if($Parametri->FiltroPromotore != -1)
+                  {
+                    $Condizione = "istituti.PROMOTORE =".$Parametri->FiltroPromotore;
+                    array_push($CondizioniWhere,$Condizione);
+                  } 
+                  
+                  if($Parametri->FiltroGruppoIst != -1)
+                  {
+                    if($Parametri->FiltroGruppoIst == -2)
+                       $Condizione = "istituti_gruppi.LICEO = 1";
+                    else $Condizione = "tipologie_gruppi_istituti.GRUPPO_IST =" .$Parametri->FiltroGruppoIst;                    
+                    array_push($CondizioniWhere,$Condizione);
+                  }  
+                  
+                  if($Parametri->FiltroProvincia != -1)
+                  {
+                    $Condizione = "istituti.PROVINCIA =".$Parametri->FiltroProvincia;
+                    array_push($CondizioniWhere,$Condizione);
+                  } 
+                  
+                  if($Parametri->FiltroTitolo != -1)
+                  {
+                    $Condizione = "adozioni_titolo.TITOLO =".$Parametri->FiltroTitolo;
+                    array_push($CondizioniWhere,$Condizione);
+                  }
+                  
+                  if($Parametri->FiltroIstituto != -1)
+                  {
+                    $Condizione = "istituti.CHIAVE =".$Parametri->FiltroIstituto;
+                    array_push($CondizioniWhere,$Condizione);
+                  }
+                  
+                  if($Parametri->FiltroMateria != -1)
+                  {
+                    $Condizione = "titoli.MATERIA =".$Parametri->FiltroMateria;
+                    array_push($CondizioniWhere,$Condizione);
+                  }
+                  
+                  switch($Parametri->FiltroGruppoEd)
+                  {
+                    case -1 : break;
+                    case -2 : array_push($CondizioniWhere,"case_editrici.CHIAVE IN (SELECT CHIAVE FROM case_editrici_amiche)");
+                              array_push($CondizioniWhere,"istituti.PROVINCIA IN (SELECT PROVINCIA FROM province_x_gruppi_editoriali WHERE GRUPPO = case_editrici.GRUPPO)");
+                              break;
+                    case -3 : array_push($CondizioniWhere,"case_editrici.DESCRIZIONE IS NULL OR " . 
+                                                          "(NOT (case_editrici.CHIAVE IN (SELECT CHIAVE FROM case_editrici_amiche))");
+                              break;
+                    case -4 : array_push($CondizioniWhere,"case_editrici.CHIAVE IN (SELECT CHIAVE FROM case_editrici_nemiche)");
+                              break;
+                    default : array_push($CondizioniWhere,"titoli.EDITORE = case_editrici.DESCRIZIONE AND case_editrici.GRUPPO =" . $Parametri->FiltroGruppoEd);
+                              array_push($CondizioniWhere,"istituti.PROVINCIA IN (SELECT PROVINCIA FROM province_x_gruppi_editoriali WHERE GRUPPO = " . $Parametri->FiltroGruppoEd . ")");
+                              break;
+                  }
+
+                  if($Parametri->FiltroVolUniciPrimi == "T")
+                  {
+                    $Condizione = "( titoli.VOLUME = 0 OR titoli.VOLUME = 1 )";
+                    array_push($CondizioniWhere,$Condizione);
+                  }
+                  
+                  for($i = 0;$i < Count($CondizioniWhere);$i++)
+                      $StringaWhere .=  " AND " . $CondizioniWhere[$i];
+
+                  $SQLBody = Global_GetSqlAdozioniAttuali($StringaWhere);
                }
                else 
                {
-                  $StringaWhere = $this->GetWhereConditions($Parametri,1);
+                  $StringaWhere = $this->GetStatisticsWhere($Parametri,1);
                   $SQLBody      = $this->GetSQLFromStatistic($StringaWhere);
                }
 
@@ -203,10 +270,12 @@
                      $RigaTmp = $this->CreateTmpRow($Row);
                      array_push($PrimaStatistica,$RigaTmp);
                    }
-               } 
-
-               //SECONDA STATISTICA
-               $StringaWhere = $this->GetWhereConditions($Parametri,2);
+               }  
+  
+               //SECONDA STATISTICA 
+               $StringaWhere = "";
+               $StringaWhere = $this->GetStatisticsWhere($Parametri,2);
+               $SQLBody      = "";
                $SQLBody      = $this->GetSQLFromStatistic($StringaWhere);
 
                if($Query = $PDODBase->query($SQLBody))
@@ -218,7 +287,6 @@
                    }
                }
 
-               //STATISTICA FINALE
                $IndexPrimo   = 0;
                $IndexSecondo = 0;
 

@@ -1,60 +1,55 @@
-{ 
-  "SelectSQL"       : [
-                        {  
-                          "Name" : "ProvinceList",
-                          "SQL"  : "SELECT * FROM province ORDER BY NOME ASC"          
-                        },
-                        {
-                          "Name" : "ProvinceListAll",
-                          "SQL"  : "SELECT * FROM province_all ORDER BY NOME ASC"
-                        },
-                        {
-                          "Name" : "ProvinceListAllOnlyHandled",
-                          "SQL"  : "SELECT * FROM province_all WHERE UPPER(NOME) IN (SELECT province.NOME FROM province WHERE province.NOME=province_all.NOME)"
-                        },
-                        {
-                          "Name" : "InstituteTypeList",
-                          "SQL"  : "SELECT * FROM tipologie_istituto ORDER BY DESCRIZIONE ASC"
-                        },
-                        {
-                          "Name" : "InstituteCodeAll",
-                          "SQL"  : "SELECT istituti.CODICE FROM istituti WHERE NASCOSTO <> 1"
-                        }
-                      ],
- 
- "SelectDataImpSQL" : [
-                        {
-                          "Name" : "LastUpdateMailChimp",
-                          "SQL"  : "SELECT ULTIMA_IMPORTAZIONE_MAIL FROM configurazioni"
-                        }
-                      ],
-    
-  
-  "SelectTitoliSQL" : [
-                        {
-                          "Name" : "BookList",
-                          "SQL"  : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,titoli.AUTORI,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL,CALCOLA_DISPONIBILITA_ALL(titoli.CHIAVE) AS QUANTITA_DISP,titoli.POS_MAGAZZINO FROM titoli WHERE EDITORE IN (SELECT DESCRIZIONE FROM case_editrici WHERE DESCRIZIONE=titoli.EDITORE) ORDER BY TITOLO ASC"
-                        }
-                      ],
-
-  "SelectTitoliInventarioSQL" : [
-                                  {
-                                    "Name" : "BookListInventory",
-                                    "SQL"  : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL,titoli.POS_MAGAZZINO FROM titoli WHERE QUANTITA_MGZN <> 0 OR QUANTITA_MGZN_VOL <> 0 AND EDITORE IN (SELECT DESCRIZIONE FROM case_editrici WHERE DESCRIZIONE=titoli.EDITORE) ORDER BY TITOLO ASC"
-                                  }
-                                ],
-                      
-  "SelectTitoliSQLAdv" : [
-                           {
-                             "Name" : "BookListAdv",
-                             "SQL"  : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,CALCOLA_DISPONIBILITA_ALL(titoli.CHIAVE) AS QUANTITA_MGZN FROM titoli WHERE EDITORE IN (SELECT DESCRIZIONE FROM case_editrici WHERE DESCRIZIONE=titoli.EDITORE) ORDER BY TITOLO ASC"
-                           }
-                         ],
-  
-  "EditSQL"            : [
-                            {
-                              "Name" : "UpdateDataImpMailchimp",
-                              "SQL"  : "UPDATE configurazioni SET ULTIMA_IMPORTAZIONE_MAIL = NOW() - INTERVAL 1 DAY"
-                            }
-                          ]                    
+{
+	"RuoliAbilitati" : "",
+	"SelectSQL" : [
+		{
+			"Name" : "ProvinceList",
+			"SQL" : "SELECT * FROM province ORDER BY NOME ASC\n"
+		},
+		{
+			"Name" : "ProvinceListAll",
+			"SQL" : "SELECT * FROM province_all ORDER BY NOME ASC\n"
+		},
+		{
+			"Name" : "ProvinceListAllOnlyHandled",
+			"SQL" : "SELECT * FROM province_all WHERE UPPER(NOME) IN (SELECT province.NOME FROM province WHERE province.NOME=province_all.NOME)\n"
+		},
+		{
+			"Name" : "InstituteTypeList",
+			"SQL" : "SELECT * FROM tipologie_istituto ORDER BY DESCRIZIONE ASC\n"
+		},
+		{
+			"Name" : "InstituteCodeAll",
+			"SQL" : "SELECT istituti.CODICE FROM istituti WHERE NASCOSTO <> 1\n"
+		}
+	],
+	"SelectDataImpSQL" : [
+		{
+			"Name" : "LastUpdateMailChimp",
+			"SQL" : "SELECT ULTIMA_IMPORTAZIONE_MAIL FROM configurazioni\n"
+		}
+	],
+	"SelectTitoliSQL" : [
+		{
+			"Name" : "BookList",
+			"SQL" : "SELECT titoli.CHIAVE,\n       titoli.CODICE_ISBN,\n       titoli.TITOLO,\n       titoli.AUTORI,\n       titoli.QUANTITA_MGZN,\n       titoli.QUANTITA_MGZN_VOL,\n       CALCOLA_DISPONIBILITA_ALL(titoli.CHIAVE) AS QUANTITA_DISP,\n       titoli.POS_MAGAZZINO\n  FROM titoli \n WHERE EDITORE IN (SELECT DESCRIZIONE FROM case_editrici_amiche WHERE DESCRIZIONE=titoli.EDITORE) \nORDER BY TITOLO ASC\n"
+		}
+	],
+	"SelectTitoliInventarioSQL" : [
+		{
+			"Name" : "BookListInventory",
+			"SQL" : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL,titoli.POS_MAGAZZINO FROM titoli WHERE QUANTITA_MGZN <> 0 OR QUANTITA_MGZN_VOL <> 0 AND EDITORE IN (SELECT DESCRIZIONE FROM case_editrici_amiche WHERE DESCRIZIONE=titoli.EDITORE) ORDER BY TITOLO ASC\n"
+		}
+	],
+	"SelectTitoliSQLAdv" : [
+		{
+			"Name" : "BookListAdv",
+			"SQL" : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,CALCOLA_DISPONIBILITA_ALL(titoli.CHIAVE) AS QUANTITA_MGZN FROM titoli WHERE EDITORE IN (SELECT DESCRIZIONE FROM case_editrici_amiche WHERE DESCRIZIONE=titoli.EDITORE) ORDER BY TITOLO ASC\n"
+		}
+	],
+	"EditSQL" : [
+		{
+			"Name" : "UpdateDataImpMailchimp",
+			"SQL" : "UPDATE configurazioni SET ULTIMA_IMPORTAZIONE_MAIL = NOW() - INTERVAL 1 DAY\n"
+		}
+]
 }

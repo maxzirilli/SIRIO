@@ -192,7 +192,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
     {      
        for(let i = 0; i < IstitutiInfoLista.length; i++)
        {
-           if(IstitutiInfoLista[i].NR_DOCENTI > 0)
+           /*if(IstitutiInfoLista[i].NR_DOCENTI > 0) //CONTROLLARE*/
               ListaIstitutiAssegnati.push({
                                             Chiave   : IstitutiInfoLista[i].CHIAVE,
                                             CodiceIstituto :  IstitutiInfoLista[i].CODICE,
@@ -1208,6 +1208,8 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
   { 
     $scope.ProvinciaOldFiltro        = $scope.AProvinciaFiltro;
     $scope.EditingOn                 = true;
+    
+    $scope.searchTextDoc             = '';
 
     $scope.DocenteInEditing = {
                                 Chiave           : -1,
@@ -1301,7 +1303,7 @@ SIRIOApp.controller("teacherListPageController",['$scope','SystemInformation','$
                       ZCustomAlert($mdDialog,'OK',"DOCENTE ASSOCIATO CORRETTAMENTE ALL'ISTITUTO DESIDERATO")
                       $ObjQuery = {};
                       $scope.selectedItemDoc = undefined;
-                      $scope.searchTextDoc = undefined;
+                      $scope.searchTextDoc   = '';
                       $scope.DocenteInEditing.RagioneSociale = '';
                       $scope.OnAnnullaDocenteClicked();
                     })

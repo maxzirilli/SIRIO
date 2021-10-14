@@ -2,7 +2,7 @@
   "SelectSQL"  : [
                    {
                      "Name" : "PublisherInfoList",
-                     "SQL"  : "SELECT *,(SELECT DESCRIZIONE FROM gruppi_case_ed WHERE CHIAVE=case_editrici.GRUPPO) AS GRUPPO_NOME FROM case_editrici ORDER BY DESCRIZIONE"
+                     "SQL"  : "SELECT *,(SELECT DESCRIZIONE FROM gruppi_case_ed WHERE CHIAVE=case_editrici.GRUPPO) AS GRUPPO_NOME,(SELECT RIVALE FROM gruppi_case_ed WHERE CHIAVE=case_editrici.GRUPPO) AS GRUPPO_RIVALE FROM case_editrici ORDER BY DESCRIZIONE"
                    }
                  ],
                 
