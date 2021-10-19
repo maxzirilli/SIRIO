@@ -23,8 +23,6 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
   this.VDocInventory         = 'VERSIONE DOCUMENTO 1.1 DEL 13/10/2020';
   this.VDocCarico            = 'VERSIONE DOCUMENTO 2.2 DEL 11/11/2020';
   this.VDocListaDocIst       = 'VERSIONE DOCUMENTO 2.3 DEL 04/03/2021';
-  
-  //this.LogoImmagine          = '';
 
   this.s2ab = function(s)
   {
@@ -33,30 +31,6 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
     for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
     return buf;
   }
-
-  /*this.Init = function()
-  {
-    var self = this;
-    var GetImageSrc = function()
-    {
-      var img = new Image();
-      img.onload = function()
-      {
-          var canvas = document.createElement('canvas');
-          document.body.appendChild(canvas);
-          canvas.width = img.width;
-          canvas.height = img.height;
-
-          var ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0);
-          var data = canvas.toDataURL('image/jpeg').slice('data:image/jpeg;base64,'.length);
-          data = atob(data);
-          self.LogoImmagine = data;
-      }
-      img.src = 'PawalikeLogo.jpeg';
-    }
-    GetImageSrc();
-  }*/
   
   this.GetCellaIntestazione = function(Valore)
   {
@@ -194,6 +168,7 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
        case HTTP_ERROR_ACCESS_DENIED    : Self.HTTPError = 'Accesso negato. Sospetto attacco DDoS'; break;
        case HTTP_ERROR_SMTP_GENERIC     : Self.HTTPError = 'Errore invio email'; break;
        case HTTP_ERROR_EXTRA_SCRIPT     : Self.HTTPError = 'Errore script customizzato'; break;
+       case ERROR_MAIL_ATTACHMENT       : Self.HTTPError = 'Errore allegati mail'; break; 
        default                          : Self.HTTPError = 'Errore sconosciuto'; break;
     }
 
@@ -324,10 +299,31 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
        Self.ApplyOnError(Error,'');
       });
   }
-  
+
+  this.HandleMailAttachment =  function(Method,Allegato,OnSuccess)
+  {
+    $http.post(URL_SERVER +'SIRIOHandleMailAttachment.php',"SIRIOAttachmentMethod=" + Method + "&SIRIOFileName=" + Allegato.Nome + '&SIRIOFileId=' + Allegato.Id + (Method == 'ADD' ? ('&SIRIOFileBody=' + encodeURIComponent(Allegato.Body)) : ''))
+      .then(function(Answer) 
+      {
+         if(Self.CheckAnswerHTTP(Answer.data))
+         {
+            if(OnSuccess != undefined)
+               OnSuccess(Answer.data);
+         }
+         else 
+         {
+            Self.ApplyOnError(Self.HTTPError,Self.SubHTTPError); 
+         }
+      })
+      .catch(function(Error) 
+      {
+         Self.ApplyOnError(Error.statusText,'');
+      });
+ }
+
   this.ExecuteExternalScript =  function(ExternalScript,Parametri,OnSuccess,alertMessages = false)
   {
-   $http.post(URL_SERVER + ExternalScript + '.php',(Parametri != undefined ? "SIRIOParams=" + JSON.stringify(Parametri) : ""))
+    $http.post(URL_SERVER + ExternalScript + '.php',(Parametri != undefined ? "SIRIOParams=" + JSON.stringify(Parametri) : ""))
       .then(function(Answer) 
       {
          if(Self.CheckAnswerHTTP(Answer.data))
@@ -348,10 +344,10 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
       });
  }
 
-  this.PostSQL = function(Modello,Oggetto,OnSuccess,InvioMail = false,alertMessages = false)
+  this.PostSQL = function(Modello,Oggetto,OnSuccess,InvioMail = false,alertMessages = false,IdAllegato = '')
   {
     $http.post(URL_SERVER + (InvioMail ? "SIRIOSendMail.php" : "SIRIOConnection.php"), 
-               "SIRIOModel=" + Modello + "&SIRIOEditParams=" + JSON.stringify(Oggetto))
+               "SIRIOModel=" + Modello + "&SIRIOEditParams=" + JSON.stringify(Oggetto) + (InvioMail ? ('&SIRIOFileId=' + IdAllegato) : ''))
       .then(function(Answer) 
       {
          if(Self.CheckAnswerHTTP(Answer.data))
@@ -363,7 +359,7 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
          {
             if(alertMessages || Self.ForeignKeyError) 
                ZCustomAlert($mdDialog,'ATTENZIONE!',Self.MessaggioErroreSQL);//Self.HTTPError  + (Self.SubHTTPError != '' ? "\n" + Self.SubHTTPError : '') 
-            else Self.ApplyOnError(Self.HTTPError,Self.SubHTTPError + Answer.data.OtherInformations != undefined ? ('INFO -> ' + Answer.data.OtherInformations) : ''); 
+            else Self.ApplyOnError(Self.HTTPError,Self.SubHTTPError + Answer.data.OtherInformations != undefined ? ('INFO : ' + Answer.data.OtherInformations) : ''); 
          }
       })
       .catch(function(Error) 

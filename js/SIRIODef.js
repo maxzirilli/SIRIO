@@ -12,6 +12,7 @@ const HTTP_ERROR_PARAMETERS        = 8;
 const HTTP_ERROR_ACCESS_DENIED     = 9;
 const HTTP_ERROR_SMTP_GENERIC      = 10; 
 const HTTP_ERROR_EXTRA_SCRIPT      = 11;
+const HTTP_ERROR_MAIL_ATTACHMENT   = 16;
 
 const STATE_LOGGED     = 'L';
 const STATE_NOT_LOGGED = 'N';

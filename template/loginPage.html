@@ -1,12 +1,8 @@
 <div ng-controller="loginController" layout-align="center center" layout="column" md-theme="{{ActualTheme}}">
-  <!--<img src="img/loginPaper.png" style="position:absolute;width:430px;height:auto;top:5px;">-->
   <img src="img/loginBackground.png" style="position:absolute;width:800px;height:auto;top:5px;">  
   <form name="LoginForm" layout="column" ng-submit="Invia()" style="text-align:center;margin-left:300px;margin-top:60px;">
     <div style="position:relative;">  
-      <!--<h1 style="font-weight:bold;font-style:italic;color:orange;">SIRIO</h1>-->
       <h1 style="font-weight:bold;font-style:italic;color:orange;">SIRIO</h1> 
-      <!--<button ng-click="StampaFatturaPawalike(OggettoFattura)">STAMPA FATTURA PAWALIKE</button>-->
-
       <label class="LabelError" style="background-color:red;font-weight:bold;color:white;padding:2px;" ng-show="HTTPError != ''" ng-bind="HTTPError"></label>
       <label class="LabelError" style="background-color:red;font-weight:bold;color:white;padding:2px;" ng-show="SubHTTPError != '' && HTTPError != ''" ng-bind="SubHTTPError"></label>
     </div>

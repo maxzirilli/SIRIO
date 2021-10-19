@@ -349,7 +349,6 @@
                    </md-tab>    
                </md-tabs>
       </form>               
-
   </div> 
 
   <div ng-show="!EditingOn && MailOn">
@@ -379,6 +378,23 @@
         <md-input-container>
           <p style="font-weight: bold;">TESTO:</p><textarea ng-model="MailInEditing.Testo" rows="10" cols="10" flex=100></textarea>
         </md-input-container>
+        <div layout="row">
+          <md-input-container>
+            <div layout="column">
+              <md-button class="md-raised md-accent" style="width:100%;font-weight:bold;" ng-disabled="ListaAllegatiMail.length >= 3" ng-click="CaricaAllegato()">Carica allegato +</md-button>
+              <input id="FileLoadAllegato" name="file" type="file" class="ng-hide" onchange="angular.element(this).scope().AllegatoLoaded(this)">
+              <!--<progress style="width:100%;margin-left:10px;" id="progressBar" value="{{Contatore}}" min="0" max="{{FileLength}}"></progress>-->
+              <!--<md-progress-linear md-mode="determinate" style="margin-left:10px;" value="{{Contatore}}"></md-progress-linear>-->
+            </div>
+         </md-input-container>
+         <div layout="column" style="margin-left:50px;" ng-repeat="Allegato in ListaAllegatiMail track by $index">
+           <p style="font-weight: bold;text-align:center;">{{Allegato.Nome}}</p>
+           <div layout="row">
+             <md-button ng-click="VisualizzaAllegato(Allegato.Nome)" title="VISUALIZZA ALLEGATO"><img src="img/attachment.png" style="width:50px;height:auto;"></md-button>
+             <md-button ng-click="EliminaAllegato(Allegato.Nome,$index)" title="ELIMINA ALLEGATO"><img src="img/delete.png" style="width:50px;height:auto;"></md-button>
+           </div>
+         </div>   
+        </div> 
       </div>
     </form>
   </div>

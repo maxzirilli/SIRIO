@@ -36,11 +36,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http,$mdDial
     $state.go("flyingStoragePage");
   }
   
-  $scope.ApriCsvCataloghiMondadoriUpload = function ()
-  {
-    $state.go("csvCatalogMondadoriPage");
-  }
-  
   $scope.ApriCsvCataloghiDeAgostiniUpload = function ()
   {
     $state.go("csvCatalogDeAgostiniPage");

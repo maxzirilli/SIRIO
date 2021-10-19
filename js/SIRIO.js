@@ -1,5 +1,5 @@
 // Inizializzazioni
-const VERSIONE_ATTUALE = '1.42.52';
+const VERSIONE_ATTUALE = '1.43.52';
 
 SIRIOApp.config(['$qProvider', function ($qProvider)
 {
@@ -128,12 +128,6 @@ SIRIOApp.config(['$stateProvider','$urlRouterProvider','$mdAriaProvider',functio
         templateUrl: "template/flyingStoragePage.html",
         url: '/flyingStoragePage'
     });
-    
-    $stateProvider.state('csvCatalogMondadoriPage', 
-    {
-        templateUrl: "template/csvCatalogMondadoriPage.html",
-        url: '/csvCatalogMondadoriPage'
-    })
     
     $stateProvider.state('csvCatalogDeAgostiniPage', 
     {

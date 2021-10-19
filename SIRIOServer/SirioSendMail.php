@@ -1,5 +1,10 @@
 <?php 
       require_once "mailer/PHPMailerAutoload.php";
+
+      /*require_once 'mailer/src/Exception.php';
+      require_once 'mailer/src/PHPMailer.php';
+      require_once 'mailer/src/SMTP.php';*/
+
       include_once 'SIRIOCfg.php';
       include_once 'SIRIODef.php';
       include_once PATH_LIBRERIE . 'ZAdvQuery.php';
