@@ -1556,7 +1556,17 @@ $scope.GridOptions_8 = {
     {
       var $ObjQuery   = { Operazioni : [] };
       var ParamGruppo = { CHIAVE : Gruppo.Chiave };
+
+      $ObjQuery.Operazioni.push({
+                                  Query     : 'UnlinkProvinceFromGroup',
+                                  Parametri : ParamGruppo
+                                });
        
+      $ObjQuery.Operazioni.push({
+                                  Query     : 'UnlinkPublisherFromGroup',
+                                  Parametri : ParamGruppo
+                                });
+
       $ObjQuery.Operazioni.push({
                                   Query     : 'DeleteGroup',
                                   Parametri : ParamGruppo
@@ -1565,6 +1575,7 @@ $scope.GridOptions_8 = {
       SystemInformation.PostSQL('PublisherGroup',$ObjQuery,function(Answer)
       {
         $scope.RefreshListaGruppi();
+        $scope.RefreshListaCase();
       });  
     }
     ZConfirm.GetConfirmBox('AVVISO','ELIMINARE IL GRUPPO DI CASE EDITRICI: ' + Gruppo.Descrizione + ' ?',EliminaGruppo,function(){});          

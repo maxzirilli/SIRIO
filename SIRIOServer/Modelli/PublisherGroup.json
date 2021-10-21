@@ -23,6 +23,14 @@
 			"Name" : "DeleteGroup",
 			"SQL" : "DELETE FROM gruppi_case_ed WHERE CHIAVE=:CHIAVE\n"
 		},
+  {
+   "Name" : "UnlinkProvinceFromGroup",
+   "SQL"  : "DELETE \n FROM province_x_gruppi_editoriali\n WHERE GRUPPO =:CHIAVE"
+  },
+  {
+   "Name" : "UnlinkPublisherFromGroup",
+   "SQL"  : "UPDATE \n case_editrici SET GRUPPO = NULL WHERE GRUPPO =:CHIAVE"
+  },
 		{
 			"Name" : "AddProvinceToGroup",
 			"SQL" : "INSERT INTO province_x_gruppi_editoriali\n       (PROVINCIA,GRUPPO)VALUES(:Provincia,:Gruppo)\n"

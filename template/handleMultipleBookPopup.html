@@ -9,7 +9,7 @@
     <md-dialog-content>
       <div class="md-dialog-content" ng-repeat="titolo in ListaTitoliToHandle" style="width:1000px;">
         <div layout="row" style="margin:0px;height:30px;">
-          <p style="font-weight:bold;">{{titolo.NOME_TITOLO}} - ISBN : {{titolo.CODICE}}</p>
+          <p style="font-weight:bold;">{{titolo.NOME_TITOLO}} - ISBN : {{titolo.ISBN_TITOLO}}</p>
           <md-input-container style="margin-left:20px;" class="containerSelect"><label>QUANTITA</label>         
             <input ng-model="titolo.QUANTITA" type="number" min=1 name="Quantita">                           
           </md-input-container>

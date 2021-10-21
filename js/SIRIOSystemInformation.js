@@ -208,6 +208,7 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
              {
                 Self.UserInformation = { 
                                          Ruolo : Result[0].ROLE, 
+                                         Chiave : Result[0].CHIAVE,
                                          OrdinamentoDoc : Result[0].ORDINAMENTO_DOC, 
                                          Username : Result[0].USERNAME
                                        };

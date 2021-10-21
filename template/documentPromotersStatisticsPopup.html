@@ -64,7 +64,7 @@
             <th>CONSEGNATI</th>
           </tr>
           <tr ng-repeat="Statistica in StatisticaPromotori | StatisticaByFiltro : PromotoreFiltroStatistica : TitoloFiltroStat | limitTo : GridOptions_3.query.limit : (GridOptions_3.query.page - 1) * GridOptions_3.query.limit">    
-            <td>{{ Statistica.Titolo }} - {{ Statistica.Codice }}</td>
+            <td>{{ Statistica.Titolo }} - {{ Statistica.Isbn }}</td>
             <td>{{ Statistica.Promotore }}</td>
             <td>{{ Statistica.Prenotati }}</td>
             <td>{{ Statistica.DaSpedire }}</td>

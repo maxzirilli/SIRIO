@@ -328,11 +328,16 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
 
     $scope.ConfermaPopup = function()
     { 
-      if($scope.CheckPromotori == 'T')
+      if($scope.IsAdministrator())
       {
-         $scope.PromotoreScelto     = -1;
-         $scope.PromotoreSceltoNome = '';
-      } 
+         if($scope.CheckPromotori == 'T')
+         {
+            $scope.PromotoreScelto     = -1;
+            $scope.PromotoreSceltoNome = '';
+         } 
+      }
+      else $scope.PromotoreScelto = SystemInformation.UserInformation.Chiave;
+
       ContatoreGruppi = 0; 
       for(let j = 0;j < $scope.ListaGruppiPopup.length;j ++)
       {

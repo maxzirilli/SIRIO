@@ -729,7 +729,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
     {
       var EliminaTit = function()
       {
-        TitoloCorrispondente = $scope.ListaTitoliSpedizione.findIndex(function(ATitolo){return(ATitolo.CHIAVE == Titolo.CHIAVE);});     
+        TitoloCorrispondente = $scope.ListaTitoliSpedizione.findIndex(function(ATitolo){return(ATitolo.TITOLO == Titolo.TITOLO);});     
         if ($scope.ListaTitoliSpedizione[TitoloCorrispondente].Nuovo)
             $scope.ListaTitoliSpedizione.splice(TitoloCorrispondente,1)
         else
@@ -946,7 +946,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
       for(let i = 0;i < $scope.ListaTitoliToHandle.length;i ++)
       {
         $scope.ListaTitoliToHandle[i] = {
-                                          "CHIAVE"            : -1,
+                                          //"CHIAVE"            : -1,
                                           "TITOLO"            : $scope.ListaTitoliToHandle[i].Chiave,
                                           "NOME_TITOLO"       : $scope.ListaTitoliToHandle[i].Nome,
                                           "QUANTITA"          : 1,

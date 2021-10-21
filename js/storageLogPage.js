@@ -116,7 +116,7 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                  
                  for(let i = 0;i < ListaMovimenti.length;i ++)
                  {
-                   if (CoordY >= 280) 
+                   if (CoordY >= 270) 
                    {
                      doc.addPage();
                      CoordY = 20;
@@ -205,11 +205,11 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                  doc.text(25,CoordY+10,'QNT');
                  doc.text(35,CoordY+10,'ISBN');
                  doc.text(55,CoordY+10,'TITOLO');
-                 doc.text(130,CoordY+10,'DESCRIZIONE');
+                 doc.text(110,CoordY+10,'DESCRIZIONE');
                  
                  for(let i = 0;i < ListaMovimenti.length;i ++)
                  {
-                   if (CoordY >= 280) 
+                   if (CoordY >= 270) 
                    {
                      doc.addPage();
                      CoordY = 20;
@@ -217,9 +217,9 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                      doc.setFontType('bold');
                      doc.text(10,CoordY,'DATA');
                      doc.text(25,CoordY,'QNT');
-                     doc.text(35,CoordY+10,'ISBN');
-                     doc.text(55,CoordY+10,'TITOLO');
-                     doc.text(150,CoordY,'DESCRIZIONE');
+                     doc.text(35,CoordY,'ISBN');
+                     doc.text(55,CoordY,'TITOLO');
+                     doc.text(110,CoordY,'DESCRIZIONE');
                    }
                    doc.setFontType('italic');
                    doc.setFontSize(7);
@@ -229,8 +229,8 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                    doc.text(10,CoordY+10,ZFormatDateTime('dd/mm/yyyy',ZDateFromHTMLInput(ListaMovimenti[i].DATA)));
                    doc.text(25 + Q + 1 - Qt,CoordY+10,ListaMovimenti[i].QUANTITA);
                    doc.text(35,CoordY+10,ListaMovimenti[i].CODICE);
-                   doc.text(55,CoordY+10,TroncaTitolo(ListaMovimenti[i].NOME_TITOLO,50));
-                   doc.text(130,CoordY+10,ListaMovimenti[i].DESCRIZIONE);
+                   doc.text(55,CoordY+10,TroncaTitolo(ListaMovimenti[i].NOME_TITOLO,30));
+                   doc.text(110,CoordY+10,ListaMovimenti[i].DESCRIZIONE);
                    doc.setFontSize(6);
                    doc.setFontType('normal');
                    doc.text(10,290,SystemInformation.VDocLogStorage);
@@ -304,7 +304,7 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                  
                  for(let i = 0;i < ListaMovimenti.length;i ++)
                  {
-                   if (CoordY >= 280) 
+                   if (CoordY >= 270) 
                    {
                      doc.addPage();
                      CoordY = 20;
@@ -391,11 +391,11 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                  doc.text(25,CoordY+10,'QNT');
                  doc.text(35,CoordY+10,'ISBN');
                  doc.text(55,CoordY+10,'TITOLO');
-                 doc.text(150,CoordY+10,'DESCRIZIONE');
+                 doc.text(110,CoordY+10,'DESCRIZIONE');
                  
                  for(let i = 0;i < ListaMovimenti.length;i ++)
                  {
-                   if (CoordY >= 280) 
+                   if (CoordY >= 270) 
                    {
                      doc.addPage();
                      CoordY = 20;
@@ -403,9 +403,9 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                      doc.setFontType('bold');
                      doc.text(10,CoordY,'DATA');
                      doc.text(25,CoordY,'QNT');
-                     doc.text(35,CoordY+10,'ISBN');
+                     doc.text(35,CoordY,'ISBN');
                      doc.text(55,CoordY,'TITOLO');
-                     doc.text(130,CoordY,'DESCRIZIONE');
+                     doc.text(110,CoordY,'DESCRIZIONE');
                    }
                    doc.setFontType('italic');
                    doc.setFontSize(7);
@@ -415,8 +415,8 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
                    doc.text(10,CoordY+10,ZFormatDateTime('dd/mm/yyyy',ZDateFromHTMLInput(ListaMovimenti[i].DATA)));
                    doc.text(25 + Q + 1 - Qt,CoordY+10,ListaMovimenti[i].QUANTITA);
                    doc.text(35,CoordY+10,ListaMovimenti[i].CODICE);
-                   doc.text(55,CoordY+10,TroncaTitolo(ListaMovimenti[i].NOME_TITOLO,50));
-                   doc.text(130,CoordY+10,ListaMovimenti[i].DESCRIZIONE);
+                   doc.text(55,CoordY+10,TroncaTitolo(ListaMovimenti[i].NOME_TITOLO,30));
+                   doc.text(110,CoordY+10,ListaMovimenti[i].DESCRIZIONE);
                    doc.setFontSize(6);
                    doc.setFontType('normal');
                    doc.text(10,290,SystemInformation.VDocLogStorage);

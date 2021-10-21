@@ -13,18 +13,20 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
   $scope.RegistraAdozVisible    = true;
   $scope.PromotoreFiltro        = -1;
   $scope.GruppoIstitutoFiltro   = -1;
+  $scope.CasaEditriceFiltro     = -1;
   $scope.ProvinciaFiltro        = -1;
   $scope.TitoloFiltro           = -1;
   $scope.IstitutoFiltro         = -1;
   $scope.MateriaFiltro          = -1;
   $scope.GruppoEditorialeFiltro = -1;
+  $scope.IsGruppoRivaleFiltro   = false;
   $scope.PrimaData              = -1;
   $scope.SecondaData            = null;
   $scope.RegistrazioneInCorso   = false;
   $scope.StatisticaPresente     = true;
   $scope.NuoveAdozioniFiltro    = false;
   $scope.VolumiUniciPrimiFiltro = false;
-  $scope.CaricamentoInCorso     = false;
+  $scope.CaricamentoInCorso     = true;
 
   $scope.DatiCumulativi = {
                             NrRigheTotali    : 0,
@@ -73,6 +75,22 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
       $scope.TitoloFiltro = itemTit.Chiave;
     else $scope.TitoloFiltro = -1;
   }  
+
+  $scope.queryEditore = function(searchTextEd)
+  {
+     searchTextEd = searchTextEd.toUpperCase();
+     return($scope.ListaEditori.grep(function(Elemento) 
+     { 
+       return(Elemento.Descrizione.toUpperCase().indexOf(searchTextEd) != -1);
+     }));
+  }
+  
+  $scope.selectedItemChangeEditore = function(itemEd)
+  {
+    if(itemEd != undefined)
+      $scope.CasaEditriceFiltro = itemEd.Chiave;
+    else $scope.CasaEditriceFiltro = -1;
+  }  
   
   $scope.queryIstituto = function(searchTextIstituto)
   {
@@ -90,6 +108,30 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
     else $scope.IstitutoFiltro = -1;
   }
 
+  $scope.GetEditori = function()
+  {
+    SystemInformation.GetSQL('Publisher', {}, function(Results)  
+    {
+      ListaEditoriTmp = SystemInformation.FindResults(Results,'PublisherInfoList');
+      if(ListaEditoriTmp != undefined)
+      { 
+         for(let i = 0;i < ListaEditoriTmp.length;i ++)
+             ListaEditoriTmp[i] = {
+                                    Chiave      : parseInt(ListaEditoriTmp[i].CHIAVE),
+                                    Descrizione : ListaEditoriTmp[i].DESCRIZIONE
+                                  }
+         $scope.ListaEditori = ListaEditoriTmp;
+         if($scope.ListaDate.length > 0)
+         {
+           $scope.SecondaData = $scope.ListaDate[0].DataStatistica;
+           $scope.GeneraStatistica();
+         }
+         else $scope.StatisticaPresente = false;
+      } 
+      else SystemInformation.ApplyOnError('Modello case editrici non conforme','');   
+    });
+  }
+
   $scope.GetGruppiEditoriali = function()
   {
     SystemInformation.GetSQL('PublisherGroup', {}, function(Results)  
@@ -103,13 +145,8 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
                                              Rivale      : ListaGruppiEditorialiTmp[i].RIVALE == 'T' ? true : false,
                                              Descrizione : ListaGruppiEditorialiTmp[i].DESCRIZIONE
                                            }
-         $scope.ListaGruppiEditoriali = ListaGruppiEditorialiTmp
-         if($scope.ListaDate.length > 0)
-         {
-           $scope.SecondaData = $scope.ListaDate[0].DataStatistica;
-           $scope.GeneraStatistica();
-         }
-         else $scope.StatisticaPresente = false;
+         $scope.ListaGruppiEditoriali = ListaGruppiEditorialiTmp;
+         $scope.GetEditori();
       } 
       else SystemInformation.ApplyOnError('Modello gruppi editoriali non conforme','');   
     });
@@ -328,20 +365,36 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
 
   $scope.GeneraStatistica = function()
   {
-    $scope.CaricamentoInCorso = true;
+    $scope.CaricamentoInCorso   = true;
+    $scope.IsGruppoRivaleFiltro = false;
+
     if($scope.ListaDate.length != 0)
     {
       if($scope.SecondaData == null)
          $scope.SecondaData = $scope.ListaDate[0].DataStatistica;
 
+      if(($scope.GruppoEditorialeFiltro != -1) && ($scope.GruppoEditorialeFiltro != -2) && 
+         ($scope.GruppoEditorialeFiltro != -3) && ($scope.GruppoEditorialeFiltro != -4))
+      {
+          var GruppoFinded = $scope.ListaGruppiEditoriali.find(function (Elemento){return Elemento.Chiave == $scope.GruppoEditorialeFiltro});
+          
+          if(GruppoFinded != undefined)
+          {
+             $scope.IsGruppoRivaleFiltro = GruppoFinded.Rivale     
+          }
+          else $scope.IsGruppoRivaleFiltro = false;
+      }
+
       var ParamStatistica = {
                                FiltroPromotore     : $scope.PromotoreFiltro,     
                                FiltroGruppoIst     : $scope.GruppoIstitutoFiltro,
-                               FiltroProvincia     : $scope.ProvinciaFiltro,     
+                               FiltroProvincia     : $scope.ProvinciaFiltro,
+                               FiltroCasaEditrice  : $scope.CasaEditriceFiltro,
                                FiltroTitolo        : $scope.TitoloFiltro,        
                                FiltroIstituto      : $scope.IstitutoFiltro,      
                                FiltroMateria       : $scope.MateriaFiltro,
-                               FiltroGruppoEd      : $scope.GruppoEditorialeFiltro,     
+                               FiltroGruppoEd      : $scope.GruppoEditorialeFiltro, 
+                               FiltroGruppoRivaleSelected : $scope.IsGruppoRivaleFiltro,    
                                PrimaStatistica     : $scope.PrimaData,        
                                SecondaStatistica   : $scope.SecondaData,
                                FiltroNuoveAdozioni : $scope.NuoveAdozioniFiltro == true ? "T" : "F",

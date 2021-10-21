@@ -45,6 +45,7 @@
           Nessuna corrispondenza
         </md-not-found>
      </md-input-container>
+
       <md-input-container class="containerSelect" style="width:20%;margin-right:10px;"><label>TIPO SCUOLA</label>
         <md-select ng-model="GruppoIstitutoFiltro" placeholder="TIPO SCUOLA" class="mdb-select" type="text" name="GruppoIstitutoFiltro">
         <md-optgroup>
@@ -62,7 +63,48 @@
         </md-optgroup>
         </md-select>
       </md-input-container>
+      <md-input-container class="containerSelect" style="width:20%;margin-right:10px;"><label>PROMOTORE</label>
+        <md-select ng-model="PromotoreFiltro" placeholder="PROMOTORE" class="mdb-select" type="text" name="PromotoreFiltro">
+        <md-optgroup>
+          <md-option ng-value="-1">QUALSIASI</md-option>  
+          <md-option ng-repeat="promotore in ListaPromotori" ng-value="promotore.Chiave">{{promotore.RagioneSociale | uppercase}}</md-option>
+        </md-optgroup>
+        </md-select>
+      </md-input-container>
     </div>
+
+       <div layout="row" ng-show="StatisticaPresente">
+         <md-input-container class="containerSelect" style="width:30%;margin-right:10px;">
+           <label>EDITORE</label>
+           <md-autocomplete
+                       md-input-name="Editore"
+                       md-autofocus="true"
+                       md-no-cache="true"
+                       md-selected-item-change = "selectedItemChangeEditore(item)"
+                       md-search-text="searchTextEditore"
+                       md-items="item in queryEditore(searchTextEditore)"
+                       md-item-text="item.Descrizione"
+                       md-require-match="true"
+                       md-clear-button="true">
+           <md-item-template>
+             <span md-highlight-text="searchText">{{item.Descrizione}}</span>
+           </md-item-template>
+           <md-not-found>
+             Nessuna corrispondenza
+           </md-not-found>
+        </md-input-container>
+        <md-input-container class="containerSelect" style="width:20%;margin-right:10px;"><label>GRUPPO EDITORIALE</label>
+           <md-select ng-model="GruppoEditorialeFiltro" placeholder="GRUPPO EDITORIALE" class="mdb-select" type="text" name="GruppoEditorialeFiltro">
+           <md-optgroup>
+             <md-option ng-value="-1">QUALSIASI</md-option>
+             <md-option ng-value="-2">GESTITI</md-option> 
+             <md-option ng-value="-3">NON GESTITI</md-option> 
+             <md-option ng-value="-4">SOLO RIVALI</md-option> 
+             <md-option ng-repeat="gruppoEditoriale in ListaGruppiEditoriali" ng-value="gruppoEditoriale.Chiave">{{gruppoEditoriale.Descrizione | uppercase}}<span ng-if="gruppoEditoriale.Rivale"> ⚔</span></md-option>
+           </md-optgroup>
+           </md-select>
+         </md-input-container>
+       </div>
 
     <div layout="row" ng-show="StatisticaPresente">
       <md-input-container class="containerSelect" style="width:30%;margin-right:10px;">
@@ -89,25 +131,6 @@
         <md-optgroup>
           <md-option ng-value="-1">QUALSIASI</md-option>  
           <md-option ng-repeat="materia in ListaMaterie" ng-value="materia.Chiave">{{materia.Materia}}</md-option>
-        </md-optgroup>
-        </md-select>
-      </md-input-container>
-      <md-input-container class="containerSelect" style="width:20%;margin-right:10px;"><label>PROMOTORE</label>
-        <md-select ng-model="PromotoreFiltro" placeholder="PROMOTORE" class="mdb-select" type="text" name="PromotoreFiltro">
-        <md-optgroup>
-          <md-option ng-value="-1">QUALSIASI</md-option>  
-          <md-option ng-repeat="promotore in ListaPromotori" ng-value="promotore.Chiave">{{promotore.RagioneSociale | uppercase}}</md-option>
-        </md-optgroup>
-        </md-select>
-      </md-input-container>
-      <md-input-container class="containerSelect" style="width:20%;margin-right:10px;"><label>GRUPPO EDITORIALE</label>
-        <md-select ng-model="GruppoEditorialeFiltro" placeholder="GRUPPO EDITORIALE" class="mdb-select" type="text" name="GruppoEditorialeFiltro">
-        <md-optgroup>
-          <md-option ng-value="-1">QUALSIASI</md-option>
-          <md-option ng-value="-2">GESTITI</md-option> 
-          <md-option ng-value="-3">NON GESTITI</md-option> 
-          <md-option ng-value="-4">SOLO RIVALI</md-option> 
-          <md-option ng-repeat="gruppoEditoriale in ListaGruppiEditoriali" ng-value="gruppoEditoriale.Chiave">{{gruppoEditoriale.Descrizione | uppercase}}<span ng-if="gruppoEditoriale.Rivale"> ⚔</span></md-option>
         </md-optgroup>
         </md-select>
       </md-input-container>
