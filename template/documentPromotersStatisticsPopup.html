@@ -24,7 +24,7 @@
         </div> 
         <div layout="row">
           <md-input-container><label style="width:100%;float:left;margin-bottom: 0px;">PROMOTORE</label>
-            <md-select ng-model="PromotoreFiltroStatistica" placeholder="Promotore" class="mdb-select" style="width:100%;float:left;" type="text" name="PromotoreFiltro">
+            <md-select ng-model="PromotoreFiltroStatistica" ng-change="SetStatistica()" placeholder="Promotore" class="mdb-select" style="width:100%;float:left;" type="text" name="PromotoreFiltro">
               <md-optgroup>
                 <md-option ng-value="-1">QUALSIASI</md-option>  
                 <md-option ng-repeat="promotore in ListaPromotori" ng-value="promotore.Chiave">{{promotore.Nome}}</md-option>

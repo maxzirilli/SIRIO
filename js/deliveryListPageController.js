@@ -585,6 +585,14 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     $scope.StatisticaVisible         = false;
     $scope.searchTextTitStat         = undefined;
     $scope.StatisticaPromotori       = [];
+    $scope.StatisticaFiltrata        = [];
+
+    $scope.SetStatistica = function()
+    {
+      $scope.StatisticaFiltrata = $filter('StatisticaByFiltro')($scope.StatisticaPromotori,
+                                                                $scope.PromotoreFiltroStatistica,
+                                                                $scope.TitoloFiltroStat);
+    }
 
     $scope.hide = function() 
     {
@@ -622,6 +630,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
       if(itemTitStat != undefined)
          $scope.TitoloFiltroStat = itemTitStat.Chiave;
       else $scope.TitoloFiltroStat  = -1;
+      $scope.SetStatistica();
     }  
 
     $scope.CreaStatisticaPromotori = function()
@@ -638,6 +647,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
 
       SystemInformation.GetSQL('Statistics',ParamStatistica,function(Results)
       {
+        $scope.StatisticaFiltrata  = [];
         $scope.StatisticaPromotori = [];
         var StatisticaTmp = SystemInformation.FindResults(Results,'DeliveryCount');
         if(StatisticaTmp != undefined)
@@ -671,9 +681,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
                  case 'C' : $scope.StatisticaPromotori[$scope.StatisticaPromotori.length - 1].Consegnati = StatisticaTmp[i].Totale;
                             break;
                } 
-               $scope.StatisticaFiltrata = $filter('StatisticaByFiltro')($scope.StatisticaPromotori,
-                                                                         $scope.PromotoreFiltroStatistica,
-                                                                         $scope.TitoloFiltroStat);
+
+               $scope.SetStatistica();
            }
         }
         else  SystemInformation.ApplyOnError('Modello statistica spedizioni/titoli per promotore non conforme','')
