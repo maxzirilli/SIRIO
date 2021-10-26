@@ -13,7 +13,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
   $scope.ListaGruppi         = [];
   $scope.StatisticaPromotori = [];
   $scope.PromotoreFiltroStatistica  = -1;
-  $scope.TitoloFiltroStat   = -1;
+  $scope.TitoloFiltroStat    = -1;
+  $scope.StatisticaFiltrata  = [];
   $scope.StatisticaVisible   = false;
   $scope.DataRicercaAl       = new Date();
   let TmpDate                = new Date($scope.DataRicercaAl);
@@ -670,11 +671,73 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
                  case 'C' : $scope.StatisticaPromotori[$scope.StatisticaPromotori.length - 1].Consegnati = StatisticaTmp[i].Totale;
                             break;
                } 
+               $scope.StatisticaFiltrata = $filter('StatisticaByFiltro')($scope.StatisticaPromotori,
+                                                                         $scope.PromotoreFiltroStatistica,
+                                                                         $scope.TitoloFiltroStat);
            }
         }
         else  SystemInformation.ApplyOnError('Modello statistica spedizioni/titoli per promotore non conforme','')
       },'SelectDeliveryCount')
     }
+  }
+
+  $scope.EsportaStatisticaPromotori = function()
+  {
+    var WBook = {
+                  SheetNames : [],
+                  Sheets     : {}
+                };
+
+    var SheetName          = "STATISTICA SPEDIZIONI PROMOTORI";
+    var BodySheet          = {};
+    
+    BodySheet['A1'] = SystemInformation.GetCellaIntestazione('ISBN');
+    BodySheet['B1'] = SystemInformation.GetCellaIntestazione('ISBN');
+    BodySheet['C1'] = SystemInformation.GetCellaIntestazione('PROMOTORE');
+    BodySheet['D1'] = SystemInformation.GetCellaIntestazione('PRENOTATI');
+    BodySheet['E1'] = SystemInformation.GetCellaIntestazione('DA SPEDIRE');
+    BodySheet['F1'] = SystemInformation.GetCellaIntestazione('CONSEGNATI');
+
+    var KeyTitolo = -1;
+    for(let i = 0; i < $scope.StatisticaFiltrata.length; i ++)
+    {
+        if($scope.StatisticaFiltrata[i].ChiaveTitolo != KeyTitolo)
+        {
+           BodySheet['A' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',$scope.StatisticaFiltrata[i].Isbn);
+           BodySheet['B' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',$scope.StatisticaFiltrata[i].Titolo);
+        }
+        BodySheet['C' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',$scope.StatisticaFiltrata[i].Promotore);
+        BodySheet['D' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',$scope.StatisticaFiltrata[i].Prenotati.toString());
+        BodySheet['E' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',$scope.StatisticaFiltrata[i].DaSpedire.toString());
+        BodySheet['F' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',$scope.StatisticaFiltrata[i].Consegnati.toString());
+        
+        KeyTitolo = $scope.StatisticaFiltrata[i].ChiaveTitolo;
+    }
+
+    BodySheet["!cols"] = [
+                          {wpx: 150}, 
+                          {wpx: 1000},            
+                          {wpx: 250},
+                          {wpx: 100},
+                          {wpx: 100},
+                          {wpx: 100} 
+                        ];
+
+    BodySheet['!ref'] = 'A1:F1' + parseInt($scope.StatisticaFiltrata.length + 1);
+    
+    WBook.SheetNames.push(SheetName);
+    WBook.Sheets[SheetName] = BodySheet;
+
+    var Data           = new Date();
+    var DataAnno       = Data.getFullYear();
+    var DataMese       = Data.getMonth()+1; 
+    var DataGiorno     = Data.getDate();
+    var DataStatistica = DataGiorno.toString() + '/' + DataMese.toString() +  '/' + DataAnno.toString();
+
+    var wbout = XLSX.write(WBook, {bookType:'xlsx', bookSST:true, type: 'binary'});
+    saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}), 'StatisticaSpedizioniPromotori' + DataStatistica + ".xlsx");
+
+
   }
 
   $scope.ApriCumulativoPrenotatiOrd = function(ev)

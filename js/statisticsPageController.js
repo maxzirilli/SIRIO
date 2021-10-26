@@ -386,19 +386,19 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
       }
 
       var ParamStatistica = {
-                               FiltroPromotore     : $scope.PromotoreFiltro,     
-                               FiltroGruppoIst     : $scope.GruppoIstitutoFiltro,
-                               FiltroProvincia     : $scope.ProvinciaFiltro,
-                               FiltroCasaEditrice  : $scope.CasaEditriceFiltro,
-                               FiltroTitolo        : $scope.TitoloFiltro,        
-                               FiltroIstituto      : $scope.IstitutoFiltro,      
-                               FiltroMateria       : $scope.MateriaFiltro,
-                               FiltroGruppoEd      : $scope.GruppoEditorialeFiltro, 
+                               FiltroPromotore            : $scope.PromotoreFiltro,     
+                               FiltroGruppoIst            : $scope.GruppoIstitutoFiltro,
+                               FiltroProvincia            : $scope.ProvinciaFiltro,
+                               FiltroCasaEditrice         : $scope.CasaEditriceFiltro,
+                               FiltroTitolo               : $scope.TitoloFiltro,        
+                               FiltroIstituto             : $scope.IstitutoFiltro,      
+                               FiltroMateria              : $scope.MateriaFiltro,
+                               FiltroGruppoEd             : $scope.GruppoEditorialeFiltro, 
                                FiltroGruppoRivaleSelected : $scope.IsGruppoRivaleFiltro,    
-                               PrimaStatistica     : $scope.PrimaData,        
-                               SecondaStatistica   : $scope.SecondaData,
-                               FiltroNuoveAdozioni : $scope.NuoveAdozioniFiltro == true ? "T" : "F",
-                               FiltroVolUniciPrimi : $scope.VolumiUniciPrimiFiltro == true ? "T" : "F"
+                               PrimaStatistica            : $scope.PrimaData,        
+                               SecondaStatistica          : $scope.SecondaData,
+                               FiltroNuoveAdozioni        : $scope.NuoveAdozioniFiltro == true ? "T" : "F",
+                               FiltroVolUniciPrimi        : $scope.VolumiUniciPrimiFiltro == true ? "T" : "F"
                             };
       SystemInformation.ExecuteExternalScript('SIRIOExtraStatistics',ParamStatistica,function(Answer) 
       {
@@ -547,8 +547,9 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
     BodySheetFiltri['G1'] = SystemInformation.GetCellaIntestazione('SOLO VOLUMI PRIMI E UNICI');
     BodySheetFiltri['H1'] = SystemInformation.GetCellaIntestazione('PROMOTORE');
     BodySheetFiltri['I1'] = SystemInformation.GetCellaIntestazione('GRUPPO EDITORIALE');
-    BodySheetFiltri['J1'] = SystemInformation.GetCellaIntestazione('DATA STATISTICA 1');
-    BodySheetFiltri['K1'] = SystemInformation.GetCellaIntestazione('DATA STATISTICA 2');
+    BodySheetFiltri['J1'] = SystemInformation.GetCellaIntestazione('EDITORE');
+    BodySheetFiltri['K1'] = SystemInformation.GetCellaIntestazione('DATA STATISTICA 1');
+    BodySheetFiltri['L1'] = SystemInformation.GetCellaIntestazione('DATA STATISTICA 2');
 
     for(let i = 0;i < $scope.ListaStatistica.length;i ++)
     {
@@ -557,7 +558,7 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
           BodySheet['C' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s', $scope.ListaStatistica[i].CodiceTitolo);
           BodySheet['D' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s', $scope.ListaStatistica[i].NomeTitolo);
           BodySheet['E' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s', $scope.ListaStatistica[i].EditoreTitolo);
-          BodySheet['F' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s', $scope.ListaStatistica[i].ValoreAdozioni.toString());
+          BodySheet['F' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s', Math.trunc($scope.ListaStatistica[i].ValoreAdozioni).toString());
           BodySheet['G' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s', $scope.ListaStatistica[i].NrClassi.toString());
           BodySheet['H' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s', $scope.ListaStatistica[i].NrClassiPrec.toString());   
     }
@@ -569,29 +570,34 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
     BodySheetCum['E' + parseInt(2)] = SystemInformation.GetCellaDati('s', $scope.DatiCumulativi.NrClassiGestite.toString());
     BodySheetCum['F' + parseInt(2)] = SystemInformation.GetCellaDati('s', $scope.DatiCumulativi.NrNuoveAdozioni.toString());
 
-    IstitutoF         = IstitutoF = $scope.searchTextTit == "" ? "TUTTI" : $scope.searchTextIstituto; 
+    IstitutoF         = IstitutoF = $scope.searchTextTit == "" ? "QUALSIASI" : $scope.searchTextIstituto; 
     ProvinciaF        = $scope.ListaProvince.find(function (Elemento){return Elemento.Chiave == $scope.ProvinciaFiltro});
-    ProvinciaF        = ProvinciaF == undefined ? "TUTTE" : ProvinciaF.Nome;
+    ProvinciaF        = ProvinciaF == undefined ? "QUALSIASI" : ProvinciaF.Nome;
     TipoScuolaF       = $scope.ListaGruppiIstituti.find(function (Elemento){return Elemento.Chiave == $scope.GruppoIstitutoFiltro});
-    TipoScuolaF       = TipoScuolaF == undefined ? "TUTTI" : TipoScuolaF.Descrizione; 
+    TipoScuolaF       = TipoScuolaF == undefined ? "QUALSIASI" : TipoScuolaF.Descrizione; 
     TitoloF           = $scope.ListaTitoli.find(function (Elemento){return Elemento.Chiave == $scope.TitoloFiltro});
-    TitoloF           = TitoloF == undefined ? "TUTTI" : TitoloF.Nome + ' - ISBN : ' + TitoloF.Codice;
+    TitoloF           = TitoloF == undefined ? "QUALSIASI" : TitoloF.Nome + ' - ISBN : ' + TitoloF.Codice;
     MateriaF          = $scope.ListaMaterie.find(function (Elemento){return Elemento.Chiave == $scope.MateriaFiltro});
-    MateriaF          = MateriaF == undefined ? "TUTTE" : MateriaF.Materia;
+    MateriaF          = MateriaF == undefined ? "QUALSIASI" : MateriaF.Materia;
     NuoveAdozF        = $scope.NuoveAdozioniFiltro ? "SI" : "NO";
     VolumiUniciPrimiF = $scope.VolumiUniciPrimiFiltro ? "SI" : "NO";   
     PromotoreF        = $scope.ListaPromotori.find(function (Elemento){return Elemento.Chiave == $scope.PromotoreFiltro});
-    PromotoreF        = PromotoreF == undefined ? "TUTTI" : PromotoreF.RagioneSociale; 
+    PromotoreF        = PromotoreF == undefined ? "QUALSIASI" : PromotoreF.RagioneSociale; 
+    CasaEdF           = $scope.ListaEditori.find(function (Elemento){return Elemento.Chiave == $scope.CasaEditriceFiltro});
+    CasaEdF           = CasaEdF == undefined ? "QUALSIASI" : CasaEdF.Descrizione;
+    
     switch($scope.GruppoEditorialeFiltro)
     {
-      case -1 : GruppoEdF = "TUTTI";
+      case -1 : GruppoEdF = "QUALSIASI";
                 break;
       case -2 : GruppoEdF = "GESTITI";
                 break;
       case -3 : GruppoEdF = "NON GESTITI";
                 break;
+      case -4 : GruppoEdF = "RIVALI";
+                break;
       default : GruppoEdF = $scope.ListaGruppiEditoriali.find(function (Elemento){return Elemento.Chiave == $scope.GruppoEditorialeFiltro}); 
-                            GruppoEdF = GruppoEdF == undefined ? "-" : GruppoEdF.Descrizione;
+                GruppoEdF = GruppoEdF == undefined ? "-" : (GruppoEdF.Descrizione + (GruppoEdF.Rivale ? '(RIVALE)' : ''));
     } 
 
     BodySheetFiltri['A' + parseInt(2)] = SystemInformation.GetCellaDati('s', IstitutoF);          
@@ -603,8 +609,9 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
     BodySheetFiltri['G' + parseInt(2)] = SystemInformation.GetCellaDati('s', VolumiUniciPrimiF);
     BodySheetFiltri['H' + parseInt(2)] = SystemInformation.GetCellaDati('s', PromotoreF);
     BodySheetFiltri['I' + parseInt(2)] = SystemInformation.GetCellaDati('s', GruppoEdF);
-    BodySheetFiltri['J' + parseInt(2)] = SystemInformation.GetCellaDati('s', Data_1);
-    BodySheetFiltri['K' + parseInt(2)] = SystemInformation.GetCellaDati('s', Data_2);     
+    BodySheetFiltri['J' + parseInt(2)] = SystemInformation.GetCellaDati('s', CasaEdF);    
+    BodySheetFiltri['K' + parseInt(2)] = SystemInformation.GetCellaDati('s', Data_1);
+    BodySheetFiltri['L' + parseInt(2)] = SystemInformation.GetCellaDati('s', Data_2); 
 
     BodySheet["!cols"] = [ 
                           {wpx: 250},
@@ -636,13 +643,14 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
                                  {wpx: 250},
                                  {wpx: 250},
                                  {wpx: 250},
+                                 {wpx: 250},
                                  {wpx: 200},
                                  {wpx: 200}
                                ];
 
     BodySheet['!ref']       = 'A1:H1' + parseInt($scope.ListaStatistica.length + 1);
     BodySheetCum['!ref']    = 'A1:F1' + 2;
-    BodySheetFiltri['!ref'] = 'A1:K1' + 2;
+    BodySheetFiltri['!ref'] = 'A1:L1' + 2;
 
     WBook.SheetNames.push(SheetName);
     WBook.SheetNames.push(SheetNameCum);

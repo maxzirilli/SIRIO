@@ -7,10 +7,11 @@
     </md-toolbar>
 
     <md-dialog-content >
-      <div class="md-dialog-content" v-if="!VisualizzaStatistica" >
+     <div class="md-dialog-content">
       <div layout="row" style="justify-content: flex-end;width:1000px;">
          <div style="justify-content: flex-end;">
-            <md-button ng-click="CreaStatisticaPromotori()" style="font-weight:bold;" class="md-raised md-accent" title="GENERA XLS PROMOTORI"> GENERA STATISTICA</md-button>
+            <md-button ng-click="EsportaStatisticaPromotori()" ng-show="StatisticaFiltrata.length > 0" style="font-weight:bold;" class="md-raised md-accent" title="ESPORTA XLS PROMOTORI"> ESPORTA STATISTICA XLS</md-button>
+            <md-button ng-click="CreaStatisticaPromotori()" style="font-weight:bold;" class="md-raised md-accent" title="GENERA STATISTICA PROMOTORI"> GENERA STATISTICA</md-button>
          </div> 
       </div>
         <div layout="row">        
@@ -52,9 +53,9 @@
        </md-input-container>
         </div>
 
-       </div>
-      <div class="md-dialog-content" v-if="VisualizzaStatistica">
-        <div ng-if="StatisticaPromotori.length != 0">
+      </div>
+      <div class="md-dialog-content">
+        <div ng-if="StatisticaFiltrata.length != 0">
           <table style="width:1000px;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
           <tr>
             <th>TITOLO</th>
@@ -79,11 +80,9 @@
                              md-boundary-links="GridOptions_3.boundaryLinks" 
                              md-on-paginate="logPagination"></md-table-pagination>
         </div>
-        <br>
-        <br>
-       <!-- <div>
-          <p ng-if="StatisticaPromotori.length == 0" style="font-weight:bold;font-style:italic;text-align:center;">NESSUNA STATISTICA PRESENTE</p>  
-        </div>-->
+        <div style="text-align:center;width:1000px;">
+          <p ng-if="StatisticaFiltrata.length == 0" style="font-weight:bold;font-style:italic;">NESSUNA STATISTICA PRESENTE</p>  
+        </div>
       </div>
     </md-dialog-content>
 
