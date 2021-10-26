@@ -345,7 +345,8 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
       Codice: IstitutoListaAdozioni[i].CODICE_TITOLO,
       Editore: IstitutoListaAdozioni[i].EDITORE_TITOLO == undefined ? 'N.D.' : IstitutoListaAdozioni[i].EDITORE_TITOLO,
       Prezzo: (IstitutoListaAdozioni[i].PREZZO_TITOLO == '' || IstitutoListaAdozioni[i].PREZZO_TITOLO == null) ? 'N.D.' : IstitutoListaAdozioni[i].PREZZO_TITOLO + '€',
-      EditoreGestito: $scope.AdozioniGestite ? 'GESTITO' : IstitutoListaAdozioni[i].CHIAVE_EDITORE == null ? 'NON GESTITO' : 'GESTITO'
+      //EditoreGestito: $scope.AdozioniGestite ? 'GESTITO' : (IstitutoListaAdozioni[i].CHIAVE_EDITORE == undefined ? 'NON GESTITO' : 'GESTITO'),
+      IsGestito: $scope.AdozioniGestite ? true : (IstitutoListaAdozioni[i].EDITORE_GESTITO == undefined ? false : true)
      })
      ClassKey = IstitutoListaAdozioni[i].CLASSE;
     }
@@ -385,7 +386,8 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
    if (Classe.ListaTitoliClasse.length == 0) Result = 'NESSUN TITOLO ADOTTATO'
    else {
     for (let i = 0; i < Classe.ListaTitoliClasse.length; i++) {
-     if (Classe.ListaTitoliClasse[i].EditoreGestito == 'GESTITO')
+     //if (Classe.ListaTitoliClasse[i].EditoreGestito == 'GESTITO')
+     if (Classe.ListaTitoliClasse[i].IsGestito)
       Result += '<p style="Background-color:FF77E8;">' + Classe.ListaTitoliClasse[i].Codice + ' - ' + Classe.ListaTitoliClasse[i].Titolo + ' - ' + Classe.ListaTitoliClasse[i].Editore + ' - ' + Classe.ListaTitoliClasse[i].Prezzo + '</p>'
      else Result += '<p>' + Classe.ListaTitoliClasse[i].Codice + ' - ' + Classe.ListaTitoliClasse[i].Titolo + ' - ' + Classe.ListaTitoliClasse[i].Editore + ' - ' + Classe.ListaTitoliClasse[i].Prezzo + '</p>'
 
