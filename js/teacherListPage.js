@@ -43,13 +43,22 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
  $scope.ListaAnni = [];
  $scope.ListaCombinazioni = [];
 
- $scope.AbilitaInvioMultiplo = function () {
-  let DocentiFiltrati = $filter('DocenteByFiltro')($scope.ListaDocenti,
+ $scope.AbilitaInvioMultiplo = function () 
+ {
+   var DocentiConMail = 0;
+   let DocentiFiltrati = $filter('DocenteByFiltro')($scope.ListaDocenti,
    $scope.ANomeFiltro,
    $scope.MateriaFiltro,
    $scope.CoordMateriaFiltro);
-  return (DocentiFiltrati.length < MAX_N_DESTINATARI_MAIL &&
-   DocentiFiltrati.length > 0);
+
+  for(let i = 0; i < DocentiFiltrati.length; i ++)
+  {
+    if(DocentiFiltrati[i].Email != 'Non disponibile')
+       DocentiConMail++;
+  }
+
+  return (DocentiConMail.length < MAX_N_DESTINATARI_MAIL &&
+          DocentiConMail.length > 0);
  };
 
  if (!(SystemInformation.DataBetweenController.OldPaginaDocenti != 1 && SystemInformation.DataBetweenController.OldPaginaDocenti != undefined))
@@ -68,9 +77,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
   SystemInformation.DataBetweenDelivery = {};
  }
 
- $scope.IsAdministrator = function () {
-  return SystemInformation.UserInformation.Ruolo == RUOLO_AMMINISTRATORE;
- }
+ $scope.IsAdministrator = SystemInformation.IsAdministrator;
 
  $scope.GridOptions = {
   rowSelection: false,
@@ -2271,29 +2278,33 @@ SIRIOApp.filter('IstitutoByNomeFiltro', function () {
  }
 });
 
-SIRIOApp.filter('AdozioneByFiltroDoc', function () {
- return function (IstitutoListaAdozioni, AnnoFiltro, CombinazioneFiltro) {
-  if (AnnoFiltro == -1 && CombinazioneFiltro == -1)
-   return (IstitutoListaAdozioni);
-  var ListaFiltrata = [];
+SIRIOApp.filter('AdozioneByFiltroDoc', function () 
+{
+ return function (IstitutoListaAdozioni, AnnoFiltro, CombinazioneFiltro) 
+ {
+   if(AnnoFiltro == -1 && CombinazioneFiltro == -1)
+      return (IstitutoListaAdozioni);
+   var ListaFiltrata = [];
 
-  var AdozioneOk = function (Adozione) {
-   var Result = true;
+   var AdozioneOk = function (Adozione) 
+   {
+     var Result = true;
 
-   if (AnnoFiltro != -1)
-    if (Adozione.AnnoClasse.toUpperCase().indexOf(AnnoFiltro) < 0)
-     Result = false;
+     if(AnnoFiltro != -1)
+        if(Adozione.AnnoClasse.toUpperCase().indexOf(AnnoFiltro) < 0)
+           Result = false;
 
-   if (CombinazioneFiltro != -1)
-    if (Adozione.CombinazioneClasse.toUpperCase().indexOf(CombinazioneFiltro) < 0)
-     Result = false;
+     if(CombinazioneFiltro != -1)
+        if(Adozione.CombinazioneClasse.toUpperCase().indexOf(CombinazioneFiltro) < 0)
+           Result = false;
 
-   return (Result);
-  }
+     return(Result);
+   }
 
-  IstitutoListaAdozioni.forEach(function (Adozione) {
-   if (AdozioneOk(Adozione))
-    ListaFiltrata.push(Adozione)
+  IstitutoListaAdozioni.forEach(function(Adozione) 
+  {
+    if(AdozioneOk(Adozione))
+       ListaFiltrata.push(Adozione)
   });
 
   return (ListaFiltrata);

@@ -27,10 +27,7 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
     $scope.StampaOn  = false;
   }
 
-  $scope.IsAdministrator = function ()
-  {
-    return SystemInformation.UserInformation.Ruolo == RUOLO_AMMINISTRATORE;
-  }
+  $scope.IsAdministrator = SystemInformation.IsAdministrator;
   
   $scope.GridOptions = {
                          rowSelection    : false,

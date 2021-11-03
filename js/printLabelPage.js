@@ -30,10 +30,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
 
   ScopeHeaderController.CheckButtons();
   
-  $scope.IsAdministrator = function ()
-  {
-    return SystemInformation.UserInformation.Ruolo == RUOLO_AMMINISTRATORE;
-  }
+  $scope.IsAdministrator = SystemInformation.IsAdministrator;
   
   $scope.AnnullaStampa = function ()
   {
@@ -388,7 +385,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
 
   if(Array.isArray(SystemInformation.DataBetweenController.ListaChiaviFromAdvanced) && SystemInformation.DataBetweenController.ListaChiaviFromAdvanced.length > 0)
   {
-    $scope.SpedizioneImmediata              = SystemInformation.DataBetweenController.Provenienza == 'NOT_ADVANCED' || SystemInformation.DataBetweenController.Provenienza == 'TeacherPage' ? true : false;
+    $scope.SpedizioneImmediata              = (SystemInformation.DataBetweenController.Provenienza == 'NOT_ADVANCED' || SystemInformation.DataBetweenController.Provenienza == 'TeacherPage') ? true : false;
     ChiaviDaSpedireTmp                      = Array.from(SystemInformation.DataBetweenController.ListaChiaviFromAdvanced);
     SystemInformation.DataBetweenController = {};
     SystemInformation.GetSQL('PrintLabel',{ChiaviDaSpedire : ChiaviDaSpedireTmp},function(Results)
@@ -520,11 +517,11 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                 doc.text(45,CoordY+10,TroncaTesto(ListaCumulativo[k].Nome,50));
                 doc.text(160,CoordY+10,ListaCumulativo[k].Posizione);            
             }
-            doc.addPage();
+            //doc.addPage();
          }
 
-         if($scope.SpedizioneImmediata)
-            doc.deletePage(0) 
+         //if($scope.SpedizioneImmediata)
+            //doc.deletePage(0) 
 
          for (let i = 0;i < ListaSpedizioniToPrint.length;i ++)
          {

@@ -39,10 +39,7 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
                            limitOptions    : [10, 20, 30]
                          };
    
-  $scope.IsAdministrator = function ()
-  {
-    return SystemInformation.UserInformation.Ruolo == RUOLO_AMMINISTRATORE;
-  }
+  $scope.IsAdministrator = SystemInformation.IsAdministrator;
 
   $scope.InventarioMagazzinoXls = function()
   { 

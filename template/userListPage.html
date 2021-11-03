@@ -3,8 +3,7 @@
     <div>
       <h2>UTENTI</h2>
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoUtente()">NUOVO UTENTE</md-button>
-      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="ApriStatisticaXls($event)">ESPORTAZIONE STATISTICA XLS</md-button>
-      <md-button class="md-raised md-accent" style="float:left;font-weight:bold;" ng-click="GestioneStatistica()">GESTIONE STATISTICHE</md-button>
+      <!--<md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="ApriStatisticaXls($event)">ESPORTAZIONE STATISTICA XLS</md-button>-->
     </div>
     <div ng-if="ListaUtenti.length != 0">
       <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  

@@ -1,5 +1,5 @@
 // Inizializzazioni
-const VERSIONE_ATTUALE = '1.44.56';
+const VERSIONE_ATTUALE = '1.45.57';
 
 SIRIOApp.config(['$qProvider', function ($qProvider)
 {
@@ -241,10 +241,7 @@ SIRIOApp.controller("headerController",['$scope','SystemInformation','$state','$
      $state.go("communicationPage");
    }
 
-   $scope.IsAdministrator = function ()
-   {
-     return SystemInformation.UserInformation.Ruolo == RUOLO_AMMINISTRATORE;
-   }
+   $scope.IsAdministrator = SystemInformation.IsAdministrator;
 
    $scope.checkCurrentPage = function(aPage)
    {

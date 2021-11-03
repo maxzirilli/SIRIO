@@ -1,4 +1,5 @@
 <md-dialog>
+  <div style="width: 1000px;margin:0px;">
   <form ng-cloak name="PopupMultipliForm">
     <md-toolbar>
       <div class="md-toolbar-tools">
@@ -6,15 +7,15 @@
       </div>
     </md-toolbar>
 
-    <md-dialog-content>
-      <div class="md-dialog-content" ng-repeat="titolo in ListaTitoliToHandle" style="width:1000px;">
-        <div layout="row" style="margin:0px;height:30px;">
+    <!--<md-dialog-content>-->
+      <div ng-repeat="titolo in ListaTitoliToHandle" style="padding:20px;">
+        <div style="margin:0px;width: 100%;">
           <p style="font-weight:bold;">{{titolo.NOME_TITOLO}} - ISBN : {{titolo.ISBN_TITOLO}}</p>
-          <md-input-container style="margin-left:20px;" class="containerSelect"><label>QUANTITA</label>         
+        </div>
+        <md-input-container style="margin-left:10px;" class="containerSelect"><label>QUANTITA</label>         
             <input ng-model="titolo.QUANTITA" type="number" min=1 name="Quantita">                           
-          </md-input-container>
-        </div>       
-        <md-radio-group ng-model="titolo.STATO" layout="row" style="text-align:center;margin-top:30px;" >
+        </md-input-container>     
+        <md-radio-group ng-model="titolo.STATO" layout="row" style="text-align:center;margin-top:0px;" >
           <md-radio-button value="P">PRENOTATO</md-radio-button>
           <md-radio-button value="S">DA SPEDIRE</md-radio-button>
           <!--<md-radio-button value="S" ng-if="(titolo.QUANTITA <= titolo.QUANTITA_DISP) && !Multipla">DA SPEDIRE</md-radio-button>
@@ -22,7 +23,8 @@
           <md-radio-button value="C" ng-if="(!SpedizioneMultipla && ChiaveSpedizione == -1 && ChiaveDocente != -1 && titolo.QUANTITA <= titolo.QUANTITA_MGZN_VOL)||(!SpedizioneMultipla && ChiaveSpedizione != -1 && titolo.QUANTITA <= titolo.QUANTITA_DISP)">CONSEGNATO</md-radio-button>
         </md-radio-group>
       </div>
-    </md-dialog-content>
+      
+    <!--</md-dialog-content>-->
 
     <md-dialog-actions layout="row">
       <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="SetTuttiPrenotati()">
@@ -39,4 +41,5 @@
       </md-button>
     </md-dialog-actions>
   </form>
+  </div>
 </md-dialog>

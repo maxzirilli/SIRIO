@@ -26,10 +26,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
  
   ScopeHeaderController.CheckButtons();
   
-  $scope.IsAdministrator = function ()
-  {
-    return SystemInformation.UserInformation.Ruolo == RUOLO_AMMINISTRATORE;
-  }
+  $scope.IsAdministrator = SystemInformation.IsAdministrator;
 
   //if ($scope.IsAdministrator()) //PER PROBLEMA CRASH TROPPE QUERY
      // $scope.DataRicercaDal = new Date(TmpDate);

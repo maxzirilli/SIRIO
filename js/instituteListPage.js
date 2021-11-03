@@ -26,10 +26,7 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
   $scope.ListaAnni          = [];
   $scope.ListaCombinazioni  = [];
 
-  $scope.IsAdministrator = function ()
-  {
-    return SystemInformation.UserInformation.Ruolo == RUOLO_AMMINISTRATORE;
-  }
+  $scope.IsAdministrator = SystemInformation.IsAdministrator;
   
   ScopeHeaderController.CheckButtons();
 

@@ -55,6 +55,11 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http,$mdDial
   {
     $state.go("adoptionDeadlinePage");
   }
+
+  $scope.ApriPaginaStatistiche = function()
+  {
+    $state.go("statisticsPage");
+  }
     
   $scope.GridOptions = {
                           rowSelection    : false,
@@ -324,10 +329,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http,$mdDial
     });
   }
 
-  $scope.IsAdministrator = function ()
-  {
-    return SystemInformation.UserInformation.Ruolo == RUOLO_AMMINISTRATORE;
-  }
+  $scope.IsAdministrator = SystemInformation.IsAdministrator;
 
   $scope.NuovaSpedizioneCasaEditrice = function ()
   {

@@ -24,6 +24,11 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
   this.VDocCarico            = 'VERSIONE DOCUMENTO 2.2 DEL 11/11/2020';
   this.VDocListaDocIst       = 'VERSIONE DOCUMENTO 2.3 DEL 04/03/2021';
 
+  this.IsAdministrator = function ()
+  {
+    return Self.UserInformation.Ruolo == RUOLO_AMMINISTRATORE;
+  }
+
   this.s2ab = function(s)
   {
     var buf = new ArrayBuffer(s.length);
