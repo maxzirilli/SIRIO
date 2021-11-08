@@ -517,11 +517,11 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                 doc.text(45,CoordY+10,TroncaTesto(ListaCumulativo[k].Nome,50));
                 doc.text(160,CoordY+10,ListaCumulativo[k].Posizione);            
             }
-            //doc.addPage();
+            doc.addPage();
          }
 
-         //if($scope.SpedizioneImmediata)
-            //doc.deletePage(0) 
+         if($scope.SpedizioneImmediata)
+            doc.deletePage(0) 
 
          for (let i = 0;i < ListaSpedizioniToPrint.length;i ++)
          {
