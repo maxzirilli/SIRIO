@@ -11,15 +11,16 @@
       <div layout="row" style="justify-content: flex-end;width:1000px;">
          <div style="justify-content: flex-end;">
             <md-button ng-click="EsportaStatisticaPromotori()" ng-show="StatisticaFiltrata.length > 0" style="font-weight:bold;" class="md-raised md-accent" title="ESPORTA XLS PROMOTORI"> ESPORTA STATISTICA XLS</md-button>
-            <md-button ng-click="CreaStatisticaPromotori()" style="font-weight:bold;" class="md-raised md-accent" title="GENERA STATISTICA PROMOTORI"> GENERA STATISTICA</md-button>
+            <!--<md-button ng-click="CreaStatisticaPromotori()" style="font-weight:bold;" class="md-raised md-accent" title="GENERA STATISTICA PROMOTORI"> GENERA STATISTICA</md-button>-->
          </div> 
       </div>
+       <div style="justify-content: flex-end;width:1000px;">
         <div layout="row">        
           <md-input-container  layout-align="start center">
-            <label>DAL</label><input  ng-model="DataRicercaDalPromotori" type="date" name="DataRicercaDalPromotori">
+            <label>DAL</label><input ng-change="CreaStatisticaPromotori()" ng-model="DataRicercaDalPromotori" type="date" name="DataRicercaDalPromotori">
           </md-input-container>
-          <md-input-container  layout-align="start center" style="margin-left:20px;">  
-            <label>AL</label><input ng-model="DataRicercaAlPromotori" type="date" name="DataRicercaAlPromotori">
+          <md-input-container layout-align="start center" style="margin-left:20px;">  
+            <label>AL</label><input ng-change="CreaStatisticaPromotori()" ng-model="DataRicercaAlPromotori" type="date" name="DataRicercaAlPromotori">
           </md-input-container>
         </div> 
         <div layout="row">
@@ -32,27 +33,46 @@
             </md-select>
           </md-input-container>
 
-         <md-input-container class="containerSelect" style="width:100%;margin-left:20px;float:left;">
-         <label>TITOLO</label>
-         <md-autocomplete
-                     md-input-name="Titolo"
-                     md-autofocus="true"
-                     md-no-cache="true"
-                     md-selected-item-change = "selectedItemChangeTitoloStat(item)"
-                     md-search-text="searchTextTitStat"
-                     md-items="item in queryTitoloStat(searchTextTitStat)"
-                     md-item-text="item.Nome"
-                     md-require-match="true"
-                     md-clear-button="true">
-         <md-item-template>
-           <span md-highlight-text="searchText">ISBN : {{item.Codice}} - {{item.Nome}}</span>
-         </md-item-template>
-         <md-not-found>
-           Nessuna corrispondenza
-         </md-not-found>
+          <md-input-container class="containerSelect" style="width:33%;margin-left:20px;float:left;">
+          <label>TITOLO</label>
+          <md-autocomplete
+                      md-input-name="Titolo"
+                      md-autofocus="true"
+                      md-no-cache="true"
+                      md-selected-item-change = "selectedItemChangeTitoloStat(item)"
+                      md-search-text="searchTextTitStat"
+                      md-items="item in queryTitoloStat(searchTextTitStat)"
+                      md-item-text="item.Nome"
+                      md-require-match="true"
+                      md-clear-button="true">
+          <md-item-template>
+            <span md-highlight-text="searchTextTitStat">ISBN : {{item.Codice}} - {{item.Nome}}</span>
+          </md-item-template>
+          <md-not-found>
+            Nessuna corrispondenza
+          </md-not-found>
+        </md-input-container>
+               <md-input-container class="containerSelect" style="margin-left:5px;width:33%;padding-top:0px;">
+           <label>ISTITUTO</label>
+           <md-autocomplete
+                       md-input-name="Istituto"
+                       md-autofocus="true"
+                       md-no-cache="true"
+                       md-selected-item-change = "selectedItemChangeIstitutoStat(item)"
+                       md-search-text="searchTextIstitutoStat"
+                       md-items="item in queryIstitutoStat(searchTextIstitutoStat)"
+                       md-item-text="item.Istituto"
+                       md-require-match="true"
+                       md-clear-button="true">
+           <md-item-template>
+             <span md-highlight-text="searchTextIstitutoStat">CODICE : {{item.CodiceIstituto}} - {{item.Istituto}}</span>
+           </md-item-template>
+           <md-not-found>
+             NESSUNA CORRISPONDENZA
+           </md-not-found>
        </md-input-container>
-        </div>
-
+       </div>
+       </div>
       </div>
       <div class="md-dialog-content">
         <div ng-if="StatisticaFiltrata.length != 0">

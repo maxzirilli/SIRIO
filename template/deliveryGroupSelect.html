@@ -52,6 +52,29 @@
              </md-select>
            </md-input-container>  
          </div>
+         <br>
+         <div ng-show="IsAdministrator() && ViewFiltroIstituto">
+           <h4 style="margin-bottom:5px;margin-top: 5px;">SELEZIONE ISTITUTO :</h4>
+           <md-input-container class="containerSelect" style="margin-left:5px;width:100%;padding-top:0px;">
+              <label>ISTITUTO</label>
+              <md-autocomplete
+                          md-input-name="Istituto"
+                          md-autofocus="true"
+                          md-no-cache="true"
+                          md-selected-item-change = "selectedItemChangeIstitutoPopup(item)"
+                          md-search-text="searchTextIstitutoPopup"
+                          md-items="item in queryIstitutoPopup(searchTextIstitutoPopup)"
+                          md-item-text="item.Istituto"
+                          md-require-match="true"
+                          md-clear-button="true">
+              <md-item-template>
+                <span md-highlight-text="searchTextIstitutoPopup">CODICE : {{item.CodiceIstituto}} - {{item.Istituto}}</span>
+              </md-item-template>
+              <md-not-found>
+                NESSUNA CORRISPONDENZA
+              </md-not-found>
+           </md-input-container>
+         </div>
       </div>
     </md-dialog-content>
 

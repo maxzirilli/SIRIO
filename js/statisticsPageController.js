@@ -365,8 +365,9 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
 
   $scope.GeneraStatistica = function()
   {
-    $scope.CaricamentoInCorso   = true;
-    $scope.IsGruppoRivaleFiltro = false;
+    $scope.CaricamentoInCorso     = true;
+    $scope.IsGruppoRivaleFiltro   = false;
+    $scope.GridOptions.query.page = 1;
 
     if($scope.ListaDate.length != 0)
     {

@@ -287,13 +287,16 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
 
   function DialogControllerSelezioneGruppi($scope,$mdDialog,Tipo)
   {
-    $scope.ListaGruppiToAdd    = [];
-    $scope.CheckGruppi         = 'G';
-    $scope.CheckNegativi       = 'N';
-    $scope.CheckPromotori      = 'T';
-    $scope.PromotoreScelto     = -1;
-    $scope.PromotoreSceltoNome = '';
-    $scope.Tipo                = Tipo;
+    $scope.ListaGruppiToAdd        = [];
+    $scope.CheckGruppi             = 'G';
+    $scope.CheckNegativi           = 'N';
+    $scope.CheckPromotori          = 'T';
+    $scope.PromotoreScelto         = -1;
+    $scope.PromotoreSceltoNome     = '';
+    $scope.Tipo                    = Tipo;
+    $scope.ViewFiltroIstituto      = Tipo == 'C';
+    $scope.IstitutoFiltroPopup     = -1;
+    $scope.searchTextIstitutoPopup = "";
 
     $scope.GetNomePromotore = function()
     {
@@ -308,6 +311,22 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
           else $scope.PromotoreSceltoNome = '';
        }     
     }
+
+    $scope.queryIstitutoPopup = function(searchTextIstituto)
+    {
+       searchTextIstituto = searchTextIstituto.toUpperCase();
+       return($scope.ListaIstituti.grep(function(Elemento) 
+       { 
+         return(Elemento.Istituto.toUpperCase().indexOf(searchTextIstituto) != -1 || Elemento.CodiceIstituto.toUpperCase().indexOf(searchTextIstituto) != -1);
+       }));
+    }
+  
+    $scope.selectedItemChangeIstitutoPopup = function(itemIstituto)
+    {
+      if(itemIstituto != undefined)
+         $scope.IstitutoFiltroPopup = itemIstituto.Chiave;
+      else $scope.IstitutoFiltroPopup = -1;
+    }    
     
     $scope.hide = function() 
     {
@@ -318,6 +337,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     {
       $scope.PromotoreScelto     = -1;
       $scope.PromotoreSceltoNome = '';
+      $scope.IstitutoFiltroPopup = -1;
       for(let i = 0;i < $scope.ListaGruppiPopup.length;i ++)
           $scope.ListaGruppiPopup[i].DaAggiungere = false;          
       $scope.ListaGruppiToAdd  = [];
@@ -518,6 +538,9 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
                               Al  : ZHTMLInputFromDate(TmpDateCnsg)
                             };
 
+      if($scope.IstitutoFiltroPopup != undefined && $scope.IstitutoFiltroPopup != -1)
+         ParamConsegnati.ChiaveIstituto = $scope.IstitutoFiltroPopup;
+
       if(ArrayGruppi.length > 0 && $scope.CheckGruppi == 'G')
         ParamConsegnati.ChiaveGruppi = ArrayGruppi.toString() 
       
@@ -583,6 +606,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     $scope.searchTextTitStat         = undefined;
     $scope.StatisticaPromotori       = [];
     $scope.StatisticaFiltrata        = [];
+    $scope.IstitutoFiltroStat        = -1;
+    $scope.searchTextIstitutoStat    = "";
 
     $scope.SetStatistica = function()
     {
@@ -594,6 +619,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     $scope.hide = function() 
     {
       $scope.PromotoreFiltroStatistica = -1;
+      $scope.IstitutoFiltroStat        = -1;
       $scope.TitoloFiltroStat          = -1;
       $scope.StatisticaVisible         = false;
       $scope.searchTextTitStat         = undefined;
@@ -630,6 +656,23 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
       $scope.SetStatistica();
     }  
 
+    $scope.queryIstitutoStat = function(searchTextIstituto)
+    {
+       searchTextIstituto = searchTextIstituto.toUpperCase();
+       return($scope.ListaIstituti.grep(function(Elemento) 
+       { 
+         return(Elemento.Istituto.toUpperCase().indexOf(searchTextIstituto) != -1 || Elemento.CodiceIstituto.toUpperCase().indexOf(searchTextIstituto) != -1);
+       }));
+    }
+  
+    $scope.selectedItemChangeIstitutoStat = function(itemIstituto)
+    {
+      if(itemIstituto != undefined)
+         $scope.IstitutoFiltroStat = itemIstituto.Chiave;
+      else $scope.IstitutoFiltroStat = -1;
+      $scope.CreaStatisticaPromotori()
+    }  
+
     $scope.CreaStatisticaPromotori = function()
     {                
       if($scope.DataRicercaDalPromotori == undefined || $scope.DataRicercaAlPromotori == undefined)
@@ -641,6 +684,9 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
                                Dal : ZHTMLInputFromDate($scope.DataRicercaDalPromotori), 
                                Al  : ZHTMLInputFromDate(TmpDatePrmt)
                             };
+
+      if($scope.IstitutoFiltroStat != undefined && $scope.IstitutoFiltroStat != -1)
+         ParamStatistica.ChiaveIstituto = $scope.IstitutoFiltroStat;
 
       SystemInformation.GetSQL('Statistics',ParamStatistica,function(Results)
       {
@@ -685,10 +731,44 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
         else  SystemInformation.ApplyOnError('Modello statistica spedizioni/titoli per promotore non conforme','')
       },'SelectDeliveryCount')
     }
+    $scope.CreaStatisticaPromotori();
+
   }
 
   $scope.EsportaStatisticaPromotori = function()
   {
+
+    var NomePromotore  = "";
+    var CodiceIstituto = "";
+    var CodiceTitolo   = "";
+
+    if($scope.PromotoreFiltroStatistica != -1)
+    {
+       var Promotore = $scope.ListaPromotori.find(function(AProm){return (AProm.Chiave == $scope.PromotoreFiltroStatistica);});
+       if(Promotore != undefined)
+       {
+          NomePromotore = Promotore.Nome + '_';
+          NomePromotore = NomePromotore.replace(" ", "_").toUpperCase();
+       }
+       else NomePromotore = '';
+    } 
+
+    if($scope.IstitutoFiltroStat != -1)
+    {
+       var Istituto = $scope.ListaIstituti.find(function(AIst){return (AIst.Chiave == $scope.IstitutoFiltroStat);});
+       if(Istituto != undefined)
+          CodiceIstituto = Istituto.CodiceIstituto + '_';
+       else CodiceIstituto = '';
+    } 
+
+    if($scope.TitoloFiltroStat != -1)
+    {
+       var Titolo = $scope.ListaTitoliFilter.find(function(ATit){return (ATit.Chiave == $scope.TitoloFiltroStat);});
+       if(Titolo != undefined)
+          CodiceTitolo = Titolo.Codice + '_';
+       else CodiceTitolo = '';
+    }         
+
     var WBook = {
                   SheetNames : [],
                   Sheets     : {}
@@ -698,7 +778,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     var BodySheet          = {};
     
     BodySheet['A1'] = SystemInformation.GetCellaIntestazione('ISBN');
-    BodySheet['B1'] = SystemInformation.GetCellaIntestazione('ISBN');
+    BodySheet['B1'] = SystemInformation.GetCellaIntestazione('TITOLO');
     BodySheet['C1'] = SystemInformation.GetCellaIntestazione('PROMOTORE');
     BodySheet['D1'] = SystemInformation.GetCellaIntestazione('PRENOTATI');
     BodySheet['E1'] = SystemInformation.GetCellaIntestazione('DA SPEDIRE');
@@ -741,9 +821,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     var DataStatistica = DataGiorno.toString() + '/' + DataMese.toString() +  '/' + DataAnno.toString();
 
     var wbout = XLSX.write(WBook, {bookType:'xlsx', bookSST:true, type: 'binary'});
-    saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}), 'StatisticaSpedizioniPromotori' + DataStatistica + ".xlsx");
-
-
+    saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}), 'StatisticaSpedizioniPromotori_' + NomePromotore + CodiceIstituto + CodiceTitolo + DataStatistica + ".xlsx");
   }
 
   $scope.ApriCumulativoPrenotatiOrd = function(ev)
@@ -961,7 +1039,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
                                    CodiceIstituto : ListaIstitutiTmp[i].CODICE,
                                    Istituto       : ListaIstitutiTmp[i].NOME
                                  }
-      $scope.ListaIstituti = ListaIstitutiTmp;
+      $scope.ListaIstituti      = ListaIstitutiTmp;
     }
     else SystemInformation.ApplyOnError('Modello istituti non conforme','');    
   },'SelectSQLOnlyVisible');

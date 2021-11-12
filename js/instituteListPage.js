@@ -1,30 +1,33 @@
 SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','$filter','$sce','ZConfirm', function($scope,SystemInformation,$state,$rootScope,$mdDialog,$filter,$sce,ZConfirm)
 {
-  $scope.EditingOn          = false;
-  $scope.IstitutoInEditing  = {};
-  $scope.ListaIstituti      = [];  
-  $scope.ListaProvince      = [];
-  $scope.ListaPromotori     = [];  
-  $scope.SezioneMax         = -1;
-  $scope.ListaSezioni       = ['A','B','C','D','E','F','G','H','I','L','M','N','O','P','Q','R','S','T','U','V','Z'];    
-  $scope.Anno               = [1,2,3,4,5];
-  $scope.ListaSezioniFinale = [];
-  $scope.ArrayClassiFinale  = [];
-  $scope.ClasseCliccata     = [];
-  $scope.IstitutiNascosti   = false;  
-  $scope.ProvinciaFiltro    = -1;
-  $scope.NomeFiltro         = '';
-  $scope.CodiceFiltro       = ''; 
-  $scope.NomeFiltroUnione   = '';
-  $scope.ComuneFiltro       = '';
-  $scope.CheckOldProvincia  = false;
-  $scope.OldPagina          = 0;
-  $scope.PromotoreFiltro    = -1;
-
-  $scope.AnnoFiltro         = -1;
-  $scope.CombinazioneFiltro = -1;
-  $scope.ListaAnni          = [];
-  $scope.ListaCombinazioni  = [];
+  $scope.EditingOn            = false;
+  $scope.MailOn               = false;
+  $scope.IstitutoInEditing    = {};
+  $scope.ListaIstituti        = [];  
+  $scope.ListaProvince        = [];
+  $scope.ListaPromotori       = [];  
+  $scope.SezioneMax           = -1;
+  $scope.ListaSezioni         = ['A','B','C','D','E','F','G','H','I','L','M','N','O','P','Q','R','S','T','U','V','Z'];    
+  $scope.Anno                 = [1,2,3,4,5];
+  $scope.ListaSezioniFinale   = [];
+  $scope.ArrayClassiFinale    = [];
+  $scope.ClasseCliccata       = [];
+  $scope.IstitutiNascosti     = false;  
+  $scope.ProvinciaFiltro      = -1;
+  $scope.NomeFiltro           = '';
+  $scope.CodiceFiltro         = ''; 
+  $scope.NomeFiltroUnione     = '';
+  $scope.ComuneFiltro         = '';
+  $scope.CheckOldProvincia    = false;
+  $scope.OldPagina            = 0;
+  $scope.PromotoreFiltro      = -1;
+  $scope.NascostoFiltro       = false;
+  $scope.ListaGruppiIstituti  = [];
+  $scope.AnnoFiltro           = -1;
+  $scope.CombinazioneFiltro   = -1;
+  $scope.ListaAnni            = [];
+  $scope.ListaCombinazioni    = [];
+  $scope.GruppoIstitutoFiltro = -1;
 
   $scope.IsAdministrator = SystemInformation.IsAdministrator;
   
@@ -105,6 +108,21 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
     else SystemInformation.ApplyOnError('Modello promotori non conforme','');     
   });
 
+  SystemInformation.GetSQL('InstituteType', {}, function(Results)  
+  {
+    ListaGruppiTmp = SystemInformation.FindResults(Results,'InstituteGroupInfo');
+    if(ListaGruppiTmp != undefined)
+    { 
+       for(let i = 0;i < ListaGruppiTmp.length;i ++)
+       ListaGruppiTmp[i] = {
+                             Chiave      : parseInt(ListaGruppiTmp[i].CHIAVE),
+                             Descrizione : ListaGruppiTmp[i].DESCRIZIONE
+                           }
+       $scope.ListaGruppiIstituti = ListaGruppiTmp;
+    }
+    else SystemInformation.ApplyOnError('Modello gruppi istituti non conforme','');   
+  },'SelectGroups');
+
   SystemInformation.GetSQL('Combination',{},function(Results)
   {
     $scope.ListaCombinazioniAll = [];
@@ -167,13 +185,16 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
             
                 IstitutiInfoLista[i] = {
                                           Chiave        : IstitutiInfoLista[i].CHIAVE,
-                                          Codice        : (IstitutiInfoLista[i].CODICE == null || IstitutiInfoLista[i].CODICE == '') ? 'N.D.' : IstitutiInfoLista[i].CODICE,   
-                                          Nome          : (IstitutiInfoLista[i].NOME == null || IstitutiInfoLista[i].NOME == '') ? 'N.D.' : IstitutiInfoLista[i].NOME,  
+                                          Codice        : (IstitutiInfoLista[i].CODICE == undefined || IstitutiInfoLista[i].CODICE == '') ? 'N.D.' : IstitutiInfoLista[i].CODICE,   
+                                          Nome          : (IstitutiInfoLista[i].NOME == undefined || IstitutiInfoLista[i].NOME == '') ? 'N.D.' : IstitutiInfoLista[i].NOME,  
+                                          Email         : IstitutiInfoLista[i].EMAIL == undefined ? 'Non disponibile' : (IstitutiInfoLista[i].EMAIL.includes('@') ? IstitutiInfoLista[i].EMAIL : 'Non disponibile'),
                                           Promotore     : IstitutiInfoLista[i].PROMOTORE,
-                                          PromotoreKey  : IstitutiInfoLista[i].PRM_CHIAVE,
+                                          PromotoreKey  : IstitutiInfoLista[i].PRM_CHIAVE == undefined ? -2 : IstitutiInfoLista[i].PRM_CHIAVE,
                                           Provincia     : IstitutiInfoLista[i].PROVINCIA, 
                                           ProvinciaNome : IstitutiInfoLista[i].NOME_PROVINCIA,
-                                          Nascosto      : (IstitutiInfoLista[i].NASCOSTO == null || IstitutiInfoLista[i].NASCOSTO == 0) ? false : true,
+                                          Gruppo        : IstitutiInfoLista[i].GRUPPO_TIPO == undefined ? 'N.D.' :  IstitutiInfoLista[i].GRUPPO_TIPO,
+                                          Liceo         : IstitutiInfoLista[i].LICEO == 1 ? true : false,
+                                          Nascosto      : (IstitutiInfoLista[i].NASCOSTO == undefined || IstitutiInfoLista[i].NASCOSTO == 0) ? false : true,
                                           NrDocenti     : parseInt(IstitutiInfoLista[i].NR_DOCENTI),
                                           NrAdozioni    : parseInt(IstitutiInfoLista[i].NR_ADOZIONI),
                                           Comune        : IstitutiInfoLista[i].COMUNE == undefined ? '' : IstitutiInfoLista[i].COMUNE                       
@@ -195,13 +216,16 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
             
                 IstitutiInfoLista[i] = {
                                           Chiave        : IstitutiInfoLista[i].CHIAVE,
-                                          Codice        : (IstitutiInfoLista[i].CODICE == null || IstitutiInfoLista[i].CODICE == '') ? 'N.D.' : IstitutiInfoLista[i].CODICE,   
-                                          Nome          : (IstitutiInfoLista[i].NOME == null || IstitutiInfoLista[i].NOME == '') ? 'N.D.' : IstitutiInfoLista[i].NOME,  
+                                          Codice        : (IstitutiInfoLista[i].CODICE == undefined || IstitutiInfoLista[i].CODICE == '') ? 'N.D.' : IstitutiInfoLista[i].CODICE,   
+                                          Nome          : (IstitutiInfoLista[i].NOME == undefined || IstitutiInfoLista[i].NOME == '') ? 'N.D.' : IstitutiInfoLista[i].NOME,  
+                                          Email         : IstitutiInfoLista[i].EMAIL == undefined ? 'Non disponibile' : (IstitutiInfoLista[i].EMAIL.includes('@') ? IstitutiInfoLista[i].EMAIL : 'Non disponibile'),
                                           Promotore     : IstitutiInfoLista[i].PROMOTORE,
-                                          PromotoreKey  : IstitutiInfoLista[i].PRM_CHIAVE,
+                                          PromotoreKey  : IstitutiInfoLista[i].PRM_CHIAVE == undefined ? -2 : IstitutiInfoLista[i].PRM_CHIAVE,
                                           Provincia     : IstitutiInfoLista[i].PROVINCIA, 
                                           ProvinciaNome : IstitutiInfoLista[i].NOME_PROVINCIA,
-                                          Nascosto      : (IstitutiInfoLista[i].NASCOSTO == null || IstitutiInfoLista[i].NASCOSTO == 0) ? false : true,
+                                          Gruppo        : IstitutiInfoLista[i].GRUPPO_TIPO == undefined ? 'N.D.' :  IstitutiInfoLista[i].GRUPPO_TIPO,
+                                          Liceo         : IstitutiInfoLista[i].LICEO == 1 ? true : false,
+                                          Nascosto      : (IstitutiInfoLista[i].NASCOSTO == undefined || IstitutiInfoLista[i].NASCOSTO == 0) ? false : true,
                                           NrDocenti     : parseInt(IstitutiInfoLista[i].NR_DOCENTI),
                                           NrAdozioni    : parseInt(IstitutiInfoLista[i].NR_ADOZIONI),
                                           Comune        : IstitutiInfoLista[i].COMUNE == undefined ? '' : IstitutiInfoLista[i].COMUNE                            
@@ -472,28 +496,28 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
       {
         // Carica dati istituto 
         $scope.IstitutoInEditing.Chiave                = IstitutoDettaglio[0].CHIAVE;
-        $scope.IstitutoInEditing.Codice                = IstitutoDettaglio[0].CODICE      == null ? '' : IstitutoDettaglio[0].CODICE;
-        $scope.IstitutoInEditing.Nome                  = IstitutoDettaglio[0].NOME        == null ? '' : IstitutoDettaglio[0].NOME;
-        $scope.IstitutoInEditing.Tipologia             = IstitutoDettaglio[0].TIPOLOGIA   == null ? -1 : IstitutoDettaglio[0].TIPOLOGIA;
-        $scope.IstitutoInEditing.Indirizzo             = IstitutoDettaglio[0].CODICE      == null ? '' : IstitutoDettaglio[0].INDIRIZZO;
-        $scope.IstitutoInEditing.Comune                = IstitutoDettaglio[0].COMUNE      == null ? '' : IstitutoDettaglio[0].COMUNE;
-        $scope.IstitutoInEditing.Provincia             = IstitutoDettaglio[0].PROVINCIA   == null ? -1 : IstitutoDettaglio[0].PROVINCIA;
-        $scope.IstitutoInEditing.Cap                   = IstitutoDettaglio[0].CAP         == null ? '' : IstitutoDettaglio[0].CAP;
-        $scope.IstitutoInEditing.Email                 = IstitutoDettaglio[0].EMAIL       == null ? '' : IstitutoDettaglio[0].EMAIL;
-        $scope.IstitutoInEditing.Pec                   = IstitutoDettaglio[0].PEC         == null ? '' : IstitutoDettaglio[0].PEC;
-        $scope.IstitutoInEditing.SitoWeb               = IstitutoDettaglio[0].SITO_WEB    == null ? '' : IstitutoDettaglio[0].SITO_WEB;
-        $scope.IstitutoInEditing.SedeSuccursale        = IstitutoDettaglio[0].SEDE        == null ? 1  : IstitutoDettaglio[0].SEDE;
-        $scope.IstitutoInEditing.Referente_1           = IstitutoDettaglio[0].REFERENTE_1 == null ? '' : IstitutoDettaglio[0].REFERENTE_1;
-        $scope.IstitutoInEditing.NumeroTelefono_1      = IstitutoDettaglio[0].TELEFONO_1  == null ? '' : IstitutoDettaglio[0].TELEFONO_1;
-        $scope.IstitutoInEditing.Referente_2           = IstitutoDettaglio[0].REFERENTE_2 == null ? '' : IstitutoDettaglio[0].REFERENTE_2;
-        $scope.IstitutoInEditing.NumeroTelefono_2      = IstitutoDettaglio[0].TELEFONO_2  == null ? '' : IstitutoDettaglio[0].TELEFONO_2;
-        $scope.IstitutoInEditing.Referente_3           = IstitutoDettaglio[0].REFERENTE_3 == null ? '' : IstitutoDettaglio[0].REFERENTE_3;
-        $scope.IstitutoInEditing.NumeroTelefono_3      = IstitutoDettaglio[0].TELEFONO_3  == null ? '' : IstitutoDettaglio[0].TELEFONO_3;
-        $scope.IstitutoInEditing.PromotoreAssegnato    = IstitutoDettaglio[0].PROMOTORE   == null ? -1 : IstitutoDettaglio[0].PROMOTORE;
-        $scope.IstitutoInEditing.Preside               = IstitutoDettaglio[0].PRESIDE     == null ? '' : IstitutoDettaglio[0].PRESIDE;
-        $scope.IstitutoInEditing.Vicepreside           = IstitutoDettaglio[0].VICEPRESIDE == null ? '' : IstitutoDettaglio[0].VICEPRESIDE;
-        $scope.IstitutoInEditing.DirAmmnstr            = IstitutoDettaglio[0].DIR_AMMNSTR == null ? '' : IstitutoDettaglio[0].DIR_AMMNSTR;
-        $scope.IstitutoInEditing.ArrayClassiGlobale    = [];
+        $scope.IstitutoInEditing.Codice                = IstitutoDettaglio[0].CODICE      == undefined ? '' : IstitutoDettaglio[0].CODICE;
+        $scope.IstitutoInEditing.Nome                  = IstitutoDettaglio[0].NOME        == undefined ? '' : IstitutoDettaglio[0].NOME;
+        $scope.IstitutoInEditing.Tipologia             = IstitutoDettaglio[0].TIPOLOGIA   == undefined ? -1 : IstitutoDettaglio[0].TIPOLOGIA;
+        $scope.IstitutoInEditing.Indirizzo             = IstitutoDettaglio[0].CODICE      == undefined ? '' : IstitutoDettaglio[0].INDIRIZZO;
+        $scope.IstitutoInEditing.Comune                = IstitutoDettaglio[0].COMUNE      == undefined ? '' : IstitutoDettaglio[0].COMUNE;
+        $scope.IstitutoInEditing.Provincia             = IstitutoDettaglio[0].PROVINCIA   == undefined ? -1 : IstitutoDettaglio[0].PROVINCIA;
+        $scope.IstitutoInEditing.Cap                   = IstitutoDettaglio[0].CAP         == undefined ? '' : IstitutoDettaglio[0].CAP;
+        $scope.IstitutoInEditing.Email                 = IstitutoDettaglio[0].EMAIL       == undefined ? '' : IstitutoDettaglio[0].EMAIL;
+        $scope.IstitutoInEditing.Pec                   = IstitutoDettaglio[0].PEC         == undefined ? '' : IstitutoDettaglio[0].PEC;
+        $scope.IstitutoInEditing.SitoWeb               = IstitutoDettaglio[0].SITO_WEB    == undefined ? '' : IstitutoDettaglio[0].SITO_WEB;
+        $scope.IstitutoInEditing.SedeSuccursale        = IstitutoDettaglio[0].SEDE        == undefined ? 1  : IstitutoDettaglio[0].SEDE;
+        $scope.IstitutoInEditing.Referente_1           = IstitutoDettaglio[0].REFERENTE_1 == undefined ? '' : IstitutoDettaglio[0].REFERENTE_1;
+        $scope.IstitutoInEditing.NumeroTelefono_1      = IstitutoDettaglio[0].TELEFONO_1  == undefined ? '' : IstitutoDettaglio[0].TELEFONO_1;
+        $scope.IstitutoInEditing.Referente_2           = IstitutoDettaglio[0].REFERENTE_2 == undefined ? '' : IstitutoDettaglio[0].REFERENTE_2;
+        $scope.IstitutoInEditing.NumeroTelefono_2      = IstitutoDettaglio[0].TELEFONO_2  == undefined ? '' : IstitutoDettaglio[0].TELEFONO_2;
+        $scope.IstitutoInEditing.Referente_3           = IstitutoDettaglio[0].REFERENTE_3 == undefined ? '' : IstitutoDettaglio[0].REFERENTE_3;
+        $scope.IstitutoInEditing.NumeroTelefono_3      = IstitutoDettaglio[0].TELEFONO_3  == undefined ? '' : IstitutoDettaglio[0].TELEFONO_3;
+        $scope.IstitutoInEditing.PromotoreAssegnato    = IstitutoDettaglio[0].PROMOTORE   == undefined ? -1 : IstitutoDettaglio[0].PROMOTORE;
+        $scope.IstitutoInEditing.Preside               = IstitutoDettaglio[0].PRESIDE     == undefined ? '' : IstitutoDettaglio[0].PRESIDE;
+        $scope.IstitutoInEditing.Vicepreside           = IstitutoDettaglio[0].VICEPRESIDE == undefined ? '' : IstitutoDettaglio[0].VICEPRESIDE;
+        $scope.IstitutoInEditing.DirAmmnstr            = IstitutoDettaglio[0].DIR_AMMNSTR == undefined ? '' : IstitutoDettaglio[0].DIR_AMMNSTR;
+        $scope.IstitutoInEditing.ArrayClassiGlobale    = [];                                 
         $scope.IstitutoInEditing.ListaAdozioniIstituto = [];
         $scope.SezioneMax                              = 10;
 
@@ -1223,7 +1247,6 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                 doc.text(88,CoordY,'GIOVEDI')
                 doc.text(113,CoordY,'VENERDI')
                 doc.text(138,CoordY,'SABATO')
-               //doc.text(163,CoordY,'DOMENICA')
                 CoordY += 5;
                                
                 for(let j = 0;j < ListaDocenti[i].DISPONIBILITA.SETTIMANA.length;j ++)
@@ -1238,7 +1261,6 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                 doc.text(88,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[3]);
                 doc.text(113,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[4]);
                 doc.text(138,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[5]);
-                //doc.text(163,CoordY,ListaDocenti[i].DISPONIBILITA.SETTIMANA[6]);
                 CoordY += 10;
             }            
          }
@@ -1247,17 +1269,218 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
       else SystemInformation.ApplyOnError('Modello docenti e disponibilita per istituto non conforme','');     
     },ModelloOrdinamento)
   }  
+
+  $scope.AbilitaInvioMultiplo = function () 
+  {
+    var IstitutiConMail  = 0;
+    let IstitutiFiltrati = $filter('IstitutoByFiltro')($scope.ListaIstituti,$scope.ProvinciaFiltro,$scope.NomeFiltro,$scope.CodiceFiltro,$scope.NascostoFiltro,
+                                                       $scope.ComuneFiltro,$scope.PromotoreFiltro,$scope.IsAdministrator(),$scope.GruppoIstitutoFiltro);
+
+   for(let i = 0; i < IstitutiFiltrati.length; i ++)
+       if(IstitutiFiltrati[i].Email != 'Non disponibile')
+          IstitutiConMail++;
+
+   return (IstitutiConMail < MAX_N_DESTINATARI_MAIL &&
+           IstitutiConMail > 0);
+  };
+
+  $scope.InvioMail = function (Istituto) 
+  {
+     SystemInformation.DataBetweenController.IstMail = Istituto.Email;
+     $scope.MailOn = true;
+     $scope.InizializzaMailPage();
+  }
+
+  $scope.InvioMultiploMail = function () 
+  {
+    var ListaMailFiltrata   = $filter('IstitutoByFiltro')($scope.ListaIstituti,$scope.ProvinciaFiltro,$scope.NomeFiltro,$scope.CodiceFiltro,$scope.NascostoFiltro,
+                                                          $scope.ComuneFiltro,$scope.PromotoreFiltro,$scope.IsAdministrator(),$scope.GruppoIstitutoFiltro);
+                                                          
+    SystemInformation.DataBetweenController = { ListaIstMail: [] };
+
+    for(let i = 0; i < ListaMailFiltrata.length; i ++)
+        if(ListaMailFiltrata[i].Email != 'Non disponibile')
+           SystemInformation.DataBetweenController.ListaIstMail.push({ Chiave: ListaMailFiltrata[i].Chiave, Email: ListaMailFiltrata[i].Email, Nome: ListaMailFiltrata[i].Nome });
+
+    SystemInformation.DataBetweenController.MailMultipla = true;
+    $scope.MailOn = true;
+    $scope.InizializzaMailPage();
+  }
   
   $scope.RefreshListaIstituti();
+
+  /////////////////////////PAGINA MAIL
+
+  $scope.ResetMailPage = function () 
+  {
+    $scope.MailMultipla              = false;
+    $scope.ListaIstitutiMailMultipla = [];
+    $scope.NumeroDestinatari         = 0;
+    $scope.ContatoreInvio            = 0;
+    $scope.InvioInCorso              = false;
+    $scope.OldPagIstituti            = 0;
+    $scope.ListaAllegatiMail         = [];
+    var Oggi                         = new Date();
+    var Anno                         = Oggi.getFullYear();
+    var Mese                         = Oggi.getMonth();
+    var Giorno                       = Oggi.getDay();
+    var Ora                          = Oggi.getHours();
+    var Minuto                       = Oggi.getMinutes();
+    var Secondo                      = Oggi.getSeconds();
+    $scope.AllegatoId                = Anno.toString() + Mese.toString() + Giorno.toString() + Ora.toString() + Minuto.toString() + Secondo.toString() + (Math.floor(Math.random() * 100)).toString();
+  }
+
+  $scope.InizializzaMailPage = function () 
+  {
+    $scope.ResetMailPage();
+    if (Array.isArray(SystemInformation.DataBetweenController.ListaIstMail) &&
+        SystemInformation.DataBetweenController.ListaIstMail.length > 0 &&
+        SystemInformation.DataBetweenController.MailMultipla) 
+    {
+        $scope.MailMultipla = true;
+        $scope.ListaIstitutiMailMultipla = Array.from(SystemInformation.DataBetweenController.ListaIstMail);
+        $scope.NumeroDestinatari = $scope.ListaIstitutiMailMultipla.length;
+        SystemInformation.DataBetweenController = {};
+    }
+
+    $scope.MailInEditing = {
+                             Destinatario : '',
+                             Oggetto      : '',
+                             Testo        : ''
+                           };
+    
+    if(!$scope.MailMultipla)
+        $scope.MailInEditing.Destinatario = SystemInformation.DataBetweenController.IstMail;
+  }
+
+  $scope.RimuoviDestinatario = function (Istituto) 
+  {
+    DestinatarioIndex = $scope.ListaIstitutiMailMultipla.findIndex(function (AIst) { return (AIst.Chiave == Istituto.Chiave); })
+    $scope.ListaIstitutiMailMultipla.splice(DestinatarioIndex, 1);
+  }
+
+  $scope.VisualizzaAllegato = function (nomeFile) 
+  {
+    SystemInformation.HandleMailAttachment('GET', { Nome: nomeFile, Id: $scope.AllegatoId }, function (Answer) {
+     try {
+      saveAs(Base64AsBlob(Answer.Allegato), nomeFile);
+     }
+     catch (e) {
+      alert(e.message);
+     }
+    });
+  }
+
+  $scope.EliminaAllegato = function (nomeFile, index) 
+  {
+    SystemInformation.HandleMailAttachment('DEL', { Nome: nomeFile, Id: $scope.AllegatoId }, function () 
+    {
+      $scope.ListaAllegatiMail.splice(index, 1);
+    });
+  }
+
+  $scope.AllegatoLoaded = function (fileInfo) 
+  {
+    var file = fileInfo.files[0];
+    if (file) 
+    {
+     var reader = new FileReader();
+     reader.onloadend = function (evt) 
+     {
+       var AllegatoBody = reader.result.split(",");
+       var AllegatoNome = file.name;
+
+       for(let i = 0; i < $scope.ListaAllegatiMail.length; i++)
+           if(AllegatoNome == $scope.ListaAllegatiMail[i].Nome) 
+           {
+              var Nome = AllegatoNome.substring(0, AllegatoNome.lastIndexOf("."));
+              var Ext = AllegatoNome.split('.').pop();
+              AllegatoNome = Nome + '(Copia).' + Ext;
+           }
+
+       SystemInformation.HandleMailAttachment('ADD', { Nome: AllegatoNome, Id: $scope.AllegatoId, Body: AllegatoBody[1] }, function () 
+       {
+         $scope.ListaAllegatiMail.push({ Nome: AllegatoNome });
+         document.getElementById('FileLoadAllegato').value = null;
+       })
+     }
+    }
+    reader.readAsDataURL(file);
+  }
+
+  $scope.CaricaAllegato = function () 
+  {
+    document.getElementById('FileLoadAllegato').click();
+  }
+
+  $scope.InviaMail = function () 
+  {
+    if($scope.ListaAllegatiMail.length == 0)
+       $scope.AllegatoId = '';
+
+    if (!$scope.MailMultipla) 
+    {
+       SystemInformation.PostSQL('MailTeacher', 
+       {
+         Oggetto      : $scope.MailInEditing.Oggetto.xSQL(),
+         Testo        : $scope.MailInEditing.Testo.xSQL(),
+         Destinatario : $scope.MailInEditing.Destinatario.xSQL()
+       },
+       function () 
+       {
+         $scope.MailInEditing = {};
+         ZCustomAlert($mdDialog, 'OK', 'INVIO MAIL ESEGUITO');
+         $scope.ResetMailPage();
+         $scope.MailOn = false;
+       }, true, false, $scope.AllegatoId)
+   }
+   else 
+   {
+     $scope.InvioInCorso   = true;
+     $scope.ContatoreInvio = 0;
+     var SendSingolaMail = function () 
+     {
+       SystemInformation.PostSQL('MailTeacher',
+       {
+         Oggetto      : $scope.MailInEditing.Oggetto.xSQL(),
+         Testo        : $scope.MailInEditing.Testo.xSQL(),
+         Destinatario : $scope.ListaIstitutiMailMultipla[$scope.ContatoreInvio].Email.xSQL()
+       },
+       function () 
+       {
+         $scope.ContatoreInvio++;
+         if($scope.ContatoreInvio >= $scope.ListaIstitutiMailMultipla.length)
+         {
+            $scope.InvioInCorso = false;
+            ZCustomAlert($mdDialog, 'OK', 'INVIO MAIL ESEGUITO');
+            SystemInformation.DataBetweenController = {};
+            $scope.ResetMailPage();
+            $scope.MailOn = false;
+         }
+         else SendSingolaMail();
+       },
+       true, false, $scope.AllegatoId)
+     }
+     SendSingolaMail();
+    }
+  }
+
+  $scope.OnAnnullaMailClicked = function () 
+  {
+    $scope.MailInEditing                    = {};
+    SystemInformation.DataBetweenController = {};
+    $scope.ResetMailPage();
+    $scope.MailOn = false;
+  }
  
 }]);
 
 
 SIRIOApp.filter('IstitutoByFiltro',function()
 {
-  return function(ListaIstituti,ProvinciaFiltro,NomeFiltro,CodiceFiltro,NascostoFiltro,ComuneFiltro,PromotoreFiltro,Admin)
+  return function(ListaIstituti,ProvinciaFiltro,NomeFiltro,CodiceFiltro,NascostoFiltro,ComuneFiltro,PromotoreFiltro,Admin,GruppoIstitutoFiltro)
          {
-           if(ProvinciaFiltro == -1 && NomeFiltro == '' && CodiceFiltro == '' && NascostoFiltro == true && ComuneFiltro == '' && ((parseInt(PromotoreFiltro) == -1 && Admin) || (parseInt(PromotoreFiltro) != -1 && !Admin))) return(ListaIstituti);
+           if(ProvinciaFiltro == -1 && NomeFiltro == '' && CodiceFiltro == '' && NascostoFiltro == true && ComuneFiltro == '' && GruppoIstitutoFiltro == -1 && ((parseInt(PromotoreFiltro) == -1 && Admin) || (parseInt(PromotoreFiltro) != -1 && !Admin))) return(ListaIstituti);
            var ListaFiltrata = [];
            NomeFiltro        = NomeFiltro.toUpperCase();
            ComuneFiltro      = ComuneFiltro.toUpperCase();
@@ -1292,6 +1515,18 @@ SIRIOApp.filter('IstitutoByFiltro',function()
                  if(PromotoreFiltro != -1)
                     if(PromotoreFiltro != Istituto.PromotoreKey)
                        Result = false;
+
+              if(GruppoIstitutoFiltro != -1)
+                 if(GruppoIstitutoFiltro == -2)
+                 {
+                    if(!Istituto.Liceo)
+                        Result = false;
+                 }
+                 else 
+                 {
+                   if(GruppoIstitutoFiltro != Istituto.Gruppo)
+                      return false;
+                 }
               
               return(Result);
            }

@@ -154,11 +154,9 @@
                  case -4 : array_push($CondizioniWhere,"case_editrici.CHIAVE IN (SELECT CHIAVE FROM case_editrici_nemiche)");
                            break;
                  default : if(!($Parametri->FiltroGruppoRivaleSelected))
-                           {
-                             array_push($CondizioniWhere,"titoli.EDITORE = case_editrici.DESCRIZIONE AND case_editrici.CHIAVE IN (SELECT CHIAVE FROM case_editrici_amiche) AND case_editrici.GRUPPO =" . $Parametri->FiltroGruppoEd);
-                             array_push($CondizioniWhere,"istituti.PROVINCIA IN (SELECT PROVINCIA FROM province_x_gruppi_editoriali WHERE GRUPPO = " . $Parametri->FiltroGruppoEd . ")");
-                           }
-                           else array_push($CondizioniWhere,"titoli.EDITORE = case_editrici.DESCRIZIONE AND case_editrici.CHIAVE IN (SELECT CHIAVE FROM case_editrici_nemiche) AND case_editrici.GRUPPO =" . $Parametri->FiltroGruppoEd);
+                                array_push($CondizioniWhere,"titoli.EDITORE = case_editrici.DESCRIZIONE AND case_editrici.CHIAVE IN (SELECT CHIAVE FROM case_editrici_amiche) AND case_editrici.GRUPPO =" . $Parametri->FiltroGruppoEd);
+                           else array_push($CondizioniWhere,"titoli.EDITORE = case_editrici.DESCRIZIONE AND case_editrici.CHIAVE IN (SELECT CHIAVE FROM case_editrici_nemiche) AND case_editrici.GRUPPO =" . $Parametri->FiltroGruppoEd);                           
+                           array_push($CondizioniWhere,"istituti.PROVINCIA IN (SELECT PROVINCIA FROM province_x_gruppi_editoriali WHERE GRUPPO = " . $Parametri->FiltroGruppoEd . ")");
                            break;
                } 
 

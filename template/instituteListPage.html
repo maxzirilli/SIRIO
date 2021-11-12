@@ -1,8 +1,9 @@
 <div ng-controller="instituteListPageController">
-  <div ng-show="!EditingOn && !StampaOn">
+  <div ng-show="!EditingOn && !StampaOn && !MailOn">
     <div>
       <h2 style="margin-right:50px;">ISTITUTI</h2>
-      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoIstituto()">NUOVO ISTITUTO</md-button>      
+      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoIstituto()">NUOVO ISTITUTO</md-button>    
+      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-if="AbilitaInvioMultiplo()" ng-click="InvioMultiploMail()">INVIO MULTIPLO MAIL</md-button>  
       <div layout="row">
         <md-input-container class="containerSelect" style="width:20%;margin-right:10px;"><label>PROVINCIA</label>
           <md-select ng-model="ProvinciaFiltro" ng-change="GridOptions.query.page = 1" placeholder="PROVINCIA" class="mdb-select" type="text" name="ProvinciaFiltro">
@@ -21,11 +22,23 @@
         <md-input-container class="containerSelect" style="width:20%;"><label>CODICE</label>
           <input ng-model="CodiceFiltro" ng-change="GridOptions.query.page = 1" style="text-transform:uppercase" type="search">
         </md-input-container>
+      </div>
+      <div layout="row">
         <md-input-container class="containerSelect" style="width:20%;margin-right:10px;" ng-show="IsAdministrator()"><label>PROMOTORE</label>
           <md-select ng-model="PromotoreFiltro" ng-change="GridOptions.query.page = 1" placeholder="PROMOTORE" class="mdb-select" type="text" name="PromotoreFiltro">
           <md-optgroup>
-            <md-option ng-value="-1">QUALSIASI</md-option>  
+            <md-option ng-value="-1">QUALSIASI</md-option>
+            <md-option ng-value="-2">NON ASSEGNATO</md-option>    
             <md-option ng-repeat="promotore in ListaPromotori" ng-value="promotore.Chiave">{{promotore.RagioneSociale}}</md-option>
+          </md-optgroup>
+          </md-select>
+        </md-input-container>
+        <md-input-container class="containerSelect" style="width:20%;margin-right:10px;"><label>TIPO</label>
+          <md-select ng-model="GruppoIstitutoFiltro" placeholder="TIPO" class="mdb-select" type="text" name="GruppoIstitutoFiltro">
+          <md-optgroup>
+            <md-option ng-value="-1">QUALSIASI</md-option>
+            <md-option ng-value="-2">SOLO SS2</md-option>   
+            <md-option ng-repeat="gruppo in ListaGruppiIstituti" ng-value="gruppo.Chiave">{{gruppo.Descrizione | uppercase}}</md-option>
           </md-optgroup>
           </md-select>
         </md-input-container>
@@ -38,19 +51,24 @@
           <th ng-if="IsAdministrator()"></th>
           <th></th>
           <th></th>
-          <th></th>          
+          <th></th>  
+          <th></th>        
           <th>CODICE</th>  
           <th>NOME</th>
           <th>PROVINCIA</th>
           <th>COMUNE</th>  
           <th ng-show="IsAdministrator()">PROMOTORE ASSEGNATO</th>      
         </tr>  
-        <tr ng-repeat="Istituto in ListaIstituti | IstitutoByFiltro : ProvinciaFiltro : NomeFiltro : CodiceFiltro : NascostoFiltro : ComuneFiltro : PromotoreFiltro : IsAdministrator() | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Istituto.Chiave}}>
+        <tr ng-repeat="Istituto in ListaIstituti | IstitutoByFiltro : ProvinciaFiltro : NomeFiltro : CodiceFiltro : NascostoFiltro : ComuneFiltro : PromotoreFiltro : IsAdministrator() : GruppoIstitutoFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Istituto.Chiave}}>
           <td ng-if="IsAdministrator()"><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA ISTITUTO" ng-click="EliminaIstituto(Istituto)"></td> 
           <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA ISTITUTO" ng-click="ModificaIstituto(Istituto)"></td>        
           <td><img src="img/printPDF.png" style="width:30px;height:auto;" title="LISTA DOCENTI" ng-click="CreaPdfListaDocenti(Istituto.Chiave,Istituto.Nome,Istituto.Codice,Istituto.ProvinciaNome)"></td>        
           <td ng-if="!(Istituto.Nascosto)"><img src="img/hide.png" style="width:30px;height:auto;" title="UNISCI E NASCONDI ISTITUTO" ng-click="UnisciIstituti(Istituto)"></td>        
           <td ng-if="Istituto.Nascosto"><img src="img/notHide.png" style="width:30px;height:auto;" title="RENDI VISIBILE ISTITUTO" ng-click="RendiVisibileIstituto(Istituto.Chiave,Istituto.Nome)"></td>        
+          
+          <td ng-if="Istituto.Email != 'Non disponibile'"><img src="img/email.png" style="width:30px;height:auto;" title="INVIA MAIL"  ng-click="InvioMail(Istituto)"></td>
+          <td ng-if="Istituto.Email == 'Non disponibile'"><img src="img/email.png" style="width:30px;height:auto;filter:grayscale(100%);" title="MAIL NON DISPONIBILE"></td>       
+
           <td>{{Istituto.Codice}}</td>  
           <td>{{Istituto.Nome}}<img ng-if="Istituto.NrDocenti > 0" src="img/smallTeacher.png" style="width:20px;height:auto;padding-left:10px;" title="DOCENTI PRESENTI"><img ng-if="Istituto.NrAdozioni > 0" src="img/smallAdoption.png" style="width:20px;height:auto;padding-left:10px;" title="ADOZIONI PRESENTI"></td>
           <td>{{Istituto.ProvinciaNome}}</td>
@@ -69,7 +87,7 @@
     <p ng-if="ListaIstituti.length == 0" style="font-weight:bold;font-style:italic;">NESSUN ISTITUTO PRESENTE</p>
   </div>
                          
-  <div ng-show="EditingOn && !StampaOn">
+  <div ng-show="EditingOn && !StampaOn && !MailOn">
     <form name="istitutoEditForm" layout="column" style="width:100%" ng-submit="ConfermaIstituto()">
          <div layout="row">
            <h2>ISTITUTO</h2>
@@ -286,8 +304,57 @@
     </form>        
   </div>
 
-  <div ng-show="!EditingOn && StampaOn">
+  <div ng-show="!EditingOn && StampaOn && !MailOn">
     <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="TornaAIstituti()">PAGINA ISTITUTI</md-button>      
     <iframe style="background:white;" id="teacherListPdf" title="Lista docenti istituto" height=100% width=100% ></iframe>
-  <div>  
+  </div> 
+
+   <div ng-show="!EditingOn && !StampaOn && MailOn">
+    <form name="MailEditForm" style="width:100%" ng-submit="InviaMail()">
+      <h2>INVIO MAIL</h2>
+      <progress ng-show="InvioInCorso && MailMultipla" style="width:100%;" id="progressBar" value={{ContatoreInvio}} min="0" max={{ListaDocentiMailMultipla.length}}></progress>
+      <div layout="row" style="width:100%;" layout-align="end start">
+        <md-button class="md-raised md-accent" style="font-weight:bold;" type="submit">INVIA MAIL</md-button>
+        <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="OnAnnullaMailClicked()">ANNULLA</md-button>
+      </div>
+      <div layout="column">
+        <!--<p style="font-weight: bold;" ng-if="MailMultipla">N° DESTINATARI : {{NumeroDestinatari}}</p>-->
+
+        <div layout="column" ng-show="MailMultipla">
+          <p style="font-weight:bold;">DESTINATARI MAIL:</p>
+          <ul>
+            <li ng-repeat="Istituto in ListaIstitutiMailMultipla">{{Istituto.Nome}} - {{Istituto.Email}}<img src="img/deleteCross.png" style="width:20px;height:auto;margin-left:10px;" title="RIMUOVI DESTINATARIO" ng-click="RimuoviDestinatario(Istituto)"></li>                        
+          </ul>
+        </div>
+
+        <md-input-container ng-show="!MailMultipla">
+          <p style="font-weight: bold;">DESTINATARIO:</p><input type="email" ng-model="MailInEditing.Destinatario" flex=30>
+        </md-input-container>
+        <md-input-container>
+          <p style="font-weight: bold;">OGGETTO:</p><input ng-model="MailInEditing.Oggetto" flex=40>
+        </md-input-container>
+        <md-input-container>
+          <p style="font-weight: bold;">TESTO:</p><textarea ng-model="MailInEditing.Testo" rows="10" cols="10" flex=100></textarea>
+        </md-input-container>
+        <div layout="row">
+          <md-input-container>
+            <div layout="column">
+              <md-button class="md-raised md-accent" style="width:100%;font-weight:bold;" ng-disabled="ListaAllegatiMail.length >= 3" ng-click="CaricaAllegato()">Carica allegato +</md-button>
+              <input id="FileLoadAllegato" name="file" type="file" class="ng-hide" onchange="angular.element(this).scope().AllegatoLoaded(this)">
+              <!--<progress style="width:100%;margin-left:10px;" id="progressBar" value="{{Contatore}}" min="0" max="{{FileLength}}"></progress>-->
+              <!--<md-progress-linear md-mode="determinate" style="margin-left:10px;" value="{{Contatore}}"></md-progress-linear>-->
+            </div>
+         </md-input-container>
+         <div layout="column" style="margin-left:50px;" ng-repeat="Allegato in ListaAllegatiMail track by $index">
+           <p style="font-weight: bold;text-align:center;">{{Allegato.Nome}}</p>
+           <div layout="row">
+             <md-button ng-click="VisualizzaAllegato(Allegato.Nome)" title="VISUALIZZA ALLEGATO"><img src="img/attachment.png" style="width:50px;height:auto;"></md-button>
+             <md-button ng-click="EliminaAllegato(Allegato.Nome,$index)" title="ELIMINA ALLEGATO"><img src="img/delete.png" style="width:50px;height:auto;"></md-button>
+           </div>
+         </div>   
+        </div> 
+      </div>
+    </form>
+  </div>
+
 </div> 
