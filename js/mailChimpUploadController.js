@@ -43,6 +43,11 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$http)
 
         var SendDieciMail = function()
         {
+          /*if(reset)
+          {
+             $ObjQuery.Operazioni = [];
+          }*/
+             
           while(i < CsvSplitted.length)
           {
             let RecordTitolo = CsvSplitted[i++].SplitCSVWithDoublequotes(';');
@@ -50,9 +55,9 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$http)
             RecordTitolo[1]  = RecordTitolo[1].trim();
             RecordTitolo[2]  = RecordTitolo[2].trim(); 
 
-            RecordTitolo[0] == '' ? RecordTitolo[0] = 'ND' : RecordTitolo[0]
-            RecordTitolo[2] == '' ? RecordTitolo[2] = 'ND' : RecordTitolo[2]
-            RecordTitolo[1] == '' ? RecordTitolo[1] = 'ND' : RecordTitolo[1]
+            RecordTitolo[0] == '' ? RecordTitolo[0] = 'ND' : RecordTitolo[0];
+            RecordTitolo[2] == '' ? RecordTitolo[2] = 'ND' : RecordTitolo[2];
+            RecordTitolo[1] == '' ? RecordTitolo[1] = 'ND' : RecordTitolo[1];
             
             $ObjQuery.Operazioni.push({
                                         Query     : 'UpdateTeacherMailFromMailChimp',
@@ -62,15 +67,16 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$http)
                                                     }
                                       });
             $scope.Contatore++;
-            //i++;
             if($ObjQuery.Operazioni.length == 20)
             {
-              SystemInformation.PostSQL('Teacher',$ObjQuery,SendDieciMail,false,true);  
-              $ObjQuery.Operazioni = [];
-              return;
+              SystemInformation.PostSQL('Teacher',$ObjQuery,function()
+              {
+                $ObjQuery.Operazioni = [];
+                SendDieciMail();  
+              },false,true)
             }
           }
-          if($ObjQuery.Operazioni.length != 0 && $ObjQuery.Operazioni.length < 20)
+          if($ObjQuery.Operazioni.length < 20)
              SystemInformation.PostSQL('Teacher',$ObjQuery,function() 
              {
                $ObjQuery = {Operazioni : []};

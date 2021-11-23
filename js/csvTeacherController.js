@@ -118,13 +118,15 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
             $scope.Contatore ++;
             if($ObjQuery.Operazioni.length > 10)
             {
-              SystemInformation.PostSQL('Teacher',$ObjQuery,SendDieciQuery,false,true);  
-              $ObjQuery.Operazioni = [];
-              return;
+              SystemInformation.PostSQL('Teacher',$ObjQuery,function()
+              {
+                $ObjQuery.Operazioni = [];
+                SendDieciQuery();
+              },false,true);  
             }
           }
           UpdateMaterieDocente(LybroKey);
-          if($ObjQuery.Operazioni.length != 0 && $ObjQuery.Operazioni.length < 10)
+          if($ObjQuery.Operazioni.length < 10)
              SystemInformation.PostSQL('Teacher',$ObjQuery,function() 
              { 
                $scope.Contatore = 0;

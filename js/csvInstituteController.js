@@ -66,12 +66,14 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
             $scope.Contatore++;            
             if($ObjQuery.Operazioni.length == 10)
             {
-              SystemInformation.PostSQL('Institute',$ObjQuery,SendDieciIstituti,false,true);  
-              $ObjQuery.Operazioni = [];
-              return;
+              SystemInformation.PostSQL('Institute',$ObjQuery,function()
+              {
+                $ObjQuery.Operazioni = [];
+                SendDieciIstituti();
+              },false,true); 
             }
           }
-          if($ObjQuery.Operazioni.length != 0 && $ObjQuery.Operazioni.length < 10)
+          if($ObjQuery.Operazioni.length < 10)
              SystemInformation.PostSQL('Institute',$ObjQuery,function() 
              { 
                $scope.Contatore = 0;
