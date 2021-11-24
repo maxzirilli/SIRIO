@@ -118,11 +118,9 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
             $scope.Contatore ++;
             if($ObjQuery.Operazioni.length > 10)
             {
-              SystemInformation.PostSQL('Teacher',$ObjQuery,function()
-              {
-                $ObjQuery.Operazioni = [];
-                SendDieciQuery();
-              },false,true);  
+              SystemInformation.PostSQL('Teacher',$ObjQuery,SendDieciQuery,false,true); 
+              $ObjQuery.Operazioni = [];
+              return; 
             }
           }
           UpdateMaterieDocente(LybroKey);

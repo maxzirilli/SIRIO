@@ -53,11 +53,9 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
               $scope.Contatore++;
             if($ObjQuery.Operazioni.length == 10)
             {
-              SystemInformation.PostSQL('Book',$ObjQuery,function()
-              {
-                $ObjQuery.Operazioni = [];
-                SendDieciTitoli();
-              },false,true);  
+              SystemInformation.PostSQL('Book',$ObjQuery,SendDieciTitoli,false,true); 
+              $ObjQuery.Operazioni = [];
+              return;  
             }
           }
           if( $ObjQuery.Operazioni.length < 10)

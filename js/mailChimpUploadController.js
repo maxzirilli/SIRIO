@@ -42,38 +42,34 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$http)
         var i = 1;
 
         var SendDieciMail = function()
-        {
-          /*if(reset)
-          {
-             $ObjQuery.Operazioni = [];
-          }*/
-             
+        {             
           while(i < CsvSplitted.length)
           {
             let RecordTitolo = CsvSplitted[i++].SplitCSVWithDoublequotes(';');
-            RecordTitolo[0]  = RecordTitolo[0].trim();
-            RecordTitolo[1]  = RecordTitolo[1].trim();
-            RecordTitolo[2]  = RecordTitolo[2].trim(); 
+            if(RecordTitolo.length > 2)
+            {
+               RecordTitolo[0]  = RecordTitolo[0].trim();
+               RecordTitolo[1]  = RecordTitolo[1].trim();
+               RecordTitolo[2]  = RecordTitolo[2].trim(); 
 
-            RecordTitolo[0] == '' ? RecordTitolo[0] = 'ND' : RecordTitolo[0];
-            RecordTitolo[2] == '' ? RecordTitolo[2] = 'ND' : RecordTitolo[2];
-            RecordTitolo[1] == '' ? RecordTitolo[1] = 'ND' : RecordTitolo[1];
-            
-            $ObjQuery.Operazioni.push({
-                                        Query     : 'UpdateTeacherMailFromMailChimp',
-                                        Parametri : {
-                                                      MailDocente : RecordTitolo[0].xSQL(),
-                                                      NomeDocente : RecordTitolo[2].xSQL() + ' ' + RecordTitolo[1].xSQL()
-                                                    }
-                                      });
-            $scope.Contatore++;
+               RecordTitolo[0] == '' ? RecordTitolo[0] = 'ND' : RecordTitolo[0];
+               RecordTitolo[1] == '' ? RecordTitolo[1] = 'ND' : RecordTitolo[1];
+               RecordTitolo[2] == '' ? RecordTitolo[2] = 'ND' : RecordTitolo[2];
+               
+               $ObjQuery.Operazioni.push({
+                                           Query     : 'UpdateTeacherMailFromMailChimp',
+                                           Parametri : {
+                                                         MailDocente : RecordTitolo[0].xSQL(),
+                                                         NomeDocente : RecordTitolo[1].xSQL() + ' ' + RecordTitolo[2].xSQL()
+                                                       }
+                                         });
+               $scope.Contatore++;
+            }
             if($ObjQuery.Operazioni.length == 20)
             {
-              SystemInformation.PostSQL('Teacher',$ObjQuery,function()
-              {
-                $ObjQuery.Operazioni = [];
-                SendDieciMail();  
-              },false,true)
+              SystemInformation.PostSQL('Teacher',$ObjQuery,SendDieciMail,false,true)
+              $ObjQuery.Operazioni = [];
+              return;  
             }
           }
           if($ObjQuery.Operazioni.length < 20)
