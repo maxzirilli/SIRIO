@@ -291,15 +291,26 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                
                $scope.PassaADaSpedire = function (Titolo)
                {
-                 if (Titolo.STATO == 'P')
+                 if(!$scope.Multipla)
                  {
-                     if(Titolo.Nuovo == true)
-                        Titolo.STATO = 'S';
-                     else 
-                     {
-                       Titolo.STATO = 'S';
-                       Titolo.Modificato = true;
-                     }          
+                    if (Titolo.STATO == 'P')
+                    {
+                        if(Titolo.Nuovo == true)
+                           Titolo.STATO = 'S';
+                        else 
+                        {
+                          Titolo.STATO = 'S';
+                          Titolo.Modificato = true;
+                        }          
+                    }
+                 }
+                 else 
+                 {
+                   if(Titolo.STATO == 'P')
+                   {
+                      (Titolo.QUANTITA * $scope.NumeroDocenti > Titolo.QUANTITA_DISP)
+                        ZCustomAlert($mdDialog,'ATTENZIONE',"LA GIACENZA E' INSUFFICIENTE!")
+                   }
                  }
                }
 
@@ -627,7 +638,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
       }
     } 
    
-    $scope.AggiungiTitoloSpedizione = function (ev)
+    /*$scope.AggiungiTitoloSpedizione = function (ev)
     {    
       $mdDialog.show({ 
                        controller          : DialogControllerTitoloSpedizione,
@@ -723,7 +734,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
           $scope.CheckTitoliAlreadyGestitiDocente();
         }             
       }
-    }
+    }*/
     
     $scope.EliminaTitolo = function(Titolo)
     {
@@ -1010,14 +1021,30 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
               if($scope.Multipla)
               {
                 if((($scope.ListaTitoliToHandle[i].QUANTITA * $scope.NumeroDocenti) > $scope.ListaTitoliToHandle[i].QUANTITA_DISP) && $scope.ListaTitoliToHandle[i].STATO == 'S')
-                     $scope.ListaTitoliToHandle[i].STATO = 'P';   
+                {
+                  $scope.ListaTitoliToHandle[i].STATO = 'P';  
+                  $scope.ListaTitoliSpedizione.push($scope.ListaTitoliToHandle[i]);
+                } 
+                else $scope.ListaTitoliSpedizione.push($scope.ListaTitoliToHandle[i]);
               }
               else
               {
-                if(($scope.ListaTitoliToHandle[i].QUANTITA >  $scope.ListaTitoliToHandle[i].QUANTITA_DISP) && $scope.ListaTitoliToHandle[i].STATO == 'S') 
-                    $scope.ListaTitoliToHandle[i].STATO = 'P'; 
+                var SdoppiareTitolo = false;
+                /*if(($scope.ListaTitoliToHandle[i].QUANTITA >  $scope.ListaTitoliToHandle[i].QUANTITA_DISP) && $scope.ListaTitoliToHandle[i].STATO == 'S') 
+                    $scope.ListaTitoliToHandle[i].STATO = 'P';*/
+                if(($scope.ListaTitoliToHandle[i].QUANTITA >  $scope.ListaTitoliToHandle[i].QUANTITA_DISP) && $scope.ListaTitoliToHandle[i].STATO == 'S')
+                {
+                    if($scope.ListaTitoliToHandle[i].QUANTITA_DISP > 0)
+                    {
+                       $scope.ListaTitoliSpedizione.push(JSON.parse(JSON.stringify($scope.ListaTitoliToHandle[i])));
+                       $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].QUANTITA = $scope.ListaTitoliToHandle[i].QUANTITA_DISP;
+                    }
+                    $scope.ListaTitoliSpedizione.push(JSON.parse(JSON.stringify($scope.ListaTitoliToHandle[i])));
+                    $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].QUANTITA = $scope.ListaTitoliToHandle[i].QUANTITA - $scope.ListaTitoliToHandle[i].QUANTITA_DISP;
+                    $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].STATO    = 'P';
+                } 
               } 
-              $scope.ListaTitoliSpedizione.push($scope.ListaTitoliToHandle[i]);
+              //$scope.ListaTitoliSpedizione.push($scope.ListaTitoliToHandle[i]);
            }
         }
         $scope.ListaTitoliToHandle = [];
@@ -1065,60 +1092,65 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
             while (i < CsvSplitted.length)          
             {
               let RecordOrdine  = CsvSplitted[i++].split(";");
-              RecordOrdine[0]   = RecordOrdine[0].trim();
-              RecordOrdine[1]   = RecordOrdine[1].trim();
-              let TitoloCorrisp = $scope.ListaTitoliCsv.find(function(ATitolo) {return(ATitolo.Codice == RecordOrdine[0]);});
-              if (TitoloCorrisp == undefined)
-              {
-                ListaCodiciEsclusi.push({
-                                          Codice     : RecordOrdine[0],
-                                          Quantita   : parseInt(RecordOrdine[1])
-                                        })
+              if(RecordOrdine.length > 1)
+              {         
+                 RecordOrdine[0]   = RecordOrdine[0].trim();
+                 RecordOrdine[1]   = RecordOrdine[1].trim();
+                 let TitoloCorrisp = $scope.ListaTitoliCsv.find(function(ATitolo) {return(ATitolo.Codice == RecordOrdine[0]);});
+                 if (TitoloCorrisp == undefined)
+                 {
+                   ListaCodiciEsclusi.push({
+                                             Codice     : RecordOrdine[0],
+                                             Quantita   : parseInt(RecordOrdine[1])
+                                           })
+                 }
+                 else            
+                 { 
+                   if(parseInt(RecordOrdine[1]) <= TitoloCorrisp.QuantitaDisp) 
+                   {                
+                      $scope.ListaTitoliSpedizione.push({
+                                                          "CHIAVE"            : -1,
+                                                          "TITOLO"            : TitoloCorrisp.Chiave,
+                                                          "NOME_TITOLO"       : TitoloCorrisp.Nome,
+                                                          "QUANTITA"          : parseInt(RecordOrdine[1]),
+                                                          "ISBN_TITOLO"       : TitoloCorrisp.Codice,
+                                                          "STATO"             : 'S',
+                                                          "QUANTITA_MGZN"     : TitoloCorrisp.Quantita,
+                                                          "QUANTITA_MGZN_VOL" : TitoloCorrisp.QuantitaVol,
+                                                          "QUANTITA_DISP"     : TitoloCorrisp.QuantitaDisp,
+                                                          "Nuovo"             : true,
+                                                          "Modificato"        : false,
+                                                          "Eliminato"         : false,
+                                                          "DATA"              : new Date().toISOString().split('T')[0]     
+                                                        })
+                   }
+                   else 
+                   {
+                      $scope.ListaTitoliSpedizione.push({
+                                                          "CHIAVE"            : -1,
+                                                          "TITOLO"            : TitoloCorrisp.Chiave,
+                                                          "NOME_TITOLO"       : TitoloCorrisp.Nome,
+                                                          "QUANTITA"          : TitoloCorrisp.QuantitaDisp,
+                                                          "ISBN_TITOLO"       : TitoloCorrisp.Codice,
+                                                          "STATO"             : 'S',
+                                                          "QUANTITA_MGZN"     : TitoloCorrisp.Quantita,
+                                                          "QUANTITA_MGZN_VOL" : TitoloCorrisp.QuantitaVol,
+                                                          "QUANTITA_DISP"     : TitoloCorrisp.QuantitaDisp,
+                                                          "Nuovo"             : true,
+                                                          "Modificato"        : false,
+                                                          "Eliminato"         : false,
+                                                          "DATA"              : new Date().toISOString().split('T')[0]    
+                                                        })
+                      ListaEccedenza.push({
+                                              QuantitaOltre : parseInt(RecordOrdine[1]) - TitoloCorrisp.QuantitaDisp,
+                                              Codice        : RecordOrdine[0],
+                                              Nome          : TitoloCorrisp.Nome
+                                            }) 
+                   }
+                   if($scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].QUANTITA == 0)
+                      $scope.ListaTitoliSpedizione.pop();                                   
+                 } 
               }
-              else            
-              { 
-                if(parseInt(RecordOrdine[1]) <= TitoloCorrisp.QuantitaDisp) 
-                {                
-                   $scope.ListaTitoliSpedizione.push({
-                                                       "CHIAVE"            : -1,
-                                                       "TITOLO"            : TitoloCorrisp.Chiave,
-                                                       "NOME_TITOLO"       : TitoloCorrisp.Nome,
-                                                       "QUANTITA"          : parseInt(RecordOrdine[1]),
-                                                       "ISBN_TITOLO"       : TitoloCorrisp.Codice,
-                                                       "STATO"             : 'S',
-                                                       "QUANTITA_MGZN"     : TitoloCorrisp.Quantita,
-                                                       "QUANTITA_MGZN_VOL" : TitoloCorrisp.QuantitaVol,
-                                                       "QUANTITA_DISP"     : TitoloCorrisp.QuantitaDisp,
-                                                       "Nuovo"             : true,
-                                                       "Modificato"        : false,
-                                                       "Eliminato"         : false,
-                                                       "DATA"              : new Date().toISOString().split('T')[0]     
-                                                     })
-                }
-                else 
-                {
-                   $scope.ListaTitoliSpedizione.push({
-                                                       "CHIAVE"            : -1,
-                                                       "TITOLO"            : TitoloCorrisp.Chiave,
-                                                       "NOME_TITOLO"       : TitoloCorrisp.Nome,
-                                                       "QUANTITA"          : TitoloCorrisp.QuantitaDisp,
-                                                       "ISBN_TITOLO"       : TitoloCorrisp.Codice,
-                                                       "STATO"             : 'S',
-                                                       "QUANTITA_MGZN"     : TitoloCorrisp.Quantita,
-                                                       "QUANTITA_MGZN_VOL" : TitoloCorrisp.QuantitaVol,
-                                                       "QUANTITA_DISP"     : TitoloCorrisp.QuantitaDisp,
-                                                       "Nuovo"             : true,
-                                                       "Modificato"        : false,
-                                                       "Eliminato"         : false,
-                                                       "DATA"              : new Date().toISOString().split('T')[0]    
-                                                     })
-                   ListaEccedenza.push({
-                                           QuantitaOltre : parseInt(RecordOrdine[1]) - TitoloCorrisp.QuantitaDisp,
-                                           Codice        : RecordOrdine[0],
-                                           Nome          : TitoloCorrisp.Nome
-                                         }) 
-                }                                       
-              } 
             }
             if(ListaCodiciEsclusi.length != 0)
             {
@@ -1147,7 +1179,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
 
             for(let i = 0;i < ListaEccedenza.length; i ++)
             {
-                StringaEccedenza = StringaEccedenza + ' • ' + ListaEccedenza[i].Nome + ' (' + ListaEccedenza[i].Codice + ') (+' + ListaEccedenza[i].QuantitaOltre + ')'; 
+                StringaEccedenza = StringaEccedenza + ' • ' + ListaEccedenza[i].Nome + ' (' + ListaEccedenza[i].Codice + ') (-' + ListaEccedenza[i].QuantitaOltre + ')'; 
             }
             for(let i = 0;i < ListaTitoliNonGestiti.length; i ++)
             {

@@ -427,7 +427,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                                            "POS_MGZN"    : ListaDaSpedireTmp[i].POS_MGZN == undefined ? 'N.D.' : ListaDaSpedireTmp[i].POS_MGZN,
                                            "AUTORI"      : ListaDaSpedireTmp[i].AUTORI == undefined ? 'N.D' : ListaDaSpedireTmp[i].AUTORI,
                                            "EDITORE"     : ListaDaSpedireTmp[i].EDITORE == undefined ? 'N.D' : ListaDaSpedireTmp[i].EDITORE,
-                                           "CODICE_ISBN" : ListaDaSpedireTmp[i].CODICE == undefined ? 'N.D' : ListaDaSpedireTmp[i].                   CODICE                                   
+                                           "CODICE_ISBN" : ListaDaSpedireTmp[i].CODICE == undefined ? 'N.D' : ListaDaSpedireTmp[i].CODICE                                   
                                           })                                
           }             
           ListaSpedizioniToPrint.push(Spedizione);
@@ -490,16 +490,17 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
             doc.text(20,CoordY+10,'ISBN');
             doc.text(45,CoordY+10,'TITOLO');
             doc.text(160,CoordY+10,'POS.MAGAZZINO');
+            doc.setFontSize(6);
         
             for(let k = 0;k < ListaCumulativo.length;k ++)
             {
                 if (CoordY >= 280) 
                 {
                   doc.addPage();
-                  CoordY = 20;
+                  CoordY = 0;
                   doc.setFontType('bold');
                   doc.setFontSize(8);
-                  doc.text(10,CoordY+10,'TOT');
+                  doc.text(10,CoordY+10,'QNT');
                   doc.text(20,CoordY+10,'ISBN');
                   doc.text(45,CoordY+10,'TITOLO');
                   doc.text(160,CoordY+10,'POS.MAGAZZINO');
@@ -623,18 +624,34 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                doc.text(170,CoordY + 80,'POS.MAGAZZINO');
                
                doc.setFontType('normal');
+               CoordY = 160; 
                
                for (let j = 0;j < ListaSpedizioniToPrint[i].ListaTitoli.length;j ++)
                {
+                   if (CoordY >= 280) 
+                   {
+                     doc.addPage();
+                     CoordY = 20;
+                     doc.setFontType('bold');
+                     doc.setFontSize(9);
+                     doc.text(10,CoordY,'CODICE ISBN');
+                     doc.text(40,CoordY,'TITOLO');
+                     doc.text(120,CoordY,'EDITORE');
+                     doc.text(150,CoordY,'QUANTITA');
+                     doc.text(170,CoordY,'POS.MAGAZZINO');
+                     doc.setFontSize(8);
+                     doc.setFontType('normal');
+                   }  
+
                    doc.setFontSize(8);    
-                   doc.text(10,CoordY+90,ListaSpedizioniToPrint[i].ListaTitoli[j].CODICE_ISBN);                  
-                   doc.text(40,CoordY+90,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].NOME_TITOLO,35));
-                   doc.text(120,CoordY+90,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].EDITORE,15));
+                   doc.text(10,CoordY+10,ListaSpedizioniToPrint[i].ListaTitoli[j].CODICE_ISBN);                  
+                   doc.text(40,CoordY+10,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].NOME_TITOLO,35));
+                   doc.text(120,CoordY+10,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].EDITORE,15));
                    var Q  = doc.getTextWidth('QUANTITA');
                    var Qt = doc.getTextWidth(ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA);
-                   doc.text(150 + Q + 1 - Qt,CoordY+90,ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA);
-                   doc.text(170,CoordY+90,ListaSpedizioniToPrint[i].ListaTitoli[j].POS_MGZN); 
-                   CoordY += 10;               
+                   doc.text(150 + Q + 1 - Qt,CoordY+10,ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA);
+                   doc.text(170,CoordY+10,ListaSpedizioniToPrint[i].ListaTitoli[j].POS_MGZN); 
+                   CoordY += 5;               
                }          
                doc.setFontSize(6);
                doc.text(10,290,SystemInformation.VDocDelivery)
@@ -654,156 +671,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
      else SystemInformation.ApplyOnError('Modello lista spedizioni non conforme') 
     })
   }
-  else
-  {
-      /*$scope.RefreshListaSpedizioniAll = function()
-      {
-        if(!$scope.RicercaPerTitolo) 
-        $scope.ListaTitoliFiltro = [];
-    
-        if($scope.DataRicercaDal == undefined || $scope.DataRicercaAl == undefined)
-          return;
-        let TmpDate = new Date($scope.DataRicercaAl);
-        TmpDate.setDate($scope.DataRicercaAl.getDate() + 1);
-        
-        var ParamSpedizione = {
-                                Dal          : ZHTMLInputFromDate($scope.DataRicercaDal), 
-                                Al           : ZHTMLInputFromDate(TmpDate),
-                                FiltroMain   : 1
-                              };
-        if($scope.IstitutoFiltro != -1)
-          ParamSpedizione.FiltroI = $scope.IstitutoFiltro;
-        if($scope.ProvinciaFiltro != -1)
-          ParamSpedizione.FiltroP = $scope.ProvinciaFiltro;
-        if($scope.DocenteFiltro != -1)
-          ParamSpedizione.FiltroD = $scope.DocenteFiltro;
-        if($scope.PromotoreFiltro != -1 && $scope.IsAdministrator())
-          ParamSpedizione.FiltroPr = $scope.PromotoreFiltro;
-    
-        if($scope.RicercaPerTitolo && $scope.ListaTitoliFiltro.length > 0)
-        {
-          var ChiaviTitoli = [];
-          for(let i = 0;i < $scope.ListaTitoliFiltro.length;i ++)
-          {
-              ChiaviTitoli.push($scope.ListaTitoliFiltro[i].Chiave) 
-          }
-          ParamSpedizione.FiltroT = ChiaviTitoli.toString();
-        }
-        
-        if($scope.IsAdministrator())
-        {
-          SystemInformation.GetSQL('Delivery',ParamSpedizione,function(Results)
-          {
-            var ListaSpedizioniTmp = [];
-            ListaSpedizioniTmp     = SystemInformation.FindResults(Results,'DettaglioToSendAdmin');
-            if (ListaSpedizioniTmp != undefined) 
-            {
-              var LastSpedizione = -1;
-              $scope.ListaSpedizioni = [];
-              for(let i = 0; i < ListaSpedizioniTmp.length; i++)
-              {
-                if(LastSpedizione != ListaSpedizioniTmp[i].CHIAVE)
-                {
-                  LastSpedizione = ListaSpedizioniTmp[i].CHIAVE;
-                  $scope.ListaSpedizioni.push({ 
-                                                ChiaveSpedizione : ListaSpedizioniTmp[i].CHIAVE,
-                                                Tipo             : 0, 
-                                                Data             : ListaSpedizioniTmp[i].DATA,
-                                                Presso           : ListaSpedizioniTmp[i].PRESSO == undefined ? '' : ListaSpedizioniTmp[i].PRESSO,
-                                                DocenteNome      : ListaSpedizioniTmp[i].NOME_DOCENTE == undefined ? 'N.D.' : ListaSpedizioniTmp[i].NOME_DOCENTE,
-                                                Provincia        : ListaSpedizioniTmp[i].PROVINCIA,
-                                                Promotore        : ListaSpedizioniTmp[i].PROMOTORE,
-                                                Istituto         : ListaSpedizioniTmp[i].ISTITUTO,
-                                                NomeIstituto     : ListaSpedizioniTmp[i].NOME_ISTITUTO == undefined ? '' : ListaSpedizioniTmp[i].NOME_ISTITUTO
-                                              })
-                }
-                $scope.ListaSpedizioni.push({ 
-                                              ChiaveDettaglio : ListaSpedizioniTmp[i].CHIAVE_DETTAGLIO,
-                                              Tipo            : 1, 
-                                              Codice          : ListaSpedizioniTmp[i].CODICE_TITOLO == undefined ? 'N.D.' : ListaSpedizioniTmp[i].CODICE_TITOLO,
-                                              TitoloNome      : ListaSpedizioniTmp[i].NOME_TITOLO == undefined ? 'N.D.' : ListaSpedizioniTmp[i].NOME_TITOLO,
-                                              Titolo          : ListaSpedizioniTmp[i].TITOLO,
-                                              Quantita        : ListaSpedizioniTmp[i].QUANTITA == undefined ? 'N.D.' : ListaSpedizioniTmp[i].QUANTITA,
-                                              QuantitaMgzn    : ListaSpedizioniTmp[i].QUANTITA_DISP,
-                                              Selezionato     : false
-                                            });
-                if(!$scope.RicercaPerTitolo)
-                {
-                    var TitoloTrovato = $scope.ListaTitoliFiltro.find(function(ATitolo){return(ATitolo.Chiave == ListaSpedizioniTmp[i].TITOLO);})
-                  
-                    if(TitoloTrovato == undefined)
-                    {
-                      $scope.ListaTitoliFiltro.push({
-                                                      Chiave         : ListaSpedizioniTmp[i].TITOLO,
-                                                      Nome           : ListaSpedizioniTmp[i].NOME_TITOLO,
-                                                      Codice         : ListaSpedizioniTmp[i].CODICE_TITOLO
-                                                    })
-                    }
-                }
-              }  
-            }
-            else SystemInformation.ApplyOnError('Modello spedizione non conforme','')     
-          },'SQLDettaglioTitoliToSendAdmin')     
-        }
-        else
-        {
-          SystemInformation.GetSQL('Delivery',ParamSpedizione,function(Results)
-          {
-            var ListaSpedizioniTmp = [];
-            ListaSpedizioniTmp     = SystemInformation.FindResults(Results,'DettaglioToSendPromotore');
-            if (ListaSpedizioniTmp != undefined) 
-            {
-              var LastSpedizione = -1;
-              $scope.ListaSpedizioni = [];
-              for(let i = 0; i < ListaSpedizioniTmp.length; i++)
-              {
-                if(LastSpedizione != ListaSpedizioniTmp[i].CHIAVE)
-                {
-                  LastSpedizione = ListaSpedizioniTmp[i].CHIAVE;
-                  $scope.ListaSpedizioni.push({ 
-                                                ChiaveSpedizione : ListaSpedizioniTmp[i].CHIAVE,
-                                                Tipo             : 0, 
-                                                Data             : ListaSpedizioniTmp[i].DATA,
-                                                Presso           : ListaSpedizioniTmp[i].PRESSO == undefined ? '' : ListaSpedizioniTmp[i].PRESSO,
-                                                DocenteNome      : ListaSpedizioniTmp[i].NOME_DOCENTE == undefined ? 'N.D.' : ListaSpedizioniTmp[i].NOME_DOCENTE,
-                                                Provincia        : ListaSpedizioniTmp[i].PROVINCIA,
-                                                Promotore        : ListaSpedizioniTmp[i].PROMOTORE,
-                                                PromotoreNome    : ListaSpedizioniTmp[i].NOME_PROMOTORE,
-                                                Istituto         : ListaSpedizioniTmp[i].ISTITUTO,
-                                                NomeIstituto     : ListaSpedizioniTmp[i].NOME_ISTITUTO == undefined ? '' : ListaSpedizioniTmp[i].NOME_ISTITUTO   
-                                              })
-                }
-                $scope.ListaSpedizioni.push({ 
-                                              ChiaveDettaglio : ListaSpedizioniTmp[i].CHIAVE_DETTAGLIO,
-                                              Tipo            : 1, 
-                                              Codice          : ListaSpedizioniTmp[i].CODICE_TITOLO == undefined ? 'N.D.' : ListaSpedizioniTmp[i].CODICE_TITOLO,
-                                              TitoloNome      : ListaSpedizioniTmp[i].NOME_TITOLO == undefined ? 'N.D.' : ListaSpedizioniTmp[i].NOME_TITOLO,
-                                              Titolo          : ListaSpedizioniTmp[i].TITOLO,
-                                              Quantita        : ListaSpedizioniTmp[i].QUANTITA == undefined ? 'N.D.' : ListaSpedizioniTmp[i].QUANTITA,
-                                              Posizione       : ListaSpedizioniTmp[i].POS_MGZN == undefined ? 'N.D.' : ListaSpedizioniTmp[i].POS_MGZN,
-                                              Selezionato     : false
-                                            });
-                if(!$scope.RicercaPerTitolo)
-                {
-                    var TitoloTrovato = $scope.ListaTitoliFiltro.find(function(ATitolo){return(ATitolo.Chiave == ListaSpedizioniTmp[i].TITOLO);})
-                  
-                    if(TitoloTrovato == undefined)
-                    {
-                      $scope.ListaTitoliFiltro.push({
-                                                      Chiave         : ListaSpedizioniTmp[i].TITOLO,
-                                                      Nome           : ListaSpedizioniTmp[i].NOME_TITOLO,
-                                                      Codice         : ListaSpedizioniTmp[i].CODICE_TITOLO
-                                                    })
-                    }
-                }
-              }  
-            }
-            else SystemInformation.ApplyOnError('Modello spedizione non conforme','') 
-          },'SQLDettaglioTitoliToSendPrm') 
-        }
-      }*/
-      $scope.RefreshListaSpedizioniAll();
-   }
+  else $scope.RefreshListaSpedizioniAll();
  
   $scope.SelezionaTutto = function()
   {
@@ -1031,16 +899,17 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
             doc.text(20,CoordY+10,'ISBN');
             doc.text(45,CoordY+10,'TITOLO');
             doc.text(160,CoordY+10,'POS.MAGAZZINO');
+            doc.setFontSize(6);
         
             for(let k = 0;k < ListaCumulativo.length;k ++)
             {
                 if (CoordY >= 280) 
                 {
                   doc.addPage();
-                  CoordY = 20;
+                  CoordY = 0;
                   doc.setFontType('bold');
                   doc.setFontSize(8);
-                  doc.text(10,CoordY+10,'TOT');
+                  doc.text(10,CoordY+10,'QNT');
                   doc.text(20,CoordY+10,'ISBN');
                   doc.text(45,CoordY+10,'TITOLO');
                   doc.text(160,CoordY+10,'POS.MAGAZZINO');
@@ -1156,18 +1025,35 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                   doc.text(170,CoordY + 80,'POS.MAGAZZINO');
                   
                   doc.setFontType('normal');
+
+                  CoordY = 160;
                   
                   for (let j = 0;j < ListaSpedizioniToPrint[i].ListaTitoli.length;j ++)
-                  {    
+                  {  
+                      if (CoordY >= 280) 
+                      {
+                        doc.addPage();
+                        CoordY = 20;
+                        doc.setFontType('bold');
+                        doc.setFontSize(9);
+                        doc.text(10,CoordY,'CODICE ISBN');
+                        doc.text(40,CoordY,'TITOLO');
+                        doc.text(120,CoordY,'EDITORE');
+                        doc.text(150,CoordY,'QUANTITA');
+                        doc.text(170,CoordY,'POS.MAGAZZINO');
+                        doc.setFontSize(8);
+                        doc.setFontType('normal');
+                      } 
+                         
                       doc.setFontSize(8);                   
-                      doc.text(10,CoordY+90,ListaSpedizioniToPrint[i].ListaTitoli[j].CODICE_ISBN);                     
-                      doc.text(40,CoordY+90,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].NOME_TITOLO,35));
-                      doc.text(120,CoordY+90,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].EDITORE,15));
+                      doc.text(10,CoordY + 10,ListaSpedizioniToPrint[i].ListaTitoli[j].CODICE_ISBN);                     
+                      doc.text(40,CoordY + 10,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].NOME_TITOLO,35));
+                      doc.text(120,CoordY + 10,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].EDITORE,15));
                       var Q  = doc.getTextWidth('QUANTITA');
                       var Qt = doc.getTextWidth(ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA);
-                      doc.text(150 + Q + 1 - Qt,CoordY+90,ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA);
-                      doc.text(170,CoordY+90,ListaSpedizioniToPrint[i].ListaTitoli[j].POS_MGZN); 
-                      CoordY += 10;               
+                      doc.text(150 + Q + 1 - Qt,CoordY + 10,ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA);
+                      doc.text(170,CoordY + 10,ListaSpedizioniToPrint[i].ListaTitoli[j].POS_MGZN); 
+                      CoordY += 5;               
                   }          
                   doc.setFontSize(6);
                   doc.text(10,290,SystemInformation.VDocDelivery)

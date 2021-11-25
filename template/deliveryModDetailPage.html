@@ -168,7 +168,7 @@
           </div>
       </md-tab>
       <md-tab label="Titoli">
-        <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="AggiungiTitoloSpedizione($event)">AGGIUNGI NUOVO TITOLO</md-button>
+        <!--<md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="AggiungiTitoloSpedizione($event)">AGGIUNGI NUOVO TITOLO</md-button>-->
         <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="AggiungiTitoliMultipli($event)">AGGIUNGI TITOLI</md-button>
         <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ImportazioneTitoliCsv()">CARICA LISTA DA FILE XLS</md-button>
         <input id="fileLoadCVSDocument" accept=".csv,.txt" name="file" type="file" class="ng-hide" onchange="angular.element(this).scope().CVSLoaded(this)">      
@@ -201,8 +201,13 @@
             <td ng-if="Titolo.QUANTITA_DISP < Titolo.QUANTITA && Titolo.STATO == 'P'">NON DISPONIBILE</td>
             <td ng-if="Titolo.STATO != 'P'"></td>
             
-            <td ng-if="Titolo.QUANTITA <= Titolo.QUANTITA_DISP && Titolo.STATO == 'P'"><img src="img/toSend.png" style="width:20px;height:auto;" ng-click="PassaADaSpedire(Titolo)"></td>
-            <td ng-if="Titolo.QUANTITA_DISP < Titolo.QUANTITA && Titolo.STATO == 'P'" title="TITOLO NON DISPONIBILE IN MAGAZZINO"><img src="img/notToSend.png" style="width:20px;height:auto;" class="off"></td>     
+            <td ng-if="!SpedizioneMultipla && (Titolo.QUANTITA <= Titolo.QUANTITA_DISP && Titolo.STATO == 'P')"><img src="img/toSend.png" style="width:20px;height:auto;" ng-click="PassaADaSpedire(Titolo)"></td>
+            <td ng-if="SpedizioneMultipla && ((Titolo.QUANTITA * NumeroDocenti <= Titolo.QUANTITA_DISP) && Titolo.STATO == 'P')"><img src="img/toSend.png" style="width:20px;height:auto;" ng-click="PassaADaSpedire(Titolo)"></td>
+            <td ng-if="!SpedizioneMultipla && (Titolo.QUANTITA_DISP < Titolo.QUANTITA && Titolo.STATO == 'P')" title="TITOLO NON DISPONIBILE IN MAGAZZINO"><img src="img/notToSend.png" style="width:20px;height:auto;" class="off"></td>
+            <td ng-if="SpedizioneMultipla && (Titolo.QUANTITA_DISP < (Titolo.QUANTITA * NumeroDocenti) && Titolo.STATO == 'P')" title="TITOLO NON DISPONIBILE IN MAGAZZINO"><img src="img/notToSend.png" style="width:20px;height:auto;" class="off"></td>
+
+            <!--<td ng-if="Titolo.QUANTITA <= Titolo.QUANTITA_DISP && Titolo.STATO == 'P'"><img src="img/toSend.png" style="width:20px;height:auto;" ng-click="PassaADaSpedire(Titolo)"></td>-->
+            <!--<td ng-if="Titolo.QUANTITA_DISP < Titolo.QUANTITA && Titolo.STATO == 'P'" title="TITOLO NON DISPONIBILE IN MAGAZZINO"><img src="img/notToSend.png" style="width:20px;height:auto;" class="off"></td>-->    
             <td ng-if="Titolo.STATO != 'P'"></td> 
             <td>{{ConvertiData(Titolo.DATA)}}</td>                      
           </tr>    
