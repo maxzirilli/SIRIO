@@ -186,8 +186,8 @@
             <th>DISPONIBILITA</th>
             <th>DA SPEDIRE</th>
             <th>DATA</th>
-          </tr>  
-          <tr ng-repeat="Titolo in ListaTitoliSpedizione track by (Titolo.CHIAVE + $index) | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Titolo.Chiave}}>
+          </tr>                      <!--track by ( Titolo.CHIAVE + $index)-->
+          <tr ng-repeat="Titolo in ListaTitoliSpedizione track by $index | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Titolo.Chiave}}>
             <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA TITOLO" ng-click="EliminaTitolo(Titolo)"></td> 
             <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA TITOLO" ng-click="ModificaTitolo(Titolo)"></td>
             <td>{{Titolo.NOME_TITOLO | uppercase}}<img ng-if="Titolo.GESTITO_PAST" src="img/alreadyHandledBook.png" style="width:20px;height:auto;padding-left:10px;" title="TITOLO GIA' GESTITO DA DOCENTE"></td>
@@ -197,8 +197,8 @@
             <td ng-if="Titolo.STATO == 'S'">DA SPEDIRE</td>
             <td ng-if="Titolo.STATO == 'P'">PRENOTATO</td>
             
-            <td ng-if="Titolo.QUANTITA <= Titolo.QUANTITA_DISP && Titolo.STATO == 'P'">DISPONIBILE</td> 
-            <td ng-if="Titolo.QUANTITA_DISP < Titolo.QUANTITA && Titolo.STATO == 'P'">NON DISPONIBILE</td>
+            <td ng-if="(!SpedizioneMultipla && (Titolo.QUANTITA <= Titolo.QUANTITA_DISP && Titolo.STATO == 'P')) || (SpedizioneMultipla && ((Titolo.QUANTITA * NumeroDocenti <= Titolo.QUANTITA_DISP) && Titolo.STATO == 'P'))">DISPONIBILE</td> 
+            <td ng-if="(!SpedizioneMultipla && (Titolo.QUANTITA_DISP < Titolo.QUANTITA && Titolo.STATO == 'P')) || (SpedizioneMultipla && (Titolo.QUANTITA_DISP < (Titolo.QUANTITA * NumeroDocenti) && Titolo.STATO == 'P'))">NON DISPONIBILE</td>
             <td ng-if="Titolo.STATO != 'P'"></td>
             
             <td ng-if="!SpedizioneMultipla && (Titolo.QUANTITA <= Titolo.QUANTITA_DISP && Titolo.STATO == 'P')"><img src="img/toSend.png" style="width:20px;height:auto;" ng-click="PassaADaSpedire(Titolo)"></td>

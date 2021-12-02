@@ -771,11 +771,11 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
     }
     
     function DialogControllerTitoloSpedizioneMod($scope,$mdDialog,Titolo)  
-    { 
-      //$scope.Multipla = false;
-      
+    {       
+      var OldTitolo = Titolo;
+
       $scope.Titolo = {
-                         "CHIAVE"        : Titolo.CHIAVE,
+                         "CHIAVE"        : Titolo.CHIAVE, //CHIAVE DELLA RIGA DI SPEDIZIONE
                          "TITOLO"        : Titolo.TITOLO,
                          "NOME_TITOLO"   : Titolo.NOME_TITOLO,
                          "ISBN_TITOLO"   : Titolo.ISBN_TITOLO,
@@ -808,6 +808,10 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
           $scope.Titolo.NOME_TITOLO   = itemTit.Nome;
           $scope.Titolo.ISBN_TITOLO   = itemTit.Codice;
           $scope.Titolo.QUANTITA_MGZN = itemTit.Quantita;
+          $scope.Titolo.QUANTITA_DISP = itemTit.QuantitaDisp;
+          $scope.Titolo.QUANTITA_VOL  = itemTit.QuantitaVol;
+          $scope.Titolo.STATO         = "P";
+          $scope.Titolo.Modificato    = true;
         }
       }
       
@@ -827,7 +831,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
       
       $scope.ConfermaPopupTitolo = function()
       { 
-        TitoloCorrispondente = $scope.ListaTitoliSpedizione.findIndex(function(ATitolo){return (ATitolo.CHIAVE == Titolo.CHIAVE);});
         if($scope.Titolo.TITOLO == -1 || $scope.Titolo.QUANTITA == 0 || $scope.Titolo.STATO == null)
         {
           ZCustomAlert($mdDialog,'ATTENZIONE','DATI TITOLO MANCANTI!');
@@ -835,48 +838,153 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
         }
         else
         {        
-          $scope.ListaTitoliSpedizione[TitoloCorrispondente].TITOLO        = $scope.Titolo.TITOLO;
-          $scope.ListaTitoliSpedizione[TitoloCorrispondente].NOME_TITOLO   = $scope.Titolo.NOME_TITOLO;
-          $scope.ListaTitoliSpedizione[TitoloCorrispondente].ISBN_TITOLO   = $scope.Titolo.ISBN_TITOLO;
-          $scope.ListaTitoliSpedizione[TitoloCorrispondente].QUANTITA      = $scope.Titolo.QUANTITA;
-          $scope.ListaTitoliSpedizione[TitoloCorrispondente].STATO         = $scope.Titolo.STATO;
-          $scope.ListaTitoliSpedizione[TitoloCorrispondente].QUANTITA_MGZN = $scope.Titolo.QUANTITA_MGZN;
-          if($scope.ListaTitoliSpedizione[TitoloCorrispondente].Nuovo)
-             $scope.ListaTitoliSpedizione[TitoloCorrispondente].Modificato = false
-          else
-             $scope.ListaTitoliSpedizione[TitoloCorrispondente].Modificato = true;
-
-
-              //CORREZIONE URGENTE
-
-              /*if($scope.SpedizioneMultipla)
+           if(OldTitolo.TITOLO == $scope.Titolo.TITOLO) //QUI TUTTO OLDTITOLO ERA TITOLO CORRISPONDENTE
+           {
+              //var TitoloCorrispondente = $scope.ListaTitoliSpedizione.find(function(ATitolo){return (ATitolo.CHIAVE == $scope.Titolo.CHIAVE);});
+              if($scope.SpedizioneMultipla)
               {
-                if((($scope.ListaTitoliSpedizione[TitoloCorrispondente].QUANTITA * $scope.NumeroDocenti) > $scope.ListaTitoliSpedizione[TitoloCorrispondente].QUANTITA_DISP) && $scope.ListaTitoliSpedizione[TitoloCorrispondente].STATO == 'S')
-                     $scope.ListaTitoliSpedizione[TitoloCorrispondente].STATO = 'P';  
+                 if($scope.Titolo.STATO == 'S')
+                 {
+                    if(($scope.Titolo.QUANTITA * $scope.NumeroDocenti) > $scope.Titolo.QUANTITA_DISP)
+                        OldTitolo.STATO = 'P'
+                    else OldTitolo.STATO = 'S'
+                 }
+                 else OldTitolo.STATO = $scope.Titolo.STATO;
+                 OldTitolo.QUANTITA = $scope.Titolo.QUANTITA;
+                 if(OldTitolo.Nuovo)
+                    OldTitolo.Modificato = false
+                 else OldTitolo.Modificato = true; 
+                 OldTitolo.DATA = new Date().toISOString().split('T')[0];  
               }
-              else
+              else 
               {
-                if($scope.ListaTitoliSpedizione[TitoloCorrispondente].STATO == 'S')
-                {
-                   if(($scope.ListaTitoliSpedizione[TitoloCorrispondente].QUANTITA >  $scope.ListaTitoliSpedizione[TitoloCorrispondente].QUANTITA_DISP))
-                   {
-                       if($scope.ListaTitoliSpedizione[TitoloCorrispondente].QUANTITA_DISP > 0)
+                 if($scope.Titolo.STATO == 'S')
+                 {
+                    if($scope.Titolo.QUANTITA > $scope.Titolo.QUANTITA_DISP)
+                    {
+                        if($scope.Titolo.QUANTITA_DISP > 0)
+                        {
+                           $scope.ListaTitoliSpedizione.push(JSON.parse(JSON.stringify(OldTitolo)));
+                           $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].CHIAVE        = -1;
+                           $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].QUANTITA      = $scope.Titolo.QUANTITA_DISP;                 
+                           $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].QUANTITA_MGZN = $scope.Titolo.QUANTITA_MGZN;
+                           $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].QUANTITA_DISP = $scope.Titolo.QUANTITA_DISP;
+                           $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].QUANTITA_VOL  = $scope.Titolo.QUANTITA_VOL;
+                           $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].STATO         = 'S';
+                           $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].Nuovo         = true;
+                           $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].Modificato    = false;
+                           $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].DATA          = new Date().toISOString().split('T')[0];
+                        }
+                        OldTitolo.QUANTITA   = $scope.Titolo.QUANTITA - $scope.Titolo.QUANTITA_DISP;
+                        OldTitolo.STATO      = 'P';
+                        OldTitolo.Modificato = true;
+                    }
+                    else
+                    {
+                        OldTitolo.QUANTITA = $scope.Titolo.QUANTITA;
+                        OldTitolo.STATO    = 'S';
+                        if(OldTitolo.Nuovo)
+                           OldTitolo.Modificato = false
+                        else OldTitolo.Modificato = true;  
+                    }
+                    OldTitolo.DATA = new Date().toISOString().split('T')[0]; 
+                 }
+                 else 
+                 {
+                    OldTitolo.QUANTITA = $scope.Titolo.QUANTITA;
+                    OldTitolo.STATO    =  $scope.Titolo.STATO;
+                    if(OldTitolo.Nuovo)
+                       OldTitolo.Modificato = false
+                    else OldTitolo.Modificato = true; 
+                 }
+              }
+           }
+           else 
+           {
+              if($scope.SpedizioneMultipla)
+              {
+                 if($scope.Titolo.STATO == 'S')
+                 {
+                    if(($scope.Titolo.QUANTITA * $scope.NumeroDocenti) > $scope.Titolo.QUANTITA_DISP)
+                        OldTitolo.STATO = 'P';
+                    else OldTitolo.STATO = 'S'; 
+                 }
+                 else OldTitolo.STATO = $scope.Titolo.STATO;
+
+                 OldTitolo.TITOLO        = $scope.Titolo.TITOLO;
+                 OldTitolo.ISBN_TITOLO   = $scope.Titolo.ISBN_TITOLO;
+                 OldTitolo.NOME_TITOLO   = $scope.Titolo.NOME_TITOLO;
+                 OldTitolo.QUANTITA      = $scope.Titolo.QUANTITA;
+                 OldTitolo.QUANTITA_MGZN = $scope.Titolo.QUANTITA_MGZN;
+                 OldTitolo.QUANTITA_DISP = $scope.Titolo.QUANTITA_DISP;  
+                 OldTitolo.QUANTITA_VOL  = $scope.Titolo.QUANTITA_VOL;                                                    
+                 OldTitolo.DATA          = new Date().toISOString().split('T')[0]; 
+                 if(OldTitolo.Nuovo)
+                    OldTitolo.Modificato = false
+                 else OldTitolo.Modificato = true; 
+              }
+              else 
+              {
+                 if($scope.Titolo.STATO == 'S')
+                 {
+                    if($scope.Titolo.QUANTITA > $scope.Titolo.QUANTITA_DISP)
+                    {     
+                       if($scope.Titolo.QUANTITA_DISP > 0)
                        {
-                          $scope.ListaTitoliSpedizione.push(JSON.parse(JSON.stringify($scope.ListaTitoliToHandle[i])));
-                          $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].QUANTITA = $scope.ListaTitoliToHandle[i].QUANTITA_DISP;
+                          $scope.ListaTitoliSpedizione.push(JSON.parse(JSON.stringify(OldTitolo)));
+                          $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].CHIAVE        = -1;
+                          $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].QUANTITA      = $scope.Titolo.QUANTITA_DISP;                 
+                          $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].QUANTITA_MGZN = $scope.Titolo.QUANTITA_MGZN;
+                          $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].QUANTITA_DISP = $scope.Titolo.QUANTITA_DISP;
+                          $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].QUANTITA_VOL  = $scope.Titolo.QUANTITA_VOL;
+                          $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].STATO         = 'S';
+                          $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].TITOLO        = $scope.Titolo.TITOLO;
+                          $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].ISBN_TITOLO   = $scope.Titolo.ISBN_TITOLO;
+                          $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].NOME_TITOLO   = $scope.Titolo.NOME_TITOLO;
+                          $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].Nuovo         = true;
+                          $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].Modificato    = false;
+                          $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].DATA          = new Date().toISOString().split('T')[0];
                        }
-                       $scope.ListaTitoliSpedizione.push(JSON.parse(JSON.stringify($scope.ListaTitoliToHandle[i])));
-                       $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].QUANTITA = $scope.ListaTitoliToHandle[i].QUANTITA - $scope.ListaTitoliToHandle[i].QUANTITA_DISP;
-                       $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].STATO    = 'P';
-                   }
-                   else $scope.ListaTitoliSpedizione.push(JSON.parse(JSON.stringify($scope.ListaTitoliToHandle[i])));  
-                }
-                else $scope.ListaTitoliSpedizione.push(JSON.parse(JSON.stringify($scope.ListaTitoliToHandle[i])));
-              } */
-
-
+                       OldTitolo.QUANTITA      = $scope.Titolo.QUANTITA - $scope.Titolo.QUANTITA_DISP;
+                       OldTitolo.STATO         = 'P';
+                    } 
+                    else 
+                    {
+                        OldTitolo.STATO    = 'S';
+                        OldTitolo.QUANTITA = $scope.Titolo.QUANTITA;
+                    }
+                    OldTitolo.TITOLO        = $scope.Titolo.TITOLO;
+                    OldTitolo.ISBN_TITOLO   = $scope.Titolo.ISBN_TITOLO;
+                    OldTitolo.NOME_TITOLO   = $scope.Titolo.NOME_TITOLO;
+                    OldTitolo.QUANTITA_MGZN = $scope.Titolo.QUANTITA_MGZN;
+                    OldTitolo.QUANTITA_DISP = $scope.Titolo.QUANTITA_DISP;  
+                    OldTitolo.QUANTITA_VOL  = $scope.Titolo.QUANTITA_VOL; 
+                    OldTitolo.DATA          = new Date().toISOString().split('T')[0];  
+                    if(OldTitolo.Nuovo)
+                       OldTitolo.Modificato = false
+                    else OldTitolo.Modificato = true; 
+                 }
+                 else
+                 {
+                    OldTitolo.TITOLO        = $scope.Titolo.TITOLO;
+                    OldTitolo.ISBN_TITOLO   = $scope.Titolo.ISBN_TITOLO;
+                    OldTitolo.NOME_TITOLO   = $scope.Titolo.NOME_TITOLO;
+                    OldTitolo.QUANTITA      = $scope.Titolo.QUANTITA;
+                    OldTitolo.QUANTITA_MGZN = $scope.Titolo.QUANTITA_MGZN;
+                    OldTitolo.QUANTITA_DISP = $scope.Titolo.QUANTITA_DISP;  
+                    OldTitolo.QUANTITA_VOL  = $scope.Titolo.QUANTITA_VOL;  
+                    OldTitolo.STATO         =  $scope.Titolo.STATO; 
+                    OldTitolo.DATA          = new Date().toISOString().split('T')[0];  
+                    if(OldTitolo.Nuovo)
+                       OldTitolo.Modificato = false
+                    else OldTitolo.Modificato = true; 
+                 }
+              }
+           }
         }
         $scope.TitoloPopup = undefined;
+        $scope.CheckTitoliAlreadyGestitiDocente();
+
         $scope.searchTextTit = '';        
         $mdDialog.hide();           
       }
@@ -973,8 +1081,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
     function DialogControllerGestioneTitoliMultipli($scope,$mdDialog,ListaTitoli)
     {
       $scope.ListaTitoliToHandle = ListaTitoli
-      //$scope.SpedizioneMultipla;
-      //$scope.ChiaveSpedizione;
       
       if($scope.SpedizioneMultipla)
       {

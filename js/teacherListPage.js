@@ -2031,7 +2031,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
       $scope.RefreshListaSpedizioni();
      });
     }
-    ZConfirm.GetConfirmBox('AVVISO', 'Eliminare la spedizione della data ' + Spedizione.DATA + ' presso ' + Spedizione.PRESSO + ' ?', EliminaSpedDoc, function () { });
+    ZConfirm.GetConfirmBox('AVVISO', 'Eliminare la spedizione della data ' + Spedizione.DATA + ' ?', EliminaSpedDoc, function () { });
    }
 
    $scope.hide = function () {
