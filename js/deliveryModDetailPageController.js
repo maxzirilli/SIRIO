@@ -283,7 +283,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                
                if($scope.SpedizioneMultipla)
                {
-                  $scope.Multipla = true;
+                  //$scope.Multipla = true;
                   if($scope.IstitutoSelezionato != '')
                      $scope.NumeroDocenti = $scope.ListaDocentiSpedizionePerMultipla.length
                   else $scope.NumeroDocenti = $scope.ListaDocentiSpedizione.length;
@@ -291,7 +291,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                
                $scope.PassaADaSpedire = function (Titolo)
                {
-                 if(!$scope.Multipla)
+                 if(!$scope.SpedizioneMultipla)
                  {
                     if (Titolo.STATO == 'P')
                     {
@@ -772,7 +772,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
     
     function DialogControllerTitoloSpedizioneMod($scope,$mdDialog,Titolo)  
     { 
-      $scope.Multipla = false;
+      //$scope.Multipla = false;
       
       $scope.Titolo = {
                          "CHIAVE"        : Titolo.CHIAVE,
@@ -845,6 +845,36 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
              $scope.ListaTitoliSpedizione[TitoloCorrispondente].Modificato = false
           else
              $scope.ListaTitoliSpedizione[TitoloCorrispondente].Modificato = true;
+
+
+              //CORREZIONE URGENTE
+
+              /*if($scope.SpedizioneMultipla)
+              {
+                if((($scope.ListaTitoliSpedizione[TitoloCorrispondente].QUANTITA * $scope.NumeroDocenti) > $scope.ListaTitoliSpedizione[TitoloCorrispondente].QUANTITA_DISP) && $scope.ListaTitoliSpedizione[TitoloCorrispondente].STATO == 'S')
+                     $scope.ListaTitoliSpedizione[TitoloCorrispondente].STATO = 'P';  
+              }
+              else
+              {
+                if($scope.ListaTitoliSpedizione[TitoloCorrispondente].STATO == 'S')
+                {
+                   if(($scope.ListaTitoliSpedizione[TitoloCorrispondente].QUANTITA >  $scope.ListaTitoliSpedizione[TitoloCorrispondente].QUANTITA_DISP))
+                   {
+                       if($scope.ListaTitoliSpedizione[TitoloCorrispondente].QUANTITA_DISP > 0)
+                       {
+                          $scope.ListaTitoliSpedizione.push(JSON.parse(JSON.stringify($scope.ListaTitoliToHandle[i])));
+                          $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].QUANTITA = $scope.ListaTitoliToHandle[i].QUANTITA_DISP;
+                       }
+                       $scope.ListaTitoliSpedizione.push(JSON.parse(JSON.stringify($scope.ListaTitoliToHandle[i])));
+                       $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].QUANTITA = $scope.ListaTitoliToHandle[i].QUANTITA - $scope.ListaTitoliToHandle[i].QUANTITA_DISP;
+                       $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].STATO    = 'P';
+                   }
+                   else $scope.ListaTitoliSpedizione.push(JSON.parse(JSON.stringify($scope.ListaTitoliToHandle[i])));  
+                }
+                else $scope.ListaTitoliSpedizione.push(JSON.parse(JSON.stringify($scope.ListaTitoliToHandle[i])));
+              } */
+
+
         }
         $scope.TitoloPopup = undefined;
         $scope.searchTextTit = '';        
@@ -943,12 +973,12 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
     function DialogControllerGestioneTitoliMultipli($scope,$mdDialog,ListaTitoli)
     {
       $scope.ListaTitoliToHandle = ListaTitoli
-      $scope.SpedizioneMultipla;
-      $scope.ChiaveSpedizione;
+      //$scope.SpedizioneMultipla;
+      //$scope.ChiaveSpedizione;
       
       if($scope.SpedizioneMultipla)
       {
-          $scope.Multipla = true;
+          //$scope.Multipla = true;
           if($scope.IstitutoSelezionato != '')
             $scope.NumeroDocenti = $scope.ListaDocentiSpedizionePerMultipla.length
           else $scope.NumeroDocenti = $scope.ListaDocentiSpedizione.length;
@@ -987,7 +1017,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
       $scope.SetTuttiDaSpedire = function()
       {
         for(let i = 0;i < $scope.ListaTitoliToHandle.length;i ++)
-            if($scope.Multipla)
+            if($scope.SpedizioneMultipla)
             {
                if(($scope.ListaTitoliToHandle[i].QUANTITA * $scope.NumeroDocenti) <= $scope.ListaTitoliToHandle[i].QUANTITA_DISP)
                    $scope.ListaTitoliToHandle[i].STATO = 'S'
@@ -1018,7 +1048,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
            }
            else
            {
-              if($scope.Multipla)
+              if($scope.SpedizioneMultipla)
               {
                 if((($scope.ListaTitoliToHandle[i].QUANTITA * $scope.NumeroDocenti) > $scope.ListaTitoliToHandle[i].QUANTITA_DISP) && $scope.ListaTitoliToHandle[i].STATO == 'S')
                 {
@@ -1029,20 +1059,25 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
               }
               else
               {
-                var SdoppiareTitolo = false;
                 /*if(($scope.ListaTitoliToHandle[i].QUANTITA >  $scope.ListaTitoliToHandle[i].QUANTITA_DISP) && $scope.ListaTitoliToHandle[i].STATO == 'S') 
                     $scope.ListaTitoliToHandle[i].STATO = 'P';*/
-                if(($scope.ListaTitoliToHandle[i].QUANTITA >  $scope.ListaTitoliToHandle[i].QUANTITA_DISP) && $scope.ListaTitoliToHandle[i].STATO == 'S')
+
+                if($scope.ListaTitoliToHandle[i].STATO == 'S')
                 {
-                    if($scope.ListaTitoliToHandle[i].QUANTITA_DISP > 0)
-                    {
+                   if(($scope.ListaTitoliToHandle[i].QUANTITA >  $scope.ListaTitoliToHandle[i].QUANTITA_DISP))
+                   {
+                       if($scope.ListaTitoliToHandle[i].QUANTITA_DISP > 0)
+                       {
+                          $scope.ListaTitoliSpedizione.push(JSON.parse(JSON.stringify($scope.ListaTitoliToHandle[i])));
+                          $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].QUANTITA = $scope.ListaTitoliToHandle[i].QUANTITA_DISP;
+                       }
                        $scope.ListaTitoliSpedizione.push(JSON.parse(JSON.stringify($scope.ListaTitoliToHandle[i])));
-                       $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].QUANTITA = $scope.ListaTitoliToHandle[i].QUANTITA_DISP;
-                    }
-                    $scope.ListaTitoliSpedizione.push(JSON.parse(JSON.stringify($scope.ListaTitoliToHandle[i])));
-                    $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].QUANTITA = $scope.ListaTitoliToHandle[i].QUANTITA - $scope.ListaTitoliToHandle[i].QUANTITA_DISP;
-                    $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].STATO    = 'P';
-                } 
+                       $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].QUANTITA = $scope.ListaTitoliToHandle[i].QUANTITA - $scope.ListaTitoliToHandle[i].QUANTITA_DISP;
+                       $scope.ListaTitoliSpedizione[$scope.ListaTitoliSpedizione.length - 1].STATO    = 'P';
+                   }
+                   else $scope.ListaTitoliSpedizione.push(JSON.parse(JSON.stringify($scope.ListaTitoliToHandle[i])));  
+                }
+                else $scope.ListaTitoliSpedizione.push(JSON.parse(JSON.stringify($scope.ListaTitoliToHandle[i])));
               } 
               //$scope.ListaTitoliSpedizione.push($scope.ListaTitoliToHandle[i]);
            }
