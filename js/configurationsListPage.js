@@ -537,6 +537,7 @@ $scope.GridOptions_8 = {
                                        Query     : 'MergeSubjects',
                                        Parametri : ParametriUnione
                                      });
+                                     
            SystemInformation.PostSQL('Subject',$ObjQuery,function(Answer)
            {
              $scope.ListaMaterieF         = [];

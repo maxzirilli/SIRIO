@@ -39,7 +39,6 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
   $scope.AnnoRicercaSpedizioni  = $scope.ListaAnni[0];
   $scope.AnnoFiltro             = -1;
   $scope.CombinazioneFiltro     = -1;
-  $scope.ListaAnni              = [];
   $scope.ListaCombinazioni      = [];
 
   $scope.AbilitaInvioMultiplo = function () 
@@ -1374,6 +1373,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
       });
 
      if (!NuovoDocente && $scope.DocenteInEditing.ListaIstitutiDoc[i].Orari[j].Modificato)
+     {
       ParamOrario = {
        CHIAVE: $scope.DocenteInEditing.ListaIstitutiDoc[i].Orari[j].CHIAVE,
        MATERIA: $scope.DocenteInEditing.ListaIstitutiDoc[i].Orari[j].MATERIA,
@@ -1383,6 +1383,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
       Query: 'UpdateLesson',
       Parametri: ParamOrario
      });
+     }
     }
 
     for (let k = 0; k < $scope.DocenteInEditing.ListaIstitutiDoc[i].Disponibilita.length; k++) {
