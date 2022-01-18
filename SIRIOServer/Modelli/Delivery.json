@@ -105,7 +105,7 @@
 	"SQLDettaglioSpedizioneCasa" : [
 		{
 			"Name" : "PublisherDelivery",
-			"SQL" : "SELECT * FROM spedizioni WHERE CHIAVE=:CHIAVE AND PROMOTORE=#KeyAccount\n"
+			"SQL" : "SELECT * FROM spedizioni WHERE CHIAVE=:CHIAVE"
 		},
 		{
 			"Name" : "PublisherDeliveryBook",
