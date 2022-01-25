@@ -22,5 +22,5 @@
       header("Access-Control-Allow-Methods:POST"); 
 
       $SIRIOConnection = new TAdvQuery();
-      $SIRIOConnection->SendMail();
+      $SIRIOConnection->SendMail(false);
 ?>
