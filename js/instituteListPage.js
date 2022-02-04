@@ -547,6 +547,7 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
             $scope.IstitutoInEditing.ListaAdozioniIstituto[$scope.IstitutoInEditing.ListaAdozioniIstituto.length-1].ListaTitoliClasse.push({
                                                                                                                                              Titolo         : IstitutoListaAdozioni[i].NOME_TITOLO,
                                                                                                                                              Codice         : IstitutoListaAdozioni[i].CODICE_TITOLO,
+                                                                                                                                             Materia        : IstitutoListaAdozioni[i].MATERIA_TITOLO,
                                                                                                                                              Editore        : IstitutoListaAdozioni[i].EDITORE_TITOLO == undefined ? 'N.D.' : IstitutoListaAdozioni[i].EDITORE_TITOLO,
                                                                                                                                              Prezzo         : (IstitutoListaAdozioni[i].PREZZO_TITOLO == '' || IstitutoListaAdozioni[i].PREZZO_TITOLO == null) ? 'N.D.' : IstitutoListaAdozioni[i].PREZZO_TITOLO + '€',
                                                                                                                                              EditoreGestito :  IstitutoListaAdozioni[i].CHIAVE_EDITORE == null ? 'NON GESTITO' : 'GESTITO' 
@@ -608,8 +609,8 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
        for(let i = 0;i < Classe.ListaTitoliClasse.length;i ++)
        {
          if(Classe.ListaTitoliClasse[i].EditoreGestito == 'GESTITO')
-            Result += '<p style="Background-color:FF77E8;">' + Classe.ListaTitoliClasse[i].Codice + ' - ' + Classe.ListaTitoliClasse[i].Titolo + ' - ' + Classe.ListaTitoliClasse[i].Editore + ' - ' + Classe.ListaTitoliClasse[i].Prezzo + '</p>'
-         else Result += '<p>' + Classe.ListaTitoliClasse[i].Codice + ' - ' + Classe.ListaTitoliClasse[i].Titolo + ' - ' + Classe.ListaTitoliClasse[i].Editore + ' - ' + Classe.ListaTitoliClasse[i].Prezzo + '</p>'
+            Result += '<p style="Background-color:' + COLOR_ADOZIONI_GESTITE + ';">' + Classe.ListaTitoliClasse[i].Materia + ' - ' + Classe.ListaTitoliClasse[i].Codice + ' - ' + Classe.ListaTitoliClasse[i].Titolo + ' - ' + Classe.ListaTitoliClasse[i].Editore + ' - ' + Classe.ListaTitoliClasse[i].Prezzo + '</p>'
+         else Result += '<p>' + Classe.ListaTitoliClasse[i].Materia + ' - ' + Classe.ListaTitoliClasse[i].Codice + ' - ' + Classe.ListaTitoliClasse[i].Titolo + ' - ' + Classe.ListaTitoliClasse[i].Editore + ' - ' + Classe.ListaTitoliClasse[i].Prezzo + '</p>'
 
        }
     }

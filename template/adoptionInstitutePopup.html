@@ -34,11 +34,11 @@
          <table style="text-align:center;width:750px;" md-row-select="GridOptionsAdoz.rowSelection" multiple="{{GridOptionsAdoz.multiSelect}}">
           <tr>
             <th>CLASSE</th>
-            <th>CODICE - TITOLO - EDITORE - PREZZO</th>
+            <th>MATERIA - CODICE - TITOLO - EDITORE - PREZZO</th>
           </tr>
           <tr ng-repeat="classe in IstitutoListaAdozioni | AdozioneByFiltroDoc : AnnoFiltro : CombinazioneFiltro | limitTo : GridOptionsAdoz.query.limit : (GridOptionsAdoz.query.page - 1) * GridOptionsAdoz.query.limit">
-            <td>{{classe.NomeClasse}} {{classe.CombinazioneClasse}}</td>
-            <td style="text-align:center;" ng-bind-html="GetTitoliClasseIstituto(classe)"></td>
+            <td style="padding-top:30px;padding-bottom: 30px;">{{classe.NomeClasse}} {{classe.CombinazioneClasse}}</td>
+            <td style="text-align:center;padding-top:30px;padding-bottom: 30px;" ng-bind-html="GetTitoliClasseIstituto(classe)"></td>
           </tr>
         </table>
         <md-table-pagination md-limit="GridOptionsAdoz.query.limit" 

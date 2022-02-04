@@ -39,57 +39,58 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$http)
         $scope.FileLength = CsvSplitted.length -1;
         var $ObjQuery = { Operazioni : [] };
         $scope.Contatore  = 0;
+        var ListaDocenti = [];
         var i = 1;
-
-        var SendDieciMail = function()
-        {             
-          while(i < CsvSplitted.length)
+          
+        while(i < CsvSplitted.length)
+        {
+          let RecordTitolo = CsvSplitted[i++].SplitCSVWithDoublequotes(';');
+          if(RecordTitolo.length > 2)
           {
-            let RecordTitolo = CsvSplitted[i++].SplitCSVWithDoublequotes(';');
-            if(RecordTitolo.length > 2)
-            {
-               RecordTitolo[0]  = RecordTitolo[0].trim();
-               RecordTitolo[1]  = RecordTitolo[1].trim();
-               RecordTitolo[2]  = RecordTitolo[2].trim(); 
+             RecordTitolo[0]  = RecordTitolo[0].trim();
+             RecordTitolo[1]  = RecordTitolo[1].trim();
+             RecordTitolo[2]  = RecordTitolo[2].trim(); 
 
-               RecordTitolo[0] == '' ? RecordTitolo[0] = 'ND' : RecordTitolo[0];
-               RecordTitolo[1] == '' ? RecordTitolo[1] = 'ND' : RecordTitolo[1];
-               RecordTitolo[2] == '' ? RecordTitolo[2] = 'ND' : RecordTitolo[2];
-               
-               $ObjQuery.Operazioni.push({
-                                           Query     : 'UpdateTeacherMailFromMailChimp',
-                                           Parametri : {
-                                                         MailDocente : RecordTitolo[0].xSQL(),
-                                                         NomeDocente : RecordTitolo[1].xSQL() + ' ' + RecordTitolo[2].xSQL()
-                                                       }
-                                         });
-               $scope.Contatore++;
-            }
-            if($ObjQuery.Operazioni.length == 20)
-            {
-              SystemInformation.PostSQL('Teacher',$ObjQuery,SendDieciMail,false,true)
-              $ObjQuery.Operazioni = [];
-              return;  
-            }
-          }
-          if($ObjQuery.Operazioni.length < 20)
-             SystemInformation.PostSQL('Teacher',$ObjQuery,function() 
-             {
-               $ObjQuery = {Operazioni : []};
-               $ObjQuery.Operazioni.push({
-                                           Query     : 'UpdateDataImpMailchimp',
-                                           Parametri : {}
-                                         });
-               SystemInformation.PostSQL('Accessories',$ObjQuery,function(Answer)
-               {
-                 $scope.Contatore = 0;
-                 $ObjQuery = {Operazioni : []};
-                 ZCustomAlert($mdDialog,'AVVISO','UPLOAD ESEGUITO!');  
-               })
-             },false,true) 
+             RecordTitolo[0] == '' ? RecordTitolo[0] = 'ND' : RecordTitolo[0];
+             RecordTitolo[1] == '' ? RecordTitolo[1] = 'ND' : RecordTitolo[1];
+             RecordTitolo[2] == '' ? RecordTitolo[2] = 'ND' : RecordTitolo[2];
+             
+             ListaDocenti.push({
+                                 MailDocente : RecordTitolo[0].xSQL(),
+                                 NomeDocente : RecordTitolo[1].xSQL() + ' ' + RecordTitolo[2].xSQL()
+                               }); 
+             $scope.Contatore++;
+          } 
         }
-        SendDieciMail();           
-      }                        
+        SystemInformation.ExecuteExternalScript('SIRIOExtraUpdateDocFromMailchimp', { ListaDocMailchimp : ListaDocenti }, function(Answer) 
+        {
+          var NuoviDocentiTmp   = Answer.NuoviDocenti;
+          var OmonimiDocentiTmp = Answer.DocentiOmonimi;
+          $ObjQuery = {Operazioni : []};
+          $ObjQuery.Operazioni.push({
+                                      Query     : 'UpdateDataImpMailchimp',
+                                      Parametri : {}
+                                    });
+          SystemInformation.PostSQL('Accessories',$ObjQuery,function(Answer)
+          {
+            $scope.Contatore = 0;
+            $ObjQuery = {Operazioni : []};
+            document.getElementById('fileLoadCSVDocument').value = null;
+            if(NuoviDocentiTmp.length > 0 && OmonimiDocentiTmp.length == 0)
+               ZCustomAlert($mdDialog,'AVVISO','UPLOAD ESEGUITO! SONO STATI CREATI I SEGUENTI DOCENTI : ' + NuoviDocentiTmp.toString());
+
+            if(NuoviDocentiTmp.length == 0 && OmonimiDocentiTmp.length > 0)
+               ZCustomAlert($mdDialog,'ATTENZIONE','I SEGUENTI DOCENTI NON SONO STATI AGGIORNATI PERCHÈ SONO PRESENTI OMONIMI : ' + OmonimiDocentiTmp.toString());
+
+            if(NuoviDocentiTmp.length > 0 && OmonimiDocentiTmp.length > 0)
+               ZCustomAlert($mdDialog,'AVVISO','UPLOAD ESEGUITO! SONO STATI CREATI I SEGUENTI DOCENTI : ' + NuoviDocentiTmp.toString() + 
+                                               '. INOLTRE I SEGUENTI DOCENTI NON SONO STATI AGGIORNATI PERCHÈ SONO PRESENTI OMONIMI : ' + OmonimiDocentiTmp.toString());
+
+            if(NuoviDocentiTmp.length == 0 && OmonimiDocentiTmp.length == 0)
+               ZCustomAlert($mdDialog,'AVVISO','UPLOAD ESEGUITO!');
+          }) 
+        })   
+      }                      
     }
     reader.readAsDataURL(file);  
   }

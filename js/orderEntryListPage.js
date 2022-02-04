@@ -58,7 +58,7 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
                                     Chiave    : TitoliInfoListaNF[i].CHIAVE,
                                     Nome      : TitoliInfoListaNF[i].TITOLO,
                                     Codice    : TitoliInfoListaNF[i].CODICE_ISBN,
-                                    Editore   : TitoliInfoListaNF[i].EDITORE
+                                    Editore   : TitoliInfoListaNF[i].EDITORE == undefined ? 'N.D.' : TitoliInfoListaNF[i].EDITORE
                                   }
        $scope.ListaTitoliNoFilter = TitoliInfoListaNF
     }

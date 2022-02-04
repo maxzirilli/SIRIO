@@ -33,7 +33,7 @@
 	"SelectInstituteList" : [
 		{
 			"Name" : "InstituteForBook",
-			"SQL" : "SELECT istituti.CHIAVE,istituti.NOME FROM istituti WHERE CHIAVE IN (SELECT ISTITUTO FROM istituti_x_titoli WHERE TITOLO=:FiltroT) ORDER BY NOME DESC\n"
+			"SQL" : "SELECT istituti.CHIAVE,istituti.NOME,istituti.CODICE FROM istituti WHERE CHIAVE IN (SELECT ISTITUTO FROM istituti_x_titoli WHERE TITOLO=:FiltroT) ORDER BY NOME DESC\n"
 		}
 	],
 	"SQLDettaglio" : [

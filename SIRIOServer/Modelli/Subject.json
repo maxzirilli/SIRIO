@@ -1,70 +1,73 @@
-{ 
-  "SelectSQL" : [
-                  { 
-                    "Name" : "SubjectInfoList",
-                    "SQL"  : "SELECT * FROM materie_insegnamento WHERE NASCOSTA <> 1 ORDER BY materie_insegnamento.DESCRIZIONE" 
-                  }
-                ],
-
-  "SelectAllSQL" : [
-                     { 
-                       "Name" : "SubjectInfoListAll",
-                       "SQL"  : "SELECT * FROM materie_insegnamento ORDER BY materie_insegnamento.DESCRIZIONE" 
-                     },
-                     { 
-                       "Name" : "SubjectGroups",
-                       "SQL"  : "SELECT *,(SELECT DESCRIZIONE FROM istituti_gruppi WHERE CHIAVE = materie_istituti.GRUPPO_IST) AS DESCR_GRUPPO FROM materie_istituti" 
-                     }
-                   ],
-        
-  "EditSQL"   : [   
-                  {
-                    "Name" : "InsertSubject",
-                    "SQL"  : "INSERT INTO materie_insegnamento (CHIAVE,DESCRIZIONE) VALUES (:NewKey1,#DESCRIZIONE)"
-                  }, 
-                  {
-                    "Name" : "UpdateSubject",
-                    "SQL"  : "UPDATE materie_insegnamento SET DESCRIZIONE=#DESCRIZIONE WHERE CHIAVE=:CHIAVE"
-                  },
-                  {
-                    "Name" : "DeleteTeacherSubject1",
-                    "SQL"  : "UPDATE docenti SET MATERIA_1=NULL WHERE MATERIA_1=:CHIAVE"
-                  },
-                  {
-                    "Name" : "DeleteTeacherSubject2",
-                    "SQL"  : "UPDATE docenti SET MATERIA_2= NULL WHERE MATERIA_2=:CHIAVE"
-                  },
-                  {
-                    "Name" : "DeleteTeacherSubject3",
-                    "SQL"  : "UPDATE docenti SET MATERIA_3= NULL WHERE MATERIA_3=:CHIAVE"
-                  },
-                  {
-                    "Name" : "DeleteSubject",
-                    "SQL"  : "DELETE FROM materie_insegnamento WHERE CHIAVE=:CHIAVE"
-                  },
-                  {
-                    "Name" : "MergeSubjects",
-                    "SQL"  : "CALL UNISCI_NASCONDI_MATERIA(:OldMateria,:NewMateria) "
-                  },
-                  {
-                    "Name" : "UnhideSubject",
-                    "SQL"  : "UPDATE materie_insegnamento SET NASCOSTA = 0 WHERE CHIAVE =:CHIAVE"
-                  },
-                  {
-                    "Name" : "InsertSubjectGroupAfterInsert",
-                    "SQL"  : "INSERT IGNORE INTO materie_istituti (MATERIA,GRUPPO_IST) VALUES (:NewKey1,:GRUPPO_IST)"
-                  },
-                  {
-                    "Name" : "InsertSubjectGroup",
-                    "SQL"  : "INSERT IGNORE INTO materie_istituti (MATERIA,GRUPPO_IST) VALUES (:MATERIA,:GRUPPO_IST)"
-                  },
-                  {
-                    "Name" : "DeleteSubjectGroup", 
-                    "SQL"  : "DELETE FROM materie_istituti WHERE MATERIA =:MATERIA AND GRUPPO_IST =:GRUPPO_IST"
-                  },
-                  {
-                    "Name" : "DeleteAllGroupSubject",
-                    "SQL"  : "DELETE FROM materie_istituti WHERE MATERIA =:CHIAVE"
-                  }
-                ]        
+{
+	"RuoliAbilitati" : "",
+	"SelectSQL" : [
+		{
+			"Name" : "SubjectInfoList",
+			"SQL" : "SELECT * FROM materie_insegnamento WHERE NASCOSTA <> 1 ORDER BY materie_insegnamento.DESCRIZIONE\n"
+		}
+	],
+	"SelectAllSQL" : [
+		{
+			"Name" : "SubjectInfoListAll",
+			"SQL" : "SELECT * FROM materie_insegnamento ORDER BY materie_insegnamento.DESCRIZIONE\n"
+		},
+		{
+			"Name" : "SubjectGroups",
+			"SQL" : "SELECT *,(SELECT DESCRIZIONE FROM istituti_gruppi WHERE CHIAVE = materie_istituti.GRUPPO_IST) AS DESCR_GRUPPO FROM materie_istituti\n"
+		}
+	],
+	"EditSQL" : [
+		{
+			"Name" : "InsertSubject",
+			"SQL" : "INSERT INTO materie_insegnamento (CHIAVE,DESCRIZIONE) VALUES (:NewKey1,#DESCRIZIONE)\n"
+		},
+		{
+			"Name" : "UpdateSubject",
+			"SQL" : "UPDATE materie_insegnamento SET DESCRIZIONE=#DESCRIZIONE WHERE CHIAVE=:CHIAVE\n"
+		},
+		{
+			"Name" : "DeleteTeacherSubject1",
+			"SQL" : "UPDATE docenti SET MATERIA_1=NULL WHERE MATERIA_1=:CHIAVE\n"
+		},
+		{
+			"Name" : "DeleteTeacherSubject2",
+			"SQL" : "UPDATE docenti SET MATERIA_2= NULL WHERE MATERIA_2=:CHIAVE\n"
+		},
+		{
+			"Name" : "DeleteTeacherSubject3",
+			"SQL" : "UPDATE docenti SET MATERIA_3= NULL WHERE MATERIA_3=:CHIAVE\n"
+		},
+		{
+			"Name" : "DeleteSubject",
+			"SQL" : "DELETE FROM materie_insegnamento WHERE CHIAVE=:CHIAVE\n"
+		},
+		{
+			"Name" : "MergeSubjects",
+			"SQL" : "CALL UNISCI_NASCONDI_MATERIA(:OldMateria,:NewMateria) \n"
+		},
+		{
+			"Name" : "UnhideSubject",
+			"SQL" : "UPDATE materie_insegnamento SET NASCOSTA = 0 WHERE CHIAVE =:CHIAVE\n"
+		},
+		{
+			"Name" : "InsertSubjectGroupAfterInsert",
+			"SQL" : "INSERT IGNORE INTO materie_istituti (MATERIA,GRUPPO_IST) VALUES (:NewKey1,:GRUPPO_IST)\n"
+		},
+		{
+			"Name" : "InsertSubjectGroup",
+			"SQL" : "INSERT IGNORE INTO materie_istituti (MATERIA,GRUPPO_IST) VALUES (:MATERIA,:GRUPPO_IST)\n"
+		},
+		{
+			"Name" : "DeleteSubjectGroup",
+			"SQL" : "DELETE FROM materie_istituti WHERE MATERIA =:MATERIA AND GRUPPO_IST =:GRUPPO_IST\n"
+		},
+		{
+			"Name" : "DeleteAllGroupSubject",
+			"SQL" : "DELETE FROM materie_istituti WHERE MATERIA =:CHIAVE\n"
+		},
+		{
+			"Name" : "HandleSubjectForTeacher",
+			"SQL" : "UPDATE materie_insegnamento \n   SET PER_DOCENTI = #PerDocente\n WHERE CHIAVE = :Chiave\n"
+		}
+]
 }

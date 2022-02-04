@@ -181,6 +181,7 @@
           <th></th>
           <th></th>
           <th></th> 
+          <th></th>
           <th style="font-weight:bold;">MATERIA</th>
           <th style="font-weight:bold;">ISTITUTI</th>
         </tr>  
@@ -188,7 +189,10 @@
           <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA MATERIA" ng-click="EliminaMateria(materia)"></td> 
           <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA MATERIA" ng-click="ModificaMateria(materia)"></td> 
           <td ng-if="!(materia.Nascosta)"><img src="img/hide.png" style="width:30px;height:auto;" title="UNISCI E NASCONDI MATERIA" ng-click="UnisciMateria(materia.Chiave,materia.Descrizione)"></td>
-          <td ng-if="materia.Nascosta"><img src="img/notHide.png" style="width:30px;height:auto;" title="RENDI VISIBILE MATERIA" ng-click="RendiVisibileMateria(materia.Chiave,materia.Descrizione)"></td>       
+          <td ng-if="materia.Nascosta"><img src="img/notHide.png" style="width:30px;height:auto;" title="RENDI VISIBILE MATERIA" ng-click="RendiVisibileMateria(materia.Chiave,materia.Descrizione)"></td>             
+          <td ng-if="!(materia.PerDocenti)"><img src="img/NotForDoc.png" style="width:30px;height:auto;" title="RENDI MATERIA GESTIBILE ANCHE PER DOCENTI" ng-click="GestisciMateriaPerDocenti(materia,true)"></td>        
+          <td ng-if="materia.PerDocenti"><img src="img/ForDoc.png" style="width:30px;height:auto;" title=" RENDI MATERIA GESTIBILE SOLO PER TITOLI" ng-click="GestisciMateriaPerDocenti(materia,false)"></td>  
+          
           <td>{{materia.Descrizione | uppercase}}</td>
           <td ng-bind-html="GetStringaGruppiMaterie(materia)"></td>
         </tr>    

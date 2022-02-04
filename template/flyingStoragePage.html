@@ -1,11 +1,14 @@
 <div ng-controller="flyingStoragePageController" ng-cloak md-theme="{{ActualTheme}}" style="height:75%">
   <div ng-show="!EditingOn && !ViewTotaleMagazzino">
-     <div>
-       <h2 style="float:left;margin-right:50px;">MAGAZZINO VOLANTE</h2>
+     <div style="margin-top:10px;">
+       <h2 style="float:left;margin-right:50px;margin-top:10px;">MAGAZZINO VOLANTE</h2>
+     
        <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoMovimento()">INSERISCI NUOVO MOVIMENTO</md-button> 
        <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="ApriVolante()">VISUALIZZA MAGAZZINO</md-button>
+
+       <input type="checkbox" ng-model="ShowOnlyCurrentYear" ng-change="RefreshListaMovimenti()" style="float:right;margin-top:15px;width:2%;">
+       <label style="margin-top:15px;float:right;">VISUALIZZA SOLO ANNO IN CORSO</label> 
      </div>    
-     
      <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}" ng-if="ListaVolante.length > 0">  
        <tr>
          <th></th>

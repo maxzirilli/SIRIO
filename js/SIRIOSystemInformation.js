@@ -6,6 +6,8 @@ const PIATTA_NESSUNA    = 'N';
 const PIATTA_HUBSCUOLA  = 'H';
 const PIATTA_BSMART     = 'B';
 
+const COLOR_ADOZIONI_GESTITE = '#DBFF33';
+
 SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',function($http,$state,$rootScope,$mdDialog)
 {
   var Self                   = this;
@@ -22,7 +24,7 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
   this.VDocLogStorage        = 'VERSIONE DOCUMENTO 1.0 DEL 08/09/2020';
   this.VDocInventory         = 'VERSIONE DOCUMENTO 1.1 DEL 13/10/2020';
   this.VDocCarico            = 'VERSIONE DOCUMENTO 2.2 DEL 11/11/2020';
-  this.VDocListaDocIst       = 'VERSIONE DOCUMENTO 2.3 DEL 04/03/2021';
+  this.VDocListaDocIst       = 'VERSIONE DOCUMENTO 2.4 DEL 04/02/2022';
 
   this.IsAdministrator = function ()
   {

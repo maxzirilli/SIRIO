@@ -229,6 +229,7 @@ $scope.GridOptions_8 = {
                                 Chiave           : SubjectInfoList[i].CHIAVE,
                                 Descrizione      : SubjectInfoList[i].DESCRIZIONE,
                                 Nascosta         : SubjectInfoList[i].NASCOSTA == 1 ? true : false,
+                                PerDocenti       : SubjectInfoList[i].PER_DOCENTI == 'T' ? true : false,
                                 GruppiIstOld     : [],
                                 GruppiIstStringa : []
                               }
@@ -437,6 +438,36 @@ $scope.GridOptions_8 = {
   }
  
   //MATERIE  
+
+  $scope.GestisciMateriaPerDocenti = function(Materia,IsForDoc)
+  {
+    var GestisciMateria = function()
+    {
+      var $ObjQuery = { Operazioni : [] }; 
+      var ParamMat  = {
+                        Chiave     : Materia.Chiave,
+                        PerDocente : IsForDoc ? 'T' : 'F'
+                      }
+      $ObjQuery.Operazioni.push({
+                                  Query     : 'HandleSubjectForTeacher',
+                                  Parametri : ParamMat
+                                });
+
+      SystemInformation.PostSQL('Subject',$ObjQuery,function(Answer)
+      {
+        $scope.RefreshListaMaterie();
+      }); 
+    }
+
+    if(IsForDoc)
+    {
+       ZConfirm.GetConfirmBox('AVVISO','RENDERE LA MATERIA ' + Materia.Descrizione + ' GESTIBILE ANCHE PER I DOCENTI?',GestisciMateria,function(){});
+    }
+    else
+    {
+       ZConfirm.GetConfirmBox('AVVISO','RENDERE LA MATERIA ' + Materia.Descrizione + ' GESTIBILE SOLO PER I TITOLI?',GestisciMateria,function(){});
+    }
+  }
 
   $scope.RendiVisibileMateria = function(ChiaveMateria,NomeMateria)
   {

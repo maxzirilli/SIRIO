@@ -79,6 +79,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
              SystemInformation.PostSQL('Book',$ObjQuery,function() 
              { 
                $scope.Contatore = 0;
+               document.getElementById('fileLoadCSVDocument').value = null;
                ZCustomAlert($mdDialog,'OK','UPLOAD ESEGUITO')                                                               
              },false,true)                                                              
         }

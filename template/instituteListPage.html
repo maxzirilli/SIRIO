@@ -285,11 +285,11 @@
             <table style="width:100%;text-align:center;" md-row-select="GridOptions_2.rowSelection" multiple="{{GridOptions_2.multiSelect}}">
               <tr>
                 <th>CLASSE</th>
-                <th>CODICE - TITOLO - EDITORE - PREZZO</th>
+                <th>MATERIA - CODICE - TITOLO - EDITORE - PREZZO</th>
               </tr>
               <tr ng-repeat="classe in IstitutoInEditing.ListaAdozioniIstituto | AdozioneByFiltro : AnnoFiltro : CombinazioneFiltro | limitTo : GridOptions_2.query.limit : (GridOptions_2.query.page - 1) * GridOptions_2.query.limit">
-                <td>{{classe.NomeClasse}} {{classe.CombinazioneClasse}}</td>
-                <td style="text-align:center;" ng-bind-html="GetTitoliClasse(classe)"></td>
+                <td style="padding-top:30px;padding-bottom: 30px;">{{classe.NomeClasse}} {{classe.CombinazioneClasse}}</td>
+                <td style="text-align:center;padding-top: 30px;padding-bottom: 30px;" ng-bind-html="GetTitoliClasse(classe)"></td>
               </tr>
             </table>
             <md-table-pagination  md-limit="GridOptions_2.query.limit" 

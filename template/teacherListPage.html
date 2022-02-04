@@ -33,6 +33,7 @@
       <md-input-container class="containerSelect" style="width:30%;margin-right:10px;">
         <label>ISTITUTO</label>
         <md-autocomplete
+                    md-search-text-change="searchTextChangeIst()"
                     md-input-name="Istituto"
                     md-autofocus="true"
                     md-no-cache="true"
@@ -53,6 +54,7 @@
        <md-input-container class="containerSelect" style="width:30%;margin-right:10px;">
          <label>TITOLO</label>
          <md-autocomplete
+                     md-search-text-change="searchTextChangeTit()"
                      md-input-name="Titolo"
                      md-autofocus="true"
                      md-no-cache="true"
@@ -73,6 +75,7 @@
       <md-input-container class="containerSelect" style="width:30%;">
         <label>MATERIA</label>
         <md-autocomplete 
+                    md-search-text-change="searchTextChangeMat()"
                     md-input-name="Materia"
                     md-no-cache="true"
                     md-selected-item-change="selectedItemChangeMateria(item)"
@@ -218,7 +221,7 @@
                        <md-select ng-model="DocenteInEditing.Materia_1" ng-change="DocenteInEditing.CoordMateria_1 = false" class="mdb-select" type="text" name="Materia_1">
                        <md-optgroup>
                          <md-option ng-value="-1">-</md-option>  
-                         <md-option ng-repeat="materia in ListaMaterie" ng-value="materia.Chiave">{{materia.Nome}}</md-option>
+                         <md-option ng-repeat="materia in ListaMateriePerDoc" ng-value="materia.Chiave">{{materia.Nome}}</md-option>
                        </md-optgroup>
                        </md-select>
                      </md-input-container>
@@ -227,7 +230,7 @@
                        <md-select ng-model="DocenteInEditing.Materia_2" ng-change="DocenteInEditing.CoordMateria_2 = false" class="mdb-select" type="text" name="Materia_2">
                        <md-optgroup>
                          <md-option ng-value="-1">-</md-option>  
-                         <md-option ng-repeat="materia in ListaMaterie" ng-value="materia.Chiave">{{materia.Nome}}</md-option>
+                         <md-option ng-repeat="materia in ListaMateriePerDoc" ng-value="materia.Chiave">{{materia.Nome}}</md-option>
                        </md-optgroup>
                        </md-select>
                      </md-input-container>
@@ -236,7 +239,7 @@
                        <md-select ng-model="DocenteInEditing.Materia_3" ng-change="DocenteInEditing.CoordMateria_3 = false" class="mdb-select" type="text" name="Materia_3">
                        <md-optgroup>
                          <md-option ng-value="-1">-</md-option>  
-                         <md-option ng-repeat="materia in ListaMaterie" ng-value="materia.Chiave">{{materia.Nome}}</md-option>
+                         <md-option ng-repeat="materia in ListaMateriePerDoc" ng-value="materia.Chiave">{{materia.Nome}}</md-option>
                        </md-optgroup>
                        </md-select>
                      </md-input-container> 

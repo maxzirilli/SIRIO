@@ -6,6 +6,7 @@ SIRIOApp.controller("flyingStoragePageController",['$scope','SystemInformation',
   $scope.CodiceBippato       = '';
   $scope.ListaTotaleVolante  = [];
   $scope.TotaleLibri         = 0;
+  $scope.ShowOnlyCurrentYear = true;
   
   ScopeHeaderController.CheckButtons();
 
@@ -60,37 +61,23 @@ $scope.GridOptions_2 = {
   {
      return(ZFormatDateTime('dd/mm/yyyy',ZDateFromHTMLInput(Dati.DATA)));
   }
-  
- /* $scope.RefreshListaMovimenti = function ()
-  {
-    $scope.GridOptions.query.page = 1;
-    SystemInformation.GetSQL('FlyingStorage',{},function(Results)
-    {
-      ListaVolanteTmp = SystemInformation.FindResults(Results,'FlyingInfoList');
-      if(ListaVolanteTmp != undefined)
-      {
-        for(let i = 0; i < ListaVolanteTmp.length;i ++)
-            ListaVolanteTmp[i] = {
-                                   "CHIAVE"         : ListaVolanteTmp[i].CHIAVE,
-                                   "DATA"           : ListaVolanteTmp[i].DATA,
-                                   "PROMOTORE"      : ListaVolanteTmp[i].PROMOTORE,
-                                   "NOME_PROMOTORE" : ListaVolanteTmp[i].NOME_PROMOTORE
-                                 }
-            $scope.ListaVolante = ListaVolanteTmp;  
-      }
-      else SystemInformation.ApplyOnError('Modello lista mag.volante non conforme','');    
-    })
-  }*/
 
   $scope.RefreshListaMovimenti = function ()
   {
     $scope.GridOptions.query.page = 1;
-    SystemInformation.GetSQL('FlyingStorage',{},function(Results)
+
+    var Parametri = {};
+    
+    if($scope.ShowOnlyCurrentYear)
+       Parametri.BeforeCurrentYear = 1;
+
+    SystemInformation.GetSQL('FlyingStorage',Parametri,function(Results)
     {
-      ListaVolanteTmp = SystemInformation.FindResults(Results,'SelectAllMovimenti');
+      ListaVolanteTmp     = SystemInformation.FindResults(Results,'SelectAllMovimenti');
+      $scope.ListaVolante = [];
       if(ListaVolanteTmp != undefined)
       {
-        var ChiaveMov = -1;
+        var ChiaveMov       = -1;        
         for(let i = 0; i < ListaVolanteTmp.length;i ++)
         {
             if(ChiaveMov != ListaVolanteTmp[i].MOVIMENTO) 
