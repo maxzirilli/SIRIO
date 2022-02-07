@@ -33,7 +33,7 @@
       <md-input-container class="containerSelect" style="width:30%;margin-right:10px;">
         <label>ISTITUTO</label>
         <md-autocomplete
-                    md-search-text-change="searchTextChangeIst()"
+                    md-search-text-change="searchTextChangeIst(searchTextIstituto)"
                     md-input-name="Istituto"
                     md-autofocus="true"
                     md-no-cache="true"
@@ -44,7 +44,7 @@
                     md-require-match="true"
                     md-clear-button="true">
         <md-item-template>
-          <span md-highlight-text="searchText">CODICE :  {{item.CodiceIstituto}} - {{item.Istituto}}</span>
+          <span md-highlight-text="searchText">CODICE :  {{item.Codice}} - {{item.Istituto}}</span>
         </md-item-template>
         <md-not-found>
           Nessuna corrispondenza
@@ -54,7 +54,7 @@
        <md-input-container class="containerSelect" style="width:30%;margin-right:10px;">
          <label>TITOLO</label>
          <md-autocomplete
-                     md-search-text-change="searchTextChangeTit()"
+                     md-search-text-change="searchTextChangeTit(searchTextTit)"
                      md-input-name="Titolo"
                      md-autofocus="true"
                      md-no-cache="true"
@@ -75,7 +75,7 @@
       <md-input-container class="containerSelect" style="width:30%;">
         <label>MATERIA</label>
         <md-autocomplete 
-                    md-search-text-change="searchTextChangeMat()"
+                    md-search-text-change="searchTextChangeMat(searchTextMat)"
                     md-input-name="Materia"
                     md-no-cache="true"
                     md-selected-item-change="selectedItemChangeMateria(item)"
