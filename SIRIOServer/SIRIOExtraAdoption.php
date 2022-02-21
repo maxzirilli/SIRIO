@@ -21,13 +21,16 @@
                                     "istituti.CHIAVE AS CHIAVE_ISTITUTO,".
                                     "istituti.NOME AS NOME_ISTITUTO,".
                                     "utenti.USERNAME AS NOME_PROMOTORE". 
-                       " FROM titoli,adozioni_titolo,istituti LEFT OUTER JOIN utenti ON (utenti.CHIAVE = istituti.PROMOTORE),classi" .
-                      " WHERE titoli.CODICE_ISBN IN ('". str_replace(",","','",$Parametri->ListaCodici) . "')" .
-                        " AND adozioni_titolo.TITOLO = titoli.CHIAVE".
-                        " AND classi.CHIAVE = adozioni_titolo.CLASSE".
-                        " AND istituti.CHIAVE = classi.ISTITUTO".
-                      " GROUP BY istituti.CHIAVE,titoli.CODICE_ISBN ".
-                      " ORDER BY titoli.TITOLO,utenti.USERNAME,istituti.NOME";                                            
+                              " FROM titoli,adozioni_titolo,istituti
+                     LEFT OUTER JOIN utenti 
+                                  ON (utenti.CHIAVE = istituti.PROMOTORE),classi" .
+                             " WHERE titoli.CODICE_ISBN IN ('". str_replace(",","','",$Parametri->ListaCodici) . "')" .
+                               " AND adozioni_titolo.TITOLO = titoli.CHIAVE".
+                               " AND classi.CHIAVE = adozioni_titolo.CLASSE".
+                               " AND istituti.CHIAVE = classi.ISTITUTO".
+                               " AND adozioni_titolo.DA_ACQUISTARE = 1" .
+                          " GROUP BY istituti.CHIAVE,titoli.CODICE_ISBN ".
+                          " ORDER BY titoli.TITOLO,utenti.USERNAME,istituti.NOME";                                            
 
                    if($Query = $PDODBase->query($SQLBody))
                    {
