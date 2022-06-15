@@ -138,6 +138,7 @@
     <div layout="row" ng-show="StatisticaPresente" style="margin-bottom: 20px;">
       <input type="checkbox" ng-model="NuoveAdozioniFiltro" style="margin-left:0px;">SOLO NUOVE ADOZIONI
       <input type="checkbox" ng-model="VolumiUniciPrimiFiltro" style="margin-left:20px;">SOLO VOLUMI UNICI E PRIMI
+      <input type="checkbox" ng-model="IstitutiInEntrambi" style="margin-left:20px;">CONFRONTA SOLO ISTITUTI PRESENTI IN ENTRAMBE
     </div>
     <div>
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-show="StatisticaPresente && ListaStatistica.length > 0" ng-click="EsportaStatisticaXls()">ESPORTAZIONE STATISTICA XLS</md-button>

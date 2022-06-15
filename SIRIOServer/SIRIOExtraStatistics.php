@@ -88,7 +88,7 @@
                return $RigaTmp;
             }
 
-            private function GetWhereConditions($Parametri,$ParametriPrimaStatistica)
+            private function GetWhereConditions($Parametri,$ParametriPrimaStatistica,$LsChiaviIstitutiCorrispondenti)
             {
                $CondizioniWhere = array();
                $AStringa        = "";     
@@ -99,6 +99,19 @@
                  $Condizione = "istituti.PROMOTORE =".$Parametri->FiltroPromotore;
                  array_push($CondizioniWhere,$Condizione);
                } 
+
+               if($Parametri->FiltroIstitutiEntrambi)
+               {
+                  if(count($LsChiaviIstitutiCorrispondenti) > 0)
+                     $StringaIstituti = implode(",", $LsChiaviIstitutiCorrispondenti);
+                  else $StringaIstituti = '-1';
+                 
+                  if($ParametriPrimaStatistica == -1)
+                     $Condizione = "istituti.CHIAVE IN (". $StringaIstituti . ") ";
+                  else $Condizione = "statistiche.ISTITUTO IN (". $StringaIstituti . ") ";
+                  array_push($CondizioniWhere,$Condizione);
+               }
+
 
                if($Parametri->FiltroGruppoIst != -1)
                {
@@ -187,20 +200,37 @@
 
             protected function FExtraScriptServerSide($PDODBase,&$JSONAnswer)
             {
-               $Parametri                    = JSON_decode($_POST['SIRIOParams']);
-               $PrimaStatistica              = array();
-               $SecondaStatistica            = array();
-               $JSONAnswer->StatisticaFinale = array();
+               $Parametri                      = JSON_decode($_POST['SIRIOParams']);
+               $PrimaStatistica                = array();
+               $SecondaStatistica              = array();
+               $JSONAnswer->StatisticaFinale   = array();
+               $LsChiaviIstitutiCorrispondenti = array();
+
+
+               if($Parametri->FiltroIstitutiEntrambi)
+               {
+                  $SQLBody = "SELECT statistiche.ISTITUTO AS CHIAVE_ISTITUTO
+                                FROM statistiche
+                               WHERE statistiche.ISTITUTO IN (SELECT istituti_x_titoli.ISTITUTO 
+                                                                FROM istituti_x_titoli)
+                               GROUP BY ISTITUTO";
+
+                  if($Query = $PDODBase->query($SQLBody))
+                  {
+                    while($Row = $Query->fetch(PDO::FETCH_ASSOC))
+                          array_push($LsChiaviIstitutiCorrispondenti,$Row['CHIAVE_ISTITUTO']);  
+                  }
+               }
 
                //PRIMA STATISTICA
                if($Parametri->PrimaStatistica == -1)
                {
-                  $StringaWhere = $this->GetWhereConditions($Parametri,-1);
+                  $StringaWhere = $this->GetWhereConditions($Parametri,-1,$LsChiaviIstitutiCorrispondenti);
                   $SQLBody      = Global_GetSqlAdozioniAttuali($StringaWhere);
                }
                else 
                {
-                  $StringaWhere = $this->GetWhereConditions($Parametri,1);
+                  $StringaWhere = $this->GetWhereConditions($Parametri,1,$LsChiaviIstitutiCorrispondenti);
                   $SQLBody      = $this->GetSQLFromStatistic($StringaWhere);
                }
 
@@ -214,7 +244,7 @@
                } 
 
                //SECONDA STATISTICA
-               $StringaWhere = $this->GetWhereConditions($Parametri,2);
+               $StringaWhere = $this->GetWhereConditions($Parametri,2,$LsChiaviIstitutiCorrispondenti);
                $SQLBody      = $this->GetSQLFromStatistic($StringaWhere);
 
                if($Query = $PDODBase->query($SQLBody))

@@ -27,6 +27,7 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
   $scope.NuoveAdozioniFiltro    = false;
   $scope.VolumiUniciPrimiFiltro = false;
   $scope.CaricamentoInCorso     = true;
+  $scope.IstitutiInEntrambi     = false;
 
   $scope.DatiCumulativi = {
                             NrRigheTotali    : 0,
@@ -399,7 +400,8 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
                                PrimaStatistica            : $scope.PrimaData,        
                                SecondaStatistica          : $scope.SecondaData,
                                FiltroNuoveAdozioni        : $scope.NuoveAdozioniFiltro == true ? "T" : "F",
-                               FiltroVolUniciPrimi        : $scope.VolumiUniciPrimiFiltro == true ? "T" : "F"
+                               FiltroVolUniciPrimi        : $scope.VolumiUniciPrimiFiltro == true ? "T" : "F",
+                               FiltroIstitutiEntrambi     : $scope.IstitutiInEntrambi
                             };
       SystemInformation.ExecuteExternalScript('SIRIOExtraStatistics',ParamStatistica,function(Answer) 
       {

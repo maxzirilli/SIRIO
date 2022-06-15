@@ -1,7 +1,7 @@
 <?php
     // Configurazione coordinate server SQL
     define('MYSQLSERVER','localhost');
-    define('MYSQLDBASE','siriopag43');
+    define('MYSQLDBASE','sirio');
     define('MYSQLACCOUNT', 'root');
     define('MYSQLPASSWORD', '');
     
@@ -10,10 +10,10 @@
     define('SMTP_PORT',465);
     define('SMTP_SECURE','ssl');
     define('SMTP_AUTH',true);
-    define('SMTP_USER', "noreply@assoantincendio.com");
-    define('SMTP_PASSWORD', "customercare");
-    define('SMTP_FROM_MAIL','noreply@pagina43.it');
-    define('SMTP_FROM_NAME','Pagina43');
+    define('SMTP_USER', "info@zmsoftware.cloud");
+    define('SMTP_PASSWORD', "andromeda75");
+    define('SMTP_FROM_MAIL','noreply@zmsoftware.cloud');
+    define('SMTP_FROM_NAME','ZmSoftware');
     
     // Path librerie
     define('PATH_LIBRERIE',"d:\\GoogleDrive\\Lavoro\\Librerie\\PHP\\");
