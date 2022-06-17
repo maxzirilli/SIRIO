@@ -28,6 +28,10 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
   $scope.VolumiUniciPrimiFiltro = false;
   $scope.CaricamentoInCorso     = true;
   $scope.IstitutiInEntrambi     = false;
+  $scope.IsAdministrator        = SystemInformation.IsAdministrator;
+
+  if(!$scope.IsAdministrator())
+     $scope.PromotoreFiltro = SystemInformation.UserInformation.Chiave;
 
   $scope.DatiCumulativi = {
                             NrRigheTotali    : 0,
@@ -261,7 +265,7 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
          $scope.GetProvince();
       }
       else SystemInformation.ApplyOnError('Modello istituti non conforme','');   
-    },'SelectSQLOnlyVisible');
+    },$scope.IsAdministrator() ? 'SelectSQLOnlyVisible' : 'SelectSQLOnlyVisiblePrm');
   }
 
   $scope.GetPromotori = function()

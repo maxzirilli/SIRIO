@@ -24,6 +24,12 @@
 			"SQL" : "SELECT istituti.CHIAVE,istituti.CODICE,istituti.NOME,istituti.PROVINCIA FROM istituti WHERE NASCOSTO <> 1 ORDER BY istituti.NOME\n"
 		}
 	],
+ 	"SelectSQLOnlyVisiblePrm" : [
+		{
+			"Name" : "InstituteInfoListOnlyVisibile",
+			"SQL" : "SELECT istituti.CHIAVE,istituti.CODICE,istituti.NOME,istituti.PROVINCIA FROM istituti WHERE NASCOSTO <> 1 AND istituti.PROMOTORE=#KeyAccount ORDER BY istituti.NOME\n"
+		}
+	],
 	"SelectInstituteDelivery" : [
 		{
 			"Name" : "InstituteForDeliveryList",
