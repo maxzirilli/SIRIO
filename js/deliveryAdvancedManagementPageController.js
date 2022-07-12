@@ -362,6 +362,7 @@ $scope.GridOptions_2 = {
                                              Tipo             : 0, 
                                              Data             : ListaSpedizioniTmp[i].DATA,
                                              Presso           : ListaSpedizioniTmp[i].PRESSO == null ? 'N.D.' : ListaSpedizioniTmp[i].PRESSO,
+                                             Docente          : ListaSpedizioniTmp[i].DOCENTE == null ? -1 : ListaSpedizioniTmp[i].DOCENTE,
                                              DocenteNome      : ListaSpedizioniTmp[i].NOME_DOCENTE == null ? 'N.D.' : ListaSpedizioniTmp[i].NOME_DOCENTE,
                                              Provincia        : ListaSpedizioniTmp[i].PROVINCIA,
                                              Promotore        : ListaSpedizioniTmp[i].PROMOTORE,

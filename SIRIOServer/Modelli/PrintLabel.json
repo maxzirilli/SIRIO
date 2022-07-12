@@ -15,5 +15,11 @@
 			"Name" : "DeliveryBookToDeliveredAll",
 			"SQL" : "UUPDATE dettaglio_spedizioni SET STATO = 'C' WHERE CHIAVE IN ?ChiaviDaSpedire\n"
 		}
+	],
+	"SelectPrenotati" : [
+		{
+			"Name" : "GetPrenotati",
+			"SQL" : "SELECT dettaglio_spedizioni.*,\n\t    (SELECT titoli.TITOLO \n\t       FROM titoli \n\t      WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,\n\t    (SELECT titoli.POS_MAGAZZINO \n\t       FROM titoli \n\t      WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS POS_MGZN,\n\t    (SELECT titoli.CODICE_ISBN \n\t       FROM titoli \n\t      WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS CODICE,\n\t    (SELECT titoli.AUTORI \n\t       FROM titoli \n\t      WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS AUTORI,\n\t    (SELECT titoli.EDITORE \n\t       FROM titoli \n\t      WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS EDITORE \n\t  FROM spedizioni,\n\t       dettaglio_spedizioni \n WHERE spedizioni.CHIAVE = dettaglio_spedizioni.SPEDIZIONE \n   AND dettaglio_spedizioni.STATO = 'P' \n   AND dettaglio_spedizioni.SPEDIZIONE IN ?ChiaviSpedizioni\n ORDER BY spedizioni.CHIAVE,NOME_TITOLO\n"
+		}
 ]
 }

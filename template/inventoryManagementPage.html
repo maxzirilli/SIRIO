@@ -1,5 +1,6 @@
 <div ng-controller="inventoryManagementController" ng-cloak md-theme="{{ActualTheme}}" style="height:75%">
   <h2>GESTIONE INVENTARIO</h2>
+  <h4 style="font-style:italic;color:orange;">N.B.: SVUOTARE IL MAGAZZINO CON IL TASTO ROSSO PRIMA DI ESEGUIRE INVENTARIO DI INIZIO STAGIONE!</h4>
   <md-button ng-click="ResetInventario()" title="RESET INVENTARIO" ng-if="IsAdministrator()" style="color:red;font-weight:bold;font-size:30;float:right;margin-bottom:10px;"><img src="img/deleteInventory.png" style="width:60px;height:auto;margin-right:10px"></md-button>
   <md-button style="width:30px;height:auto;float:right;" ng-click="InventarioMagazzinoXls()" title="INVENTARIO MAGAZZINO XLS">  
     <img src="img/printXLS.png" style="width:60px;height:auto;">

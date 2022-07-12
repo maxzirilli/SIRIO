@@ -8,7 +8,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
   $scope.DataRicercaAl    = new Date();
   let TmpDate             = new Date($scope.DataRicercaAl);
   TmpDate.setDate(TmpDate.getDate() - 30);
-  //$scope.DataRicercaDal   = new Date(TmpDate);
   var AnnoCorrente = new Date().getFullYear();
   $scope.DataRicercaDal   = new Date(AnnoCorrente, 0, 1)
   $scope.RicercaPerTitolo = false;
@@ -91,6 +90,160 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                                             },
                           limitOptions    : [10, 20, 30]
                         };
+
+  var NuovaStampa = function(ListaSpedizioniToPrint,ListaChiaviSpedizioni,DataSpedizione)
+  {
+     SystemInformation.GetSQL('PrintLabel',{ChiaviSpedizioni : ListaChiaviSpedizioni},function(Results)
+     {
+       ListaPrenotati = SystemInformation.FindResults(Results,'GetPrenotati');
+
+       for(var i = 0; i < ListaSpedizioniToPrint.length; i ++)
+       {
+           for(var j = 0; j < ListaPrenotati.length; j ++)
+           {
+               if(ListaSpedizioniToPrint[i].CHIAVE == ListaPrenotati[j].SPEDIZIONE)
+                  ListaSpedizioniToPrint[i].ListaPrenotati.push({
+                                                                 "NOME_TITOLO" : ListaPrenotati[j].NOME_TITOLO == undefined ? 'N.D.' : ListaPrenotati[j].NOME_TITOLO,
+                                                                 "QUANTITA"    : ListaPrenotati[j].QUANTITA == undefined ? 'N.D.' : ListaPrenotati[j].QUANTITA,
+                                                                 "AUTORI"      : ListaPrenotati[j].AUTORI == undefined ? 'N.D' : ListaPrenotati[j].AUTORI,
+                                                                 "EDITORE"     : ListaPrenotati[j].EDITORE == undefined ? 'N.D' : ListaPrenotati[j].EDITORE,
+                                                                 "CODICE_ISBN" : ListaPrenotati[j].CODICE == undefined ? 'N.D' : ListaPrenotati[j].CODICE                                   
+                                                                })
+           }
+       }
+       
+       var doc = new jsPDF('l', 'mm', [150, 100]);
+       doc.setProperties({title: 'STAMPA ETICHETTE ' + DataSpedizione});
+
+       for (let i = 0;i < ListaSpedizioniToPrint.length;i ++)
+       {
+            doc.setFontSize(8);            
+            CoordY = 10;
+            doc.setFontType('normal');
+            doc.addImage(SystemInformation.Pagina43Logo,'JPEG',3,6,68,18);      
+            doc.text(5,CoordY + 22,DatiDitta.Indirizzo);
+            doc.text(5,CoordY + 25,'Tel : ' + DatiDitta.Telefono);
+            doc.text(5,CoordY + 28,'Email : ' + DatiDitta.Email + '       SitoWeb : ' + DatiDitta.SitoWeb);
+
+            doc.setFontType('courier');
+            doc.setFontSize(12);
+            if (ListaSpedizioniToPrint[i].DOCENTE != 'N.D.')
+            {
+                doc.text(30,CoordY + 40,ListaSpedizioniToPrint[i].TITOLO_DOCENTE);
+                doc.setFontType('bold');
+                doc.text(30,CoordY + 45,ListaSpedizioniToPrint[i].NOME_DOCENTE);
+                doc.setFontType('normal');
+                if(ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D.')
+                   doc.text(30,CoordY + 53,(ListaSpedizioniToPrint[i].NOME_ISTITUTO))
+                else 
+                {
+                  if(ListaSpedizioniToPrint[i].PRESSO != ListaSpedizioniToPrint[i].NOME_DOCENTE)
+                     doc.text(30,CoordY + 53,(ListaSpedizioniToPrint[i].PRESSO))        
+                }
+                doc.text(30,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO);
+                doc.text(30,CoordY + 65,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].COMUNE + /*', ' + ListaSpedizioniToPrint[i].NOME_PROVINCIA +*/ ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')');
+            }
+            else
+            {                     
+                doc.text(30,CoordY + 50,ListaSpedizioniToPrint[i].PRESSO);
+                doc.text(30,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO);
+                doc.text(30,CoordY + 65,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].COMUNE + /*', ' + ListaSpedizioniToPrint[i].NOME_PROVINCIA +*/ ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')');
+            }
+            
+            doc.setFontType('italic');
+            doc.setFontSize(12);
+            doc.text(5,CoordY + 85, 'A cura di : ' + ListaSpedizioniToPrint[i].NOME_PROMOTORE.toUpperCase());
+            
+            doc.text(105,CoordY + 85, 'Peso Gr.........................');
+            doc.line(105,CoordY + 86,145,CoordY + 86);
+
+            doc.addPage();
+            
+            CoordY = 5;
+            doc.setFontType('bold');
+            doc.setFontSize(8);
+            doc.text(5,CoordY + 5,'ISBN');
+            doc.text(25,CoordY + 5,'TITOLO');
+            doc.text(85,CoordY + 5,'EDITORE');
+            doc.text(115,CoordY + 5,'QNT.');
+            doc.text(130,CoordY + 5,'POS.MAG.');
+            
+            doc.setFontType('normal');
+
+            CoordY = 15;
+            
+            for (let j = 0;j < ListaSpedizioniToPrint[i].ListaTitoli.length;j ++)
+            {  
+                if (CoordY >= 100) 
+                {
+                  doc.addPage();
+                  CoordY = 10;
+                  doc.setFontType('bold');
+                  doc.setFontSize(8);
+                  doc.text(5,CoordY,'ISBN');
+                  doc.text(25,CoordY,'TITOLO');
+                  doc.text(85,CoordY,'EDITORE');
+                  doc.text(115,CoordY,'QNT.');
+                  doc.text(130,CoordY,'POS.MAG.');
+                  doc.setFontType('normal');
+                  CoordY += 5;
+                }
+                   
+                doc.text(5,CoordY + 0,ListaSpedizioniToPrint[i].ListaTitoli[j].CODICE_ISBN);                     
+                doc.text(25,CoordY + 0,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].NOME_TITOLO,28));
+                doc.text(85,CoordY + 0,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].EDITORE,15));
+                var Q  = doc.getTextWidth('QNT.');
+                var Qt = doc.getTextWidth(ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA);
+                doc.text(115 + Q + 1 - Qt,CoordY + 0,ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA.toString());
+                doc.text(130,CoordY + 0,ListaSpedizioniToPrint[i].ListaTitoli[j].POS_MGZN); 
+                CoordY += 5;               
+            }
+
+            doc.setFontType('bold');
+            doc.setFontSize(8);
+
+            if(ListaSpedizioniToPrint[i].ListaPrenotati.length > 0)
+            {
+               doc.text(5,CoordY + 5,'TITOLI PRENOTATI :');
+               doc.setFontType('normal');
+
+               CoordY = CoordY + 10;
+
+               for (let j = 0;j < ListaSpedizioniToPrint[i].ListaPrenotati.length;j ++)
+               {  
+                   if (CoordY >= 100) 
+                   {
+                     doc.addPage();
+                     CoordY = 10;
+                     doc.setFontType('bold');
+                     doc.text(5,CoordY,'TITOLI PRENOTATI :');
+                     doc.setFontSize(8);
+                     doc.text(5,CoordY + 5,'ISBN');
+                     doc.text(25,CoordY + 5,'TITOLO');
+                     doc.text(85,CoordY + 5,'EDITORE');
+                     doc.text(115,CoordY + 5,'QNT.');
+                     doc.setFontType('normal');
+                     CoordY += 10;
+                   }
+                      
+                   doc.text(5,CoordY + 0,ListaSpedizioniToPrint[i].ListaPrenotati[j].CODICE_ISBN);                     
+                   doc.text(25,CoordY + 0,TroncaTesto(ListaSpedizioniToPrint[i].ListaPrenotati[j].NOME_TITOLO,28));
+                   doc.text(85,CoordY + 0,TroncaTesto(ListaSpedizioniToPrint[i].ListaPrenotati[j].EDITORE,15));
+                   var Q  = doc.getTextWidth('QNT.');
+                   var Qt = doc.getTextWidth(ListaSpedizioniToPrint[i].ListaPrenotati[j].QUANTITA);
+                   doc.text(115 + Q + 1 - Qt,CoordY + 0,ListaSpedizioniToPrint[i].ListaPrenotati[j].QUANTITA.toString());
+                   CoordY += 5;               
+               } 
+            }          
+            doc.setFontSize(6);
+
+            if(i != ListaSpedizioniToPrint.length - 1)
+               doc.addPage();
+      }
+      doc.save('EtichettePDF' + DataSpedizione + '.pdf',{}); 
+      $scope.AbilitaConfermaStampa = true;
+     },'SelectPrenotati')
+  }
   
   $scope.ConvertiData = function (Dati)
   {
@@ -390,7 +543,9 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
     SystemInformation.DataBetweenController = {};
     SystemInformation.GetSQL('PrintLabel',{ChiaviDaSpedire : ChiaviDaSpedireTmp},function(Results)
     {
-      ListaDaSpedireTmp = SystemInformation.FindResults(Results,'LabelPrintDeliveryToSend');
+      ListaDaSpedireTmp         = SystemInformation.FindResults(Results,'LabelPrintDeliveryToSend');
+      var ListaChiaviSpedizioni = [];
+
       if(ListaDaSpedireTmp != undefined)
       {
           var ChiaveSpedizione = -1;
@@ -417,9 +572,11 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                                "NOME_PROVINCIA" : ListaDaSpedireTmp[i].NOME_PROVINCIA == undefined ? 'N.D.' : ListaDaSpedireTmp[i].NOME_PROVINCIA,
                                "TARGA_PROVINCIA" : ListaDaSpedireTmp[i].TARGA_PROVINCIA == undefined ? 'N.D.' : ListaDaSpedireTmp[i].TARGA_PROVINCIA,
                                "NOME_PROMOTORE" : ListaDaSpedireTmp[i].NOME_PROMOTORE == undefined ? 'N.D.' : ListaDaSpedireTmp[i].NOME_PROMOTORE,
-                               "ListaTitoli"    : []                                      
+                               "ListaTitoli"    : [],
+                               "ListaPrenotati" : []                                                                       
                              }
                 ChiaveSpedizione = ListaDaSpedireTmp[i].SPEDIZIONE;
+                ListaChiaviSpedizioni.push(ChiaveSpedizione);
               }
               Spedizione.ListaTitoli.push({
                                            "NOME_TITOLO" : ListaDaSpedireTmp[i].NOME_TITOLO == undefined ? 'N.D.' : ListaDaSpedireTmp[i].NOME_TITOLO,
@@ -447,226 +604,227 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
          var DataMese   = Data.getMonth()+1; 
          var DataGiorno = Data.getDate();
          var DataSpedizione = DataGiorno.toString() + '/' + DataMese.toString() +  '/' + DataAnno.toString();
-       
-         var doc = new jsPDF();
-         doc.setProperties({title: 'STAMPA ETICHETTE ' + DataSpedizione});
-         
-         if(!$scope.SpedizioneImmediata)
-         {
-            doc.setFontSize(10); 
-            doc.setFontType('bold');
-            doc.text(10,20,'REPORT SPEDIZIONI - IN DATA ' + DataSpedizione);
-            doc.setFontSize(7);
-            var CoordY = 20;
-            //doc.text(10,280,'BORDO INFERIORE');
-            
-            var ListaCumulativo = [];
-            
-            for(let i = 0;i < ListaSpedizioniToPrint.length;i ++)
-            {
-                for(let j = 0;j < ListaSpedizioniToPrint[i].ListaTitoli.length;j ++)
-                {
-                    TitoloCorrisp = ListaCumulativo.findIndex(function(ATitolo){return(ATitolo.Codice == ListaSpedizioniToPrint[i].ListaTitoli[j].CODICE_ISBN);});
-                    if(TitoloCorrisp == -1)
-                    {
-                        ListaCumulativo.push({
-                                              Codice     : ListaSpedizioniToPrint[i].ListaTitoli[j].CODICE_ISBN,
-                                              Nome       : ListaSpedizioniToPrint[i].ListaTitoli[j].NOME_TITOLO,
-                                              Quantita   : ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA,
-                                              Posizione  : ListaSpedizioniToPrint[i].ListaTitoli[j].POS_MGZN
-                                            })
+
+         if(SystemInformation.UserInformation.TipoStampa == 'V')
+           {
+              var doc = new jsPDF();
+              doc.setProperties({title: 'STAMPA ETICHETTE ' + DataSpedizione});
+              
+              if(!$scope.SpedizioneImmediata)
+              {
+                 doc.setFontSize(10); 
+                 doc.setFontType('bold');
+                 doc.text(10,20,'REPORT SPEDIZIONI - IN DATA ' + DataSpedizione);
+                 doc.setFontSize(7);
+                 var CoordY = 20;
+                 //doc.text(10,280,'BORDO INFERIORE');
+                 
+                 var ListaCumulativo = [];
+                 
+                 for(let i = 0;i < ListaSpedizioniToPrint.length;i ++)
+                 {
+                     for(let j = 0;j < ListaSpedizioniToPrint[i].ListaTitoli.length;j ++)
+                     {
+                         TitoloCorrisp = ListaCumulativo.findIndex(function(ATitolo){return(ATitolo.Codice == ListaSpedizioniToPrint[i].ListaTitoli[j].CODICE_ISBN);});
+                         if(TitoloCorrisp == -1)
+                         {
+                             ListaCumulativo.push({
+                                                   Codice     : ListaSpedizioniToPrint[i].ListaTitoli[j].CODICE_ISBN,
+                                                   Nome       : ListaSpedizioniToPrint[i].ListaTitoli[j].NOME_TITOLO,
+                                                   Quantita   : ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA,
+                                                   Posizione  : ListaSpedizioniToPrint[i].ListaTitoli[j].POS_MGZN
+                                                 })
+                         }
+                         else 
+                         {
+                             ListaCumulativo[TitoloCorrisp].Quantita = parseInt(ListaCumulativo[TitoloCorrisp].Quantita) + parseInt(ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA);   
+                             ListaCumulativo[TitoloCorrisp].Quantita = ListaCumulativo[TitoloCorrisp].Quantita.toString()
+                         } 
+                     }
+                 }
+                 //CoordY = 20;
+                 doc.setFontType('bold');
+                 doc.setFontSize(8);
+                 doc.text(10,CoordY+10,'QNT');
+                 doc.text(20,CoordY+10,'ISBN');
+                 doc.text(45,CoordY+10,'TITOLO');
+                 doc.text(160,CoordY+10,'POS.MAGAZZINO');
+                 doc.setFontSize(6);
+             
+                 for(let k = 0;k < ListaCumulativo.length;k ++)
+                 {
+                     if (CoordY >= 280) 
+                     {
+                       doc.addPage();
+                       CoordY = 0;
+                       doc.setFontType('bold');
+                       doc.setFontSize(8);
+                       doc.text(10,CoordY+10,'QNT');
+                       doc.text(20,CoordY+10,'ISBN');
+                       doc.text(45,CoordY+10,'TITOLO');
+                       doc.text(160,CoordY+10,'POS.MAGAZZINO');
+                       doc.setFontSize(6);
+                       doc.setFontType('normal');
+                       doc.text(10,290,SystemInformation.VDocDelivery)
+                     }
+                     
+                     doc.setFontType('italic');
+                     CoordY += 5;
+                     var Q  = doc.getTextWidth('TOT');
+                     var Qt = doc.getTextWidth(ListaCumulativo[k].Quantita);
+                     doc.text(10 + Q + 1 - Qt,CoordY+10,ListaCumulativo[k].Quantita.toString());
+                     doc.text(20,CoordY+10,ListaCumulativo[k].Codice);
+                     doc.text(45,CoordY+10,TroncaTesto(ListaCumulativo[k].Nome,50));
+                     doc.text(160,CoordY+10,ListaCumulativo[k].Posizione);            
+                 }
+                 doc.addPage();
+              }
+
+              if($scope.SpedizioneImmediata)
+                 doc.deletePage(0) 
+
+              for (let i = 0;i < ListaSpedizioniToPrint.length;i ++)
+              {
+                    if(ListaSpedizioniToPrint.length > 1)
+                       doc.addPage();
+
+                    doc.setFontSize(8);
+                    if(BORDO_ETICHETTA)
+                    {   
+                      doc.setLineWidth(0.2);
+                      doc.line(0,105,155,105);
+                      doc.line(155,0,155,105);
                     }
-                    else 
+                    
+                    CoordY = 10;
+
+                    //var Pagina43Logo = IMMAGINE BASE 64
+                    
+                    doc.setFontType('normal');
+                    //doc.addImage(Pagina43Logo,'JPEG',5,8,70,20);
+                    if(BORDO_ETICHETTA)
+                    {   
+                       var Ind = doc.getTextWidth(DatiDitta.Indirizzo);
+                       var Tel = doc.getTextWidth('Tel : ' + DatiDitta.Telefono);
+                       var Mail = doc.getTextWidth('Email : ' + DatiDitta.Email + ' SitoWeb : ' + DatiDitta.SitoWeb);           
+                       doc.text(150 - Ind,CoordY,DatiDitta.Indirizzo);
+                       doc.text(150 - Tel,CoordY + 5,'Tel : ' + DatiDitta.Telefono);
+                       doc.text(150 - Mail,CoordY + 10,'Email : ' + DatiDitta.Email + ' SitoWeb : ' + DatiDitta.SitoWeb);
+                    }
+                    
+                    doc.setFontType('courier');
+                    doc.setFontSize(12);
+                    if (ListaSpedizioniToPrint[i].DOCENTE != 'N.D.')
                     {
-                        ListaCumulativo[TitoloCorrisp].Quantita = parseInt(ListaCumulativo[TitoloCorrisp].Quantita) + parseInt(ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA);   
-                        ListaCumulativo[TitoloCorrisp].Quantita = ListaCumulativo[TitoloCorrisp].Quantita.toString()
-                    } 
-                }
-            }
-            //CoordY = 20;
-            doc.setFontType('bold');
-            doc.setFontSize(8);
-            doc.text(10,CoordY+10,'QNT');
-            doc.text(20,CoordY+10,'ISBN');
-            doc.text(45,CoordY+10,'TITOLO');
-            doc.text(160,CoordY+10,'POS.MAGAZZINO');
-            doc.setFontSize(6);
-        
-            for(let k = 0;k < ListaCumulativo.length;k ++)
-            {
-                if (CoordY >= 280) 
-                {
-                  doc.addPage();
-                  CoordY = 0;
-                  doc.setFontType('bold');
-                  doc.setFontSize(8);
-                  doc.text(10,CoordY+10,'QNT');
-                  doc.text(20,CoordY+10,'ISBN');
-                  doc.text(45,CoordY+10,'TITOLO');
-                  doc.text(160,CoordY+10,'POS.MAGAZZINO');
-                  doc.setFontSize(6);
-                  doc.setFontType('normal');
-                  doc.text(10,290,SystemInformation.VDocDelivery)
-                }
-                
-                doc.setFontType('italic');
-                CoordY += 5;
-                var Q  = doc.getTextWidth('TOT');
-                var Qt = doc.getTextWidth(ListaCumulativo[k].Quantita);
-                doc.text(10 + Q + 1 - Qt,CoordY+10,ListaCumulativo[k].Quantita);
-                doc.text(20,CoordY+10,ListaCumulativo[k].Codice);
-                doc.text(45,CoordY+10,TroncaTesto(ListaCumulativo[k].Nome,50));
-                doc.text(160,CoordY+10,ListaCumulativo[k].Posizione);            
-            }
-            doc.addPage();
+                        doc.text(50,CoordY + 40,ListaSpedizioniToPrint[i].TITOLO_DOCENTE);
+                        doc.setFontType('bold');
+                        doc.text(50,CoordY + 45,ListaSpedizioniToPrint[i].NOME_DOCENTE);
+                        doc.setFontType('normal');
+                        if(ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D.')
+                           doc.text(50,CoordY + 53,(ListaSpedizioniToPrint[i].NOME_ISTITUTO))
+                        else 
+                        {
+                          if(ListaSpedizioniToPrint[i].PRESSO != ListaSpedizioniToPrint[i].NOME_DOCENTE)
+                            doc.text(50,CoordY + 53,(ListaSpedizioniToPrint[i].PRESSO))        
+                        }
+                        doc.text(50,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO);
+                        doc.text(50,CoordY + 65,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].COMUNE + /*', ' + ListaSpedizioniToPrint[i].NOME_PROVINCIA +*/ ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')');                   doc.setFontType('italic');
+                    }
+                    else
+                    {                   
+                        doc.text(50,CoordY + 55,ListaSpedizioniToPrint[i].PRESSO);
+                        doc.text(50,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO);
+                        doc.text(50,CoordY + 65,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].COMUNE + /*', ' + /*ListaSpedizioniToPrint[i].NOME_PROVINCIA +*/ ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')' );  
+                    }
+                    
+                    doc.setFontType('italic');
+                    doc.setFontSize(12);
+
+                    doc.text(5,CoordY + 85, 'A cura di : ' + ListaSpedizioniToPrint[i].NOME_PROMOTORE.toUpperCase());
+                    
+                    doc.text(90,CoordY + 85, 'Peso Gr.........................');
+                    doc.line(90,CoordY + 86,130,CoordY + 86);
+
+                    doc.setLineWidth(0.2);
+                    doc.line(10,120,200,120);
+                    
+                    CoordY = 90;
+
+                    doc.setFontType('normal');
+                    doc.setFontSize(10);
+                              
+                    if (ListaSpedizioniToPrint[i].DOCENTE != 'N.D.')
+                    {
+                        doc.text(10,CoordY + 40,'DOCENTE:');
+                        doc.text(10,CoordY + 45,ListaSpedizioniToPrint[i].NOME_DOCENTE);                      
+                        if(ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D.')
+                           doc.text(10,CoordY + 55,(ListaSpedizioniToPrint[i].NOME_ISTITUTO))
+                        else 
+                        {
+                          if(ListaSpedizioniToPrint[i].PRESSO != ListaSpedizioniToPrint[i].NOME_DOCENTE)
+                            doc.text(10,CoordY + 55,(ListaSpedizioniToPrint[i].PRESSO))        
+                        }                  
+                        doc.text(10,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].CAP + /*', ' +  ListaSpedizioniToPrint[i].NOME_PROVINCIA +*/ ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')')      
+                    }
+                    else
+                    {
+                        doc.text(10,CoordY + 55,'PRESSO : ' + ListaSpedizioniToPrint[i].PRESSO);
+                        doc.text(10,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].CAP + /*', ' +  ListaSpedizioniToPrint[i].NOME_PROVINCIA +*/ ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')')      
+                    }
+
+                    CoordY = 80;
+                    doc.setFontType('bold');
+                    doc.setFontSize(9);
+                    doc.text(10,CoordY + 80,'CODICE ISBN');
+                    doc.text(40,CoordY + 80,'TITOLO');
+                    doc.text(120,CoordY + 80,'EDITORE');
+                    doc.text(150,CoordY + 80,'QUANTITA');
+                    doc.text(170,CoordY + 80,'POS.MAGAZZINO');
+                    
+                    doc.setFontType('normal');
+                    CoordY = 160; 
+                    
+                    for (let j = 0;j < ListaSpedizioniToPrint[i].ListaTitoli.length;j ++)
+                    {
+                        if (CoordY >= 280) 
+                        {
+                          doc.addPage();
+                          CoordY = 20;
+                          doc.setFontType('bold');
+                          doc.setFontSize(9);
+                          doc.text(10,CoordY,'CODICE ISBN');
+                          doc.text(40,CoordY,'TITOLO');
+                          doc.text(120,CoordY,'EDITORE');
+                          doc.text(150,CoordY,'QUANTITA');
+                          doc.text(170,CoordY,'POS.MAGAZZINO');
+                          doc.setFontSize(8);
+                          doc.setFontType('normal');
+                        }  
+
+                        doc.setFontSize(8);    
+                        doc.text(10,CoordY+10,ListaSpedizioniToPrint[i].ListaTitoli[j].CODICE_ISBN);                  
+                        doc.text(40,CoordY+10,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].NOME_TITOLO,35));
+                        doc.text(120,CoordY+10,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].EDITORE,15));
+                        var Q  = doc.getTextWidth('QUANTITA');
+                        var Qt = doc.getTextWidth(ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA);
+                        doc.text(150 + Q + 1 - Qt,CoordY+10,ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA.toString());
+                        doc.text(170,CoordY+10,ListaSpedizioniToPrint[i].ListaTitoli[j].POS_MGZN); 
+                        CoordY += 5;               
+                    }          
+                    doc.setFontSize(6);
+                    doc.text(10,290,SystemInformation.VDocDelivery)
+                    
+              }
+            doc.save('EtichettePDF' + DataSpedizione + '.pdf',{}); // USANDO IFRAME NON PERMETTE IL SALVATAGGIO!
+            $scope.AbilitaConfermaStampa = true;
+            /*var string = doc.output('datauristring');
+            var iframe = "<iframe width='100%' height='100%' src='" + string + "'></iframe>"
+            var x = window.open();
+            x.document.open();
+            x.document.write(iframe);
+            x.document.close();*/
          }
-
-         if($scope.SpedizioneImmediata)
-            doc.deletePage(0) 
-
-         for (let i = 0;i < ListaSpedizioniToPrint.length;i ++)
-         {
-               if(ListaSpedizioniToPrint.length > 1)
-                  doc.addPage();
-
-               doc.setFontSize(8);
-               if(BORDO_ETICHETTA)
-               {   
-                 doc.setLineWidth(0.2);
-                 doc.line(0,105,155,105);
-                 doc.line(155,0,155,105);
-               }
-               
-               CoordY = 10;
-
-               //var Pagina43Logo = IMMAGINE BASE 64
-               
-               doc.setFontType('normal');
-               //doc.addImage(Pagina43Logo,'JPEG',5,8,70,20);
-               if(BORDO_ETICHETTA)
-               {   
-                  var Ind = doc.getTextWidth(DatiDitta.Indirizzo);
-                  var Tel = doc.getTextWidth('Tel : ' + DatiDitta.Telefono);
-                  var Mail = doc.getTextWidth('Email : ' + DatiDitta.Email + ' SitoWeb : ' + DatiDitta.SitoWeb);           
-                  doc.text(150 - Ind,CoordY,DatiDitta.Indirizzo);
-                  doc.text(150 - Tel,CoordY + 5,'Tel : ' + DatiDitta.Telefono);
-                  doc.text(150 - Mail,CoordY + 10,'Email : ' + DatiDitta.Email + ' SitoWeb : ' + DatiDitta.SitoWeb);
-               }
-               
-               doc.setFontType('courier');
-               doc.setFontSize(12);
-               if (ListaSpedizioniToPrint[i].DOCENTE != 'N.D.')
-               {
-                   doc.text(50,CoordY + 40,ListaSpedizioniToPrint[i].TITOLO_DOCENTE);
-                   doc.setFontType('bold');
-                   doc.text(50,CoordY + 45,ListaSpedizioniToPrint[i].NOME_DOCENTE);
-                   doc.setFontType('normal');
-                   if(ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D.')
-                      doc.text(50,CoordY + 53,(ListaSpedizioniToPrint[i].NOME_ISTITUTO))
-                   else 
-                   {
-                     if(ListaSpedizioniToPrint[i].PRESSO != ListaSpedizioniToPrint[i].NOME_DOCENTE)
-                       doc.text(50,CoordY + 53,(ListaSpedizioniToPrint[i].PRESSO))        
-                   }
-                   doc.text(50,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO);
-                   doc.text(50,CoordY + 65,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].COMUNE + /*', ' + ListaSpedizioniToPrint[i].NOME_PROVINCIA +*/ ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')');                   doc.setFontType('italic');
-               }
-               else
-               {                   
-                   doc.text(50,CoordY + 55,ListaSpedizioniToPrint[i].PRESSO);
-                   doc.text(50,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO);
-                   doc.text(50,CoordY + 65,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].COMUNE + /*', ' + /*ListaSpedizioniToPrint[i].NOME_PROVINCIA +*/ ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')' );  
-               }
-               
-               doc.setFontType('italic');
-               doc.setFontSize(12);
-
-               doc.text(5,CoordY + 85, 'A cura di : ' + ListaSpedizioniToPrint[i].NOME_PROMOTORE.toUpperCase());
-               
-               //if(BORDO_ETICHETTA)
-               doc.text(90,CoordY + 85, 'Peso Gr.........................');
-               doc.line(90,CoordY + 86,130,CoordY + 86);
-
-               doc.setLineWidth(0.2);
-               doc.line(10,120,200,120);
-               
-               CoordY = 90;
-
-               doc.setFontType('normal');
-               doc.setFontSize(10);
-                         
-               if (ListaSpedizioniToPrint[i].DOCENTE != 'N.D.')
-               {
-                   doc.text(10,CoordY + 40,'DOCENTE:');
-                   doc.text(10,CoordY + 45,ListaSpedizioniToPrint[i].NOME_DOCENTE);                      
-                   if(ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D.')
-                      doc.text(10,CoordY + 55,(ListaSpedizioniToPrint[i].NOME_ISTITUTO))
-                   else 
-                   {
-                     if(ListaSpedizioniToPrint[i].PRESSO != ListaSpedizioniToPrint[i].NOME_DOCENTE)
-                       doc.text(10,CoordY + 55,(ListaSpedizioniToPrint[i].PRESSO))        
-                   }                  
-                   doc.text(10,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].CAP + /*', ' +  ListaSpedizioniToPrint[i].NOME_PROVINCIA +*/ ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')')      
-               }
-               else
-               {
-                   doc.text(10,CoordY + 55,'PRESSO : ' + ListaSpedizioniToPrint[i].PRESSO);
-                   doc.text(10,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].CAP + /*', ' +  ListaSpedizioniToPrint[i].NOME_PROVINCIA +*/ ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')')      
-               }
-
-               CoordY = 80;
-               doc.setFontType('bold');
-               doc.setFontSize(9);
-               doc.text(10,CoordY + 80,'CODICE ISBN');
-               doc.text(40,CoordY + 80,'TITOLO');
-               doc.text(120,CoordY + 80,'EDITORE');
-               doc.text(150,CoordY + 80,'QUANTITA');
-               doc.text(170,CoordY + 80,'POS.MAGAZZINO');
-               
-               doc.setFontType('normal');
-               CoordY = 160; 
-               
-               for (let j = 0;j < ListaSpedizioniToPrint[i].ListaTitoli.length;j ++)
-               {
-                   if (CoordY >= 280) 
-                   {
-                     doc.addPage();
-                     CoordY = 20;
-                     doc.setFontType('bold');
-                     doc.setFontSize(9);
-                     doc.text(10,CoordY,'CODICE ISBN');
-                     doc.text(40,CoordY,'TITOLO');
-                     doc.text(120,CoordY,'EDITORE');
-                     doc.text(150,CoordY,'QUANTITA');
-                     doc.text(170,CoordY,'POS.MAGAZZINO');
-                     doc.setFontSize(8);
-                     doc.setFontType('normal');
-                   }  
-
-                   doc.setFontSize(8);    
-                   doc.text(10,CoordY+10,ListaSpedizioniToPrint[i].ListaTitoli[j].CODICE_ISBN);                  
-                   doc.text(40,CoordY+10,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].NOME_TITOLO,35));
-                   doc.text(120,CoordY+10,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].EDITORE,15));
-                   var Q  = doc.getTextWidth('QUANTITA');
-                   var Qt = doc.getTextWidth(ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA);
-                   doc.text(150 + Q + 1 - Qt,CoordY+10,ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA);
-                   doc.text(170,CoordY+10,ListaSpedizioniToPrint[i].ListaTitoli[j].POS_MGZN); 
-                   CoordY += 5;               
-               }          
-               doc.setFontSize(6);
-               doc.text(10,290,SystemInformation.VDocDelivery)
-               
-         }
-       doc.save('EtichettePDF' + DataSpedizione + '.pdf',{}); // USANDO IFRAME NON PERMETTE IL SALVATAGGIO!
-
-       /*var string = doc.output('datauristring');
-       var iframe = "<iframe width='100%' height='100%' src='" + string + "'></iframe>"
-       var x = window.open();
-       x.document.open();
-       x.document.write(iframe);
-       x.document.close();*/
-
-       $scope.AbilitaConfermaStampa = true;
+         else NuovaStampa(ListaSpedizioniToPrint,ListaChiaviSpedizioni,DataSpedizione);
      }
      else SystemInformation.ApplyOnError('Modello lista spedizioni non conforme') 
     })
@@ -801,7 +959,9 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
        ChiaviDaSpedireTmp = ChiaviDaSpedire.toString();
        SystemInformation.GetSQL('PrintLabel',{ChiaviDaSpedire : ChiaviDaSpedireTmp},function(Results)
        {
-         ListaDaSpedireTmp = SystemInformation.FindResults(Results,'LabelPrintDeliveryToSend');
+         ListaDaSpedireTmp         = SystemInformation.FindResults(Results,'LabelPrintDeliveryToSend');
+         var ListaChiaviSpedizioni = [];
+
          if(ListaDaSpedireTmp != undefined)
          {
              var ChiaveSpedizione = -1;
@@ -815,6 +975,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                    var Spedizione = {};
                    
                    Spedizione = {
+                                  "CHIAVE"         : ListaDaSpedireTmp[i].SPEDIZIONE,
                                   "PRESSO"         : ListaDaSpedireTmp[i].PRESSO == undefined ? 'N.D.' : ListaDaSpedireTmp[i].PRESSO,
                                   "DOCENTE"        : ListaDaSpedireTmp[i].DOCENTE == undefined ? 'N.D.' : ListaDaSpedireTmp[i].DOCENTE,
                                   "ISTITUTO"       : ListaDaSpedireTmp[i].ISTITUTO == undefined ? 'N.D.' : ListaDaSpedireTmp[i].ISTITUTO,
@@ -828,9 +989,11 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                                   "NOME_PROVINCIA" : ListaDaSpedireTmp[i].NOME_PROVINCIA == undefined ? 'N.D.' : ListaDaSpedireTmp[i].NOME_PROVINCIA,
                                   "TARGA_PROVINCIA" : ListaDaSpedireTmp[i].TARGA_PROVINCIA == undefined ? 'N.D.' : ListaDaSpedireTmp[i].TARGA_PROVINCIA,
                                   "NOME_PROMOTORE" : ListaDaSpedireTmp[i].NOME_PROMOTORE == undefined ? 'N.D.' : ListaDaSpedireTmp[i].NOME_PROMOTORE,
-                                  "ListaTitoli"    : []                                      
+                                  "ListaTitoli"    : [],  
+                                  "ListaPrenotati" : []                                   
                                 }
                    ChiaveSpedizione = ListaDaSpedireTmp[i].SPEDIZIONE;
+                   ListaChiaviSpedizioni.push(ChiaveSpedizione);
                  }
                  Spedizione.ListaTitoli.push({
                                               "NOME_TITOLO" : ListaDaSpedireTmp[i].NOME_TITOLO == undefined ? 'N.D.' : ListaDaSpedireTmp[i].NOME_TITOLO,
@@ -859,215 +1022,217 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
             var DataGiorno = Data.getDate();
             var DataSpedizione = DataGiorno.toString() + '/' + DataMese.toString() +  '/' + DataAnno.toString();
           
-            var doc = new jsPDF();
-            doc.setProperties({title: 'STAMPA ETICHETTE ' + DataSpedizione});
-            
-            doc.setFontSize(10); 
-            doc.setFontType('bold');
-            doc.text(10,20,'REPORT SPEDIZIONI - IN DATA ' + DataSpedizione);
-            doc.setFontSize(7);
-            var CoordY = 30;
-            //doc.text(10,280,'BORDO INFERIORE');
-            
-            var ListaCumulativo = [];
-            
-            for(let i = 0;i < ListaSpedizioniToPrint.length;i ++)
+            if(SystemInformation.UserInformation.TipoStampa == 'V')
             {
-                for(let j = 0;j < ListaSpedizioniToPrint[i].ListaTitoli.length;j ++)
-                {
-                    TitoloCorrisp = ListaCumulativo.findIndex(function(ATitolo){return(ATitolo.Codice == ListaSpedizioniToPrint[i].ListaTitoli[j].CODICE_ISBN);});
-                    if(TitoloCorrisp == -1)
-                    {
-                        ListaCumulativo.push({
-                                              Codice     : ListaSpedizioniToPrint[i].ListaTitoli[j].CODICE_ISBN,
-                                              Nome       : ListaSpedizioniToPrint[i].ListaTitoli[j].NOME_TITOLO,
-                                              Quantita   : ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA,
-                                              Posizione  : ListaSpedizioniToPrint[i].ListaTitoli[j].POS_MGZN
-                                            })
-                    }
-                    else 
-                    {
-                        ListaCumulativo[TitoloCorrisp].Quantita = parseInt(ListaCumulativo[TitoloCorrisp].Quantita) + parseInt(ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA);   
-                        ListaCumulativo[TitoloCorrisp].Quantita = ListaCumulativo[TitoloCorrisp].Quantita.toString()
-                    } 
-                }
+               var doc = new jsPDF();
+               doc.setProperties({title: 'STAMPA ETICHETTE ' + DataSpedizione});
+               
+               doc.setFontSize(10); 
+               doc.setFontType('bold');
+               doc.text(10,20,'REPORT SPEDIZIONI - IN DATA ' + DataSpedizione);
+               doc.setFontSize(7);
+               var CoordY = 30;
+               //doc.text(10,280,'BORDO INFERIORE');
+               
+               var ListaCumulativo = [];
+               
+               for(let i = 0;i < ListaSpedizioniToPrint.length;i ++)
+               {
+                   for(let j = 0;j < ListaSpedizioniToPrint[i].ListaTitoli.length;j ++)
+                   {
+                       TitoloCorrisp = ListaCumulativo.findIndex(function(ATitolo){return(ATitolo.Codice == ListaSpedizioniToPrint[i].ListaTitoli[j].CODICE_ISBN);});
+                       if(TitoloCorrisp == -1)
+                       {
+                           ListaCumulativo.push({
+                                                 Codice     : ListaSpedizioniToPrint[i].ListaTitoli[j].CODICE_ISBN,
+                                                 Nome       : ListaSpedizioniToPrint[i].ListaTitoli[j].NOME_TITOLO,
+                                                 Quantita   : ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA,
+                                                 Posizione  : ListaSpedizioniToPrint[i].ListaTitoli[j].POS_MGZN
+                                               })
+                       }
+                       else 
+                       {
+                           ListaCumulativo[TitoloCorrisp].Quantita = parseInt(ListaCumulativo[TitoloCorrisp].Quantita) + parseInt(ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA);   
+                           ListaCumulativo[TitoloCorrisp].Quantita = ListaCumulativo[TitoloCorrisp].Quantita.toString()
+                       } 
+                   }
+               }
+               CoordY = 20;
+               doc.setFontType('bold');
+               doc.setFontSize(8);
+               doc.text(10,CoordY+10,'QNT');
+               doc.text(20,CoordY+10,'ISBN');
+               doc.text(45,CoordY+10,'TITOLO');
+               doc.text(160,CoordY+10,'POS.MAGAZZINO');
+               doc.setFontSize(6);
+           
+               for(let k = 0;k < ListaCumulativo.length;k ++)
+               {
+                   if (CoordY >= 280) 
+                   {
+                     doc.addPage();
+                     CoordY = 0;
+                     doc.setFontType('bold');
+                     doc.setFontSize(8);
+                     doc.text(10,CoordY+10,'QNT');
+                     doc.text(20,CoordY+10,'ISBN');
+                     doc.text(45,CoordY+10,'TITOLO');
+                     doc.text(160,CoordY+10,'POS.MAGAZZINO');
+                     doc.setFontSize(6);
+                     doc.setFontType('normal');
+                     doc.text(10,290,SystemInformation.VDocDelivery)
+                   }
+                   
+                   doc.setFontType('italic');
+                   CoordY += 5;
+                   var Q  = doc.getTextWidth('TOT');
+                   var Qt = doc.getTextWidth(ListaCumulativo[k].Quantita);
+                   doc.text(10 + Q + 1 - Qt,CoordY+10,ListaCumulativo[k].Quantita.toString());
+                   doc.text(20,CoordY+10,ListaCumulativo[k].Codice);
+                   doc.text(45,CoordY+10,TroncaTesto(ListaCumulativo[k].Nome,50));
+                   doc.text(160,CoordY+10,ListaCumulativo[k].Posizione);            
+               }
+               
+               for (let i = 0;i < ListaSpedizioniToPrint.length;i ++)
+               {
+                     doc.addPage();
+                     doc.setFontSize(8);
+                     if(BORDO_ETICHETTA)
+                     {   
+                       doc.setLineWidth(0.2);
+                       doc.line(0,105,155,105);
+                       doc.line(155,0,155,105);
+                     }
+                     
+                     CoordY = 10;
+
+                     //var Pagina43Logo = IMMAGINE BASE 64
+                     
+                     doc.setFontType('normal');
+                     //doc.addImage(Pagina43Logo,'JPEG',5,8,70,20);
+                     
+                     if(BORDO_ETICHETTA)
+                     {
+                        var Ind = doc.getTextWidth(DatiDitta.Indirizzo);
+                        var Tel = doc.getTextWidth('Tel : ' + DatiDitta.Telefono);
+                        var Mail = doc.getTextWidth('Email : ' + DatiDitta.Email + ' SitoWeb : ' + DatiDitta.SitoWeb);           
+                        doc.text(150 - Ind,CoordY,DatiDitta.Indirizzo);
+                        doc.text(150 - Tel,CoordY + 5,'Tel : ' + DatiDitta.Telefono);
+                        doc.text(150 - Mail,CoordY + 10,'Email : ' + DatiDitta.Email + ' SitoWeb : ' + DatiDitta.SitoWeb);
+                     }
+
+                     doc.setFontType('courier');
+                     doc.setFontSize(12);
+                     if (ListaSpedizioniToPrint[i].DOCENTE != 'N.D.')
+                     {
+                         doc.text(50,CoordY + 40,ListaSpedizioniToPrint[i].TITOLO_DOCENTE);
+                         doc.setFontType('bold');
+                         doc.text(50,CoordY + 45,ListaSpedizioniToPrint[i].NOME_DOCENTE);
+                         doc.setFontType('normal');
+                         if(ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D.')
+                            doc.text(50,CoordY + 53,(ListaSpedizioniToPrint[i].NOME_ISTITUTO))
+                         else 
+                         {
+                           if(ListaSpedizioniToPrint[i].PRESSO != ListaSpedizioniToPrint[i].NOME_DOCENTE)
+                              doc.text(50,CoordY + 53,(ListaSpedizioniToPrint[i].PRESSO))        
+                         }
+                         doc.text(50,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO);
+                         doc.text(50,CoordY + 65,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].COMUNE + /*', ' + ListaSpedizioniToPrint[i].NOME_PROVINCIA +*/ ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')');
+                     }
+                     else
+                     {                     
+                         doc.text(50,CoordY + 50,ListaSpedizioniToPrint[i].PRESSO);
+                         doc.text(50,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO);
+                         doc.text(50,CoordY + 65,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].COMUNE + /*', ' + ListaSpedizioniToPrint[i].NOME_PROVINCIA +*/ ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')');
+                     }
+                     
+                     doc.setFontType('italic');
+                     doc.setFontSize(12);
+                     doc.text(5,CoordY + 85, 'A cura di : ' + ListaSpedizioniToPrint[i].NOME_PROMOTORE.toUpperCase());
+                     
+                     doc.text(90,CoordY + 85, 'Peso Gr.........................');
+                     doc.line(90,CoordY + 86,130,CoordY + 86);
+
+                     doc.setLineWidth(0.2);
+                     doc.line(10,120,200,120);
+                     
+                     CoordY = 90;
+                     
+                     doc.setFontType('normal');
+                     doc.setFontSize(10);
+                     if (ListaSpedizioniToPrint[i].DOCENTE != 'N.D.')
+                     {
+                         doc.text(10,CoordY + 40,'DOCENTE:');
+                         doc.text(10,CoordY + 45,ListaSpedizioniToPrint[i].NOME_DOCENTE);
+                         if(ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D.')
+                            doc.text(10,CoordY + 55,(ListaSpedizioniToPrint[i].NOME_ISTITUTO))
+                         else 
+                         {
+                           if(ListaSpedizioniToPrint[i].PRESSO != ListaSpedizioniToPrint[i].NOME_DOCENTE)
+                             doc.text(10,CoordY + 55,(ListaSpedizioniToPrint[i].PRESSO))        
+                         }  
+                         doc.text(10,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].CAP + /*', ' +  ListaSpedizioniToPrint[i].NOME_PROVINCIA +*/ ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')')      
+                     }
+                     else
+                     {
+                         doc.text(10,CoordY + 55,'PRESSO : ' + ListaSpedizioniToPrint[i].PRESSO);
+                         doc.text(10,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].CAP + /*', ' +  ListaSpedizioniToPrint[i].NOME_PROVINCIA +*/ ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')')      
+                     }
+                     
+                     CoordY = 80;
+                     doc.setFontType('bold');
+                     doc.setFontSize(9);
+                     doc.text(10,CoordY + 80,'CODICE ISBN');
+                     doc.text(40,CoordY + 80,'TITOLO');
+                     doc.text(120,CoordY + 80,'EDITORE');
+                     doc.text(150,CoordY + 80,'QUANTITA');
+                     doc.text(170,CoordY + 80,'POS.MAGAZZINO');
+                     
+                     doc.setFontType('normal');
+
+                     CoordY = 160;
+                     
+                     for (let j = 0;j < ListaSpedizioniToPrint[i].ListaTitoli.length;j ++)
+                     {  
+                         if (CoordY >= 280) 
+                         {
+                           doc.addPage();
+                           CoordY = 20;
+                           doc.setFontType('bold');
+                           doc.setFontSize(9);
+                           doc.text(10,CoordY,'CODICE ISBN');
+                           doc.text(40,CoordY,'TITOLO');
+                           doc.text(120,CoordY,'EDITORE');
+                           doc.text(150,CoordY,'QUANTITA');
+                           doc.text(170,CoordY,'POS.MAGAZZINO');
+                           doc.setFontSize(8);
+                           doc.setFontType('normal');
+                         } 
+                            
+                         doc.setFontSize(8);                   
+                         doc.text(10,CoordY + 10,ListaSpedizioniToPrint[i].ListaTitoli[j].CODICE_ISBN);                     
+                         doc.text(40,CoordY + 10,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].NOME_TITOLO,35));
+                         doc.text(120,CoordY + 10,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].EDITORE,15));
+                         var Q  = doc.getTextWidth('QUANTITA');
+                         var Qt = doc.getTextWidth(ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA);
+                         doc.text(150 + Q + 1 - Qt,CoordY + 10,ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA.toString());
+                         doc.text(170,CoordY + 10,ListaSpedizioniToPrint[i].ListaTitoli[j].POS_MGZN); 
+                         CoordY += 5;               
+                     }          
+                     doc.setFontSize(6);
+                     doc.text(10,290,SystemInformation.VDocDelivery)
+                     $scope.AbilitaConfermaStampa = true;
+             }
+             doc.save('EtichettePDF' + DataSpedizione + '.pdf',{});  // USANDO IFRAME NON PERMETTE IL SALVATAGGIO!
+
+             /*var string = doc.output('datauristring');
+             var iframe = "<iframe width='100%' height='100%' src='" + string + "'></iframe>"
+             var x = window.open();
+             x.document.open();
+             x.document.write(iframe);
+             x.document.close();*/
             }
-            CoordY = 20;
-            doc.setFontType('bold');
-            doc.setFontSize(8);
-            doc.text(10,CoordY+10,'QNT');
-            doc.text(20,CoordY+10,'ISBN');
-            doc.text(45,CoordY+10,'TITOLO');
-            doc.text(160,CoordY+10,'POS.MAGAZZINO');
-            doc.setFontSize(6);
-        
-            for(let k = 0;k < ListaCumulativo.length;k ++)
-            {
-                if (CoordY >= 280) 
-                {
-                  doc.addPage();
-                  CoordY = 0;
-                  doc.setFontType('bold');
-                  doc.setFontSize(8);
-                  doc.text(10,CoordY+10,'QNT');
-                  doc.text(20,CoordY+10,'ISBN');
-                  doc.text(45,CoordY+10,'TITOLO');
-                  doc.text(160,CoordY+10,'POS.MAGAZZINO');
-                  doc.setFontSize(6);
-                  doc.setFontType('normal');
-                  doc.text(10,290,SystemInformation.VDocDelivery)
-                }
-                
-                doc.setFontType('italic');
-                CoordY += 5;
-                var Q  = doc.getTextWidth('TOT');
-                var Qt = doc.getTextWidth(ListaCumulativo[k].Quantita);
-                doc.text(10 + Q + 1 - Qt,CoordY+10,ListaCumulativo[k].Quantita);
-                doc.text(20,CoordY+10,ListaCumulativo[k].Codice);
-                doc.text(45,CoordY+10,TroncaTesto(ListaCumulativo[k].Nome,50));
-                doc.text(160,CoordY+10,ListaCumulativo[k].Posizione);            
-            }
-            
-            for (let i = 0;i < ListaSpedizioniToPrint.length;i ++)
-            {
-                  doc.addPage();
-                  doc.setFontSize(8);
-                  if(BORDO_ETICHETTA)
-                  {   
-                    doc.setLineWidth(0.2);
-                    doc.line(0,105,155,105);
-                    doc.line(155,0,155,105);
-                  }
-                  
-                  CoordY = 10;
-
-                  //var Pagina43Logo = IMMAGINE BASE 64
-                  
-                  doc.setFontType('normal');
-                  //doc.addImage(Pagina43Logo,'JPEG',5,8,70,20);
-                  
-                  if(BORDO_ETICHETTA)
-                  {
-                     var Ind = doc.getTextWidth(DatiDitta.Indirizzo);
-                     var Tel = doc.getTextWidth('Tel : ' + DatiDitta.Telefono);
-                     var Mail = doc.getTextWidth('Email : ' + DatiDitta.Email + ' SitoWeb : ' + DatiDitta.SitoWeb);           
-                     doc.text(150 - Ind,CoordY,DatiDitta.Indirizzo);
-                     doc.text(150 - Tel,CoordY + 5,'Tel : ' + DatiDitta.Telefono);
-                     doc.text(150 - Mail,CoordY + 10,'Email : ' + DatiDitta.Email + ' SitoWeb : ' + DatiDitta.SitoWeb);
-                  }
-
-                  doc.setFontType('courier');
-                  doc.setFontSize(12);
-                  if (ListaSpedizioniToPrint[i].DOCENTE != 'N.D.')
-                  {
-                      doc.text(50,CoordY + 40,ListaSpedizioniToPrint[i].TITOLO_DOCENTE);
-                      doc.setFontType('bold');
-                      doc.text(50,CoordY + 45,ListaSpedizioniToPrint[i].NOME_DOCENTE);
-                      doc.setFontType('normal');
-                      if(ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D.')
-                         doc.text(50,CoordY + 53,(ListaSpedizioniToPrint[i].NOME_ISTITUTO))
-                      else 
-                      {
-                        if(ListaSpedizioniToPrint[i].PRESSO != ListaSpedizioniToPrint[i].NOME_DOCENTE)
-                           doc.text(50,CoordY + 53,(ListaSpedizioniToPrint[i].PRESSO))        
-                      }
-                      doc.text(50,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO);
-                      doc.text(50,CoordY + 65,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].COMUNE + /*', ' + ListaSpedizioniToPrint[i].NOME_PROVINCIA +*/ ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')');
-                  }
-                  else
-                  {                     
-                      doc.text(50,CoordY + 50,ListaSpedizioniToPrint[i].PRESSO);
-                      doc.text(50,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO);
-                      doc.text(50,CoordY + 65,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].COMUNE + /*', ' + ListaSpedizioniToPrint[i].NOME_PROVINCIA +*/ ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')');
-                  }
-                  
-                  doc.setFontType('italic');
-                  doc.setFontSize(12);
-                  doc.text(5,CoordY + 85, 'A cura di : ' + ListaSpedizioniToPrint[i].NOME_PROMOTORE.toUpperCase());
-                  
-                  //if(BORDO_ETICHETTA) 
-                  doc.text(90,CoordY + 85, 'Peso Gr.........................');
-                  doc.line(90,CoordY + 86,130,CoordY + 86);
-
-                  doc.setLineWidth(0.2);
-                  doc.line(10,120,200,120);
-                  
-                  CoordY = 90;
-                  
-                  doc.setFontType('normal');
-                  doc.setFontSize(10);
-                  if (ListaSpedizioniToPrint[i].DOCENTE != 'N.D.')
-                  {
-                      doc.text(10,CoordY + 40,'DOCENTE:');
-                      doc.text(10,CoordY + 45,ListaSpedizioniToPrint[i].NOME_DOCENTE);
-                      if(ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D.')
-                         doc.text(10,CoordY + 55,(ListaSpedizioniToPrint[i].NOME_ISTITUTO))
-                      else 
-                      {
-                        if(ListaSpedizioniToPrint[i].PRESSO != ListaSpedizioniToPrint[i].NOME_DOCENTE)
-                          doc.text(10,CoordY + 55,(ListaSpedizioniToPrint[i].PRESSO))        
-                      }  
-                      doc.text(10,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].CAP + /*', ' +  ListaSpedizioniToPrint[i].NOME_PROVINCIA +*/ ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')')      
-                  }
-                  else
-                  {
-                      doc.text(10,CoordY + 55,'PRESSO : ' + ListaSpedizioniToPrint[i].PRESSO);
-                      doc.text(10,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].CAP + /*', ' +  ListaSpedizioniToPrint[i].NOME_PROVINCIA +*/ ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')')      
-                  }
-                  
-                  CoordY = 80;
-                  doc.setFontType('bold');
-                  doc.setFontSize(9);
-                  doc.text(10,CoordY + 80,'CODICE ISBN');
-                  doc.text(40,CoordY + 80,'TITOLO');
-                  doc.text(120,CoordY + 80,'EDITORE');
-                  doc.text(150,CoordY + 80,'QUANTITA');
-                  doc.text(170,CoordY + 80,'POS.MAGAZZINO');
-                  
-                  doc.setFontType('normal');
-
-                  CoordY = 160;
-                  
-                  for (let j = 0;j < ListaSpedizioniToPrint[i].ListaTitoli.length;j ++)
-                  {  
-                      if (CoordY >= 280) 
-                      {
-                        doc.addPage();
-                        CoordY = 20;
-                        doc.setFontType('bold');
-                        doc.setFontSize(9);
-                        doc.text(10,CoordY,'CODICE ISBN');
-                        doc.text(40,CoordY,'TITOLO');
-                        doc.text(120,CoordY,'EDITORE');
-                        doc.text(150,CoordY,'QUANTITA');
-                        doc.text(170,CoordY,'POS.MAGAZZINO');
-                        doc.setFontSize(8);
-                        doc.setFontType('normal');
-                      } 
-                         
-                      doc.setFontSize(8);                   
-                      doc.text(10,CoordY + 10,ListaSpedizioniToPrint[i].ListaTitoli[j].CODICE_ISBN);                     
-                      doc.text(40,CoordY + 10,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].NOME_TITOLO,35));
-                      doc.text(120,CoordY + 10,TroncaTesto(ListaSpedizioniToPrint[i].ListaTitoli[j].EDITORE,15));
-                      var Q  = doc.getTextWidth('QUANTITA');
-                      var Qt = doc.getTextWidth(ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA);
-                      doc.text(150 + Q + 1 - Qt,CoordY + 10,ListaSpedizioniToPrint[i].ListaTitoli[j].QUANTITA);
-                      doc.text(170,CoordY + 10,ListaSpedizioniToPrint[i].ListaTitoli[j].POS_MGZN); 
-                      CoordY += 5;               
-                  }          
-                  doc.setFontSize(6);
-                  doc.text(10,290,SystemInformation.VDocDelivery)
-          }
-          doc.save('EtichettePDF' + DataSpedizione + '.pdf',{});  // USANDO IFRAME NON PERMETTE IL SALVATAGGIO!
-
-          /*var string = doc.output('datauristring');
-          var iframe = "<iframe width='100%' height='100%' src='" + string + "'></iframe>"
-          var x = window.open();
-          x.document.open();
-          x.document.write(iframe);
-          x.document.close();*/
-          
-          $scope.AbilitaConfermaStampa = true;
+            else NuovaStampa(ListaSpedizioniToPrint,ListaChiaviSpedizioni,DataSpedizione);
         }
         else SystemInformation.ApplyOnError('Modello lista spedizioni non conforme') 
     })

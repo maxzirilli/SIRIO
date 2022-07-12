@@ -2,7 +2,7 @@
   "SelectSQL" : [
                   { 
                      "Name" : "UserInformation",
-                     "SQL"  : "SELECT CHIAVE,ROLE,ORDINAMENTO_DOC,EMAIL,USERNAME FROM utenti WHERE CHIAVE = :KeyAccount" 
+                     "SQL"  : "SELECT CHIAVE,ROLE,ORDINAMENTO_DOC,EMAIL,USERNAME,TIPO_STAMPA FROM utenti WHERE CHIAVE = :KeyAccount" 
                   }
                 ]
                 

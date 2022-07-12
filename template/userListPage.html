@@ -73,6 +73,12 @@
           </md-select>
         </md-input-container>
 
+        <md-input-container class="containerSelect" style="width:33%;"><label>TIPO STAMPA</label>
+          <md-select ng-model="UtenteInEditing.TIPO_STAMPA" class="mdb-select" type="text" name="Stampa">
+            <md-option ng-repeat="stampa in ListaStampe" ng-value="stampa.Sigla">{{stampa.Descrizione}}</md-option>
+          </md-select>
+        </md-input-container>
+
         <md-input-container class="containerSelect" style="width:33%;">
           <md-select ng-model="UtenteInEditing.ROLE" class="mdb-select" type="text" name="Ruolo" required >
             <md-option ng-value="1">AMMINISTRATORE</md-option>

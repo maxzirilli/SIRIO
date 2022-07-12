@@ -7,7 +7,8 @@ SIRIOApp.controller("userListPageController",['$scope','SystemInformation','$sta
   $scope.NuovoUtente      = false;
   $scope.MyKey            = [];
   $scope.ListaOrdinamenti = [{Sigla:'A',Descrizione:"ALFABETICO"},{Sigla:'M',Descrizione:"MATERIA"}];
-  $scope.NrMedioAlunni    = 20;  //VIENE COMUNQUE POI SOVRASCRITTO
+  $scope.ListaStampe      = [{Sigla:'V',Descrizione:"VECCHIA STAMPA"},{Sigla:'N',Descrizione:"NUOVA STAMPA / CON PRENOTATI"}];
+  $scope.NrMedioAlunni    = 20;  
   
   ScopeHeaderController.CheckButtons();
   
@@ -48,7 +49,8 @@ SIRIOApp.controller("userListPageController",['$scope','SystemInformation','$sta
                                    Username       : UtentiInfoList[i].USERNAME,   
                                    Email          : UtentiInfoList[i].EMAIL,  
                                    Ruolo          : UtentiInfoList[i].ROLE,
-                                   Ordinamento    : UtentiInfoList[i].ORDINAMENTO_DOC
+                                   Ordinamento    : UtentiInfoList[i].ORDINAMENTO_DOC,
+                                   TipoStampa     : UtentiInfoList[i].TIPO_STAMPA
                                 };
           
           $scope.ListaUtenti = UtentiInfoList;
@@ -67,6 +69,7 @@ SIRIOApp.controller("userListPageController",['$scope','SystemInformation','$sta
     $scope.UtenteInEditing.ROLE            = Utente.Ruolo;
     $scope.UtenteInEditing.RAGIONE_SOCIALE = Utente.RagioneSociale;
     $scope.UtenteInEditing.ORDINAMENTO_DOC = Utente.Ordinamento;
+    $scope.UtenteInEditing.TIPO_STAMPA     = Utente.TipoStampa;
   }
   
   $scope.NuovoUtente = function()
@@ -79,7 +82,8 @@ SIRIOApp.controller("userListPageController",['$scope','SystemInformation','$sta
                                RAGIONE_SOCIALE : '',
                                EMAIL           : '',
                                ROLE            : 0,
-                               ORDINAMENTO_DOC : 'A'      
+                               ORDINAMENTO_DOC : 'A',
+                               TIPO_STAMPA     : 'V'     
                              }
   }
   
@@ -98,7 +102,8 @@ SIRIOApp.controller("userListPageController",['$scope','SystemInformation','$sta
                          RAGIONE_SOCIALE : $scope.UtenteInEditing.RAGIONE_SOCIALE,
                          EMAIL           : $scope.UtenteInEditing.EMAIL,
                          ROLE            : $scope.UtenteInEditing.ROLE,
-                         ORDINAMENTO_DOC : $scope.UtenteInEditing.ORDINAMENTO_DOC
+                         ORDINAMENTO_DOC : $scope.UtenteInEditing.ORDINAMENTO_DOC,
+                         TIPO_STAMPA     : $scope.UtenteInEditing.TIPO_STAMPA
                        };
                      
      var NuovoUtente = ($scope.UtenteInEditing.CHIAVE == -1);
@@ -121,7 +126,7 @@ SIRIOApp.controller("userListPageController",['$scope','SystemInformation','$sta
      SystemInformation.PostSQL('User',$ObjQuery,function(Answer)
      {
        $scope.EditingOn = false;
-       $scope.RefreshListaUtenti();
+       location.reload();
      });  
   }
   
