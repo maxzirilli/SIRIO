@@ -1,4 +1,4 @@
-SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation', '$state', '$rootScope', '$mdDialog', '$sce', '$filter', 'ZConfirm', function ($scope, SystemInformation, $state, $rootScope, $mdDialog, $sce, $filter, ZConfirm) 
+SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation', '$state', '$rootScope', '$mdDialog', '$sce', '$filter', 'ZConfirm', function ($scope, SystemInformation, $state, $rootScope, $mdDialog, $sce, $filter, ZConfirm)
 {
   $scope.MailOn                 = false;
   $scope.ListaDocenti           = [];
@@ -178,110 +178,125 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
                                }
      }
       $scope.ListaMaterie = ListaMaterieOpt;
+
+      SystemInformation.GetSQL('Schedule', {}, function (Results) 
+      {
+        ListaOrariTabellaTmp = SystemInformation.FindResults(Results, 'ScheduleInfoList');
+        if(ListaOrariTabellaTmp != undefined) 
+        {
+           for(let i = 0; i < ListaOrariTabellaTmp.length; i++)
+               ListaOrariTabellaTmp[i] = {
+                                           Chiave: ListaOrariTabellaTmp[i].CHIAVE,
+                                           Descrizione: ListaOrariTabellaTmp[i].DESCRIZIONE
+                                         }
+            $scope.ListaOrariTabella = ListaOrariTabellaTmp;
+            
+            SystemInformation.GetSQL('Institute', {}, function (Results) 
+            {
+              var ListaIstitutiAssegnati = [];
+              IstitutiInfoLista = SystemInformation.FindResults(Results, 'InstituteInfoList');
+              if (IstitutiInfoLista != undefined) {
+               for(let i = 0; i < IstitutiInfoLista.length; i++) 
+               {
+                  ListaIstitutiAssegnati.push({
+                                                Chiave: IstitutiInfoLista[i].CHIAVE,
+                                                Codice: IstitutiInfoLista[i].CODICE,
+                                                Istituto: IstitutiInfoLista[i].NOME
+                                              });
+
+                  IstitutiInfoLista[i] = {
+                                           Chiave: IstitutiInfoLista[i].CHIAVE,
+                                           Codice: IstitutiInfoLista[i].CODICE,
+                                           Istituto: IstitutiInfoLista[i].NOME
+                                         }
+               }
+               $scope.ListaIstituti = ListaIstitutiAssegnati;
+               $scope.ListaIstitutiNoFilter = Array.from(ListaIstitutiAssegnati);
+
+               SystemInformation.GetSQL('Institute', {}, function (Results) 
+               {
+                IstitutiInfoListaP = SystemInformation.FindResults(Results, 'InstituteInfoListOnlyVisibile');
+                if(IstitutiInfoListaP != undefined) 
+                {
+                   for(let i = 0; i < IstitutiInfoListaP.length; i++)
+                       IstitutiInfoListaP[i] = {
+                                                 Chiave: IstitutiInfoListaP[i].CHIAVE,
+                                                 Codice: IstitutiInfoListaP[i].CODICE,
+                                                 Istituto: IstitutiInfoListaP[i].NOME
+                                               }
+                   $scope.ListaIstitutiPopup = IstitutiInfoListaP;
+
+                   SystemInformation.GetSQL('Accessories', {}, function (Results) 
+                   {
+                     ListaProvinceTmp = SystemInformation.FindResults(Results, 'ProvinceList');
+                     if(ListaProvinceTmp != undefined) 
+                     {
+                       for(let i = 0; i < ListaProvinceTmp.length; i++)
+                           ListaProvinceTmp[i] = {
+                                                   Chiave: ListaProvinceTmp[i].CHIAVE,
+                                                   Nome: ListaProvinceTmp[i].NOME
+                                                 }
+                       $scope.ListaProvinceF = ListaProvinceTmp;
+                     }
+                     else SystemInformation.ApplyOnError('Modello province non conforme', '');
+
+                     ListaProvinceAllTmp = SystemInformation.FindResults(Results, 'ProvinceListAll');
+                     if(ListaProvinceAllTmp != undefined) 
+                     {
+                       for (let i = 0; i < ListaProvinceAllTmp.length; i++)
+                            ListaProvinceAllTmp[i] = {
+                                                       Chiave: ListaProvinceAllTmp[i].CHIAVE,
+                                                       Nome: ListaProvinceAllTmp[i].NOME
+                                                     }
+                       $scope.ListaProvinceAll = ListaProvinceAllTmp;
+
+                       SystemInformation.GetSQL('Book', {}, function (Results) 
+                       {
+                         TitoliInfoLista = SystemInformation.FindResults(Results, 'BookListNoFilter');
+                         if(TitoliInfoLista != undefined) 
+                         {
+                            for(let i = 0; i < TitoliInfoLista.length; i++)
+                                TitoliInfoLista[i] = {
+                                                       Chiave: TitoliInfoLista[i].CHIAVE,
+                                                       Nome: TitoliInfoLista[i].TITOLO,
+                                                       Codice: TitoliInfoLista[i].CODICE_ISBN
+                                                     }
+                            $scope.ListaTitoliF = TitoliInfoLista;
+                            $scope.ListaTitoli = TitoliInfoLista;
+
+                            var parametri = window.location.href.split('/');
+
+                            if(parametri[parametri.length - 1] != '')
+                            {
+                               for(var i = 0; i <  $scope.ListaIstituti.length; i++)
+                               {
+                                   if($scope.ListaIstituti[i].Chiave == parseInt(parametri[parametri.length - 1]))
+                                   {
+                                      $scope.searchTextIstituto  = $scope.ListaIstituti[i].Istituto;
+                                      $scope.selectedItemChangeIstituto($scope.ListaIstituti[i]);
+                                   }
+                               }
+                            }
+                         }
+                         else SystemInformation.ApplyOnError('Modello titoli non conforme', '');
+                       },'SelectSQLNoFilter');
+                     }
+                     else SystemInformation.ApplyOnError('Modello province di italia non conforme', '');
+                   });
+
+                }
+                else SystemInformation.ApplyOnError('Modello istituti non conforme', '');
+               }, 'SelectSQLOnlyVisible');
+
+              }
+              else SystemInformation.ApplyOnError('Modello istituti non conforme', '');
+            });
+        }
+        else SystemInformation.ApplyOnError('Modello orari disponibilità non conforme', '');
+      });
     }
     else SystemInformation.ApplyOnError('Modello materie non conforme', '');
   });
-
-  SystemInformation.GetSQL('Schedule', {}, function (Results) 
-  {
-    ListaOrariTabellaTmp = SystemInformation.FindResults(Results, 'ScheduleInfoList');
-    if(ListaOrariTabellaTmp != undefined) 
-    {
-       for(let i = 0; i < ListaOrariTabellaTmp.length; i++)
-           ListaOrariTabellaTmp[i] = {
-                                       Chiave: ListaOrariTabellaTmp[i].CHIAVE,
-                                       Descrizione: ListaOrariTabellaTmp[i].DESCRIZIONE
-                                     }
-        $scope.ListaOrariTabella = ListaOrariTabellaTmp;
-    }
-    else SystemInformation.ApplyOnError('Modello orari disponibilità non conforme', '');
-  });
-
-  SystemInformation.GetSQL('Institute', {}, function (Results) 
-  {
-    var ListaIstitutiAssegnati = [];
-    IstitutiInfoLista = SystemInformation.FindResults(Results, 'InstituteInfoList');
-    if (IstitutiInfoLista != undefined) {
-     for(let i = 0; i < IstitutiInfoLista.length; i++) 
-     {
-        /*if(IstitutiInfoLista[i].NR_DOCENTI > 0) //CONTROLLARE*/
-        ListaIstitutiAssegnati.push({
-                                      Chiave: IstitutiInfoLista[i].CHIAVE,
-                                      Codice: IstitutiInfoLista[i].CODICE,
-                                      Istituto: IstitutiInfoLista[i].NOME
-                                    });
-
-        IstitutiInfoLista[i] = {
-                                 Chiave: IstitutiInfoLista[i].CHIAVE,
-                                 Codice: IstitutiInfoLista[i].CODICE,
-                                 Istituto: IstitutiInfoLista[i].NOME
-                               }
-     }
-     $scope.ListaIstituti = ListaIstitutiAssegnati;
-     $scope.ListaIstitutiNoFilter = Array.from(ListaIstitutiAssegnati);
-    }
-    else SystemInformation.ApplyOnError('Modello istituti non conforme', '');
-  });
-
-  SystemInformation.GetSQL('Institute', {}, function (Results) 
-  {
-   IstitutiInfoListaP = SystemInformation.FindResults(Results, 'InstituteInfoListOnlyVisibile');
-   if(IstitutiInfoListaP != undefined) 
-   {
-      for(let i = 0; i < IstitutiInfoListaP.length; i++)
-          IstitutiInfoListaP[i] = {
-                                    Chiave: IstitutiInfoListaP[i].CHIAVE,
-                                    Codice: IstitutiInfoListaP[i].CODICE,
-                                    Istituto: IstitutiInfoListaP[i].NOME
-                                  }
-      $scope.ListaIstitutiPopup = IstitutiInfoListaP;
-   }
-   else SystemInformation.ApplyOnError('Modello istituti non conforme', '');
-  }, 'SelectSQLOnlyVisible');
-
-  SystemInformation.GetSQL('Accessories', {}, function (Results) 
-  {
-    ListaProvinceTmp = SystemInformation.FindResults(Results, 'ProvinceList');
-    if(ListaProvinceTmp != undefined) 
-    {
-      for(let i = 0; i < ListaProvinceTmp.length; i++)
-          ListaProvinceTmp[i] = {
-                                  Chiave: ListaProvinceTmp[i].CHIAVE,
-                                  Nome: ListaProvinceTmp[i].NOME
-                                }
-      $scope.ListaProvinceF = ListaProvinceTmp;
-    }
-    else SystemInformation.ApplyOnError('Modello province non conforme', '');
-
-    ListaProvinceAllTmp = SystemInformation.FindResults(Results, 'ProvinceListAll');
-    if(ListaProvinceAllTmp != undefined) 
-    {
-      for (let i = 0; i < ListaProvinceAllTmp.length; i++)
-           ListaProvinceAllTmp[i] = {
-                                      Chiave: ListaProvinceAllTmp[i].CHIAVE,
-                                      Nome: ListaProvinceAllTmp[i].NOME
-                                    }
-      $scope.ListaProvinceAll = ListaProvinceAllTmp;
-    }
-    else SystemInformation.ApplyOnError('Modello province di italia non conforme', '');
-  });
-
-  SystemInformation.GetSQL('Book', {}, function (Results) 
-  {
-    TitoliInfoLista = SystemInformation.FindResults(Results, 'BookListNoFilter');
-    if(TitoliInfoLista != undefined) 
-    {
-       for(let i = 0; i < TitoliInfoLista.length; i++)
-           TitoliInfoLista[i] = {
-                                  Chiave: TitoliInfoLista[i].CHIAVE,
-                                  Nome: TitoliInfoLista[i].TITOLO,
-                                  Codice: TitoliInfoLista[i].CODICE_ISBN
-                                }
-       $scope.ListaTitoliF = TitoliInfoLista;
-       $scope.ListaTitoli = TitoliInfoLista;
-    }
-    else SystemInformation.ApplyOnError('Modello titoli non conforme', '');
-  },'SelectSQLNoFilter');
 
   $scope.searchTextChangeMat = function(text)
   {

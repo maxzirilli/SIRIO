@@ -368,6 +368,12 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
     });
   }
 
+  $scope.ApriPaginaIstituto = function(ChiaveIstituto)
+  {
+     var url = $state.href('teacherListPage',{istituto: ChiaveIstituto});
+     window.open(url,'_blank');
+  }
+
   $scope.GeneraStatistica = function()
   {
     $scope.CaricamentoInCorso     = true;

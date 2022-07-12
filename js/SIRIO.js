@@ -1,5 +1,5 @@
 // Inizializzazioni
-const VERSIONE_ATTUALE = '1.51.69';
+const VERSIONE_ATTUALE = '1.52.69';
 
 SIRIOApp.config(['$qProvider', function ($qProvider)
 {
@@ -60,7 +60,10 @@ SIRIOApp.config(['$stateProvider','$urlRouterProvider','$mdAriaProvider',functio
     $stateProvider.state('teacherListPage', 
     {
         templateUrl: "template/teacherListPage.html",
-        url: '/teacherListPage'
+        url: '/teacherListPage/:istituto',
+        params : {
+          istituto : null
+        }
     });
     
     $stateProvider.state('orderEntryPage', 
