@@ -1,5 +1,5 @@
 // Inizializzazioni
-const VERSIONE_ATTUALE = '1.52.70';
+const VERSIONE_ATTUALE = '1.52.71';
 
 SIRIOApp.config(['$qProvider', function ($qProvider)
 {

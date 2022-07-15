@@ -559,6 +559,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                 var Spedizione = {};
                 
                 Spedizione = {
+                               "CHIAVE"         : ListaDaSpedireTmp[i].SPEDIZIONE,
                                "PRESSO"         : ListaDaSpedireTmp[i].PRESSO == undefined ? 'N.D.' : ListaDaSpedireTmp[i].PRESSO,
                                "ISTITUTO"       : ListaDaSpedireTmp[i].ISTITUTO == undefined ? 'N.D.' : ListaDaSpedireTmp[i].ISTITUTO,
                                "NOME_ISTITUTO"  : ListaDaSpedireTmp[i].NOME_ISTITUTO == undefined ? 'N.D.' : ListaDaSpedireTmp[i].NOME_ISTITUTO,
