@@ -42,6 +42,84 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
   $scope.CombinazioneFiltro     = -1;
   $scope.ListaCombinazioni      = [];
 
+
+  $scope.searchTextChangeMat1 = function(text)
+  {
+    if(!text)
+    {
+       $scope.selectedItemChangeMateria1(undefined);
+       $scope.DocenteInEditing.Materia_1 = -1;
+    }
+  }
+
+  $scope.queryMateria1 = function (searchTextMat1) 
+  {
+    searchTextMat = searchTextMat1.toUpperCase();
+    return ($scope.ListaMateriePerDoc.grep(function (Elemento) 
+    {
+      return (Elemento.Nome.toUpperCase().indexOf(searchTextMat) != -1);
+    }));
+  }
+
+  $scope.selectedItemChangeMateria1 = function (itemMat1) 
+  {
+    if(itemMat1 != undefined) 
+       $scope.DocenteInEditing.Materia_1 = itemMat1.Chiave;
+    else $scope.DocenteInEditing.Materia_1  = -1;
+  }
+
+  $scope.searchTextChangeMat2 = function(text)
+  {
+    if(!text)
+    {
+       $scope.selectedItemChangeMateria2(undefined);
+       $scope.DocenteInEditing.Materia_2 = -1;
+    }
+  }
+
+  $scope.queryMateria2 = function (searchTextMat2) 
+  {
+    searchTextMat = searchTextMat2.toUpperCase();
+    return ($scope.ListaMateriePerDoc.grep(function (Elemento) 
+    {
+      return (Elemento.Nome.toUpperCase().indexOf(searchTextMat) != -1);
+    }));
+  }
+
+  $scope.selectedItemChangeMateria2 = function (itemMat2) 
+  {
+    if(itemMat2 != undefined) 
+       $scope.DocenteInEditing.Materia_2 = itemMat2.Chiave;
+    else $scope.DocenteInEditing.Materia_2  = -1;
+  }
+
+  $scope.searchTextChangeMat3 = function(text)
+  {
+    if(!text)
+    {
+       $scope.selectedItemChangeMateria3(undefined);
+       $scope.DocenteInEditing.Materia_3 = -1;
+    }
+  }
+
+  $scope.queryMateria3 = function (searchTextMat3) 
+  {
+    searchTextMat = searchTextMat3.toUpperCase();
+    return ($scope.ListaMateriePerDoc.grep(function (Elemento) 
+    {
+      return (Elemento.Nome.toUpperCase().indexOf(searchTextMat) != -1);
+    }));
+  }
+
+  $scope.selectedItemChangeMateria3 = function (itemMat3) 
+  {
+    if(itemMat3 != undefined) 
+       $scope.DocenteInEditing.Materia_3 = itemMat3.Chiave;
+    else $scope.DocenteInEditing.Materia_3  = -1;
+  }
+
+
+
   $scope.AbilitaInvioMultiplo = function () 
   {
     var DocentiConMail  = 0;
@@ -380,9 +458,10 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
     $scope.RefreshListaDocenti();
   }
 
-  $scope.VisualizzaAdozioni = function (ChiaveIstituto) 
+  $scope.VisualizzaAdozioni = function (ChiaveIstituto,NomeIstituto) 
   {
    $scope.thisIstituto = ChiaveIstituto;
+   $scope.thisIstitutoNome = NomeIstituto;
    $scope.AnnoFiltro = -1;
    $scope.CombinazioneFiltro = -1;
    $scope.ListaCombinazioni = [];
@@ -460,6 +539,76 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
      $scope.ChiudiPopupAdozioni = function () 
      {
        $mdDialog.hide();
+     }
+
+     $scope.CreaPdfListaAdozioni = function()
+     {
+        var TroncaTitolo = function(str, n)
+        {
+          return (str.length > n) ? str.substr(0, n-1) + '(...)' : str;
+        };
+
+        var ListaAdozFiltrata = $filter('AdozioneByFiltroDoc')($scope.IstitutoListaAdozioni,$scope.AnnoFiltro,$scope.CombinazioneFiltro);
+        
+        var Data = new Date();
+        var DataAnno = Data.getFullYear();
+        var DataMese = Data.getMonth() + 1;
+        var DataGiorno = Data.getDate();
+        var DataDocumento = DataGiorno.toString() + '_' + DataMese.toString() + '_' + DataAnno.toString();
+        var doc = new jsPDF();
+
+        doc.setProperties({ title: 'ADOZIONI ' + $scope.thisIstitutoNome + ' ' + DataDocumento });
+        var CoordY = 10;
+        var CoordX = 10;
+        doc.setFontSize(12);
+        doc.setFontType('bold');
+        doc.text(CoordX, CoordY, 'ADOZIONI - ISTITUTO : ' + $scope.thisIstitutoNome);
+        doc.text(CoordX + 155, CoordY, 'ANNO ' + DataAnno + ' / ' + (DataAnno + 1));
+        doc.setFontSize(8);
+        doc.setFontType('normal');
+        doc.text(10, 295, SystemInformation.VDocInstituteAdoption);
+
+        CoordY += 5;
+ 
+        doc.setFontSize(8);
+        for(let i = 0; i < ListaAdozFiltrata.length; i ++)
+        {
+           CoordY += 10;
+
+           if(CoordY >= 275) 
+           {
+              doc.addPage();
+              CoordY = 10;
+              doc.setFontSize(8);
+              doc.setFontType('normal');
+              doc.text(CoordX, 295, SystemInformation.VDocInstituteAdoption);
+           }
+           doc.setFontSize(10);
+           doc.setFontType('bold');
+           doc.text(CoordX, CoordY, ListaAdozFiltrata[i].NomeClasse + ' - ' + ListaAdozFiltrata[i].CombinazioneClasse);
+           doc.text(CoordX, CoordY + 5,'TITOLO / CODICE / EDITORE / MATERIA / PREZZO / GESTITO');
+           CoordY += 15;
+           doc.setFontSize(8);
+           doc.setFontType('normal');
+           for(let j = 0; j < ListaAdozFiltrata[i].ListaTitoliClasse.length; j ++)
+           {
+               if(CoordY >= 275) 
+               {
+                  doc.addPage();
+                  CoordY = 10;
+                  doc.setFontSize(8);
+                  doc.setFontType('normal');
+                  doc.text(CoordX, 295, SystemInformation.VDocInstituteAdoption);
+                  CoordY += 10;
+               }
+
+               doc.text(CoordX, CoordY, TroncaTitolo(ListaAdozFiltrata[i].ListaTitoliClasse[j].Titolo,80) + ' / ' + ListaAdozFiltrata[i].ListaTitoliClasse[j].Codice + ' / ');
+               doc.text(CoordX, CoordY + 5,ListaAdozFiltrata[i].ListaTitoliClasse[j].Editore + ' / ' + ListaAdozFiltrata[i].ListaTitoliClasse[j].Materia + ' / ' + ListaAdozFiltrata[i].ListaTitoliClasse[j].Prezzo + ' / ' + (ListaAdozFiltrata[i].ListaTitoliClasse[j].IsGestito ? 'SI' : 'NO'));
+               CoordY += 12;
+           }
+        }
+        
+        doc.save('ADOZIONI ' + $scope.thisIstitutoNome + ' ' + DataDocumento + '.pdf', {});
      }
 
      $scope.GetTitoliClasseIstituto = function (Classe) 
@@ -1073,6 +1222,19 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
 
   $scope.ModificaDocente = function (docente) 
   {
+
+    $scope.searchTextMat1 = '';
+    $scope.queryMateria1($scope.searchTextMat1);
+    $scope.selectedItemChangeMateria1(undefined);
+
+    $scope.searchTextMat2 = '';
+    $scope.queryMateria1($scope.searchTextMat1);
+    $scope.selectedItemChangeMateria2(undefined);
+
+    $scope.searchTextMat3 = '';
+    $scope.queryMateria1($scope.searchTextMat1);
+    $scope.selectedItemChangeMateria3(undefined);
+
     $scope.OldPagina = $scope.GridOptions.query.page;
     $scope.ProvinciaOldFiltro = $scope.AProvinciaFiltro;
     $scope.NomeOldFiltro = $scope.ANomeFiltro;
@@ -1178,6 +1340,31 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
 
          if ($scope.DocenteInEditing.ListaIstitutiDoc.length > 0)
           $scope.IstitutoVisualizzato = $scope.DocenteInEditing.ListaIstitutiDoc[0].CHIAVE
+
+         for(let i = 0; i < $scope.ListaMateriePerDoc.length; i ++)
+         {
+             if($scope.ListaMateriePerDoc[i].Chiave == $scope.DocenteInEditing.Materia_1)
+             {
+                $scope.searchTextMat1 = $scope.ListaMateriePerDoc[i].Nome;
+                $scope.queryMateria1($scope.searchTextMat1);
+                $scope.selectedItemChangeMateria1($scope.ListaMateriePerDoc[i]);
+             }
+
+             if($scope.ListaMateriePerDoc[i].Chiave == $scope.DocenteInEditing.Materia_2)
+             {
+                $scope.searchTextMat2 = $scope.ListaMateriePerDoc[i].Nome;
+                $scope.queryMateria2($scope.searchTextMat2);
+                $scope.selectedItemChangeMateria2($scope.ListaMateriePerDoc[i]);
+             }
+
+             if($scope.ListaMateriePerDoc[i].Chiave == $scope.DocenteInEditing.Materia_3)
+             {
+                $scope.searchTextMat3 = $scope.ListaMateriePerDoc[i].Nome;
+                $scope.queryMateria3($scope.searchTextMat3);
+                $scope.selectedItemChangeMateria3($scope.ListaMateriePerDoc[i]);
+             }
+         }  
+
       }
       else SystemInformation.ApplyOnError('Modello docente non conforme', '');
     }, 'SQLDettaglio');
@@ -2124,6 +2311,22 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
     $state.go("deliveryModDetailPage");
   }
 
+  $scope.ConvertiData = function (Dati)
+  {
+     return(ZFormatDateTime('dd/mm/yyyy',ZDateFromHTMLInput(Dati.Data)));
+  }
+
+  $scope.GetIfPrenotati = function(Spedizione)
+  {
+     for(let i = 0;i < Spedizione.DettagliTitoli.length;i ++)
+     {
+         if(Spedizione.DettagliTitoli[i].STATO == 'PRENOTATO')
+            return true
+     }
+     
+     return false;
+  }
+
   $scope.ListaSpedizioni = function (Docente) 
   {
     $mdDialog.show({
@@ -2157,6 +2360,27 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
             },
      limitOptions: [10, 20, 30]
     };
+
+    $scope.EliminaPrenotati = function (Spedizione)
+    {
+      var EliminaSped = function()
+      {
+        var $ObjQuery       = { Operazioni : [] };
+        var ParamSpedizione = { CHIAVE : Spedizione.CHIAVE };
+        
+        $ObjQuery.Operazioni.push({
+                                    Query     : 'DeleteDeliveryAllBooked',
+                                    Parametri : ParamSpedizione
+                                  });  
+        
+        SystemInformation.PostSQL('Delivery',$ObjQuery,function(Answer)
+        {
+          $scope.RefreshListaSpedizioni();
+          $ObjQuery.Operazioni = [];
+        });
+      }
+      ZConfirm.GetConfirmBox('AVVISO',"Eliminare tutti i titoli prenotati della spedizione del " +  $scope.ConvertiData(Spedizione) + " presso " + Spedizione.Presso + " ?\nN.B: Se la spedizione contiene solo titoli prenotati verrà cancellata!",EliminaSped,function(){});  
+    }
 
    $scope.RefreshListaSpedizioni = function () 
    {

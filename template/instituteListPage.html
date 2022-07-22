@@ -42,7 +42,9 @@
           </md-optgroup>
           </md-select>
         </md-input-container>
-        <input type="checkbox" ng-model="NascostoFiltro" ng-change="GridOptions.query.page = 1" style="margin-top:30px;margin-left:20px;"><label style="margin-top:28px;">ISTITUTI NASCOSTI</label>
+        <input type="checkbox" ng-model="NascostoFiltro" ng-change="GridOptions.query.page = 1" style="margin-left:20px;">
+          <label style="margin-left:5px;margin-right:2px;margin-top:27px;">ISTITUTI NASCOSTI</label> 
+
       </div>
     </div>
     <div ng-if="ListaIstituti.length != 0">

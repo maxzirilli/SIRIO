@@ -183,6 +183,7 @@
           <th></th> 
           <th></th>
           <th style="font-weight:bold;">MATERIA</th>
+          <th style="font-weight:bold;">MIUR</th>
           <th style="font-weight:bold;">ISTITUTI</th>
         </tr>  
         <tr ng-repeat="materia in ListaMaterie | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{materia.Chiave}}>
@@ -192,8 +193,8 @@
           <td ng-if="materia.Nascosta"><img src="img/notHide.png" style="width:30px;height:auto;" title="RENDI VISIBILE MATERIA" ng-click="RendiVisibileMateria(materia.Chiave,materia.Descrizione)"></td>             
           <td ng-if="!(materia.PerDocenti)"><img src="img/NotForDoc.png" style="width:30px;height:auto;" title="RENDI MATERIA GESTIBILE ANCHE PER DOCENTI" ng-click="GestisciMateriaPerDocenti(materia,true)"></td>        
           <td ng-if="materia.PerDocenti"><img src="img/ForDoc.png" style="width:30px;height:auto;" title=" RENDI MATERIA GESTIBILE SOLO PER TITOLI" ng-click="GestisciMateriaPerDocenti(materia,false)"></td>  
-          
           <td>{{materia.Descrizione | uppercase}}</td>
+          <td>{{materia.FromMiur ? 'SI' : 'NO'}}</td>
           <td ng-bind-html="GetStringaGruppiMaterie(materia)"></td>
         </tr>    
       </table>

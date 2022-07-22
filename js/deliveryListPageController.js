@@ -1124,6 +1124,17 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
       $scope.ListaSpedizioni = Answer.ListaSpedizioni; 
     }); 
   }
+
+  $scope.GetIfPrenotati = function(Spedizione)
+  {
+     for(let i = 0;i < Spedizione.DettagliTitoli.length;i ++)
+     {
+         if(Spedizione.DettagliTitoli[i].StatoTitolo == 'PRENOTATO')
+            return true
+     }
+     
+     return false;
+  }
   
   $scope.GetTitoliSpedizione = function(Spedizione)
   {
@@ -1528,6 +1539,29 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     }
     ZConfirm.GetConfirmBox('AVVISO',"Eliminare la spedizione del " +  $scope.ConvertiData(Spedizione) + " presso " + Spedizione.Presso + " ?",EliminaSped,function(){});  
   }
+
+  $scope.EliminaPrenotati = function (Spedizione)
+  {
+    var EliminaSped = function()
+    {
+      var $ObjQuery       = { Operazioni : [] };
+      var ParamSpedizione = { CHIAVE : Spedizione.Chiave };
+      
+      $ObjQuery.Operazioni.push({
+                                  Query     : 'DeleteDeliveryAllBooked',
+                                  Parametri : ParamSpedizione
+                                });  
+      
+      SystemInformation.PostSQL('Delivery',$ObjQuery,function(Answer)
+      {
+        $scope.RefreshListaSpedizioniAll();
+        $ObjQuery.Operazioni = [];
+      });
+    }
+    ZConfirm.GetConfirmBox('AVVISO',"Eliminare tutti i titoli prenotati della spedizione del " +  $scope.ConvertiData(Spedizione) + " presso " + Spedizione.Presso + " ?\nN.B: Se la spedizione contiene solo titoli prenotati verrà cancellata!",EliminaSped,function(){});  
+  }
+
+  
   
   $scope.PassaADaSpedireDisponibili = function (ChiaveSped)
   {

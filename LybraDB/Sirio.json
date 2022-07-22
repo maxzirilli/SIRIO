@@ -1,10 +1,12 @@
 {
  "Version": {
   "Major": 1,
-  "Minor": 30,
+  "Minor": 31,
   "Release": 8
  },
  "Storia": [
+  "Versione 1.31.8   22 Luglio 2022 - Tommaso Martinoli",
+  "                  - CHG: rimossa la gestione del campo SOTTOTITOLO in tutte le store procedure e rimosso campo SOTTOTITOLO dalla tabella dei titoli",
   "Versione 1.30.8   15 Luglio 2022 - Tommaso Martinoli",
   "                  - NEW: aggiunto campo TIPO_STAMPA alla tabella utenti",
   "Versione 1.29.8   15 Novembre 2021 - Tommaso Martinoli",
@@ -763,6 +765,15 @@
      "Commento": "",
      "DefaultValue": "'F'",
      "SQLAfterAddedColumn": null
+    },
+    {
+     "Nome": "FROM_MIUR",
+     "IsNullable": true,
+     "DataType": "char(1)",
+     "AutoIncrement": false,
+     "Commento": "",
+     "DefaultValue": "'F'",
+     "SQLAfterAddedColumn": null
     }
    ],
    "PrimaryKey": {
@@ -1313,15 +1324,6 @@
     },
     {
      "Nome": "TITOLO",
-     "IsNullable": true,
-     "DataType": "varchar(255)",
-     "AutoIncrement": false,
-     "Commento": "",
-     "DefaultValue": "NULL",
-     "SQLAfterAddedColumn": null
-    },
-    {
-     "Nome": "SOTTOTITOLO",
      "IsNullable": true,
      "DataType": "varchar(255)",
      "AutoIncrement": false,
@@ -2881,7 +2883,7 @@
    "Nome": "AGGIORNA_TITOLI_ADOZIONI",
    "Type": "PROCEDURE",
    "ReturnType": null,
-   "Body": "BEGIN\r\n  DECLARE NewKey INT;\r\n  DECLARE KeyMateria INT;\r\n  DECLARE KeyClasse INT;\r\n  DECLARE KeyAdozione INT;\r\n  DECLARE KeyIstituto INT;\r\n  DECLARE KeyCombinazione INT;\r\n  \r\n  SELECT MAX(CHIAVE)\r\n    FROM materie_insegnamento \r\n\tWHERE UPPER(DESCRIZIONE) = DescrizioneMateria \r\n\t INTO KeyMateria;\r\n  \r\n  IF KeyMateria IS NULL THEN\r\n     UPDATE gen_key SET CHIAVE = CHIAVE + 1;\r\n     SELECT MAX(CHIAVE) FROM gen_key INTO KeyMateria; \r\n     INSERT INTO materie_insegnamento(CHIAVE,DESCRIZIONE) VALUES (KeyMateria,DescrizioneMateria);\r\n  END IF;\r\n  \r\n  SELECT MAX(CHIAVE) \r\n    FROM classi_combinazioni\r\n   WHERE UPPER(DESCRIZIONE) = DescrizioneCombinazione\r\n    INTO KeyCombinazione;\r\n    \r\n  IF KeyCombinazione IS NULL THEN\r\n     UPDATE gen_key SET CHIAVE = CHIAVE + 1;\r\n     SELECT MAX(CHIAVE) FROM gen_key INTO KeyCombinazione;\r\n     INSERT INTO classi_combinazioni(CHIAVE,DESCRIZIONE)VALUES(KeyCombinazione,DescrizioneCombinazione);\r\n  END IF;\r\n  \r\n  IF (SELECT count(*) FROM titoli WHERE CODICE_ISBN = CodiceTitolo) > 0 THEN\r\n      UPDATE titoli \r\n\t\t   SET TITOLO = TitoloTitolo, SOTTOTITOLO = SottotitoloTitolo, AUTORI = AutoriTitolo, EDITORE = EditoreTitolo, VOLUME = VolumeTitolo, PREZZO = PrezzoTitolo\r\n\t\t WHERE CODICE_ISBN = CodiceTitolo;\r\n  ELSE\r\n      UPDATE gen_key SET CHIAVE = CHIAVE + 1;\r\n      SELECT MAX(CHIAVE) FROM gen_key INTO NewKey; \r\n      INSERT INTO titoli (CHIAVE,CODICE_ISBN,TITOLO,SOTTOTITOLO,AUTORI,EDITORE,VOLUME,MATERIA,PREZZO) VALUES (NewKey,CodiceTitolo,TitoloTitolo,SottotitoloTitolo,AutoriTitolo,EditoreTitolo,VolumeTitolo,KeyMateria,PrezzoTitolo);\r\n  END IF;\r\n  \r\n  SELECT istituti.CHIAVE \r\n    FROM istituti \r\n\tWHERE istituti.CODICE = IstitutoTitolo \r\n   LIMIT 1 \r\n\t INTO KeyIstituto; \r\n\t \r\n   IF KeyIstituto IS NOT NULL THEN\r\n      INSERT IGNORE INTO istituti_x_titoli (TITOLO,ISTITUTO) VALUES ((SELECT titoli.CHIAVE FROM titoli WHERE CODICE_ISBN = CodiceTitolo),KeyIstituto); \r\n      \r\n\t\tSELECT MAX(CHIAVE)\r\n \t\t  FROM classi \r\n\t\tWHERE UPPER(ANNO) = AnnoTitolo AND UPPER(SEZIONE) = SezioneTitolo AND ISTITUTO = KeyIstituto AND COMBINAZIONE = KeyCombinazione\r\n \t\t INTO KeyClasse;\r\n\t\t\r\n\t\tIF KeyClasse IS NULL THEN\r\n\t\t  UPDATE gen_key \r\n\t\t    SET CHIAVE = CHIAVE + 1;\r\n\t\t  SELECT MAX(CHIAVE) FROM gen_key INTO KeyClasse; \r\n\t\t  INSERT INTO classi (CHIAVE,ANNO,SEZIONE,ISTITUTO,COMBINAZIONE) VALUES (KeyClasse,AnnoTitolo,SezioneTitolo,KeyIstituto,KeyCombinazione);\r\n\t\tEND IF;\r\n\t\t\r\n\t\tSELECT MAX(CHIAVE)\r\n\t\t  FROM adozioni_titolo\r\n\t\t WHERE TITOLO = (SELECT titoli.CHIAVE FROM titoli WHERE CODICE_ISBN = CodiceTitolo) AND CLASSE = KeyClasse\r\n\t\t  INTO KeyAdozione;\r\n\t\t\r\n\t\tIF KeyAdozione IS NULL THEN\r\n\t\t  UPDATE gen_key \r\n\t\t    SET CHIAVE = CHIAVE + 1;\r\n\t\t  SELECT MAX(CHIAVE) FROM gen_key INTO KeyAdozione; \r\n\t\t  INSERT INTO adozioni_titolo (CHIAVE,TITOLO,CLASSE,NUOVA_ADOZIONE,DA_ACQUISTARE,CONSIGLIATO) VALUES (KeyAdozione,(SELECT titoli.CHIAVE FROM titoli WHERE CODICE_ISBN = CodiceTitolo),KeyClasse,NuovaAdozioneTitolo,DaAcquistareTitolo,ConsigliatoTitolo);\r\n\t\tELSE\r\n\t\t  UPDATE adozioni_titolo SET DA_ACQUISTARE = DaAcquistareTitolo,CONSIGLIATO = ConsigliatoTitolo,NUOVA_ADOZIONE = NuovaAdozioneTitolo WHERE CHIAVE = KeyAdozione;\r\n\t   END IF;\r\n\tEND IF;\r\n  \r\nEND",
+   "Body": "BEGIN\r\n  DECLARE NewKey INT;\r\n  DECLARE KeyMateria INT;\r\n  DECLARE KeyClasse INT;\r\n  DECLARE KeyAdozione INT;\r\n  DECLARE KeyIstituto INT;\r\n  DECLARE KeyCombinazione INT;\r\n  \r\n  SELECT MAX(CHIAVE)\r\n    FROM materie_insegnamento \r\n\tWHERE UPPER(DESCRIZIONE) = DescrizioneMateria \r\n\t INTO KeyMateria;\r\n  \r\n  IF KeyMateria IS NULL THEN\r\n     UPDATE gen_key SET CHIAVE = CHIAVE + 1;\r\n     SELECT MAX(CHIAVE) FROM gen_key INTO KeyMateria; \r\n     INSERT INTO materie_insegnamento(CHIAVE,DESCRIZIONE,FROM_MIUR) VALUES (KeyMateria,DescrizioneMateria,'T');\r\n  END IF;\r\n  \r\n  SELECT MAX(CHIAVE) \r\n    FROM classi_combinazioni\r\n   WHERE UPPER(DESCRIZIONE) = DescrizioneCombinazione\r\n    INTO KeyCombinazione;\r\n    \r\n  IF KeyCombinazione IS NULL THEN\r\n     UPDATE gen_key SET CHIAVE = CHIAVE + 1;\r\n     SELECT MAX(CHIAVE) FROM gen_key INTO KeyCombinazione;\r\n     INSERT INTO classi_combinazioni(CHIAVE,DESCRIZIONE)VALUES(KeyCombinazione,DescrizioneCombinazione);\r\n  END IF;\r\n  \r\n  IF (SELECT count(*) FROM titoli WHERE CODICE_ISBN = CodiceTitolo) > 0 THEN\r\n      UPDATE titoli \r\n\t\t   SET TITOLO = TitoloTitolo, AUTORI = AutoriTitolo, EDITORE = EditoreTitolo, VOLUME = VolumeTitolo, PREZZO = PrezzoTitolo, MATERIA = KeyMateria\r\n\t\t WHERE CODICE_ISBN = CodiceTitolo;\r\n  ELSE\r\n      UPDATE gen_key SET CHIAVE = CHIAVE + 1;\r\n      SELECT MAX(CHIAVE) FROM gen_key INTO NewKey; \r\n      INSERT INTO titoli (CHIAVE,CODICE_ISBN,TITOLO,AUTORI,EDITORE,VOLUME,MATERIA,PREZZO) VALUES (NewKey,CodiceTitolo,TitoloTitolo,AutoriTitolo,EditoreTitolo,VolumeTitolo,KeyMateria,PrezzoTitolo);\r\n  END IF;\r\n  \r\n  SELECT istituti.CHIAVE \r\n    FROM istituti \r\n\tWHERE istituti.CODICE = IstitutoTitolo \r\n   LIMIT 1 \r\n\t INTO KeyIstituto; \r\n\t \r\n   IF KeyIstituto IS NOT NULL THEN\r\n      INSERT IGNORE INTO istituti_x_titoli (TITOLO,ISTITUTO) VALUES ((SELECT titoli.CHIAVE FROM titoli WHERE CODICE_ISBN = CodiceTitolo),KeyIstituto); \r\n      \r\n\t\tSELECT MAX(CHIAVE)\r\n \t\t  FROM classi \r\n\t\tWHERE UPPER(ANNO) = AnnoTitolo AND UPPER(SEZIONE) = SezioneTitolo AND ISTITUTO = KeyIstituto AND COMBINAZIONE = KeyCombinazione\r\n \t\t INTO KeyClasse;\r\n\t\t\r\n\t\tIF KeyClasse IS NULL THEN\r\n\t\t  UPDATE gen_key \r\n\t\t    SET CHIAVE = CHIAVE + 1;\r\n\t\t  SELECT MAX(CHIAVE) FROM gen_key INTO KeyClasse; \r\n\t\t  INSERT INTO classi (CHIAVE,ANNO,SEZIONE,ISTITUTO,COMBINAZIONE) VALUES (KeyClasse,AnnoTitolo,SezioneTitolo,KeyIstituto,KeyCombinazione);\r\n\t\tEND IF;\r\n\t\t\r\n\t\tSELECT MAX(CHIAVE)\r\n\t\t  FROM adozioni_titolo\r\n\t\t WHERE TITOLO = (SELECT titoli.CHIAVE FROM titoli WHERE CODICE_ISBN = CodiceTitolo) AND CLASSE = KeyClasse\r\n\t\t  INTO KeyAdozione;\r\n\t\t\r\n\t\tIF KeyAdozione IS NULL THEN\r\n\t\t  UPDATE gen_key \r\n\t\t    SET CHIAVE = CHIAVE + 1;\r\n\t\t  SELECT MAX(CHIAVE) FROM gen_key INTO KeyAdozione; \r\n\t\t  INSERT INTO adozioni_titolo (CHIAVE,TITOLO,CLASSE,NUOVA_ADOZIONE,DA_ACQUISTARE,CONSIGLIATO) VALUES (KeyAdozione,(SELECT titoli.CHIAVE FROM titoli WHERE CODICE_ISBN = CodiceTitolo),KeyClasse,NuovaAdozioneTitolo,DaAcquistareTitolo,ConsigliatoTitolo);\r\n\t\tELSE\r\n\t\t  UPDATE adozioni_titolo SET DA_ACQUISTARE = DaAcquistareTitolo,CONSIGLIATO = ConsigliatoTitolo,NUOVA_ADOZIONE = NuovaAdozioneTitolo WHERE CHIAVE = KeyAdozione;\r\n\t   END IF;\r\n\tEND IF;\r\n  \r\nEND",
    "Parametri": [
     {
      "Nome": "CodiceTitolo",
@@ -2890,11 +2892,6 @@
     },
     {
      "Nome": "TitoloTitolo",
-     "Mode": "IN",
-     "Type": "varchar(255)"
-    },
-    {
-     "Nome": "SottotitoloTitolo",
      "Mode": "IN",
      "Type": "varchar(255)"
     },
@@ -2964,7 +2961,7 @@
    "Nome": "AGGIORNA_TITOLI_FROM_CATALOGHI_DEAGOSTINI",
    "Type": "PROCEDURE",
    "ReturnType": null,
-   "Body": "BEGIN\r\n\r\n  DECLARE NewKey INT;\r\n  DECLARE KeyMateria INT;\r\n  DECLARE KeyEditore INT;\r\n\r\n  SELECT MAX(CHIAVE)\r\n    FROM materie_insegnamento \r\n\tWHERE UPPER(DESCRIZIONE) = MateriaTitolo \r\n\t INTO KeyMateria;\r\n  \r\n  IF KeyMateria IS NULL THEN\r\n\t  UPDATE gen_key SET CHIAVE = CHIAVE + 1;\r\n\t  SELECT MAX(CHIAVE) FROM gen_key INTO KeyMateria; \r\n     INSERT INTO materie_insegnamento(CHIAVE,DESCRIZIONE) VALUES (KeyMateria,MateriaTitolo);\r\n  END IF;\r\n  \r\n  SELECT MAX(CHIAVE)\r\n    FROM  case_editrici \r\n   WHERE UPPER(DESCRIZIONE) = EditoreTitolo  \r\n    INTO KeyEditore;\r\n  \r\n  IF KeyEditore IS NULL THEN\r\n     UPDATE gen_key SET CHIAVE = CHIAVE + 1;\r\n     SELECT MAX(CHIAVE) FROM gen_key INTO KeyEditore; \r\n     INSERT INTO case_editrici(CHIAVE,DESCRIZIONE) VALUES (KeyEditore,EditoreTitolo);\r\n  END IF;\r\n  \r\n  IF (SELECT count(*) FROM titoli WHERE CODICE_ISBN = CodiceTitolo) > 0 THEN\r\n      UPDATE titoli \r\n\t\t   SET TITOLO = TitoloTitolo, EDITORE = EditoreTitolo, PREZZO = PrezzoTitolo, VOLUME = VolumeTitolo \r\n\t\t WHERE CODICE_ISBN = CodiceTitolo;\r\n  ELSE\r\n      UPDATE gen_key SET CHIAVE = CHIAVE + 1;\r\n      SELECT MAX(CHIAVE) FROM gen_key INTO NewKey; \r\n      INSERT INTO titoli (CHIAVE,CODICE_ISBN,TITOLO,SOTTOTITOLO,AUTORI,EDITORE,MATERIA,VOLUME,PREZZO) VALUES (NewKey,CodiceTitolo,TitoloTitolo,null,AutoreTitolo,EditoreTitolo,KeyMateria,VolumeTitolo,PrezzoTitolo);\r\n  END IF;\r\n\t  \r\nEND",
+   "Body": "BEGIN\r\n\r\n  DECLARE NewKey INT;\r\n  DECLARE KeyMateria INT;\r\n  DECLARE KeyEditore INT;\r\n\r\n  SELECT MAX(CHIAVE)\r\n    FROM materie_insegnamento \r\n\tWHERE UPPER(DESCRIZIONE) = MateriaTitolo \r\n\t INTO KeyMateria;\r\n  \r\n  IF KeyMateria IS NULL THEN\r\n\t  UPDATE gen_key SET CHIAVE = CHIAVE + 1;\r\n\t  SELECT MAX(CHIAVE) FROM gen_key INTO KeyMateria; \r\n     INSERT INTO materie_insegnamento(CHIAVE,DESCRIZIONE) VALUES (KeyMateria,MateriaTitolo);\r\n  END IF;\r\n  \r\n  SELECT MAX(CHIAVE)\r\n    FROM  case_editrici \r\n   WHERE UPPER(DESCRIZIONE) = EditoreTitolo  \r\n    INTO KeyEditore;\r\n  \r\n  IF KeyEditore IS NULL THEN\r\n     UPDATE gen_key SET CHIAVE = CHIAVE + 1;\r\n     SELECT MAX(CHIAVE) FROM gen_key INTO KeyEditore; \r\n     INSERT INTO case_editrici(CHIAVE,DESCRIZIONE) VALUES (KeyEditore,EditoreTitolo);\r\n  END IF;\r\n  \r\n  IF (SELECT count(*) FROM titoli WHERE CODICE_ISBN = CodiceTitolo) > 0 THEN\r\n      UPDATE titoli \r\n\t\t   SET TITOLO = TitoloTitolo, EDITORE = EditoreTitolo, PREZZO = PrezzoTitolo, VOLUME = VolumeTitolo \r\n\t\t WHERE CODICE_ISBN = CodiceTitolo;\r\n  ELSE\r\n      UPDATE gen_key SET CHIAVE = CHIAVE + 1;\r\n      SELECT MAX(CHIAVE) FROM gen_key INTO NewKey; \r\n      INSERT INTO titoli (CHIAVE,CODICE_ISBN,TITOLO,AUTORI,EDITORE,MATERIA,VOLUME,PREZZO) VALUES (NewKey,CodiceTitolo,TitoloTitolo,AutoreTitolo,EditoreTitolo,KeyMateria,VolumeTitolo,PrezzoTitolo);\r\n  END IF;\r\n\t  \r\nEND",
    "Parametri": [
     {
      "Nome": "CodiceTitolo",
@@ -3044,6 +3041,19 @@
    "Parametri": [
     {
      "Nome": "ChiaveEditore",
+     "Mode": "IN",
+     "Type": "int(11)"
+    }
+   ]
+  },
+  {
+   "Nome": "DELETE_ALL_PRENOTATI",
+   "Type": "PROCEDURE",
+   "ReturnType": null,
+   "Body": "BEGIN\r\n\r\n  DECLARE CountTitoli INT;\r\n\r\n  DELETE \r\n    FROM dettaglio_spedizioni \r\n\tWHERE dettaglio_spedizioni.SPEDIZIONE = ChiaveSpedizione \r\n\t  AND dettaglio_spedizioni.STATO = 'P'; \r\n  \r\n  SELECT COUNT(*) INTO CountTitoli\r\n    FROM dettaglio_spedizioni \r\n\tWHERE dettaglio_spedizioni.SPEDIZIONE = ChiaveSpedizione;\r\n\t\r\n\tIF CountTitoli = 0 THEN\r\n\t   DELETE FROM spedizioni WHERE CHIAVE = ChiaveSpedizione;\r\n\tEND IF;\r\n\r\nEND",
+   "Parametri": [
+    {
+     "Nome": "ChiaveSpedizione",
      "Mode": "IN",
      "Type": "int(11)"
     }
@@ -3402,7 +3412,7 @@
    "Nome": "UPDATE_TITOLI_LOG_MAGAZZINI",
    "Type": "PROCEDURE",
    "ReturnType": null,
-   "Body": "BEGIN\r\n \r\n  DECLARE OldQuantita INT;\r\n  DECLARE OldQuantitaVol INT;\r\n  \r\n  SELECT titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL \r\n    FROM titoli \r\n\tWHERE CHIAVE=ChiaveTitolo \r\n\t INTO OldQuantita,OldQuantitaVol;\r\n  \r\n  UPDATE titoli SET CODICE_ISBN=Codice,TITOLO=Titolo,SOTTOTITOLO=Sottotitolo,MATERIA=Materia,AUTORI=Autori,EDITORE=Editore,VOLUME=Volume,POS_MAGAZZINO=PosMgzn,PREZZO=Prezzo,QUANTITA_MGZN=QuantitaMgzn,QUANTITA_MGZN_VOL=QuantitaMgznVol,PRENOTAZ_NOVITA=PrenotazNovita \r\n   WHERE CHIAVE=ChiaveTitolo;\r\n  IF QuantitaMgzn <> 0 THEN\r\n    INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE) VALUES (NOW(),ChiaveTitolo,QuantitaMgzn - OldQuantita,'Modificata quantita magazzino da titoli');\r\n  END IF;\r\n  IF QuantitaMgznVol <> 0 THEN\r\n    INSERT INTO movimenti_magazzino_volante (DATA,TITOLO,QUANTITA,DESCRIZIONE) VALUES (NOW(),ChiaveTitolo,QuantitaMgznVol - OldQuantitaVol,'Modificata quantita magazzino volante da titoli');\r\n  END IF;\r\nEND",
+   "Body": "BEGIN\r\n \r\n  DECLARE OldQuantita INT;\r\n  DECLARE OldQuantitaVol INT;\r\n  \r\n  SELECT titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL \r\n    FROM titoli \r\n\tWHERE CHIAVE=ChiaveTitolo \r\n\t INTO OldQuantita,OldQuantitaVol;\r\n  \r\n  UPDATE titoli SET CODICE_ISBN=Codice,TITOLO=Titolo,MATERIA=Materia,AUTORI=Autori,EDITORE=Editore,VOLUME=Volume,POS_MAGAZZINO=PosMgzn,PREZZO=Prezzo,QUANTITA_MGZN=QuantitaMgzn,QUANTITA_MGZN_VOL=QuantitaMgznVol,PRENOTAZ_NOVITA=PrenotazNovita \r\n   WHERE CHIAVE=ChiaveTitolo;\r\n  IF QuantitaMgzn <> 0 THEN\r\n    INSERT INTO movimenti_magazzino (DATA,TITOLO,QUANTITA,DESCRIZIONE) VALUES (NOW(),ChiaveTitolo,QuantitaMgzn - OldQuantita,'Modificata quantita magazzino da titoli');\r\n  END IF;\r\n  IF QuantitaMgznVol <> 0 THEN\r\n    INSERT INTO movimenti_magazzino_volante (DATA,TITOLO,QUANTITA,DESCRIZIONE) VALUES (NOW(),ChiaveTitolo,QuantitaMgznVol - OldQuantitaVol,'Modificata quantita magazzino volante da titoli');\r\n  END IF;\r\nEND",
    "Parametri": [
     {
      "Nome": "ChiaveTitolo",
@@ -3416,11 +3426,6 @@
     },
     {
      "Nome": "Titolo",
-     "Mode": "IN",
-     "Type": "varchar(255)"
-    },
-    {
-     "Nome": "Sottotitolo",
      "Mode": "IN",
      "Type": "varchar(255)"
     },
@@ -3493,6 +3498,10 @@
   {
    "Campo": "POSIZIONE",
    "Tabella": "docenti_disponibilita"
+  },
+  {
+   "Campo": "SOTTOTITOLO",
+   "Tabella": "titoli"
   }
  ],
  "__CommentTabelleDaEliminare": "Vettore di stringhe con i nomi delle tabelle",

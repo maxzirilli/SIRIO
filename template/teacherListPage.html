@@ -21,14 +21,14 @@
         </md-select>
       </md-input-container>
       
-      <input type="checkbox" ng-model="CoordMateriaFiltro" ng-change="GridOptions.query.page = 1" style="margin-left:5px;margin-right:2px;margin-top:30px;width:2%;">
+      <input type="checkbox" ng-model="CoordMateriaFiltro" ng-change="GridOptions.query.page = 1" style="margin-left:10px;margin-right:2px;margin-top:0px;width:20px;">
       <label style="margin-left:5px;margin-right:2px;margin-top:27px;">COORDINATORE DI MATERIA</label> 
     </div>
     
     <div layout="row" style="margin-top:0px;">    
 
       <img src="img/printPDF.png" ng-show="IstitutoFiltrato != -1 && searchTextIstituto != ''" style="margin-top:15px;margin-right:10px;width:3%;height:3%;" title="LISTA DOCENTI" ng-click="CreaPdfListaDocenti(IstitutoFiltrato)">
-      <img src="img/adoption.png" ng-show="IstitutoFiltrato != -1 && searchTextIstituto != ''" style="margin-top:15px;margin-right:10px;width:3%;height:3%;" title="ADOZIONI ISTITUTO" ng-click="VisualizzaAdozioni(IstitutoFiltrato)">
+      <img src="img/adoption.png" ng-show="IstitutoFiltrato != -1 && searchTextIstituto != ''" style="margin-top:15px;margin-right:10px;width:3%;height:3%;" title="ADOZIONI ISTITUTO" ng-click="VisualizzaAdozioni(IstitutoFiltrato,IstitutoFiltratoNome)">
 
       <md-input-container class="containerSelect" style="width:30%;margin-right:10px;">
         <label>ISTITUTO</label>
@@ -131,11 +131,11 @@
   </div>
     
   <div ng-show="EditingOn && !MailOn">
-      <form name="docenteEditForm" layout="column" style="width:100%" ng-submit="ConfermaDocente()">
+      <form name="docenteEditForm" layout="column" style="width:100%" >
            <div layout="row">
              <h2>DOCENTE</h2>
              <div layout="row" style="width:100%;" layout-align="end start">
-               <md-button class="md-raised md-accent" style="font-weight:bold;" type="submit">CONFERMA</md-button> <!--ng-disabled="docenteEditForm.$invalid"-->
+               <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ConfermaDocente()" ng-disabled="DocenteInEditing.RagioneSociale == ''" >CONFERMA</md-button> <!--ng-disabled="docenteEditForm.$invalid"-->
                <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="OnAnnullaDocenteClicked()">ANNULLA</md-button>
              </div>
            </div>
@@ -146,10 +146,7 @@
                          <label>TITOLO</label><input ng-model="DocenteInEditing.Titolo" type="text" name="Titolo">
                        </md-input-container>        
                        <md-input-container style="width:20%;" ng-show="DocenteInEditing.Chiave != -1 || (IstitutoForNewDocente == -1 && DocenteInEditing.Chiave == -1) || IstitutoFiltro == -1 || searchTextIstituto == ''">
-                         <label>COGNOME NOME</label><input ng-model="DocenteInEditing.RagioneSociale" type="text" name="RagioneSociale" > <!--required
-                         <div ng-messages="docenteEditForm.RagioneSociale.$error" multiple md-auto-hide="true">
-                           <div ng-message="required">Inserire la ragione sociale del docente</div>
-                         </div>-->
+                         <label>COGNOME NOME</label><input ng-model="DocenteInEditing.RagioneSociale" type="text" name="RagioneSociale" >
                        </md-input-container>
 
                        <md-input-container class="containerSelect" style="margin-left:5px;width:30%;padding-top:0px;" ng-show="DocenteInEditing.Chiave == -1 && IstitutoFiltro != -1 && searchTextIstituto != ''">
@@ -216,33 +213,90 @@
                      </div>
                      
                      <div layout="row">
-                     <input type="checkbox" ng-model="DocenteInEditing.CoordMateria_1" title="COORDINATORE MATERIA 1" ng-disabled="DocenteInEditing.Materia_1 == -1" style="margin-left:2px;margin-right:2px;margin-top:30px;width:2%;">
-                     <md-input-container class="containerSelect" style="width:27%;"><label>MATERIA 1</label>
+                     <input type="checkbox" ng-model="DocenteInEditing.CoordMateria_1" title="COORDINATORE MATERIA 1" ng-disabled="DocenteInEditing.Materia_1 == -1" style="margin-left:2px;margin-right:10px;width:20px;">
+                     <!--<md-input-container class="containerSelect" style="width:27%;"><label>MATERIA 1</label>
                        <md-select ng-model="DocenteInEditing.Materia_1" ng-change="DocenteInEditing.CoordMateria_1 = false" class="mdb-select" type="text" name="Materia_1">
                        <md-optgroup>
                          <md-option ng-value="-1">-</md-option>  
                          <md-option ng-repeat="materia in ListaMateriePerDoc" ng-value="materia.Chiave">{{materia.Nome}}</md-option>
                        </md-optgroup>
                        </md-select>
-                     </md-input-container>
-                     <input type="checkbox" ng-model="DocenteInEditing.CoordMateria_2" title="COORDINATORE MATERIA 2" ng-disabled="DocenteInEditing.Materia_2 == -1" style="margin-left:2px;margin-right:2px;margin-top:30px;width:2%;">                                     
-                     <md-input-container class="containerSelect" style="width:27%;"><label>MATERIA 2</label>
+                     </md-input-container>-->
+                          <md-input-container class="containerSelect" style="width:30%;margin-right: 20px;">
+                            <label>MATERIA 1</label>
+                            <md-autocomplete
+                                        md-search-text-change="searchTextChangeMat1(searchTextMat1)"
+                                        md-input-name="MateriaEdit1"
+                                        md-no-cache="true"
+                                        md-selected-item-change="selectedItemChangeMateria1(item1)"
+                                        md-search-text="searchTextMat1"
+                                        md-items="item1 in queryMateria1(searchTextMat1)"
+                                        md-item-text="item1.Nome"
+                                        md-require-match="true"
+                                        md-clear-button="true">
+                            <md-item-template>
+                              <span md-highlight-text="searchTextMat1">{{item1.Nome}}</span>
+                            </md-item-template>
+                            <md-not-found>
+                              Nessuna corrispondenza
+                            </md-not-found>
+                         </md-input-container>
+                     <input type="checkbox" ng-model="DocenteInEditing.CoordMateria_2" title="COORDINATORE MATERIA 2" ng-disabled="DocenteInEditing.Materia_2 == -1" style="margin-left:2px;margin-right:10px;width:20px;">                                     
+                          <md-input-container class="containerSelect" style="width:30%;margin-right: 20px;">
+                            <label>MATERIA 2</label>
+                            <md-autocomplete
+                                        md-search-text-change="searchTextChangeMat2(searchTextMat2)"
+                                        md-input-name="MateriaEdit2"
+                                        md-no-cache="true"
+                                        md-selected-item-change="selectedItemChangeMateria2(item2)"
+                                        md-search-text="searchTextMat2"
+                                        md-items="item2 in queryMateria2(searchTextMat2)"
+                                        md-item-text="item2.Nome"
+                                        md-require-match="true"
+                                        md-clear-button="true">
+                            <md-item-template>
+                              <span md-highlight-text="searchTextMat2">{{item2.Nome}}</span>
+                            </md-item-template>
+                            <md-not-found>
+                              Nessuna corrispondenza
+                            </md-not-found>
+                         </md-input-container>
+                     <!--<md-input-container class="containerSelect" style="width:27%;"><label>MATERIA 2</label>
                        <md-select ng-model="DocenteInEditing.Materia_2" ng-change="DocenteInEditing.CoordMateria_2 = false" class="mdb-select" type="text" name="Materia_2">
                        <md-optgroup>
                          <md-option ng-value="-1">-</md-option>  
                          <md-option ng-repeat="materia in ListaMateriePerDoc" ng-value="materia.Chiave">{{materia.Nome}}</md-option>
                        </md-optgroup>
                        </md-select>
-                     </md-input-container>
-                     <input type="checkbox" ng-model="DocenteInEditing.CoordMateria_3" title="COORDINATORE MATERIA 3" ng-disabled="DocenteInEditing.Materia_3 == -1" style="margin-left:2px;margin-right:2px;margin-top:30px;width:2%;">                 
-                     <md-input-container class="containerSelect" style="width:27%;"><label>MATERIA 3</label>
+                     </md-input-container>-->
+                     <input type="checkbox" ng-model="DocenteInEditing.CoordMateria_3" title="COORDINATORE MATERIA 3" ng-disabled="DocenteInEditing.Materia_3 == -1" style="margin-left:2px;margin-right:10px;width:20px;">                 
+                         <md-input-container class="containerSelect" style="width:30%;margin-right: 20px;">
+                            <label>MATERIA 1</label>
+                            <md-autocomplete
+                                        md-search-text-change="searchTextChangeMat3(searchTextMat3)"
+                                        md-input-name="MateriaEdit3"
+                                        md-no-cache="true"
+                                        md-selected-item-change="selectedItemChangeMateria3(item3)"
+                                        md-search-text="searchTextMat3"
+                                        md-items="item3 in queryMateria3(searchTextMat3)"
+                                        md-item-text="item3.Nome"
+                                        md-require-match="true"
+                                        md-clear-button="true">
+                            <md-item-template>
+                              <span md-highlight-text="searchTextMat3">{{item3.Nome}}</span>
+                            </md-item-template>
+                            <md-not-found>
+                              Nessuna corrispondenza
+                            </md-not-found>
+                         </md-input-container>
+                     <!--<md-input-container class="containerSelect" style="width:27%;"><label>MATERIA 3</label>
                        <md-select ng-model="DocenteInEditing.Materia_3" ng-change="DocenteInEditing.CoordMateria_3 = false" class="mdb-select" type="text" name="Materia_3">
                        <md-optgroup>
                          <md-option ng-value="-1">-</md-option>  
                          <md-option ng-repeat="materia in ListaMateriePerDoc" ng-value="materia.Chiave">{{materia.Nome}}</md-option>
                        </md-optgroup>
                        </md-select>
-                     </md-input-container> 
+                     </md-input-container>-->
                      </div>
                      <br>
                     

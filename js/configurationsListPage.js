@@ -230,6 +230,7 @@ $scope.GridOptions_8 = {
                                 Descrizione      : SubjectInfoList[i].DESCRIZIONE,
                                 Nascosta         : SubjectInfoList[i].NASCOSTA == 1 ? true : false,
                                 PerDocenti       : SubjectInfoList[i].PER_DOCENTI == 'T' ? true : false,
+                                FromMiur         : SubjectInfoList[i].FROM_MIUR == 'T' ? true : false,
                                 GruppiIstOld     : [],
                                 GruppiIstStringa : []
                               }

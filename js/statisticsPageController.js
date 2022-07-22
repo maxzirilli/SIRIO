@@ -96,6 +96,28 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
       $scope.CasaEditriceFiltro = itemEd.Chiave;
     else $scope.CasaEditriceFiltro = -1;
   }  
+
+   $scope.searchTextChangeMat = function(text)
+  {
+    if(!text)
+       $scope.selectedItemChangeMateria(undefined)
+  }
+
+  $scope.queryMateria = function (searchTextMat) 
+  {
+    searchTextMat = searchTextMat.toUpperCase();
+    return ($scope.ListaMaterie.grep(function (Elemento) 
+    {
+      return (Elemento.Materia.toUpperCase().indexOf(searchTextMat) != -1);
+    }));
+  }
+
+  $scope.selectedItemChangeMateria = function (itemMat) 
+  {
+    if(itemMat != undefined) 
+       $scope.MateriaFiltro     = itemMat.Chiave;
+    else $scope.MateriaFiltro = -1;
+  }
   
   $scope.queryIstituto = function(searchTextIstituto)
   {
@@ -161,7 +183,7 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
   {
     SystemInformation.GetSQL('Subject',{}, function(Results)
     {
-      ListaMaterieTmp = SystemInformation.FindResults(Results,'SubjectInfoList');
+      ListaMaterieTmp = SystemInformation.FindResults(Results,'SubjectInfoListMiur');
       if (ListaMaterieTmp != undefined) 
       {
         for(let i = 0; i < ListaMaterieTmp.length; i++)
@@ -173,7 +195,7 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
         $scope.GetGruppiEditoriali();
       }
       else SystemInformation.ApplyOnError('Modello materie non conforme','');     
-    });
+    },'SelectAllMiur');
   }
 
   $scope.GetNrAlunni = function ()

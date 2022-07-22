@@ -6,6 +6,12 @@
 			"SQL" : "SELECT * FROM materie_insegnamento WHERE NASCOSTA <> 1 ORDER BY materie_insegnamento.DESCRIZIONE\n"
 		}
 	],
+ 	"SelectAllMiur" : [
+		{
+			"Name" : "SubjectInfoListMiur",
+			"SQL" : "SELECT * FROM materie_insegnamento WHERE NASCOSTA <> 1 AND FROM_MIUR = 'T' ORDER BY materie_insegnamento.DESCRIZIONE\n"
+		}
+ ],
 	"SelectAllSQL" : [
 		{
 			"Name" : "SubjectInfoListAll",

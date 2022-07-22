@@ -126,14 +126,27 @@
           Nessuna corrispondenza
         </md-not-found>
       </md-input-container>
-      <md-input-container class="containerSelect" style="width:20%;float:left;margin-right:10px;"><label>MATERIA</label>
-        <md-select ng-model="MateriaFiltro" ng-change="GridOptions.query.page = 1" placeholder="MATERIA" class="mdb-select" type="text" name="MateriaFiltro">
-        <md-optgroup>
-          <md-option ng-value="-1">QUALSIASI</md-option>  
-          <md-option ng-repeat="materia in ListaMaterie" ng-value="materia.Chiave">{{materia.Materia}}</md-option>
-        </md-optgroup>
-        </md-select>
-      </md-input-container>
+
+      <md-input-container class="containerSelect" style="width:30%;">
+        <label>MATERIA</label>
+        <md-autocomplete 
+                    md-search-text-change="searchTextChangeMat(searchTextMat)"
+                    md-input-name="Materia"
+                    md-no-cache="true"
+                    md-selected-item-change="selectedItemChangeMateria(item)"
+                    md-search-text="searchTextMat"
+                    md-items="item in queryMateria(searchTextMat)"
+                    md-item-text="item.Materia"
+                    md-require-match="true"
+                    md-clear-button="true">
+        <md-item-template>
+          <span md-highlight-text="searchText">{{item.Materia}}</span>
+        </md-item-template>
+        <md-not-found>
+          Nessuna corrispondenza
+        </md-not-found>
+     </md-input-container>
+
     </div>
     <div layout="row" ng-show="StatisticaPresente" style="margin-bottom: 20px;">
       <input type="checkbox" ng-model="NuoveAdozioniFiltro" style="margin-left:0px;">SOLO NUOVE ADOZIONI

@@ -25,6 +25,7 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
   this.VDocInventory         = 'VERSIONE DOCUMENTO 1.1 DEL 13/10/2020';
   this.VDocCarico            = 'VERSIONE DOCUMENTO 2.2 DEL 11/11/2020';
   this.VDocListaDocIst       = 'VERSIONE DOCUMENTO 2.4 DEL 04/02/2022';
+  this.VDocInstituteAdoption = 'VERSIONE DOCUMENTO 1.0 DEL 22/07/2022';
 
   this.IsAdministrator = function ()
   {
@@ -215,6 +216,7 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
              {
                 Self.UserInformation = { 
                                          Ruolo          : Result[0].ROLE, 
+                                         Mail           : Result[0].EMAIL,
                                          Chiave         : Result[0].CHIAVE,
                                          OrdinamentoDoc : Result[0].ORDINAMENTO_DOC, 
                                          TipoStampa     : Result[0].TIPO_STAMPA, 

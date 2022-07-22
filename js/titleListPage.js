@@ -102,6 +102,53 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
        return(Elemento.Istituto.toUpperCase().indexOf(searchTextIstituto) != -1 || Elemento.CodiceIstituto.toUpperCase().indexOf(searchTextIstituto) != -1);
      }));
   }
+
+  $scope.searchTextChangeMat = function(text)
+  {
+    if(!text)
+       $scope.selectedItemChangeMateria(undefined)
+  }
+
+  $scope.queryMateria = function (searchTextMat) 
+  {
+    searchTextMat = searchTextMat.toUpperCase();
+    return ($scope.ListaMaterie.grep(function (Elemento) 
+    {
+      return (Elemento.Materia.toUpperCase().indexOf(searchTextMat) != -1);
+    }));
+  }
+
+  $scope.selectedItemChangeMateria = function (itemMat) 
+  {
+    if(itemMat != undefined) 
+       $scope.MateriaFiltro     = itemMat.Chiave;
+    else $scope.MateriaFiltro = -1;
+  }
+
+  $scope.searchTextChangeMatEdit = function(text)
+  {
+    if(!text)
+    {
+       $scope.selectedItemChangeMateriaEdit(undefined);
+       $scope.TitoloInEditing.Materia = -1;
+    }
+  }
+
+  $scope.queryMateriaEdit = function (searchTextMatEdit) 
+  {
+    searchTextMat = searchTextMatEdit.toUpperCase();
+    return ($scope.ListaMaterie.grep(function (Elemento) 
+    {
+      return (Elemento.Materia.toUpperCase().indexOf(searchTextMat) != -1);
+    }));
+  }
+
+  $scope.selectedItemChangeMateriaEdit = function (itemMat) 
+  {
+    if(itemMat != undefined) 
+       $scope.TitoloInEditing.Materia = itemMat.Chiave;
+    else $scope.TitoloInEditing.Materia  = -1;
+  }
   
   $scope.selectedItemChangeIstituto = function(itemIstituto)
   {
@@ -272,7 +319,6 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
         $scope.TitoloInEditing.PrenotazNovita   = TitoloDettaglio[0].PRENOTAZ_NOVITA   == undefined ? 0 : parseInt(TitoloDettaglio[0].PRENOTAZ_NOVITA);
         $scope.TitoloInEditing.Codice           = TitoloDettaglio[0].CODICE_ISBN       == null ? '' : TitoloDettaglio[0].CODICE_ISBN;
         $scope.TitoloInEditing.Titolo           = TitoloDettaglio[0].TITOLO            == null ? '' : TitoloDettaglio[0].TITOLO;
-        $scope.TitoloInEditing.Sottotitolo      = TitoloDettaglio[0].SOTTOTITOLO       == null ? '' : TitoloDettaglio[0].SOTTOTITOLO;
         $scope.TitoloInEditing.Materia          = TitoloDettaglio[0].MATERIA           == null ? -1 : TitoloDettaglio[0].MATERIA;
         $scope.TitoloInEditing.Autori           = TitoloDettaglio[0].AUTORI            == null ? '' : TitoloDettaglio[0].AUTORI;
         $scope.TitoloInEditing.Editore          = TitoloDettaglio[0].EDITORE           == null ? '' : TitoloDettaglio[0].EDITORE;
@@ -298,7 +344,17 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
           }
            
         if($scope.TitoloInEditing.ListaIstitutiTit.length > 0) 
-           $scope.IstitutoVisualizzato = $scope.TitoloInEditing.ListaIstitutiTit[0].CHIAVE              
+           $scope.IstitutoVisualizzato = $scope.TitoloInEditing.ListaIstitutiTit[0].CHIAVE   
+
+        for(let i = 0; i < $scope.ListaMaterie.length; i ++)
+        {
+            if($scope.ListaMaterie[i].Chiave == $scope.TitoloInEditing.Materia)
+            {
+               $scope.searchTextMatEdit = $scope.ListaMaterie[i].Materia;
+               $scope.queryMateriaEdit($scope.searchTextMatEdit);
+               $scope.selectedItemChangeMateriaEdit($scope.ListaMaterie[i]);
+            }
+        }           
       }       
       else SystemInformation.ApplyOnError('Modello titolo non conforme',''); 
     },'SQLDettaglio'); 
@@ -311,7 +367,6 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
                                Chiave           : -1,
                                Codice           : '',
                                Titolo           : '',
-                               Sottotitolo      : '',
                                Materia          : -1,
                                Autori           : '',
                                Editore          : '',
@@ -356,8 +411,7 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
                            CHIAVE            : $scope.TitoloInEditing.Chiave,
                            CODICE_ISBN       : $scope.TitoloInEditing.Codice.xSQL(),
                            TITOLO            : $scope.TitoloInEditing.Titolo == '' ? null : $scope.TitoloInEditing.Titolo.xSQL(),
-                           SOTTOTITOLO       : $scope.TitoloInEditing.Sottotitolo == '' ? null : $scope.TitoloInEditing.Sottotitolo.xSQL(),
-                           MATERIA           : $scope.TitoloInEditing.Materia == -1 ? null : $scope.TitoloInEditing.Materia.xSQL(),
+                           MATERIA           : $scope.TitoloInEditing.Materia == -1 ? null : $scope.TitoloInEditing.Materia,
                            AUTORI            : $scope.TitoloInEditing.Autori == '' ? null : $scope.TitoloInEditing.Autori.xSQL(),
                            EDITORE           : $scope.TitoloInEditing.Editore == '' ? null : $scope.TitoloInEditing.Editore.xSQL(),
                            VOLUME            : $scope.TitoloInEditing.Volume,
@@ -383,8 +437,7 @@ SIRIOApp.controller("titleListPageController",['$scope','SystemInformation','$st
                         ChiaveTitolo      : $scope.TitoloInEditing.Chiave,
                         Codice            : $scope.TitoloInEditing.Codice.xSQL(),
                         Titolo            : $scope.TitoloInEditing.Titolo == '' ? null : $scope.TitoloInEditing.Titolo.xSQL(),
-                        Sottotitolo       : $scope.TitoloInEditing.Sottotitolo == '' ? null : $scope.TitoloInEditing.Sottotitolo.xSQL(),
-                        Materia           : $scope.TitoloInEditing.Materia  == -1 ? null : $scope.TitoloInEditing.Materia.xSQL(),
+                        Materia           : $scope.TitoloInEditing.Materia  == -1 ? null : $scope.TitoloInEditing.Materia,
                         Autori            : $scope.TitoloInEditing.Autori == '' ? null : $scope.TitoloInEditing.Autori.xSQL(),
                         Editore           : $scope.TitoloInEditing.Editore == '' ? null : $scope.TitoloInEditing.Editore.xSQL(),
                         Volume            : $scope.TitoloInEditing.Volume,

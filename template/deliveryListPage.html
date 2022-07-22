@@ -25,9 +25,12 @@
       </md-select>
     </md-input-container>
     
-    <input type="checkbox" ng-change="GridOptions.query.page = 1" ng-model="DaSpedireFiltro" style="margin-left:60px;">DA SPEDIRE
-    <input type="checkbox" ng-change="GridOptions.query.page = 1" ng-model="PrenotataFiltro" style="margin-left:20px;">PRENOTATA
-    <input type="checkbox" ng-change="GridOptions.query.page = 1"ng-model="ConsegnataFiltro" style="margin-left:20px;">CONSEGNATA
+    <input type="checkbox" ng-change="GridOptions.query.page = 1" ng-model="DaSpedireFiltro" style="margin-left:60px;">
+    <label style="margin-left:5px;margin-right:2px;margin-top:27px;">DA SPEDIRE</label> 
+    <input type="checkbox" ng-change="GridOptions.query.page = 1" ng-model="PrenotataFiltro" style="margin-left:20px;">
+    <label style="margin-left:5px;margin-right:2px;margin-top:27px;">PRENOTATA</label> 
+    <input type="checkbox" ng-change="GridOptions.query.page = 1"ng-model="ConsegnataFiltro" style="margin-left:20px;">
+    <label style="margin-left:5px;margin-right:2px;margin-top:27px;">CONSEGNATA</label> 
 
   </div>   
   <br>
@@ -109,6 +112,7 @@
     <tr>
       <th></th>
       <th></th>
+      <th></th>
       <th>DA SPEDIRE</th>
       <th>DATA</th>
       <th>PRESSO</th>
@@ -116,6 +120,7 @@
     </tr>
     <tr ng-repeat="Spedizione in ListaSpedizioni | SpedizioneByFiltro : ProvinciaFiltro : PrenotataFiltro : DaSpedireFiltro : ConsegnataFiltro : $parent.PromotoreFiltro : IstitutoFiltro : DocenteFiltro : TitoloFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Spedizione.Chiave}}>
       <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA SPEDIZIONE" ng-click="EliminaSpedizione(Spedizione)"></td> 
+      <td><img ng-if="GetIfPrenotati(Spedizione)" src="img/deleteBooked.png" style="width:30px;height:auto;" title="ELIMINA PRENOTATI" ng-click="EliminaPrenotati(Spedizione)"></td> 
       <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA SPEDIZIONE" ng-click="ModificaSpedizione(Spedizione.Chiave,Spedizione.Docente)"></td>
       <td ng-if="Spedizione.Spedibile && Spedizione.NrPrenotate > 0"><img src="img/toSend.png" style="width:30px;height:auto;" title="SPEDIRE TITOLI DISPONIBILI" ng-click="PassaADaSpedireDisponibili(Spedizione.Chiave)"></td>
       <td ng-if="!(Spedizione.Spedibile) && Spedizione.NrPrenotate > 0" title="NESSUN TITOLO TRA I PRENOTATI E' DISPONIBILE"><img src="img/notToSend.png" style="width:30px;height:auto;" class="off"></td>      

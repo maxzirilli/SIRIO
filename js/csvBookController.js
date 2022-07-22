@@ -49,8 +49,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog)
                                         Query     : 'UpdateDatabaseBook',
                                         Parametri : {                                                      
                                                       CodiceTitolo            : RecordTitolo[6].xSQL(),
-                                                      TitoloTitolo            : RecordTitolo[8].xSQL(),                                                      
-                                                      SottotitoloTitolo       : RecordTitolo[9].xSQL() == 'ND' ? '' : RecordTitolo[9].xSQL(),
+                                                      TitoloTitolo            : RecordTitolo[8].xSQL() + (RecordTitolo[9].xSQL() == 'ND' ? '' : ', ' + RecordTitolo[9].xSQL()),                                                      
                                                       DescrizioneMateria      : RecordTitolo[5].xSQL(),
                                                       AutoriTitolo            : RecordTitolo[7].xSQL(),
                                                       EditoreTitolo           : RecordTitolo[11].xSQL() == 'ND' ? '' : RecordTitolo[11].xSQL(),                                                      

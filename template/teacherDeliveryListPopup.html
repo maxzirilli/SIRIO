@@ -19,12 +19,14 @@
           <table style="text-align:center;width:1000px;" md-row-select="GridOptions3.rowSelection" multiple="{{GridOptions3.multiSelect}}" ng-if="ListaSpedizioniDoc.length > 0">  
           <tr>
             <th></th>
-            <th></th>       
+            <th></th>  
+            <th></th>     
             <th>DATA</th>
             <th>TITOLI (ISBN / TITOLO / STATO)</th>
           </tr>  
           <tr ng-repeat="Spedizione in ListaSpedizioniDoc | limitTo : GridOptions.query.limit : (GridOptions3.query.page - 1) * GridOptions3.query.limit" id={{Spedizione.CHIAVE}}>
             <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA SPEDIZIONE" ng-click="EliminaSpedizione(Spedizione)"></td> 
+            <td><img ng-if="GetIfPrenotati(Spedizione)" src="img/deleteBooked.png" style="width:30px;height:auto;" title="ELIMINA PRENOTATI" ng-click="EliminaPrenotati(Spedizione)"></td> 
             <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA SPEDIZIONE" ng-click="ModificaSpedizione(Spedizione.CHIAVE)"></td>                       
             <td>{{Spedizione.DATA}}</td>
             <td style="text-align:left;" ng-bind-html="GetTitoliSpedizione(Spedizione)"></td>

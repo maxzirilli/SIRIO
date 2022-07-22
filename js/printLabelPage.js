@@ -91,7 +91,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                           limitOptions    : [10, 20, 30]
                         };
 
-  var NuovaStampa = function(ListaSpedizioniToPrint,ListaChiaviSpedizioni,DataSpedizione)
+  var StampaTermica = function(ListaSpedizioniToPrint,ListaChiaviSpedizioni,DataSpedizione)
   {
      SystemInformation.GetSQL('PrintLabel',{ChiaviSpedizioni : ListaChiaviSpedizioni},function(Results)
      {
@@ -825,7 +825,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
             x.document.write(iframe);
             x.document.close();*/
          }
-         else NuovaStampa(ListaSpedizioniToPrint,ListaChiaviSpedizioni,DataSpedizione);
+         else StampaTermica(ListaSpedizioniToPrint,ListaChiaviSpedizioni,DataSpedizione);
      }
      else SystemInformation.ApplyOnError('Modello lista spedizioni non conforme') 
     })
@@ -1233,7 +1233,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
              x.document.write(iframe);
              x.document.close();*/
             }
-            else NuovaStampa(ListaSpedizioniToPrint,ListaChiaviSpedizioni,DataSpedizione);
+            else StampaTermica(ListaSpedizioniToPrint,ListaChiaviSpedizioni,DataSpedizione);
         }
         else SystemInformation.ApplyOnError('Modello lista spedizioni non conforme') 
     })
