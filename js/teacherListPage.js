@@ -586,7 +586,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
            doc.setFontSize(10);
            doc.setFontType('bold');
            doc.text(CoordX, CoordY, ListaAdozFiltrata[i].NomeClasse + ' - ' + ListaAdozFiltrata[i].CombinazioneClasse);
-           doc.text(CoordX, CoordY + 5,'TITOLO / CODICE / EDITORE / MATERIA / PREZZO / GESTITO');
+           doc.text(CoordX, CoordY + 5,'MATERIA / TITOLO / CODICE / EDITORE / PREZZO / GESTITO');
            CoordY += 15;
            doc.setFontSize(8);
            doc.setFontType('normal');
@@ -602,8 +602,8 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
                   CoordY += 10;
                }
 
-               doc.text(CoordX, CoordY, TroncaTitolo(ListaAdozFiltrata[i].ListaTitoliClasse[j].Titolo,80) + ' / ' + ListaAdozFiltrata[i].ListaTitoliClasse[j].Codice + ' / ');
-               doc.text(CoordX, CoordY + 5,ListaAdozFiltrata[i].ListaTitoliClasse[j].Editore + ' / ' + ListaAdozFiltrata[i].ListaTitoliClasse[j].Materia + ' / ' + ListaAdozFiltrata[i].ListaTitoliClasse[j].Prezzo + ' / ' + (ListaAdozFiltrata[i].ListaTitoliClasse[j].IsGestito ? 'SI' : 'NO'));
+               doc.text(CoordX, CoordY, ListaAdozFiltrata[i].ListaTitoliClasse[j].Materia + ' / ' + TroncaTitolo(ListaAdozFiltrata[i].ListaTitoliClasse[j].Titolo,80) + ' / ');
+               doc.text(CoordX, CoordY + 5, ListaAdozFiltrata[i].ListaTitoliClasse[j].Codice + ' / ' + ListaAdozFiltrata[i].ListaTitoliClasse[j].Editore + ' / ' + ListaAdozFiltrata[i].ListaTitoliClasse[j].Prezzo + ' / ' + (ListaAdozFiltrata[i].ListaTitoliClasse[j].IsGestito ? 'SI' : 'NO'));
                CoordY += 12;
            }
         }

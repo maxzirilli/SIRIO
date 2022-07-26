@@ -7,7 +7,7 @@
    </md-toolbar>
 
    <md-dialog-content>
-         <input type="checkbox" ng-model="AdozioniGestite" ng-change="VisualizzaAdozioni(thisIstituto)" style="margin-left:25px;margin-right:2px;margin-top:30px;width:2%;">
+         <input type="checkbox" ng-model="AdozioniGestite" ng-change="VisualizzaAdozioni(thisIstituto,thisIstitutoNome)" style="margin-left:25px;margin-right:2px;margin-top:30px;width:2%;">
          <label style="margin-left:5px;margin-right:2px;margin-top:27px;">ADOZIONI GESTITE</label>  
          <img ng-if="IstitutoListaAdozioni.length > 0" src="img/printPDF.png" style="width:70px;height:auto;float:right;margin-top:20px;margin-right: 20px;" title="STAMPA ADOZIONI" ng-click="CreaPdfListaAdozioni()"></img>    
  
