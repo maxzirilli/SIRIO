@@ -78,6 +78,7 @@
                  <th>COMUNE</th>
                  <th>CAP</th>
                  <th>PROVINCIA</th>
+                 <th>MATERIE</th>
                </tr>  
                <tr ng-repeat="Docente in ListaDocentiSpedizione | limitTo : GridOptions2.query.limit : (GridOptions2.query.page - 1) * GridOptions2.query.limit">
                  <td><img src="img/delete.png" style="width:30px;height:auto;" title="RIMUOVI DOCENTE" ng-click="RimuoviDocenteTabella(Docente)"></td>
@@ -85,7 +86,8 @@
                  <td>{{Docente.IndirizzoDocente}}</td> 
                  <td>{{Docente.ComuneDocente}}</td>
                  <td>{{Docente.CapDocente}}</td>
-                 <td>{{Docente.ProvinciaDocenteNome}}</td>                        
+                 <td>{{Docente.ProvinciaDocenteNome}}</td>    
+                 <td>{{Docente.MaterieDocente}}</td>                      
                </tr>    
              </table>
              <md-table-pagination md-limit="GridOptions2.query.limit" 

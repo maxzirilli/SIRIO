@@ -1179,9 +1179,24 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
 
     for(let i = 0; i < ListaFiltrata.length; i++) 
     {
+       var StringaMaterie = '';
+
+       if(ListaFiltrata[i].DescrMateria1 != '')
+          StringaMaterie += ListaFiltrata[i].DescrMateria1;
+
+       if(ListaFiltrata[i].DescrMateria2 != '')
+          StringaMaterie += ' / ' + ListaFiltrata[i].DescrMateria2;
+
+       if(ListaFiltrata[i].DescrMateria3 != '')
+          StringaMaterie += ' / ' + ListaFiltrata[i].DescrMateria3;
+  
+       if(StringaMaterie == '')
+          StringaMaterie = 'NESSUNA MATERIA';
+   
        var Docente = {
                        "ChiaveDocente": ListaFiltrata[i].Chiave,
                        "NomeDocente": ListaFiltrata[i].RagioneSociale,
+                       "MaterieDocente" : StringaMaterie,
                        "TitoloDocente": ListaFiltrata[i].Titolo,
                        "IndirizzoDocente": ListaFiltrata[i].Indirizzo,
                        "ComuneDocente": ListaFiltrata[i].Comune,
