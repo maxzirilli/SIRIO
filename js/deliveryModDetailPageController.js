@@ -1129,12 +1129,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                    $scope.ListaTitoliToHandle[i].STATO = 'S'
                else $scope.ListaTitoliToHandle[i].STATO = 'P';   
             }
-            else
-            {
-              if($scope.ListaTitoliToHandle[i].QUANTITA <=  $scope.ListaTitoliToHandle[i].QUANTITA_DISP)
-                 $scope.ListaTitoliToHandle[i].STATO = 'S'
-              else $scope.ListaTitoliToHandle[i].STATO = 'P'; 
-            }       
+            else $scope.ListaTitoliToHandle[i].STATO = 'S'
       }
 
       $scope.AnnullaMultipliPopup = function() 
