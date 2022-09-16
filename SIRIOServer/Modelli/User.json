@@ -1,34 +1,39 @@
-{ 
- "SelectSQL" : [
-                 { 
-                   "Name" : "UserInfoList",
-                   "SQL"  : "SELECT CHIAVE,USERNAME,RAGIONE_SOCIALE,EMAIL,ROLE,ELIMINATO,ORDINAMENTO_DOC,TIPO_STAMPA FROM utenti WHERE ELIMINATO <> 1 ORDER BY utenti.USERNAME" 
-                 },
-                 {
-                   "Name" : "MyUserKey",
-                   "SQL"  : "SELECT CHIAVE FROM utenti WHERE CHIAVE = #KeyAccount"
-                 }
-               ],
-
- "SelectStatistica" : [
-                        {
-                          "Name" : "GetUserStatistics",
-                          "SQL"  : "CALL GET_STATISTICA_PROMOTORI(#DataDal,#DataAl)"                       
-                        }
-                      ],
- 
- "EditSQL"  : [   
-                {
-                  "Name" : "InsertUser",
-                  "SQL"  : "INSERT INTO utenti (CHIAVE,USERNAME,RAGIONE_SOCIALE,EMAIL,ROLE,PASSWORD,ORDINAMENTO_DOC,TIPO_STAMPA) VALUES (:NewKey1,#USERNAME,#RAGIONE_SOCIALE,#EMAIL,:ROLE,'',#ORDINAMENTO_DOC,#TIPO_STAMPA)"
-                }, 
-                {
-                  "Name" : "UpdateUser",
-                  "SQL"  : "UPDATE utenti SET USERNAME=#USERNAME,RAGIONE_SOCIALE=#RAGIONE_SOCIALE,EMAIL=#EMAIL,ROLE=:ROLE,ORDINAMENTO_DOC=#ORDINAMENTO_DOC,TIPO_STAMPA=#TIPO_STAMPA WHERE CHIAVE=:CHIAVE"
-                },
-                {
-                  "Name" : "DeleteUser",
-                  "SQL"  : "UPDATE utenti SET ELIMINATO=1 WHERE CHIAVE=:CHIAVE"
-                }
-              ]        
+{
+	"RuoliAbilitati" : "",
+	"SelectSQL" : [
+		{
+			"Name" : "UserInfoList",
+			"SQL" : "SELECT CHIAVE,USERNAME,RAGIONE_SOCIALE,EMAIL,ROLE,ELIMINATO,ORDINAMENTO_DOC,TIPO_STAMPA FROM utenti WHERE ELIMINATO <> 1 ORDER BY utenti.USERNAME\n"
+		},
+		{
+			"Name" : "MyUserKey",
+			"SQL" : "SELECT CHIAVE FROM utenti WHERE CHIAVE = #KeyAccount\n"
+		}
+	],
+	"SelectStatistica" : [
+		{
+			"Name" : "GetUserStatistics",
+			"SQL" : "CALL GET_STATISTICA_PROMOTORI(#DataDal,#DataAl)\n"
+		}
+	],
+	"EditSQL" : [
+		{
+			"Name" : "InsertUser",
+			"SQL" : "INSERT INTO utenti (CHIAVE,USERNAME,RAGIONE_SOCIALE,EMAIL,ROLE,PASSWORD,ORDINAMENTO_DOC,TIPO_STAMPA) VALUES (:NewKey1,#USERNAME,#RAGIONE_SOCIALE,#EMAIL,:ROLE,'',#ORDINAMENTO_DOC,#TIPO_STAMPA)\n"
+		},
+		{
+			"Name" : "UpdateUser",
+			"SQL" : "UPDATE utenti SET USERNAME=#USERNAME,RAGIONE_SOCIALE=#RAGIONE_SOCIALE,EMAIL=#EMAIL,ROLE=:ROLE,ORDINAMENTO_DOC=#ORDINAMENTO_DOC,TIPO_STAMPA=#TIPO_STAMPA WHERE CHIAVE=:CHIAVE\n"
+		},
+		{
+			"Name" : "DeleteUser",
+			"SQL" : "UPDATE utenti SET ELIMINATO=1 WHERE CHIAVE=:CHIAVE\n"
+		}
+	],
+	"SelectIstitutiXPromotori" : [
+		{
+			"Name" : "GetIstitutiXPromotori",
+			"SQL" : "SELECT istituti.CODICE,istituti.NOME,istituti.COMUNE,province.NOME AS PROVINCIA,utenti.USERNAME AS PROMOTORE\n  FROM istituti,\n       province,\n       utenti\n WHERE province.CHIAVE = istituti.PROVINCIA\n   AND utenti.CHIAVE = istituti.PROMOTORE\n   AND utenti.USERNAME <> 'ADMIN'\n ORDER BY PROMOTORE,PROVINCIA,istituti.NOME\n"
+		}
+]
 }

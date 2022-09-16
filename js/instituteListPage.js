@@ -170,6 +170,72 @@ SIRIOApp.controller("instituteListPageController",['$scope','SystemInformation',
                                                 },
                               limitOptions    : [10, 20, 30]
                            };
+
+  $scope.EsportaIstitutiXPromotori = function()
+  {
+    SystemInformation.GetSQL('User', {}, function(Results)  
+    {
+      ListaTmp = SystemInformation.FindResults(Results,'GetIstitutiXPromotori');
+
+      var LsPromotori = [];
+
+      var OldPromotore = 'Obiwan';
+      for(let i = 0; i < ListaTmp.length; i ++)
+      {
+          if(ListaTmp[i].PROMOTORE != OldPromotore)
+             LsPromotori.push({ "Promotore" : ListaTmp[i].PROMOTORE, "Istituti" : [] })
+          
+          LsPromotori[LsPromotori.length - 1].Istituti.push(ListaTmp[i]);
+          OldPromotore = ListaTmp[i].PROMOTORE;
+      }
+
+      var NomeDocumento = "Istituti_X_Promotori";
+      
+      var WBook = {
+                    SheetNames : [],
+                    Sheets     : {}
+                  };
+
+      for(let i = 0; i < LsPromotori.length; i ++)
+      {
+          var SheetNameA = LsPromotori[i].Promotore.toUpperCase();
+          var BodySheetA = {}; 
+
+          BodySheetA['A1'] = SystemInformation.GetCellaIntestazione('CODICE');
+          BodySheetA['B1'] = SystemInformation.GetCellaIntestazione('NOME');
+          BodySheetA['C1'] = SystemInformation.GetCellaIntestazione('COMUNE');
+          BodySheetA['D1'] = SystemInformation.GetCellaIntestazione('PROVINCIA');
+
+          for(let j = 0;j < LsPromotori[i].Istituti.length;j ++)
+          {
+              BodySheetA['A' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s', LsPromotori[i].Istituti[j].CODICE);
+              BodySheetA['B' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s', LsPromotori[i].Istituti[j].NOME);            
+              BodySheetA['C' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s', LsPromotori[i].Istituti[j].COMUNE);
+              BodySheetA['D' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s', LsPromotori[i].Istituti[j].PROVINCIA);  
+          }
+
+          BodySheetA["!cols"] = [ 
+                                  {wpx: 300},
+                                  {wpx: 300},              
+                                  {wpx: 300},
+                                  {wpx: 300},
+                                ];
+
+          BodySheetA['!ref'] = 'A1:D1' + parseInt(LsPromotori[i].Istituti.length + 1);
+          WBook.SheetNames.push(SheetNameA);
+          WBook.Sheets[SheetNameA] = BodySheetA;
+      }
+
+      var Data       = new Date();
+      var DataAnno   = Data.getFullYear();
+      var DataMese   = Data.getMonth()+1; 
+      var DataGiorno = Data.getDate();
+      var DataDoc    = DataGiorno.toString() + '_' + DataMese.toString() +  '_' + DataAnno.toString();
+
+      var wbout = XLSX.write(WBook, {bookType:'xlsx', bookSST:true, type: 'binary'});
+      saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}), NomeDocumento + '_' + DataDoc + ".xlsx");
+    },'SelectIstitutiXPromotori')
+  }
   
   $scope.RefreshListaIstituti = function()
   {

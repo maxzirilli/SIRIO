@@ -343,13 +343,27 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
                             $scope.ListaTitoli = TitoliInfoLista;
 
                             var parametri = window.location.href.split('/');
-
-                            if(parametri[parametri.length - 1] != '')
+                            
+                            if(parametri[parametri.length - 1] != '-1' && parametri[parametri.length - 1] != '')
+                            {
+                               for(var i = 0; i <  $scope.ListaMateriePerDoc.length; i++)
+                               {
+                                   if($scope.ListaMateriePerDoc[i].Chiave == parseInt(parametri[parametri.length - 1]))
+                                   {
+                                      console.log($scope.ListaMateriePerDoc[i])
+                                      $scope.searchTextMat  = $scope.ListaMateriePerDoc[i].Nome;
+                                      $scope.selectedItemChangeMateria($scope.ListaMateriePerDoc[i]);
+                                   }
+                               }
+                            }
+                            
+                            if(parametri[parametri.length - 2] != '-1' && parametri[parametri.length - 2] != '')
                             {
                                for(var i = 0; i <  $scope.ListaIstituti.length; i++)
                                {
-                                   if($scope.ListaIstituti[i].Chiave == parseInt(parametri[parametri.length - 1]))
+                                   if($scope.ListaIstituti[i].Chiave == parseInt(parametri[parametri.length - 2]))
                                    {
+                                      console.log($scope.ListaIstituti[i])
                                       $scope.searchTextIstituto  = $scope.ListaIstituti[i].Istituto;
                                       $scope.selectedItemChangeIstituto($scope.ListaIstituti[i]);
                                    }
