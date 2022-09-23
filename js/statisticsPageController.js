@@ -26,7 +26,7 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
   $scope.StatisticaPresente     = true;
   $scope.NuoveAdozioniFiltro    = false;
   $scope.VolumiUniciPrimiFiltro = false;
-  $scope.CaricamentoInCorso     = true;
+  $scope.CaricamentoInCorso     = false; //true
   $scope.IstitutiInEntrambi     = false;
   $scope.IsAdministrator        = SystemInformation.IsAdministrator;
 
@@ -151,7 +151,7 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
          if($scope.ListaDate.length > 0)
          {
            $scope.SecondaData = $scope.ListaDate[0].DataStatistica;
-           $scope.GeneraStatistica();
+           //$scope.GeneraStatistica();
          }
          else $scope.StatisticaPresente = false;
       } 
@@ -398,8 +398,41 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
 
   $scope.ApriPaginaIstitutoFiltri = function()
   {
-     var url = $state.href('teacherListPage',{ istituto : $scope.IstitutoFiltro, materia : $scope.MateriaFiltro });
-     window.open(url,'_blank');
+      var AObject = {};
+      if($scope.IstitutoFiltro != -1)
+         AObject.Istituto = $scope.IstitutoFiltro;
+      if($scope.GruppoIstitutoFiltro != -1)
+         AObject.GruppoIstituto = $scope.GruppoIstitutoFiltro;
+      if($scope.ProvinciaFiltro != -1)
+         AObject.Provincia = $scope.ProvinciaFiltro;
+      if($scope.PromotoreFiltro != -1)
+         AObject.Promotore = $scope.PromotoreFiltro;
+
+      if($scope.CasaEditriceFiltro != -1)
+         AObject.CaseEditrice = $scope.CasaEditriceFiltro;
+      if($scope.GruppoEditorialeFiltro != -1)
+         AObject.GruppoEditoriale = $scope.GruppoEditorialeFiltro;
+      
+      if($scope.TitoloFiltro != -1)
+         AObject.Titolo = $scope.TitoloFiltro;   
+      if($scope.MateriaFiltro != -1)
+         AObject.Materia = $scope.MateriaFiltro;
+
+      AObject.NuoveAdozioni    = $scope.NuoveAdozioniFiltro;
+      AObject.VolumiUniciPrimi = $scope.VolumiUniciPrimiFiltro;
+
+      var url = window.location.href;
+      url = url.substring(0, url.lastIndexOf("/"));
+      url += '/teacherListPage';
+
+     var First = true;
+     for(var i in AObject) 
+     {
+        url += (First ? '?' : '&') + i + (AObject[i] == null ? '' : '=' + AObject[i]);
+        First = false;
+     }
+
+      window.open(url,'_blank');
   }
 
   $scope.GeneraStatistica = function()
@@ -419,9 +452,7 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
           var GruppoFinded = $scope.ListaGruppiEditoriali.find(function (Elemento){return Elemento.Chiave == $scope.GruppoEditorialeFiltro});
           
           if(GruppoFinded != undefined)
-          {
              $scope.IsGruppoRivaleFiltro = GruppoFinded.Rivale     
-          }
           else $scope.IsGruppoRivaleFiltro = false;
       }
 
@@ -486,7 +517,7 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
         $scope.ListaStatistica.sort($scope.OrdinaLista);
 
         $scope.CaricamentoInCorso = false;
-      }); 
+      });
     }
     else ZCustomAlert($mdDialog,'ATTENZIONE','Non è presente nessuna statistica di confronto!');   
   }

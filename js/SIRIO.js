@@ -60,13 +60,7 @@ SIRIOApp.config(['$stateProvider','$urlRouterProvider','$mdAriaProvider',functio
     $stateProvider.state('teacherListPage', 
     {
         templateUrl: "template/teacherListPage.html",
-        url: '/teacherListPage/:istituto/:materia',
-        params : 
-        {
-          istituto : null,
-          materia : null,
-          titolo : null
-        }
+        url: '/teacherListPage', 
     });
     
     $stateProvider.state('orderEntryPage', 

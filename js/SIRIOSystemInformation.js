@@ -32,6 +32,34 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
     return Self.UserInformation.Ruolo == RUOLO_AMMINISTRATORE;
   }
 
+   this.ChangeURLParameters = function(Parameters)
+   {
+     var URL = window.location.href.split('?')[0];
+     var First = true;
+     for(var k in Parameters) 
+     {
+        URL += (First ? '?' : '&') + k + (Parameters[k] == null ? '' : '=' + Parameters[k]);
+        First = false;
+     }
+     window.location.href = URL;
+   }
+  
+   this.GetURLParameters = function()
+   {
+     var Result = {}
+     var Parameters = window.location.href.split('?')
+     if(Parameters.length > 1)
+     {
+        Parameters = Parameters[1].split('&');
+        Parameters.forEach(function(AParameter)
+        {
+          AParameter = AParameter.split('=') 
+          Result[AParameter[0]] = AParameter.length > 1 ? AParameter[1] : null
+        })
+     }
+     return Result;
+   }
+
   this.s2ab = function(s)
   {
     var buf = new ArrayBuffer(s.length);

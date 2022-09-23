@@ -42,6 +42,16 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
   $scope.CombinazioneFiltro     = -1;
   $scope.ListaCombinazioni      = [];
 
+  $scope.ViewFiltriStatistiche  = true;
+  $scope.ListaPromotori         = []; 
+  $scope.ListaGruppiIstituti    = [];
+  $scope.ListaGruppiEditoriali  = [];
+  $scope.PromotoreFiltro        = -1;
+  $scope.GruppoIstitutoFiltro   = -1;
+  $scope.CasaEditriceFiltro     = -1;
+  $scope.GruppoEditorialeFiltro = -1;
+  $scope.NuoveAdozioniFiltro    = false;
+  $scope.VolumiUniciPrimiFiltro = false;
 
   $scope.searchTextChangeMat1 = function(text)
   {
@@ -342,33 +352,98 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
                             $scope.ListaTitoliF = TitoliInfoLista;
                             $scope.ListaTitoli = TitoliInfoLista;
 
-                            var parametri = window.location.href.split('/');
+                            var UrlObj = SystemInformation.GetURLParameters();
                             
-                            if(parametri[parametri.length - 1] != '-1' && parametri[parametri.length - 1] != '')
+                            if(UrlObj.Materia != undefined)
                             {
                                for(var i = 0; i <  $scope.ListaMateriePerDoc.length; i++)
                                {
-                                   if($scope.ListaMateriePerDoc[i].Chiave == parseInt(parametri[parametri.length - 1]))
+                                   if($scope.ListaMateriePerDoc[i].Chiave == parseInt(UrlObj.Materia))
                                    {
-                                      console.log($scope.ListaMateriePerDoc[i])
                                       $scope.searchTextMat  = $scope.ListaMateriePerDoc[i].Nome;
                                       $scope.selectedItemChangeMateria($scope.ListaMateriePerDoc[i]);
                                    }
                                }
                             }
                             
-                            if(parametri[parametri.length - 2] != '-1' && parametri[parametri.length - 2] != '')
+                            if(UrlObj.Istituto != undefined)
                             {
                                for(var i = 0; i <  $scope.ListaIstituti.length; i++)
                                {
-                                   if($scope.ListaIstituti[i].Chiave == parseInt(parametri[parametri.length - 2]))
+                                   if($scope.ListaIstituti[i].Chiave == parseInt(UrlObj.Istituto))
                                    {
-                                      console.log($scope.ListaIstituti[i])
                                       $scope.searchTextIstituto  = $scope.ListaIstituti[i].Istituto;
                                       $scope.selectedItemChangeIstituto($scope.ListaIstituti[i]);
                                    }
                                }
                             }
+
+
+                            SystemInformation.GetSQL('InstituteType', {}, function(Results)  
+                            {
+                              ListaGruppiTmp = SystemInformation.FindResults(Results,'InstituteGroupInfo');
+                              if(ListaGruppiTmp != undefined)
+                              { 
+                                 for(let i = 0;i < ListaGruppiTmp.length;i ++)
+                                 ListaGruppiTmp[i] = {
+                                                       Chiave      : parseInt(ListaGruppiTmp[i].CHIAVE),
+                                                       Descrizione : ListaGruppiTmp[i].DESCRIZIONE
+                                                     }
+                                 $scope.ListaGruppiIstituti = ListaGruppiTmp;
+                                 
+                                 SystemInformation.GetSQL('PublisherGroup', {}, function(Results)  
+                                 {
+                                   ListaGruppiEditorialiTmp = SystemInformation.FindResults(Results,'GroupInfoList');
+                                   if(ListaGruppiEditorialiTmp != undefined)
+                                   { 
+                                      for(let i = 0;i < ListaGruppiEditorialiTmp.length;i ++)
+                                          ListaGruppiEditorialiTmp[i] = {
+                                                                          Chiave      : parseInt(ListaGruppiEditorialiTmp[i].CHIAVE),
+                                                                          Rivale      : ListaGruppiEditorialiTmp[i].RIVALE == 'T' ? true : false,
+                                                                          Descrizione : ListaGruppiEditorialiTmp[i].DESCRIZIONE
+                                                                        }
+                                      $scope.ListaGruppiEditoriali = ListaGruppiEditorialiTmp;
+                                      
+                                      SystemInformation.GetSQL('Publisher', {}, function(Results)  
+                                      {
+                                        ListaEditoriTmp = SystemInformation.FindResults(Results,'PublisherInfoList');
+                                        if(ListaEditoriTmp != undefined)
+                                        { 
+                                           for(let i = 0;i < ListaEditoriTmp.length;i ++)
+                                               ListaEditoriTmp[i] = {
+                                                                      Chiave      : parseInt(ListaEditoriTmp[i].CHIAVE),
+                                                                      Descrizione : ListaEditoriTmp[i].DESCRIZIONE
+                                                                    }
+                                           $scope.ListaEditori = ListaEditoriTmp;
+
+                                           SystemInformation.GetSQL('User', {}, function(Results)  
+                                           {
+                                             ListaPromotoriTmp = SystemInformation.FindResults(Results,'UserInfoList');
+                                             if(ListaPromotoriTmp != undefined)
+                                             { 
+                                               for(let i = 0;i < ListaPromotoriTmp.length;i ++)   
+                                                   ListaPromotoriTmp[i] = { 
+                                                                              Chiave         : parseInt(ListaPromotoriTmp[i].CHIAVE),
+                                                                              RagioneSociale : ListaPromotoriTmp[i].RAGIONE_SOCIALE,
+                                                                              Username       : ListaPromotoriTmp[i].USERNAME,   
+                                                                           };
+                                                 $scope.ListaPromotori = ListaPromotoriTmp;
+                                             }
+                                             else SystemInformation.ApplyOnError('Modello promotori non conforme','');   
+                                           });
+
+                                        } 
+                                        else SystemInformation.ApplyOnError('Modello case editrici non conforme','');   
+                                      });
+
+                                   } 
+                                   else SystemInformation.ApplyOnError('Modello gruppi editoriali non conforme','');   
+                                 });
+
+                              }
+                              else SystemInformation.ApplyOnError('Modello gruppi istituti non conforme','');   
+                            },'SelectGroups');
+
                          }
                          else SystemInformation.ApplyOnError('Modello titoli non conforme', '');
                        },'SelectSQLNoFilter');
@@ -389,6 +464,22 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
     }
     else SystemInformation.ApplyOnError('Modello materie non conforme', '');
   });
+
+  $scope.queryEditore = function(searchTextEd)
+  {
+     searchTextEd = searchTextEd.toUpperCase();
+     return($scope.ListaEditori.grep(function(Elemento) 
+     { 
+       return(Elemento.Descrizione.toUpperCase().indexOf(searchTextEd) != -1);
+     }));
+  }
+  
+  $scope.selectedItemChangeEditore = function(itemEd)
+  {
+    if(itemEd != undefined)
+      $scope.CasaEditriceFiltro = itemEd.Chiave;
+    else $scope.CasaEditriceFiltro = -1;
+  }  
 
   $scope.searchTextChangeMat = function(text)
   {
@@ -440,7 +531,6 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
       $scope.TitoloFiltro = -1;
       $scope.ListaIstituti = $scope.ListaIstitutiNoFilter;
     }
-    $scope.RefreshListaDocenti();
   }
 
   $scope.searchTextChangeIst = function(text)
@@ -469,7 +559,6 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
        $scope.CheckOldIstituto = true;
     }
     else $scope.IstitutoFiltrato = -1;
-    $scope.RefreshListaDocenti();
   }
 
   $scope.VisualizzaAdozioni = function (ChiaveIstituto,NomeIstituto) 
@@ -1015,7 +1104,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
     return ($sce.trustAsHtml(Result.substr(0, Result.length)));
   }
 
-  $scope.RefreshListaDocenti = function () 
+  /*$scope.RefreshListaDocenti = function () 
   {
     $scope.GridOptions.query.page = 1;
     var RicercaPerTitolo = false;
@@ -1109,10 +1198,115 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
           $scope.GridOptions.query.page = SystemInformation.DataBetweenController.OldPaginaDocenti;
           SystemInformation.DataBetweenController = {};
        }
-     }
+    }
     else SystemInformation.ApplyOnError('Modello docente non conforme', '');
    });
+  }*/
 
+  $scope.RefreshListaDocenti = function () 
+  {
+    $scope.GridOptions.query.page = 1;
+    var ObjParametri              = {};
+
+    if($scope.IstitutoFiltrato != -1) 
+    {
+      $scope.RicercaPerIstituto = true;
+      $scope.IstitutoMultipla = $scope.IstitutoFiltrato;
+    }
+    if($scope.TitoloFiltro != -1) 
+       RicercaPerTitolo = true;
+    else 
+    {
+      $scope.ListaIstitutiTitolo = [];
+      RicercaPerTitolo          = false;
+    }
+
+    var ObjParametri = {
+                          FiltroNome                 : $scope.ANomeFiltro,
+                          FiltroPromotore            : $scope.PromotoreFiltro,     
+                          FiltroGruppoIst            : $scope.GruppoIstitutoFiltro,
+                          FiltroProvincia            : $scope.AProvinciaFiltro,
+                          FiltroCasaEditrice         : $scope.CasaEditriceFiltro,
+                          FiltroTitolo               : $scope.TitoloFiltro,        
+                          FiltroIstituto             : $scope.IstitutoFiltrato,      
+                          FiltroMateria              : $scope.MateriaFiltro,
+                          FiltroGruppoEd             : $scope.GruppoEditorialeFiltro, 
+                          FiltroNuoveAdozioni        : $scope.NuoveAdozioniFiltro == true ? "T" : "F",
+                          FiltroVolUniciPrimi        : $scope.VolumiUniciPrimiFiltro == true ? "T" : "F",
+                       };
+
+   SystemInformation.ExecuteExternalScript('SIRIOExtraGetDocenti', ObjParametri, function(Results) 
+   {
+     DocentiInfoLista = Results.ListaDocenti;
+
+     for(let i = 0; i < DocentiInfoLista.length; i++) 
+     {
+         var AggiungiDoc = true;
+         if(!$scope.IsAdministrator()) 
+            if(DocentiInfoLista[i].NASCOSTO == 'T')
+               AggiungiDoc = false;
+         if(AggiungiDoc) 
+         {
+          DocentiInfoLista[i] = {
+                                  Chiave: DocentiInfoLista[i].CHIAVE,
+                                  Nascosto: DocentiInfoLista[i].NASCOSTO,
+                                  RagioneSociale: DocentiInfoLista[i].RAGIONE_SOCIALE,
+                                  Materia1: DocentiInfoLista[i].MATERIA_1 == null ? -1 : DocentiInfoLista[i].MATERIA_1,
+                                  DescrMateria1: DocentiInfoLista[i].NOME_MATERIA1 == null ? '' : DocentiInfoLista[i].NOME_MATERIA1,
+                                  Materia2: DocentiInfoLista[i].MATERIA_2 == null ? -1 : DocentiInfoLista[i].MATERIA_2,
+                                  DescrMateria2: DocentiInfoLista[i].NOME_MATERIA2 == null ? '' : DocentiInfoLista[i].NOME_MATERIA2,
+                                  Materia3: DocentiInfoLista[i].MATERIA_3 == null ? -1 : DocentiInfoLista[i].MATERIA_3,
+                                  DescrMateria3: DocentiInfoLista[i].NOME_MATERIA3 == null ? '' : DocentiInfoLista[i].NOME_MATERIA3,
+                                  Titolo: DocentiInfoLista[i].TITOLO == null ? '' : DocentiInfoLista[i].TITOLO,
+                                  Indirizzo: DocentiInfoLista[i].INDIRIZZO == null ? '' : DocentiInfoLista[i].INDIRIZZO,
+                                  Comune: DocentiInfoLista[i].COMUNE == null ? '' : DocentiInfoLista[i].COMUNE,
+                                  Cap: DocentiInfoLista[i].CAP == null ? '' : DocentiInfoLista[i].CAP,
+                                  Provincia: DocentiInfoLista[i].PROVINCIA == null ? 0 : DocentiInfoLista[i].PROVINCIA,
+                                  ProvinciaNome: DocentiInfoLista[i].PROVINCIA_NOME == null ? '' : DocentiInfoLista[i].PROVINCIA_NOME,
+                                  Email: DocentiInfoLista[i].EMAIL == undefined ? 'Non disponibile' : (DocentiInfoLista[i].EMAIL.includes('@') ? DocentiInfoLista[i].EMAIL : 'Non disponibile'),
+                                  CoordMateria_1: DocentiInfoLista[i].COORD_MATERIA_1 == undefined ? -1 : DocentiInfoLista[i].COORD_MATERIA_1,
+                                  CoordMateria_2: DocentiInfoLista[i].COORD_MATERIA_2 == undefined ? -1 : DocentiInfoLista[i].COORD_MATERIA_2,
+                                  CoordMateria_3: DocentiInfoLista[i].COORD_MATERIA_3 == undefined ? -1 : DocentiInfoLista[i].COORD_MATERIA_3,
+                                  SpedizioniTotali: parseInt(DocentiInfoLista[i].NR_SPED_TOT),
+                                  SpedizioniThisAnno: parseInt(DocentiInfoLista[i].NR_SPED_LAST_ANNO)
+                                };
+       }
+       else 
+       {
+         DocentiInfoLista.splice(i, 1);
+         i--;
+       }
+     }
+     $scope.ListaDocenti = DocentiInfoLista;
+
+     if(RicercaPerTitolo) 
+     {
+        var ListaIstitutiTitoloTmp = [];
+        SystemInformation.GetSQL('Book', { FiltroT: ObjParametri.FiltroT }, function (Results) 
+        {
+          ListaIstitutiTitoloTmp = SystemInformation.FindResults(Results, 'InstituteForBook');
+          if(ListaIstitutiTitoloTmp != undefined) 
+          {
+             for(let i = 0; i < ListaIstitutiTitoloTmp.length; i++) 
+             {
+                 ListaIstitutiTitoloTmp[i] = {
+                                               Chiave: ListaIstitutiTitoloTmp[i].CHIAVE,
+                                               Codice : ListaIstitutiTitoloTmp[i].CODICE,
+                                               Istituto: ListaIstitutiTitoloTmp[i] == null ? 'N.D.' : ListaIstitutiTitoloTmp[i].NOME.toUpperCase()
+                                             }
+             }
+             $scope.ListaIstituti = ListaIstitutiTitoloTmp;
+          }
+          else SystemInformation.ApplyOnError('Modello istituti per titolo filtrato non conforme', '')
+        },'SelectInstituteList')
+     }
+
+     if(SystemInformation.DataBetweenController.Provenienza == 'MailPage' && SystemInformation.DataBetweenController.OldPaginaDocenti != 0) 
+     {
+        $scope.GridOptions.query.page = SystemInformation.DataBetweenController.OldPaginaDocenti;
+        SystemInformation.DataBetweenController = {};
+     }
+    });
   }
 
   $scope.NascondiDocente = function (Docente) 
@@ -1552,7 +1746,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
 
   $scope.OnAnnullaDocenteClicked = function () 
   {
-    $scope.AProvinciaFiltro = $scope.ProvinciaOldFiltro; //??
+    $scope.AProvinciaFiltro = $scope.ProvinciaOldFiltro; 
     $scope.EditingOn = false;
     $scope.RefreshListaDocenti();
     $scope.GridOptions.query.page = $scope.OldPagina;
