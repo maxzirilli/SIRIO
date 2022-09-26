@@ -396,7 +396,7 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
      window.open(url,'_blank');
   }
 
-  $scope.ApriPaginaIstitutoFiltri = function()
+  $scope.ApriPaginaDocentiFiltri = function()
   {
       var AObject = {};
       if($scope.IstitutoFiltro != -1)
@@ -409,17 +409,17 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
          AObject.Promotore = $scope.PromotoreFiltro;
 
       if($scope.CasaEditriceFiltro != -1)
-         AObject.CaseEditrice = $scope.CasaEditriceFiltro;
+         AObject.Editore = $scope.CasaEditriceFiltro;
       if($scope.GruppoEditorialeFiltro != -1)
          AObject.GruppoEditoriale = $scope.GruppoEditorialeFiltro;
       
       if($scope.TitoloFiltro != -1)
          AObject.Titolo = $scope.TitoloFiltro;   
       if($scope.MateriaFiltro != -1)
-         AObject.Materia = $scope.MateriaFiltro;
+         AObject.MateriaTitolo = $scope.MateriaFiltro;
 
-      AObject.NuoveAdozioni    = $scope.NuoveAdozioniFiltro;
-      AObject.VolumiUniciPrimi = $scope.VolumiUniciPrimiFiltro;
+      if($scope.VolumiUniciPrimiFiltro)
+         AObject.VolumiUniciPrimi = 'SI';
 
       var url = window.location.href;
       url = url.substring(0, url.lastIndexOf("/"));

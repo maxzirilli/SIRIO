@@ -157,7 +157,7 @@
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-show="StatisticaPresente && ListaStatistica.length > 0" ng-click="EsportaStatisticaXls()">ESPORTAZIONE STATISTICA XLS</md-button>
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-show="StatisticaPresente" ng-click="GeneraStatistica()">GENERA STATISTICA</md-button>
       <md-button class="md-raised md-accent" style="float:left;font-weight:bold;" ng-show="RegistraAdozVisible && ListaStatistica.length > 0" ng-click="RegistraStatoAdozioni()">REGISTRA STATO ATTUALE</md-button>
-      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-show="StatisticaPresente" ng-click="ApriPaginaIstitutoFiltri()">VAI A DOCENTI</md-button>
+      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-show="StatisticaPresente && GruppoEditorialeFiltro != -1" ng-click="ApriPaginaDocentiFiltri()">VAI A DOCENTI</md-button>
     </div>
   </div>
   

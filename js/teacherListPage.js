@@ -16,6 +16,8 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
   $scope.AProvinciaFiltro       = -1;
   $scope.IstitutoFiltrato       = -1;
   $scope.MateriaFiltro          = -1;
+  $scope.MateriaFiltroTitolo    = -1;
+  $scope.MateriaFiltroNomeTit   = '';
   $scope.ListaIstitutiTitolo    = [];
   $scope.IstitutoMultipla       = -1;
   $scope.GiorniSettimanaD       = SystemInformation.GiorniSettimana;
@@ -50,7 +52,6 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
   $scope.GruppoIstitutoFiltro   = -1;
   $scope.CasaEditriceFiltro     = -1;
   $scope.GruppoEditorialeFiltro = -1;
-  $scope.NuoveAdozioniFiltro    = false;
   $scope.VolumiUniciPrimiFiltro = false;
 
   $scope.searchTextChangeMat1 = function(text)
@@ -133,7 +134,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
   $scope.AbilitaInvioMultiplo = function () 
   {
     var DocentiConMail  = 0;
-    let DocentiFiltrati = $filter('DocenteByFiltro')($scope.ListaDocenti,$scope.ANomeFiltro,$scope.MateriaFiltro,$scope.CoordMateriaFiltro);
+    var DocentiFiltrati = $scope.ListaDocenti; //$filter('DocenteByFiltro')($scope.ListaDocenti,$scope.ANomeFiltro,$scope.MateriaFiltro,$scope.CoordMateriaFiltro);
 
     for(let i = 0; i < DocentiFiltrati.length; i ++)
         if(DocentiFiltrati[i].Email != 'Non disponibile')
@@ -352,34 +353,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
                             $scope.ListaTitoliF = TitoliInfoLista;
                             $scope.ListaTitoli = TitoliInfoLista;
 
-                            var UrlObj = SystemInformation.GetURLParameters();
-                            
-                            if(UrlObj.Materia != undefined)
-                            {
-                               for(var i = 0; i <  $scope.ListaMateriePerDoc.length; i++)
-                               {
-                                   if($scope.ListaMateriePerDoc[i].Chiave == parseInt(UrlObj.Materia))
-                                   {
-                                      $scope.searchTextMat  = $scope.ListaMateriePerDoc[i].Nome;
-                                      $scope.selectedItemChangeMateria($scope.ListaMateriePerDoc[i]);
-                                   }
-                               }
-                            }
-                            
-                            if(UrlObj.Istituto != undefined)
-                            {
-                               for(var i = 0; i <  $scope.ListaIstituti.length; i++)
-                               {
-                                   if($scope.ListaIstituti[i].Chiave == parseInt(UrlObj.Istituto))
-                                   {
-                                      $scope.searchTextIstituto  = $scope.ListaIstituti[i].Istituto;
-                                      $scope.selectedItemChangeIstituto($scope.ListaIstituti[i]);
-                                   }
-                               }
-                            }
-
-
-                            SystemInformation.GetSQL('InstituteType', {}, function(Results)  
+                                                        SystemInformation.GetSQL('InstituteType', {}, function(Results)  
                             {
                               ListaGruppiTmp = SystemInformation.FindResults(Results,'InstituteGroupInfo');
                               if(ListaGruppiTmp != undefined)
@@ -428,14 +402,78 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
                                                                               Username       : ListaPromotoriTmp[i].USERNAME,   
                                                                            };
                                                  $scope.ListaPromotori = ListaPromotoriTmp;
+
+                                                 var UrlObj = SystemInformation.GetURLParameters();
+                                                 
+                                                 if(UrlObj.MateriaTitolo != undefined)
+                                                 {
+                                                    for(var i = 0; i < $scope.ListaMaterie.length; i ++)
+                                                    {
+                                                        if($scope.ListaMaterie[i].Chiave == parseInt(UrlObj.MateriaTitolo))
+                                                        {
+                                                           $scope.searchTextMatTit  = $scope.ListaMaterie[i].Nome;
+                                                           $scope.selectedItemChangeMateriaTit($scope.ListaMaterie[i]);
+                                                        }
+                                                    }
+                                                 }
+                                                 
+                                                 if(UrlObj.Istituto != undefined)
+                                                 {
+                                                    for(var i = 0; i <  $scope.ListaIstituti.length; i++)
+                                                    {
+                                                        if($scope.ListaIstituti[i].Chiave == parseInt(UrlObj.Istituto))
+                                                        {
+                                                           $scope.searchTextIstituto  = $scope.ListaIstituti[i].Istituto;
+                                                           $scope.selectedItemChangeIstituto($scope.ListaIstituti[i]);
+                                                        }
+                                                    }
+                                                 }
+
+                                                 if(UrlObj.Titolo != undefined)
+                                                 {
+                                                    for(var i = 0; i <  $scope.ListaTitoli.length; i++)
+                                                    {
+                                                        if($scope.ListaTitoli[i].Chiave == parseInt(UrlObj.Titolo))
+                                                        {
+                                                           $scope.searchTextTit  = $scope.ListaTitoli[i].Nome;
+                                                           $scope.selectedItemChangeTitolo($scope.ListaTitoli[i]);
+                                                        }
+                                                    }
+                                                 }
+
+                                                 if(UrlObj.Editore != undefined)
+                                                 {
+                                                    for(var i = 0; i < $scope.ListaEditori.length; i++)
+                                                    {
+                                                        if($scope.ListaEditori[i].Chiave == parseInt(UrlObj.Editore))
+                                                        {
+                                                           $scope.searchTextEd  = $scope.ListaEditori[i].Descrizione;
+                                                           $scope.selectedItemChangeEditore($scope.ListaEditori[i]);
+                                                        }
+                                                    }
+                                                 }
+
+                                                 if(UrlObj.VolumiUniciPrimi != undefined)
+                                                    $scope.VolumiUniciPrimiFiltro = true;
+
+                                                 if(UrlObj.Promotore != undefined)
+                                                    $scope.PromotoreFiltro = UrlObj.Promotore;
+
+                                                 if(UrlObj.GruppoEditoriale != undefined)
+                                                    $scope.GruppoEditorialeFiltro = UrlObj.GruppoEditoriale;
+                                                    
+                                                 if(UrlObj.GruppoIstituto != undefined)
+                                                    $scope.GruppoIstitutoFiltro = UrlObj.GruppoIstituto;
+
+                                                 if(UrlObj.Provincia != undefined)
+                                                    $scope.AProvinciaFiltro = UrlObj.Provincia;
+
                                              }
                                              else SystemInformation.ApplyOnError('Modello promotori non conforme','');   
                                            });
-
                                         } 
                                         else SystemInformation.ApplyOnError('Modello case editrici non conforme','');   
                                       });
-
                                    } 
                                    else SystemInformation.ApplyOnError('Modello gruppi editoriali non conforme','');   
                                  });
@@ -443,7 +481,6 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
                               }
                               else SystemInformation.ApplyOnError('Modello gruppi istituti non conforme','');   
                             },'SelectGroups');
-
                          }
                          else SystemInformation.ApplyOnError('Modello titoli non conforme', '');
                        },'SelectSQLNoFilter');
@@ -464,6 +501,12 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
     }
     else SystemInformation.ApplyOnError('Modello materie non conforme', '');
   });
+
+  $scope.searchTextChangeEd = function(text)
+  {
+    if(!text)
+       $scope.selectedItemChangeEditore(undefined)
+  }
 
   $scope.queryEditore = function(searchTextEd)
   {
@@ -507,9 +550,35 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
     $scope.GridOptions.query.page = 1;
   }
 
-  $scope.searchTextChangeTit = function(text)
+  $scope.searchTextChangeMatTit = function(text)
   {
     if(!text)
+       $scope.selectedItemChangeMateriaTit(undefined)
+  }
+
+  $scope.queryMateriaTit = function (searchTextMatTit) 
+  {
+    searchTextMatTit = searchTextMatTit.toUpperCase();
+    return ($scope.ListaMaterie.grep(function (Elemento) 
+    {
+      return (Elemento.Nome.toUpperCase().indexOf(searchTextMatTit) != -1);
+    }));
+  }
+
+  $scope.selectedItemChangeMateriaTit = function (itemMatTit) 
+  {
+    if(itemMatTit != undefined) 
+    {
+       $scope.MateriaFiltroTitolo  = itemMatTit.Chiave;
+       $scope.MateriaFiltroNomeTit = itemMatTit.Nome
+    }
+    else $scope.MateriaFiltroTitolo = -1;
+    $scope.GridOptions.query.page = 1;
+  }
+
+  $scope.searchTextChangeTit = function(searchTextTit)
+  {
+    if(!searchTextTit)
        $scope.selectedItemChangeTitolo(undefined)
   }
 
@@ -1104,109 +1173,52 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
     return ($sce.trustAsHtml(Result.substr(0, Result.length)));
   }
 
-  /*$scope.RefreshListaDocenti = function () 
-  {
-    $scope.GridOptions.query.page = 1;
-    var RicercaPerTitolo = false;
-    var ObjParametri = {};
-
-    if($scope.AProvinciaFiltro != -1)
-       ObjParametri.FiltroP = $scope.AProvinciaFiltro;
-    if($scope.IstitutoFiltrato != -1) 
-    {
-      ObjParametri.FiltroI = $scope.IstitutoFiltrato;
-      $scope.RicercaPerIstituto = true;
-      $scope.IstitutoMultipla = $scope.IstitutoFiltrato;
-    }
-
-    if($scope.TitoloFiltro != -1) 
-    {
-      ObjParametri.FiltroT = $scope.TitoloFiltro;
-      RicercaPerTitolo = true;
-    }
-    else $scope.ListaIstitutiTitolo = [];
-
-   SystemInformation.GetSQL('Teacher', ObjParametri, function (Results) 
-   {
-     DocentiInfoLista = SystemInformation.FindResults(Results, 'TeacherInfoList');
-     if(DocentiInfoLista != undefined) 
-     {
-        for(let i = 0; i < DocentiInfoLista.length; i++) 
-        {
-            var AggiungiDoc = true;
-            if(!$scope.IsAdministrator()) 
-               if(DocentiInfoLista[i].NASCOSTO == 'T')
-                  AggiungiDoc = false;
-            if(AggiungiDoc) 
-            {
-             DocentiInfoLista[i] = {
-                                     Chiave: DocentiInfoLista[i].CHIAVE,
-                                     Nascosto: DocentiInfoLista[i].NASCOSTO,
-                                     RagioneSociale: DocentiInfoLista[i].RAGIONE_SOCIALE,
-                                     Materia1: DocentiInfoLista[i].MATERIA_1 == null ? -1 : DocentiInfoLista[i].MATERIA_1,
-                                     DescrMateria1: DocentiInfoLista[i].NOME_MATERIA1 == null ? '' : DocentiInfoLista[i].NOME_MATERIA1,
-                                     Materia2: DocentiInfoLista[i].MATERIA_2 == null ? -1 : DocentiInfoLista[i].MATERIA_2,
-                                     DescrMateria2: DocentiInfoLista[i].NOME_MATERIA2 == null ? '' : DocentiInfoLista[i].NOME_MATERIA2,
-                                     Materia3: DocentiInfoLista[i].MATERIA_3 == null ? -1 : DocentiInfoLista[i].MATERIA_3,
-                                     DescrMateria3: DocentiInfoLista[i].NOME_MATERIA3 == null ? '' : DocentiInfoLista[i].NOME_MATERIA3,
-                                     Titolo: DocentiInfoLista[i].TITOLO == null ? '' : DocentiInfoLista[i].TITOLO,
-                                     Indirizzo: DocentiInfoLista[i].INDIRIZZO == null ? '' : DocentiInfoLista[i].INDIRIZZO,
-                                     Comune: DocentiInfoLista[i].COMUNE == null ? '' : DocentiInfoLista[i].COMUNE,
-                                     Cap: DocentiInfoLista[i].CAP == null ? '' : DocentiInfoLista[i].CAP,
-                                     Provincia: DocentiInfoLista[i].PROVINCIA == null ? 0 : DocentiInfoLista[i].PROVINCIA,
-                                     ProvinciaNome: DocentiInfoLista[i].PROVINCIA_NOME == null ? '' : DocentiInfoLista[i].PROVINCIA_NOME,
-                                     Email: DocentiInfoLista[i].EMAIL == undefined ? 'Non disponibile' : (DocentiInfoLista[i].EMAIL.includes('@') ? DocentiInfoLista[i].EMAIL : 'Non disponibile'),
-                                     CoordMateria_1: DocentiInfoLista[i].COORD_MATERIA_1 == undefined ? -1 : DocentiInfoLista[i].COORD_MATERIA_1,
-                                     CoordMateria_2: DocentiInfoLista[i].COORD_MATERIA_2 == undefined ? -1 : DocentiInfoLista[i].COORD_MATERIA_2,
-                                     CoordMateria_3: DocentiInfoLista[i].COORD_MATERIA_3 == undefined ? -1 : DocentiInfoLista[i].COORD_MATERIA_3,
-                                     SpedizioniTotali: parseInt(DocentiInfoLista[i].NR_SPED_TOT),
-                                     SpedizioniThisAnno: parseInt(DocentiInfoLista[i].NR_SPED_LAST_ANNO)
-                                   };
-          }
-          else 
-          {
-            DocentiInfoLista.splice(i, 1);
-            i--;
-          }
-       }
-       $scope.ListaDocenti = DocentiInfoLista;
-
-       if(RicercaPerTitolo) 
-       {
-          var ListaIstitutiTitoloTmp = [];
-          SystemInformation.GetSQL('Book', { FiltroT: ObjParametri.FiltroT }, function (Results) 
-          {
-            ListaIstitutiTitoloTmp = SystemInformation.FindResults(Results, 'InstituteForBook');
-            if(ListaIstitutiTitoloTmp != undefined) 
-            {
-               for(let i = 0; i < ListaIstitutiTitoloTmp.length; i++) 
-               {
-                   ListaIstitutiTitoloTmp[i] = {
-                                                 Chiave: ListaIstitutiTitoloTmp[i].CHIAVE,
-                                                 Codice : ListaIstitutiTitoloTmp[i].CODICE,
-                                                 Istituto: ListaIstitutiTitoloTmp[i] == null ? 'N.D.' : ListaIstitutiTitoloTmp[i].NOME.toUpperCase()
-                                               }
-               }
-               $scope.ListaIstituti = ListaIstitutiTitoloTmp;
-            }
-            else SystemInformation.ApplyOnError('Modello istituti per titolo filtrato non conforme', '')
-          },'SelectInstituteList')
-       }
-
-       if(SystemInformation.DataBetweenController.Provenienza == 'MailPage' && SystemInformation.DataBetweenController.OldPaginaDocenti != 0) 
-       {
-          $scope.GridOptions.query.page = SystemInformation.DataBetweenController.OldPaginaDocenti;
-          SystemInformation.DataBetweenController = {};
-       }
-    }
-    else SystemInformation.ApplyOnError('Modello docente non conforme', '');
-   });
-  }*/
-
   $scope.RefreshListaDocenti = function () 
   {
     $scope.GridOptions.query.page = 1;
     var ObjParametri              = {};
+
+    var AObject = {};
+    if($scope.IstitutoFiltrato != -1)
+       AObject.Istituto = $scope.IstitutoFiltrato;
+    if($scope.GruppoIstitutoFiltro != -1)
+       AObject.GruppoIstituto = $scope.GruppoIstitutoFiltro;
+    if($scope.AProvinciaFiltro != -1)
+       AObject.Provincia = $scope.AProvinciaFiltro;
+    if($scope.PromotoreFiltro != -1)
+       AObject.Promotore = $scope.PromotoreFiltro;
+
+    if($scope.CasaEditriceFiltro != -1)
+       AObject.Editore = $scope.CasaEditriceFiltro;
+    if($scope.GruppoEditorialeFiltro != -1)
+       AObject.GruppoEditoriale = $scope.GruppoEditorialeFiltro;
+    
+    if($scope.TitoloFiltro != -1)
+       AObject.Titolo = $scope.TitoloFiltro;   
+    if($scope.MateriaFiltro != -1)
+       AObject.MateriaTitolo = $scope.MateriaFiltro;
+ 
+    if($scope.ANomeFiltro != '')
+       AObject.NomeDocente = $scope.ANomeFiltro;
+    if($scope.FiltroCoordinatore)
+       AObject.CoordinatoreDocente = 'SI';
+    if($scope.MateriaFiltro != -1)
+       AObject.FiltroMateriaDocente = $scope.MateriaFiltro;
+
+    if($scope.VolumiUniciPrimiFiltro)
+       AObject.VolumiUniciPrimi = 'SI';
+
+    var url = window.location.href;
+    url = url.substring(0, url.lastIndexOf("/"));
+    url += '/teacherListPage';
+
+     var First = true;
+     for(var i in AObject) 
+     {
+        url += (First ? '?' : '&') + i + (AObject[i] == null ? '' : '=' + AObject[i]);
+        First = false;
+     }
+    window.history.replaceState(null, 'SIRIO', url)
 
     if($scope.IstitutoFiltrato != -1) 
     {
@@ -1221,23 +1233,39 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
       RicercaPerTitolo          = false;
     }
 
+    var IsGruppoRivaleFiltro = false;
+
+    if(($scope.GruppoEditorialeFiltro != -1) && ($scope.GruppoEditorialeFiltro != -2) && 
+       ($scope.GruppoEditorialeFiltro != -3) && ($scope.GruppoEditorialeFiltro != -4))
+    {
+        var GruppoFinded = $scope.ListaGruppiEditoriali.find(function (Elemento){return Elemento.Chiave == $scope.GruppoEditorialeFiltro});
+        
+        if(GruppoFinded != undefined)
+           IsGruppoRivaleFiltro = GruppoFinded.Rivale;     
+        else IsGruppoRivaleFiltro = false;
+    }
+
     var ObjParametri = {
                           FiltroNome                 : $scope.ANomeFiltro,
-                          FiltroPromotore            : $scope.PromotoreFiltro,     
+                          FiltroMateriaDocente       : $scope.MateriaFiltro,
+                          FiltroCoordinatore         : $scope.CoordMateriaFiltro ? 'T' : 'F',
+                          
+                          FiltroIstituto             : $scope.IstitutoFiltrato, 
                           FiltroGruppoIst            : $scope.GruppoIstitutoFiltro,
+                          FiltroPromotore            : $scope.PromotoreFiltro,  
                           FiltroProvincia            : $scope.AProvinciaFiltro,
-                          FiltroCasaEditrice         : $scope.CasaEditriceFiltro,
-                          FiltroTitolo               : $scope.TitoloFiltro,        
-                          FiltroIstituto             : $scope.IstitutoFiltrato,      
-                          FiltroMateria              : $scope.MateriaFiltro,
+
+                          FiltroTitolo               : $scope.TitoloFiltro,       
+                          FiltroCasaEditrice         : $scope.CasaEditriceFiltro,    
                           FiltroGruppoEd             : $scope.GruppoEditorialeFiltro, 
-                          FiltroNuoveAdozioni        : $scope.NuoveAdozioniFiltro == true ? "T" : "F",
-                          FiltroVolUniciPrimi        : $scope.VolumiUniciPrimiFiltro == true ? "T" : "F",
+                          FiltroIsGruppoEdRivale     : IsGruppoRivaleFiltro ? 'T' : 'F',
+                          FiltroMateriaTitolo        : $scope.MateriaFiltroTitolo,
+                          FiltroVolUniciPrimi        : $scope.VolumiUniciPrimiFiltro ? "T" : "F",
                        };
 
-   SystemInformation.ExecuteExternalScript('SIRIOExtraGetDocenti', ObjParametri, function(Results) 
+   SystemInformation.ExecuteExternalScript('SIRIOExtraGetLsTeacher', ObjParametri, function(Results) 
    {
-     DocentiInfoLista = Results.ListaDocenti;
+     DocentiInfoLista = Results.LsDocenti;
 
      for(let i = 0; i < DocentiInfoLista.length; i++) 
      {
@@ -1282,7 +1310,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
      if(RicercaPerTitolo) 
      {
         var ListaIstitutiTitoloTmp = [];
-        SystemInformation.GetSQL('Book', { FiltroT: ObjParametri.FiltroT }, function (Results) 
+        SystemInformation.GetSQL('Book', { FiltroT: ObjParametri.FiltroTitolo }, function (Results) 
         {
           ListaIstitutiTitoloTmp = SystemInformation.FindResults(Results, 'InstituteForBook');
           if(ListaIstitutiTitoloTmp != undefined) 
@@ -1356,7 +1384,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
 
   $scope.InvioMultiploMail = function (Nome) 
   {
-     var ListaMailFiltrata   = $filter('DocenteByFiltro')($scope.ListaDocenti, Nome, $scope.MateriaFiltro, $scope.CoordMateriaFiltro);
+     var ListaMailFiltrata = $scope.ListaDocenti; // $filter('DocenteByFiltro')($scope.ListaDocenti, Nome, $scope.MateriaFiltro, $scope.CoordMateriaFiltro);
      SystemInformation.DataBetweenController = { ListaDocMail: [] };
 
      for(let i = 0; i < ListaMailFiltrata.length; i ++)
@@ -1370,7 +1398,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
 
   $scope.NuovaSpedizioneMultipla = function (Nome) 
   {
-    var ListaFiltrata = $filter('DocenteByFiltro')($scope.ListaDocenti, Nome, $scope.MateriaFiltro, $scope.CoordMateriaFiltro);
+    var ListaFiltrata = $scope.ListaDocenti; //$filter('DocenteByFiltro')($scope.ListaDocenti, Nome, $scope.MateriaFiltro, $scope.CoordMateriaFiltro);
     SystemInformation.DataBetweenController = { ListaDocSped: [] };
     SystemInformation.DataBetweenController.Provenienza = 'TeacherPage';
     SystemInformation.DataBetweenController.MateriaFiltro = $scope.MateriaFiltro;
@@ -2735,7 +2763,8 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
    $scope.RefreshListaSpedizioni();
   }
 
-  $scope.RefreshListaDocenti();
+  
+  setTimeout(() => { $scope.RefreshListaDocenti(); }, 1000); //SENNO NON PRENDE I FILTRI DA URL
 
   /////////////////////////PAGINA MAIL
 
