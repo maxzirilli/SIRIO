@@ -1154,7 +1154,12 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
             style = 'style="font-weight: bold;color:rgb(92, 190, 0);"';
 
 
-         Result += '<span ' + style + '>' + Spedizione.DettagliTitoli[i].CodiceTitolo + ' - ' + Spedizione.DettagliTitoli[i].NomeTitolo + '</br><span style="font-weight:bold;">' + Spedizione.DettagliTitoli[i].StatoTitolo + ' IN DATA ' + $scope.ConvertiData(Spedizione.DettagliTitoli[i]) + '</span></br>';
+         Result += Spedizione.DettagliTitoli[i].CodiceTitolo + ' - ' + 
+                   Spedizione.DettagliTitoli[i].NomeTitolo + 
+                   '</br>' +
+                   '<span ' + style + '>' + Spedizione.DettagliTitoli[i].StatoTitolo + '</span>' +
+                   '<span style="font-weight: bold;"> IN DATA ' + 
+                   $scope.ConvertiData(Spedizione.DettagliTitoli[i]) + '</span></br>';
      }
      
      return($sce.trustAsHtml(Result.substr(0,Result.length)));
