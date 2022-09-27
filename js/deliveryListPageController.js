@@ -4,6 +4,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
   $scope.DaSpedireFiltro     = true;
   $scope.PrenotataFiltro     = true;
   $scope.ConsegnataFiltro    = false;
+  $scope.CaricamentoInCorso  = false;
   $scope.ProvinciaFiltro     = -1;
   $scope.PromotoreFiltro     = -1;
   $scope.IstitutoFiltro      = -1;
@@ -1113,6 +1114,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
   
   $scope.RefreshListaSpedizioniAll = function ()
   {
+    $scope.CaricamentoInCorso = true;
     $scope.GridOptions.query.page = 1;
     if($scope.DataRicercaDal == undefined || $scope.DataRicercaAl == undefined)
        return;
@@ -1122,6 +1124,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     SystemInformation.ExecuteExternalScript('SIRIOExtra',{ Dal : ZHTMLInputFromDate($scope.DataRicercaDal), Al : ZHTMLInputFromDate(TmpDate), Admin : ($scope.IsAdministrator() ? 'T' : 'F')},function(Answer) 
     {
       $scope.ListaSpedizioni = Answer.ListaSpedizioni; 
+      $scope.CaricamentoInCorso = false;
     }); 
   }
 
@@ -1138,13 +1141,40 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
   
   $scope.GetTitoliSpedizione = function(Spedizione)
   {
+     var style = 'style="font-weight: bold;color:black;"';
+
      var Result = '';
      for(let i = 0;i < Spedizione.DettagliTitoli.length;i ++)
      {
-         Result += Spedizione.DettagliTitoli[i].CodiceTitolo + ' - ' + Spedizione.DettagliTitoli[i].NomeTitolo + '</br><span style="font-weight:bold;">' + Spedizione.DettagliTitoli[i].StatoTitolo + ' IN DATA ' + $scope.ConvertiData(Spedizione.DettagliTitoli[i]) + '</span></br>';
+         if(Spedizione.DettagliTitoli[i].StatoTitolo == 'PRENOTATO')
+            style = 'style="font-weight: bold;color:rgb(255, 0, 0);"';
+         if(Spedizione.DettagliTitoli[i].StatoTitolo == 'DA SPEDIRE')
+            style = 'style="font-weight: bold;color:rgb(255, 153, 0);"';
+         if(Spedizione.DettagliTitoli[i].StatoTitolo == 'CONSEGNATO')
+            style = 'style="font-weight: bold;color:rgb(92, 190, 0);"';
+
+
+         Result += '<span ' + style + '>' + Spedizione.DettagliTitoli[i].CodiceTitolo + ' - ' + Spedizione.DettagliTitoli[i].NomeTitolo + '</br><span style="font-weight:bold;">' + Spedizione.DettagliTitoli[i].StatoTitolo + ' IN DATA ' + $scope.ConvertiData(Spedizione.DettagliTitoli[i]) + '</span></br>';
      }
      
      return($sce.trustAsHtml(Result.substr(0,Result.length)));
+  }
+
+  $scope.GetNumberRows = function()
+  {
+    let SpedizioniFiltrate = $filter('SpedizioneByFiltro')($scope.ListaSpedizioni,
+                                                           $scope.ProvinciaFiltro,
+                                                           $scope.PrenotataFiltro,
+                                                           $scope.DaSpedireFiltro,
+                                                           $scope.ConsegnataFiltro,
+                                                           $scope.PromotoreFiltro,
+                                                           $scope.IstitutoFiltro,
+                                                           $scope.DocenteFiltro,
+                                                           $scope.TitoloFiltro);
+    
+    if(SpedizioniFiltrate != undefined)
+       return SpedizioniFiltrate.length;
+    else return 0;
   }
 
   $scope.CreaXlsSpedizioni = function()

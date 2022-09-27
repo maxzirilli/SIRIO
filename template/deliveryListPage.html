@@ -26,11 +26,11 @@
     </md-input-container>
     
     <input type="checkbox" ng-change="GridOptions.query.page = 1" ng-model="DaSpedireFiltro" style="margin-left:60px;">
-    <label style="margin-left:5px;margin-right:2px;margin-top:27px;">DA SPEDIRE</label> 
+    <label style="margin-left:5px;margin-right:2px;margin-top:30px;font-weight: bold;color:rgb(255, 153, 0)">DA SPEDIRE</label> 
     <input type="checkbox" ng-change="GridOptions.query.page = 1" ng-model="PrenotataFiltro" style="margin-left:20px;">
-    <label style="margin-left:5px;margin-right:2px;margin-top:27px;">PRENOTATA</label> 
+    <label style="margin-left:5px;margin-right:2px;margin-top:30px;font-weight: bold;color:rgb(255, 0, 0)">PRENOTATA</label> 
     <input type="checkbox" ng-change="GridOptions.query.page = 1"ng-model="ConsegnataFiltro" style="margin-left:20px;">
-    <label style="margin-left:5px;margin-right:2px;margin-top:27px;">CONSEGNATA</label> 
+    <label style="margin-left:5px;margin-right:2px;margin-top:30px;font-weight: bold;color:rgb(92, 190, 0)">CONSEGNATA</label> 
 
   </div>   
   <br>
@@ -107,7 +107,7 @@
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="GestioneAvanzataSpedizioni()">GESTIONE SPEDIZIONI DISPONIBILI</md-button>
     </div>
   </div>
-  <div ng-if="ListaSpedizioni.length != 0">
+  <div ng-if="GetNumberRows() != 0 && !CaricamentoInCorso">
     <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
     <tr>
       <th></th>
@@ -141,6 +141,9 @@
   <br>
   <br>
   <div>
-    <p ng-if="ListaSpedizioni.length == 0" style="font-weight:bold;font-style:italic;text-align:center;">NESSUNA SPEDIZIONE PRESENTE</p>  
+    <p ng-if="GetNumberRows() == 0 && !CaricamentoInCorso" style="font-weight:bold;font-style:italic;text-align:center;">NESSUNA SPEDIZIONE PRESENTE</p>  
+  </div>
+  <div layout="column" layout-align="center center" ng-show="CaricamentoInCorso">
+    <label style="background-color:orange;display:block;font-size:30px;text-align:center;font-weight:bold;color:white;padding:50px;margin:50px;width:100%;">RICERCA SPEDIZIONI IN CORSO...</label>
   </div>
 </div>
