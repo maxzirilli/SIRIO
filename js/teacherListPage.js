@@ -24,6 +24,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
   $scope.DisponibilitaInEditing = [];
   $scope.NomeFiltro             = '';
   $scope.CodiceFiltro           = '';
+  $scope.RicercaInCorso         = false;
   $scope.CoordMateriaFiltro     = false;
   $scope.OldPagina              = 0;
   $scope.AdozioniGestite        = true;
@@ -1175,6 +1176,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
 
   $scope.RefreshListaDocenti = function () 
   {
+    $scope.RicercaInCorso = true;
     $scope.GridOptions.query.page = 1;
     var ObjParametri              = {};
 
@@ -1334,6 +1336,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
         $scope.GridOptions.query.page = SystemInformation.DataBetweenController.OldPaginaDocenti;
         SystemInformation.DataBetweenController = {};
      }
+     $scope.RicercaInCorso = false;
     });
   }
 
@@ -2558,7 +2561,6 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
     SystemInformation.DataBetweenController.MateriaFiltroNome = $scope.searchTextMat;
     SystemInformation.DataBetweenController.IstitutoFiltrato = $scope.IstitutoFiltrato;
     SystemInformation.DataBetweenController.IstitutoFiltratoNome = $scope.searchTextIstituto;
-    //SystemInformation.DataBetweenController.Pagina                  = $scope.GridOptions.query.page;
     $state.go("deliveryModDetailPage");
   }
 

@@ -45,7 +45,7 @@
 		},
 		{
 			"Name" : "TeacherInstitute",
-			"SQL" : "SELECT istituti.CHIAVE,istituti.INDIRIZZO,istituti.CAP,istituti.COMUNE,istituti.PROVINCIA,(SELECT province.NOME FROM province WHERE province.CHIAVE = istituti.PROVINCIA) AS PROVINCIA_NOME,(SELECT province_all.CHIAVE FROM province_all WHERE NOME=(SELECT province.NOME FROM province WHERE CHIAVE = istituti.PROVINCIA)) AS PROVINCIA_LISTA_ALL,istituti.CAP,istituti.NOME AS ISTITUTO FROM istituti_x_docenti,istituti WHERE DOCENTE=:CHIAVE AND istituti.CHIAVE = istituti_x_docenti.ISTITUTO ORDER BY ISTITUTO\n"
+			"SQL" : "SELECT istituti.NOME,istituti.CHIAVE,istituti.INDIRIZZO,istituti.CAP,istituti.COMUNE,istituti.PROVINCIA,(SELECT province.NOME FROM province WHERE province.CHIAVE = istituti.PROVINCIA) AS PROVINCIA_NOME,(SELECT province_all.CHIAVE FROM province_all WHERE NOME=(SELECT province.NOME FROM province WHERE CHIAVE = istituti.PROVINCIA)) AS PROVINCIA_LISTA_ALL,istituti.CAP,istituti.NOME AS ISTITUTO FROM istituti_x_docenti,istituti WHERE DOCENTE=:CHIAVE AND istituti.CHIAVE = istituti_x_docenti.ISTITUTO ORDER BY ISTITUTO\n"
 		},
 		{
 			"Name" : "TeacherLesson",

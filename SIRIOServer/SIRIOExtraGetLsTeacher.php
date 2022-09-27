@@ -82,7 +82,7 @@ use LDAP\Result;
                if($Parametri->FiltroGruppoEd > 0)
                {
                  //$Result .= ($Where ? " WHERE " : " AND ") . "case_editrici.CHIAVE = " . $Parametri->FiltroCasaEditrice;
-                 if($Parametri->FiltroIsGruppoEdRivale == 'T')
+                 if($Parametri->FiltroIsGruppoEdRivale == 'F')
                     $Result .= ($Where ? " WHERE " : " AND ") . "case_editrici.CHIAVE IN (SELECT CHIAVE FROM case_editrici_amiche) AND case_editrici.GRUPPO = " . $this->FPrepareParameterValue($Parametri->FiltroGruppoEd,':');
                  else $Result .= ($Where ? " WHERE " : " AND ") . "case_editrici.CHIAVE IN (SELECT CHIAVE FROM case_editrici_nemiche) AND case_editrici.GRUPPO = " . $this->FPrepareParameterValue($Parametri->FiltroGruppoEd,':'); 
                  $Where = false;
@@ -123,7 +123,6 @@ use LDAP\Result;
 
             protected function FExtraScriptServerSide($PDODBase,&$JSONAnswer)
             {
-               error_log(($_POST['SIRIOParams']));
                $Parametri             = JSON_decode($_POST['SIRIOParams']);
                $JSONAnswer->LsDocenti = array();
 
@@ -196,8 +195,6 @@ use LDAP\Result;
                                                                                                                                   $this->GetWhereTitoli($Parametri) .")))";
                                                                 
                $SQLBody .= " ORDER BY docenti.RAGIONE_SOCIALE";
-
-               error_log($SQLBody);
 
                if($Query = $PDODBase->query($SQLBody))
                {

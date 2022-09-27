@@ -151,7 +151,7 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
          if($scope.ListaDate.length > 0)
          {
            $scope.SecondaData = $scope.ListaDate[0].DataStatistica;
-           //$scope.GeneraStatistica();
+           $scope.GeneraStatistica();
          }
          else $scope.StatisticaPresente = false;
       } 
