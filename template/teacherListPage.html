@@ -1,543 +1,544 @@
 <div ng-controller="teacherListPageController">
-  <div ng-show="!EditingOn && !MailOn">
-    <div>
-      <h2>DOCENTI</h2>
-      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="RefreshListaDocenti()">CERCA 🔍</md-button>
-      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoDocente()">NUOVO DOCENTE</md-button>
-      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaSpedizioneMultipla(ANomeFiltro)">SPEDIZIONE MULTIPLA</md-button>
-      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-if="AbilitaInvioMultiplo()" ng-click="InvioMultiploMail(ANomeFiltro)">INVIO MULTIPLO MAIL</md-button>
-    </div>
-    
-    <div layout="row" style="padding-bottom:0px;">
-      <md-input-container class="containerSelect" style="width:33%;height:20px;"><label>COGNOME NOME</label>
-        <input ng-model="ANomeFiltro" ng-change="GridOptions.query.page = 1" type="search">
-      </md-input-container>
+   <div ng-show="!EditingOn && !MailOn">
+     <div>
+       <h2>DOCENTI</h2>
+       <!--<md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="RefreshListaDocenti()">CERCA 🔍</md-button>-->
+       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoDocente()">NUOVO DOCENTE</md-button>
+       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaSpedizioneMultipla(ANomeFiltro)">SPEDIZIONE MULTIPLA</md-button>
+       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-if="AbilitaInvioMultiplo()" ng-click="InvioMultiploMail(ANomeFiltro)">INVIO MULTIPLO MAIL</md-button>
+     </div>
+     
+     <div layout="row" style="padding-bottom:0px;">
+       <md-input-container class="containerSelect" style="width:33%;height:20px;"><label>COGNOME NOME</label>
+         <input ng-model="ANomeFiltro" ng-change="GridOptions.query.page = 1" type="search">
+       </md-input-container>
+        
+       <md-input-container class="containerSelect" style="width:33%;"><label>PROVINCIA</label>
+         <md-select ng-model="AProvinciaFiltro"  class="mdb-select" ng-change="RefreshListaDocenti()"> 
+            <md-optgroup label="-">
+              <md-option ng-value="-1">QUALSIASI</md-option>  
+              <md-option ng-repeat="provincia in ListaProvinceF" ng-value="provincia.Chiave">{{provincia.Nome}}</md-option>
+            </md-optgroup>
+         </md-select>
+       </md-input-container>
        
-      <md-input-container class="containerSelect" style="width:33%;"><label>PROVINCIA</label>
-        <md-select ng-model="AProvinciaFiltro"  class="mdb-select"> 
-           <md-optgroup label="-">
-             <md-option ng-value="-1">QUALSIASI</md-option>  
-             <md-option ng-repeat="provincia in ListaProvinceF" ng-value="provincia.Chiave">{{provincia.Nome}}</md-option>
-           </md-optgroup>
-        </md-select>
-      </md-input-container>
-      
-      <input type="checkbox" ng-model="CoordMateriaFiltro" ng-change="GridOptions.query.page = 1" style="margin-left:10px;margin-right:2px;margin-top:0px;width:20px;">
-      <label style="margin-left:5px;margin-right:2px;margin-top:27px;">COORDINATORE DI MATERIA</label> 
-    </div>
-    
-    <div layout="row" style="margin-top:0px;">    
+       <input ng-change="RefreshListaDocenti()" type="checkbox" ng-model="CoordMateriaFiltro" ng-change="GridOptions.query.page = 1" style="margin-left:10px;margin-right:2px;margin-top:0px;width:20px;">
+       <label style="margin-left:5px;margin-right:2px;margin-top:27px;">COORDINATORE DI MATERIA</label> 
+     </div>
+     
+     <div layout="row" style="margin-top:0px;">    
 
-      <img src="img/printPDF.png" ng-show="IstitutoFiltrato != -1 && searchTextIstituto != ''" style="margin-top:15px;margin-right:10px;width:3%;height:3%;" title="LISTA DOCENTI" ng-click="CreaPdfListaDocenti(IstitutoFiltrato)">
-      <img src="img/adoption.png" ng-show="IstitutoFiltrato != -1 && searchTextIstituto != ''" style="margin-top:15px;margin-right:10px;width:3%;height:3%;" title="ADOZIONI ISTITUTO" ng-click="VisualizzaAdozioni(IstitutoFiltrato,IstitutoFiltratoNome)">
+       <img src="img/printPDF.png" ng-show="IstitutoFiltrato != -1 && searchTextIstituto != ''" style="margin-top:15px;margin-right:10px;width:3%;height:3%;" title="LISTA DOCENTI" ng-click="CreaPdfListaDocenti(IstitutoFiltrato)">
+       <img src="img/adoption.png" ng-show="IstitutoFiltrato != -1 && searchTextIstituto != ''" style="margin-top:15px;margin-right:10px;width:3%;height:3%;" title="ADOZIONI ISTITUTO" ng-click="VisualizzaAdozioni(IstitutoFiltrato,IstitutoFiltratoNome)">
 
-      <md-input-container class="containerSelect" style="width:30%;margin-right:10px;">
-        <label>ISTITUTO</label>
-        <md-autocomplete
-                    md-search-text-change="searchTextChangeIst(searchTextIstituto)"
-                    md-input-name="Istituto"
-                    md-autofocus="true"
-                    md-no-cache="true"
-                    md-selected-item-change = "selectedItemChangeIstituto(item)"
-                    md-search-text="searchTextIstituto"
-                    md-items="item in queryIstituto(searchTextIstituto)"
-                    md-item-text="item.Istituto"
-                    md-require-match="true"
-                    md-clear-button="true">
-        <md-item-template>
-          <span md-highlight-text="searchText">CODICE :  {{item.Codice}} - {{item.Istituto}}</span>
-        </md-item-template>
-        <md-not-found>
-          Nessuna corrispondenza
-        </md-not-found>
-     </md-input-container>
-      
        <md-input-container class="containerSelect" style="width:30%;margin-right:10px;">
-         <label>TITOLO</label>
+         <label>ISTITUTO</label>
          <md-autocomplete
-                     md-search-text-change="searchTextChangeTit(searchTextTit)"
-                     md-input-name="Titolo"
+                     md-search-text-change="searchTextChangeIst(searchTextIstituto)"
+                     md-input-name="Istituto"
                      md-autofocus="true"
                      md-no-cache="true"
-                     md-selected-item-change = "selectedItemChangeTitolo(itemTit)"
-                     md-search-text="searchTextTit"
-                     md-items="itemTit in queryTitolo(searchTextTit)"
-                     md-item-text="itemTit.Nome"
+                     md-selected-item-change = "selectedItemChangeIstituto(item)"
+                     md-search-text="searchTextIstituto"
+                     md-items="item in queryIstituto(searchTextIstituto)"
+                     md-item-text="item.Istituto"
                      md-require-match="true"
                      md-clear-button="true">
          <md-item-template>
-           <span md-highlight-text="searchTextTit">ISBN : {{itemTit.Codice}} - {{itemTit.Nome}}</span>
+           <span md-highlight-text="searchText">CODICE :  {{item.Codice}} - {{item.Istituto}}</span>
          </md-item-template>
          <md-not-found>
            Nessuna corrispondenza
          </md-not-found>
-       </md-input-container>
+      </md-input-container>
        
-      <md-input-container class="containerSelect" style="width:30%;">
-        <label>RUOLO DOCENTE</label>
-        <md-autocomplete 
-                    md-search-text-change="searchTextChangeMat(searchTextMat)"
-                    md-input-name="Materia"
-                    md-no-cache="true"
-                    md-selected-item-change="selectedItemChangeMateria(itemMat)"
-                    md-search-text="searchTextMat"
-                    md-items="itemMat in queryMateria(searchTextMat)"
-                    md-item-text="itemMat.Nome"
-                    md-require-match="true"
-                    md-clear-button="true">
-        <md-item-template>
-          <span md-highlight-text="searchTextMat">{{itemMat.Nome}}</span>
-        </md-item-template>
-        <md-not-found>
-          Nessuna corrispondenza
-        </md-not-found>
-     </md-input-container>
-    </div>    
-
-    <div>
-
-      <div layout="row">
-        <md-input-container class="containerSelect" style="width:20%;margin-right:10px;"><label>TIPO SCUOLA</label>
-          <md-select ng-model="GruppoIstitutoFiltro" placeholder="TIPO SCUOLA" class="mdb-select" type="text" name="GruppoIstitutoFiltro">
-          <md-optgroup>
-            <md-option ng-value="-1">QUALSIASI</md-option>
-            <md-option ng-value="'-2'">SOLO SS2</md-option>   
-            <md-option ng-repeat="gruppo in ListaGruppiIstituti" ng-value="gruppo.Chiave">{{gruppo.Descrizione | uppercase}}</md-option>
-          </md-optgroup>
-          </md-select>
-        </md-input-container>
-        <md-input-container ng-show="IsAdministrator()" class="containerSelect" style="width:20%;margin-right:10px;"><label>PROMOTORE</label>
-          <md-select ng-model="PromotoreFiltro" placeholder="PROMOTORE" class="mdb-select" type="text" name="PromotoreFiltro">
-          <md-optgroup>
-            <md-option ng-value="-1">QUALSIASI</md-option>  
-            <md-option ng-repeat="promotore in ListaPromotori" ng-value="promotore.Chiave">{{promotore.RagioneSociale | uppercase}}</md-option>
-          </md-optgroup>
-          </md-select>
-        </md-input-container>
-       <md-input-container class="containerSelect" style="width:20%;margin-right:10px;"><label>GRUPPO EDITORIALE</label>
-          <md-select ng-model="GruppoEditorialeFiltro" placeholder="GRUPPO EDITORIALE" class="mdb-select" type="text" name="GruppoEditorialeFiltro">
-          <md-optgroup>
-            <md-option ng-value="-1">QUALSIASI</md-option>
-            <md-option ng-value="-2">GESTITI</md-option> 
-            <md-option ng-value="-3">NON GESTITI</md-option> 
-            <md-option ng-value="-4">SOLO RIVALI</md-option> 
-            <md-option ng-repeat="gruppoEditoriale in ListaGruppiEditoriali" ng-value="gruppoEditoriale.Chiave">{{gruppoEditoriale.Descrizione | uppercase}}<span ng-if="gruppoEditoriale.Rivale"> ⚔</span></md-option>
-          </md-optgroup>
-          </md-select>
-        </md-input-container>
-      </div>
-      <div layout="row">
         <md-input-container class="containerSelect" style="width:30%;margin-right:10px;">
-          <label>EDITORE</label>
+          <label>TITOLO</label>
           <md-autocomplete
-                      md-search-text-change="searchTextChangeEd(searchTextEd)"
-                      md-input-name="Editore"
+                      md-search-text-change="searchTextChangeTit(searchTextTit)"
+                      md-input-name="Titolo"
                       md-autofocus="true"
                       md-no-cache="true"
-                      md-selected-item-change = "selectedItemChangeEditore(item)"
-                      md-search-text="searchTextEd"
-                      md-items="item in queryEditore(searchTextEd)"
-                      md-item-text="item.Descrizione"
+                      md-selected-item-change = "selectedItemChangeTitolo(itemTit)"
+                      md-search-text="searchTextTit"
+                      md-items="itemTit in queryTitolo(searchTextTit)"
+                      md-item-text="itemTit.Nome"
                       md-require-match="true"
                       md-clear-button="true">
           <md-item-template>
-            <span md-highlight-text="searchText">{{item.Descrizione}}</span>
+            <span md-highlight-text="searchTextTit">ISBN : {{itemTit.Codice}} - {{itemTit.Nome}}</span>
           </md-item-template>
           <md-not-found>
             Nessuna corrispondenza
           </md-not-found>
-       </md-input-container>
+        </md-input-container>
+        
        <md-input-container class="containerSelect" style="width:30%;">
-        <label>MATERIA TITOLO</label>
-        <md-autocomplete 
-                    md-search-text-change="searchTextChangeMatTit(searchTextMatTit)"
-                    md-input-name="MateriaTitolo"
-                    md-no-cache="true"
-                    md-selected-item-change="selectedItemChangeMateriaTit(item)"
-                    md-search-text="searchTextMatTit"
-                    md-items="item in queryMateriaTit(searchTextMatTit)"
-                    md-item-text="item.Nome"
-                    md-require-match="true"
-                    md-clear-button="true">
-        <md-item-template>
-          <span md-highlight-text="searchText">{{item.Nome}}</span>
-        </md-item-template>
-        <md-not-found>
-          Nessuna corrispondenza
-        </md-not-found>
-     </md-input-container>
-     <input name="ckVolumi" type="checkbox" ng-model="VolumiUniciPrimiFiltro" style="margin-left:20px;"><label for="ckVolumi" style="margin-top:30px;margin-left:10px;">SOLO VOLUMI UNICI E PRIMI</label>
-      </div>
-    </div>
+         <label>RUOLO DOCENTE</label>
+         <md-autocomplete 
+                     md-search-text-change="searchTextChangeMat(searchTextMat)"
+                     md-input-name="Materia"
+                     md-no-cache="true"
+                     md-selected-item-change="selectedItemChangeMateria(itemMat)"
+                     md-search-text="searchTextMat"
+                     md-items="itemMat in queryMateria(searchTextMat)"
+                     md-item-text="itemMat.Nome"
+                     md-require-match="true"
+                     md-clear-button="true">
+         <md-item-template>
+           <span md-highlight-text="searchTextMat">{{itemMat.Nome}}</span>
+         </md-item-template>
+         <md-not-found>
+           Nessuna corrispondenza
+         </md-not-found>
+      </md-input-container>
+     </div>    
 
-    </div>
+     <input name="filtriStatistiche" type="checkbox" ng-model="ViewFiltriStatistiche" style="margin-top:30px;margin-bottom:30px;"><label for="filtriStatistiche" style="margin-top:30px;margin-left:10px;">VISUALIZZA FILTRI STATISTICHE</label>
 
-    <div v-show="!RicercaInCorso">
-      <div ng-if="ListaDocenti.length != 0">
-        <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
-          <tr>
-            <th ng-if="IsAdministrator()"></th>
-            <th ng-if="IsAdministrator()"></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th>COGNOME NOME</th>
-            <th>MATERIA</th>
-          </tr>                               <!--| DocenteByFiltro : ANomeFiltro : MateriaFiltro : CoordMateriaFiltro-->
-          <tr ng-repeat="Docente in ListaDocenti  | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Docente.Chiave}}>
-            <td ng-if="IsAdministrator()"><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA DOCENTE" ng-click="EliminaDocente(Docente)"></td> 
-            <td ng-if="Docente.Nascosto != 'T' && IsAdministrator()"><img src="img/hide.png" style="width:30px;height:auto;" title="NASCONDI DOCENTE" ng-click="NascondiDocente(Docente)"></td>        
-            <td ng-if="Docente.Nascosto == 'T' && IsAdministrator()"><img src="img/notHide.png" style="width:30px;height:auto;" title="RENDI VISIBILE DOCENTE" ng-click="RendiVisibileDocente(Docente)"></td>     
-            <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA DOCENTE" ng-click="ModificaDocente(Docente)"></td>
-            <td><img src="img/delivery.png" style="width:30px;height:auto;" title="NUOVA SPEDIZIONE" ng-click="NuovaSpedizione(Docente.Chiave)"></td>
-            <td ng-if="Docente.SpedizioniTotali != 0 && Docente.SpedizioniThisAnno > 0"><img src="img/deliveryList.png" style="width:30px;height:auto;" title="LISTA SPEDIZIONI" ng-click="ListaSpedizioni(Docente)"></td>
-            <td ng-if="Docente.SpedizioniTotali == 0"><img src="img/deliveryList.png" style="width:30px;height:auto;filter:grayscale(100%);" title="NESSUNA SPEDIZIONE ASSOCIATA"></td>
-            <td ng-if="Docente.SpedizioniTotali != 0 && Docente.SpedizioniThisAnno == 0"><img src="img/deliveryList.png" style="width:30px;height:auto;filter:hue-rotate(200deg);" title="NESSUNA SPEDIZIONE NELL'ANNO IN CORSO" ng-click="ListaSpedizioni(Docente)"></td>
-            <td ng-if="Docente.Email != 'Non disponibile'"><img src="img/email.png" style="width:30px;height:auto;" title="INVIA MAIL"  ng-click="InvioMail(Docente)"></td>
-            <td ng-if="Docente.Email == 'Non disponibile'"><img src="img/email.png" style="width:30px;height:auto;filter:grayscale(100%);" title="MAIL NON DISPONIBILE"></td>       
-            <td>{{Docente.RagioneSociale}}</td>
-            <td ng-bind-html="GetMaterieDoc(Docente)"></td>
-          </tr>    
-        </table>
-        <md-table-pagination md-limit="GridOptions.query.limit" 
-                             md-limit-options="GridOptions.limitOptions" 
-                             md-page="GridOptions.query.page" 
-                             md-total="{{ListaDocenti.length}}" 
-                             md-page-select="GridOptions.pageSelect" 
-                             md-boundary-links="GridOptions.boundaryLinks" 
-                             md-on-paginate="logPagination"></md-table-pagination>
-      </div>
-      <p ng-if="ListaDocenti.length == 0" style="font-weight:bold;font-style:italic;text-align:center;">NESSUN DOCENTE PRESENTE</p>
-    </div>
-      <div layout="column" layout-align="center center" ng-show="RicercaInCorso">
-    <label style="background-color:orange;display:block;font-size:30px;text-align:center;font-weight:bold;color:white;padding:50px;margin:50px;width:100%;">RICERCA DOCENTI IN CORSO...</label>
-  </div>
-  </div>
-    
-  <div ng-show="EditingOn && !MailOn">
-      <form name="docenteEditForm" layout="column" style="width:100%" >
-           <div layout="row">
-             <h2>DOCENTE</h2>
-             <div layout="row" style="width:100%;" layout-align="end start">
-               <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ConfermaDocente()" ng-disabled="DocenteInEditing.RagioneSociale == ''" >CONFERMA</md-button> <!--ng-disabled="docenteEditForm.$invalid"-->
-               <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="OnAnnullaDocenteClicked()">ANNULLA</md-button>
-             </div>
-           </div>
-                 <md-tabs style="width:100%;" md-selected="selectedIstitutiClassi" md-border-bottom md-autoselect md-dynamic-height md-swipe-content>
-                   <md-tab label="Generale">
+     <div ng-show="ViewFiltriStatistiche">
+       <div layout="row">
+         <md-input-container class="containerSelect" style="width:20%;margin-right:10px;"><label>TIPO SCUOLA</label>
+           <md-select ng-model="GruppoIstitutoFiltro" ng-change="RefreshListaDocenti()" placeholder="TIPO SCUOLA" class="mdb-select" type="text" name="GruppoIstitutoFiltro">
+           <md-optgroup>
+             <md-option ng-value="-1">QUALSIASI</md-option>
+             <md-option ng-value="'-2'">SOLO SS2</md-option>   
+             <md-option ng-repeat="gruppo in ListaGruppiIstituti" ng-value="gruppo.Chiave">{{gruppo.Descrizione | uppercase}}</md-option>
+           </md-optgroup>
+           </md-select>
+         </md-input-container>
+         <md-input-container ng-show="IsAdministrator()" class="containerSelect" style="width:20%;margin-right:10px;"><label>PROMOTORE</label>
+           <md-select ng-model="PromotoreFiltro" ng-change="RefreshListaDocenti()" placeholder="PROMOTORE" class="mdb-select" type="text" name="PromotoreFiltro">
+           <md-optgroup>
+             <md-option ng-value="-1">QUALSIASI</md-option>  
+             <md-option ng-repeat="promotore in ListaPromotori" ng-value="promotore.Chiave">{{promotore.RagioneSociale | uppercase}}</md-option>
+           </md-optgroup>
+           </md-select>
+         </md-input-container>
+        <md-input-container class="containerSelect" style="width:20%;margin-right:10px;"><label>GRUPPO EDITORIALE</label>
+           <md-select ng-model="GruppoEditorialeFiltro" ng-change="RefreshListaDocenti()" placeholder="GRUPPO EDITORIALE" class="mdb-select" type="text" name="GruppoEditorialeFiltro">
+           <md-optgroup>
+             <md-option ng-value="-1">QUALSIASI</md-option>
+             <md-option ng-value="-2">GESTITI</md-option> 
+             <md-option ng-value="-3">NON GESTITI</md-option> 
+             <md-option ng-value="-4">SOLO RIVALI</md-option> 
+             <md-option ng-repeat="gruppoEditoriale in ListaGruppiEditoriali" ng-value="gruppoEditoriale.Chiave">{{gruppoEditoriale.Descrizione | uppercase}}<span ng-if="gruppoEditoriale.Rivale"> ⚔</span></md-option>
+           </md-optgroup>
+           </md-select>
+         </md-input-container>
+       </div>
+       <div layout="row">
+         <md-input-container class="containerSelect" style="width:30%;margin-right:10px;">
+           <label>EDITORE</label>
+           <md-autocomplete
+                       md-search-text-change="searchTextChangeEd(searchTextEd)"
+                       md-input-name="Editore"
+                       md-autofocus="true"
+                       md-no-cache="true"
+                       md-selected-item-change = "selectedItemChangeEditore(item)"
+                       md-search-text="searchTextEd"
+                       md-items="item in queryEditore(searchTextEd)"
+                       md-item-text="item.Descrizione"
+                       md-require-match="true"
+                       md-clear-button="true">
+           <md-item-template>
+             <span md-highlight-text="searchText">{{item.Descrizione}}</span>
+           </md-item-template>
+           <md-not-found>
+             Nessuna corrispondenza
+           </md-not-found>
+        </md-input-container>
+        <md-input-container class="containerSelect" style="width:30%;">
+         <label>MATERIA TITOLO</label>
+         <md-autocomplete 
+                     md-search-text-change="searchTextChangeMatTit(searchTextMatTit)"
+                     md-input-name="MateriaTitolo"
+                     md-no-cache="true"
+                     md-selected-item-change="selectedItemChangeMateriaTit(item)"
+                     md-search-text="searchTextMatTit"
+                     md-items="item in queryMateriaTit(searchTextMatTit)"
+                     md-item-text="item.Nome"
+                     md-require-match="true"
+                     md-clear-button="true">
+         <md-item-template>
+           <span md-highlight-text="searchText">{{item.Nome}}</span>
+         </md-item-template>
+         <md-not-found>
+           Nessuna corrispondenza
+         </md-not-found>
+      </md-input-container>
+      <input name="ckVolumi" ng-change="RefreshListaDocenti()" type="checkbox" ng-model="VolumiUniciPrimiFiltro" style="margin-left:20px;"><label for="ckVolumi" style="margin-top:30px;margin-left:10px;">SOLO VOLUMI UNICI E PRIMI</label>
+       </div>
+     </div>
+
+   </div>
+
+   <div ng-show="!RicercaInCorso && !EditingOn && !MailOn">
+     <div ng-if="ListaDocenti.length != 0">
+       <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
+         <tr>
+           <th ng-if="IsAdministrator()"></th>
+           <th ng-if="IsAdministrator()"></th>
+           <th></th>
+           <th></th>
+           <th></th>
+           <th></th>
+           <th>COGNOME NOME</th>
+           <th>MATERIA</th>
+         </tr>                              
+         <tr ng-repeat="Docente in ListaDocenti | DocenteByFiltro : ANomeFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Docente.Chiave}}>
+           <td ng-if="IsAdministrator()"><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA DOCENTE" ng-click="EliminaDocente(Docente)"></td> 
+           <td ng-if="Docente.Nascosto != 'T' && IsAdministrator()"><img src="img/hide.png" style="width:30px;height:auto;" title="NASCONDI DOCENTE" ng-click="NascondiDocente(Docente)"></td>        
+           <td ng-if="Docente.Nascosto == 'T' && IsAdministrator()"><img src="img/notHide.png" style="width:30px;height:auto;" title="RENDI VISIBILE DOCENTE" ng-click="RendiVisibileDocente(Docente)"></td>     
+           <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA DOCENTE" ng-click="ModificaDocente(Docente)"></td>
+           <td><img src="img/delivery.png" style="width:30px;height:auto;" title="NUOVA SPEDIZIONE" ng-click="NuovaSpedizione(Docente.Chiave)"></td>
+           <td ng-if="Docente.SpedizioniTotali != 0 && Docente.SpedizioniThisAnno > 0"><img src="img/deliveryList.png" style="width:30px;height:auto;" title="LISTA SPEDIZIONI" ng-click="ListaSpedizioni(Docente)"></td>
+           <td ng-if="Docente.SpedizioniTotali == 0"><img src="img/deliveryList.png" style="width:30px;height:auto;filter:grayscale(100%);" title="NESSUNA SPEDIZIONE ASSOCIATA"></td>
+           <td ng-if="Docente.SpedizioniTotali != 0 && Docente.SpedizioniThisAnno == 0"><img src="img/deliveryList.png" style="width:30px;height:auto;filter:hue-rotate(200deg);" title="NESSUNA SPEDIZIONE NELL'ANNO IN CORSO" ng-click="ListaSpedizioni(Docente)"></td>
+           <td ng-if="Docente.Email != 'Non disponibile'"><img src="img/email.png" style="width:30px;height:auto;" title="INVIA MAIL"  ng-click="InvioMail(Docente)"></td>
+           <td ng-if="Docente.Email == 'Non disponibile'"><img src="img/email.png" style="width:30px;height:auto;filter:grayscale(100%);" title="MAIL NON DISPONIBILE"></td>       
+           <td>{{Docente.RagioneSociale}}</td>
+           <td ng-bind-html="GetMaterieDoc(Docente)"></td>
+         </tr>    
+       </table>
+       <md-table-pagination md-limit="GridOptions.query.limit" 
+                            md-limit-options="GridOptions.limitOptions" 
+                            md-page="GridOptions.query.page" 
+                            md-total="{{ListaDocenti.length}}" 
+                            md-page-select="GridOptions.pageSelect" 
+                            md-boundary-links="GridOptions.boundaryLinks" 
+                            md-on-paginate="logPagination"></md-table-pagination>
+     </div>
+     <p ng-if="ListaDocenti.length == 0" style="font-weight:bold;font-style:italic;text-align:center;">NESSUN DOCENTE PRESENTE</p>
+   </div>
+
+   <div layout="column" layout-align="center center" ng-show="RicercaInCorso">
+     <label style="background-color:orange;display:block;font-size:30px;text-align:center;font-weight:bold;color:white;padding:50px;margin:50px;width:100%;">RICERCA DOCENTI IN CORSO...</label>
+   </div>
+     
+   <div ng-show="EditingOn && !MailOn">
+       <form name="docenteEditForm" layout="column" style="width:100%" >
+            <div layout="row">
+              <h2>DOCENTE</h2>
+              <div layout="row" style="width:100%;" layout-align="end start">
+                <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="ConfermaDocente()" ng-disabled="DocenteInEditing.RagioneSociale == ''" >CONFERMA</md-button> <!--ng-disabled="docenteEditForm.$invalid"-->
+                <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="OnAnnullaDocenteClicked()">ANNULLA</md-button>
+              </div>
+            </div>
+                  <md-tabs style="width:100%;" md-selected="selectedIstitutiClassi" md-border-bottom md-autoselect md-dynamic-height md-swipe-content>
+                    <md-tab label="Generale">
+                      <div layout="row">
+                        <md-input-container style="width:10%;">
+                          <label>TITOLO</label><input ng-model="DocenteInEditing.Titolo" type="text" name="Titolo">
+                        </md-input-container>        
+                        <md-input-container style="width:20%;" ng-show="DocenteInEditing.Chiave != -1 || (IstitutoForNewDocente == -1 && DocenteInEditing.Chiave == -1) || IstitutoFiltro == -1 || searchTextIstituto == ''">
+                          <label>COGNOME NOME</label><input ng-model="DocenteInEditing.RagioneSociale" type="text" name="RagioneSociale" >
+                        </md-input-container>
+
+                        <md-input-container class="containerSelect" style="margin-left:5px;width:30%;padding-top:0px;" ng-show="DocenteInEditing.Chiave == -1 && IstitutoFiltro != -1 && searchTextIstituto != ''">
+                         <label>DOCENTE</label>
+                         <md-autocomplete
+                                     md-input-name="Docente"
+                                     md-autofocus="true"
+                                     md-no-cache="true"
+                                     md-selected-item="selectedItemDoc"
+                                     md-selected-item-change="selectedItemChangeDoc(item)"
+                                     md-search-text="searchTextDoc"
+                                     md-items="item in queryDoc(searchTextDoc)"
+                                     md-item-text="item.NomeDoc"
+                                     md-require-match="true"
+                                     md-clear-button="true">
+                         <md-item-template>
+                           <span md-highlight-text="searchText">{{item.NomeDoc}}</span>
+                         </md-item-template>
+                      </md-input-container>
+
+                      </div>
+                                  
+                      <div layout="row">
+                        <md-input-container style="width:20%;">
+                          <label>INDIRIZZO</label><input ng-model="DocenteInEditing.Indirizzo" type="text" name="Indirizzo">
+                        </md-input-container> 
+                        <md-input-container style="width:20%;">
+                          <label>COMUNE</label><input ng-model="DocenteInEditing.Comune" type="text" name="Comune">
+                        </md-input-container>
+                        <md-input-container style="width:20%;">
+                          <label>CAP</label><input ng-model="DocenteInEditing.Cap" type="text" name="Cap">
+                        </md-input-container> 
+                        <md-input-container class="containerSelect" style="width:33%;"><label>PROVINCIA</label>
+                          <md-select ng-model="DocenteInEditing.Provincia" class="mdb-select" type="text" name="Provincia">
+                          <md-optgroup label="-">
+                            <md-option ng-value="-1">-</md-option>  
+                            <md-option ng-repeat="provincia in ListaProvinceAll" ng-value="provincia.Chiave">{{provincia.Nome}}</md-option>
+                          </md-optgroup>
+                          </md-select>
+                        </md-input-container>                                              
+                      </div>
+                     
                      <div layout="row">
-                       <md-input-container style="width:10%;">
-                         <label>TITOLO</label><input ng-model="DocenteInEditing.Titolo" type="text" name="Titolo">
-                       </md-input-container>        
-                       <md-input-container style="width:20%;" ng-show="DocenteInEditing.Chiave != -1 || (IstitutoForNewDocente == -1 && DocenteInEditing.Chiave == -1) || IstitutoFiltro == -1 || searchTextIstituto == ''">
-                         <label>COGNOME NOME</label><input ng-model="DocenteInEditing.RagioneSociale" type="text" name="RagioneSociale" >
-                       </md-input-container>
-
-                       <md-input-container class="containerSelect" style="margin-left:5px;width:30%;padding-top:0px;" ng-show="DocenteInEditing.Chiave == -1 && IstitutoFiltro != -1 && searchTextIstituto != ''">
-                        <label>DOCENTE</label>
-                        <md-autocomplete
-                                    md-input-name="Docente"
-                                    md-autofocus="true"
-                                    md-no-cache="true"
-                                    md-selected-item="selectedItemDoc"
-                                    md-selected-item-change="selectedItemChangeDoc(item)"
-                                    md-search-text="searchTextDoc"
-                                    md-items="item in queryDoc(searchTextDoc)"
-                                    md-item-text="item.NomeDoc"
-                                    md-require-match="true"
-                                    md-clear-button="true">
-                        <md-item-template>
-                          <span md-highlight-text="searchText">{{item.NomeDoc}}</span>
-                        </md-item-template>
-                     </md-input-container>
-
-                     </div>
-                                 
-                     <div layout="row">
-                       <md-input-container style="width:20%;">
-                         <label>INDIRIZZO</label><input ng-model="DocenteInEditing.Indirizzo" type="text" name="Indirizzo">
-                       </md-input-container> 
-                       <md-input-container style="width:20%;">
-                         <label>COMUNE</label><input ng-model="DocenteInEditing.Comune" type="text" name="Comune">
-                       </md-input-container>
-                       <md-input-container style="width:20%;">
-                         <label>CAP</label><input ng-model="DocenteInEditing.Cap" type="text" name="Cap">
-                       </md-input-container> 
-                       <md-input-container class="containerSelect" style="width:33%;"><label>PROVINCIA</label>
-                         <md-select ng-model="DocenteInEditing.Provincia" class="mdb-select" type="text" name="Provincia">
-                         <md-optgroup label="-">
-                           <md-option ng-value="-1">-</md-option>  
-                           <md-option ng-repeat="provincia in ListaProvinceAll" ng-value="provincia.Chiave">{{provincia.Nome}}</md-option>
-                         </md-optgroup>
-                         </md-select>
-                       </md-input-container>                                              
-                     </div>
-                    
-                    <div layout="row">
-                       <md-input-container class="containerSelect" style="width:33%;"><label>PIATTAFORMA 1</label>
-                         <md-select ng-model="DocenteInEditing.Piattaforma" class="mdb-select" type="text" name="Piattaforma">
+                        <md-input-container class="containerSelect" style="width:33%;"><label>PIATTAFORMA 1</label>
+                          <md-select ng-model="DocenteInEditing.Piattaforma" class="mdb-select" type="text" name="Piattaforma">
+                          <md-optgroup>
+                            <md-option ng-repeat="piattaforma in ListaPiattaforme" ng-value="piattaforma.Sigla">{{piattaforma.Valore}}</md-option>
+                          </md-optgroup>
+                          </md-select>
+                        </md-input-container>
+                        <md-input-container class="containerSelect" style="width:33%;"><label>PIATTAFORMA 2</label>
+                         <md-select ng-model="DocenteInEditing.Piattaforma_2" class="mdb-select" type="text" name="Piattaforma_2">
                          <md-optgroup>
                            <md-option ng-repeat="piattaforma in ListaPiattaforme" ng-value="piattaforma.Sigla">{{piattaforma.Valore}}</md-option>
                          </md-optgroup>
                          </md-select>
                        </md-input-container>
-                       <md-input-container class="containerSelect" style="width:33%;"><label>PIATTAFORMA 2</label>
-                        <md-select ng-model="DocenteInEditing.Piattaforma_2" class="mdb-select" type="text" name="Piattaforma_2">
+                        <md-input-container style="width:20%;">
+                          <label>EMAIL PRINCIPALE</label><input type="text" ng-model="DocenteInEditing.Email" type="text" name="Email">
+                        </md-input-container>
+                        <md-input-container style="width:20%;">
+                         <label>EMAIL SECONDARIA</label><input type="text" ng-model="DocenteInEditing.EmailSecondaria" type="text" name="EmailSecondaria">
+                       </md-input-container>  
+                      </div>
+                      
+                      <div layout="row">
+                      <input type="checkbox" ng-model="DocenteInEditing.CoordMateria_1" title="COORDINATORE MATERIA 1" ng-disabled="DocenteInEditing.Materia_1 == -1" style="margin-left:2px;margin-right:10px;width:20px;">
+                      <!--<md-input-container class="containerSelect" style="width:27%;"><label>MATERIA 1</label>
+                        <md-select ng-model="DocenteInEditing.Materia_1" ng-change="DocenteInEditing.CoordMateria_1 = false" class="mdb-select" type="text" name="Materia_1">
                         <md-optgroup>
-                          <md-option ng-repeat="piattaforma in ListaPiattaforme" ng-value="piattaforma.Sigla">{{piattaforma.Valore}}</md-option>
+                          <md-option ng-value="-1">-</md-option>  
+                          <md-option ng-repeat="materia in ListaMateriePerDoc" ng-value="materia.Chiave">{{materia.Nome}}</md-option>
+                        </md-optgroup>
+                        </md-select>
+                      </md-input-container>-->
+                           <md-input-container class="containerSelect" style="width:30%;margin-right: 20px;">
+                             <label>MATERIA 1</label>
+                             <md-autocomplete
+                                         md-search-text-change="searchTextChangeMat1(searchTextMat1)"
+                                         md-input-name="MateriaEdit1"
+                                         md-no-cache="true"
+                                         md-selected-item-change="selectedItemChangeMateria1(item1)"
+                                         md-search-text="searchTextMat1"
+                                         md-items="item1 in queryMateria1(searchTextMat1)"
+                                         md-item-text="item1.Nome"
+                                         md-require-match="true"
+                                         md-clear-button="true">
+                             <md-item-template>
+                               <span md-highlight-text="searchTextMat1">{{item1.Nome}}</span>
+                             </md-item-template>
+                             <md-not-found>
+                               Nessuna corrispondenza
+                             </md-not-found>
+                          </md-input-container>
+                      <input type="checkbox" ng-model="DocenteInEditing.CoordMateria_2" title="COORDINATORE MATERIA 2" ng-disabled="DocenteInEditing.Materia_2 == -1" style="margin-left:2px;margin-right:10px;width:20px;">                                     
+                           <md-input-container class="containerSelect" style="width:30%;margin-right: 20px;">
+                             <label>MATERIA 2</label>
+                             <md-autocomplete
+                                         md-search-text-change="searchTextChangeMat2(searchTextMat2)"
+                                         md-input-name="MateriaEdit2"
+                                         md-no-cache="true"
+                                         md-selected-item-change="selectedItemChangeMateria2(item2)"
+                                         md-search-text="searchTextMat2"
+                                         md-items="item2 in queryMateria2(searchTextMat2)"
+                                         md-item-text="item2.Nome"
+                                         md-require-match="true"
+                                         md-clear-button="true">
+                             <md-item-template>
+                               <span md-highlight-text="searchTextMat2">{{item2.Nome}}</span>
+                             </md-item-template>
+                             <md-not-found>
+                               Nessuna corrispondenza
+                             </md-not-found>
+                          </md-input-container>
+                      <!--<md-input-container class="containerSelect" style="width:27%;"><label>MATERIA 2</label>
+                        <md-select ng-model="DocenteInEditing.Materia_2" ng-change="DocenteInEditing.CoordMateria_2 = false" class="mdb-select" type="text" name="Materia_2">
+                        <md-optgroup>
+                          <md-option ng-value="-1">-</md-option>  
+                          <md-option ng-repeat="materia in ListaMateriePerDoc" ng-value="materia.Chiave">{{materia.Nome}}</md-option>
+                        </md-optgroup>
+                        </md-select>
+                      </md-input-container>-->
+                      <input type="checkbox" ng-model="DocenteInEditing.CoordMateria_3" title="COORDINATORE MATERIA 3" ng-disabled="DocenteInEditing.Materia_3 == -1" style="margin-left:2px;margin-right:10px;width:20px;">                 
+                          <md-input-container class="containerSelect" style="width:30%;margin-right: 20px;">
+                             <label>MATERIA 1</label>
+                             <md-autocomplete
+                                         md-search-text-change="searchTextChangeMat3(searchTextMat3)"
+                                         md-input-name="MateriaEdit3"
+                                         md-no-cache="true"
+                                         md-selected-item-change="selectedItemChangeMateria3(item3)"
+                                         md-search-text="searchTextMat3"
+                                         md-items="item3 in queryMateria3(searchTextMat3)"
+                                         md-item-text="item3.Nome"
+                                         md-require-match="true"
+                                         md-clear-button="true">
+                             <md-item-template>
+                               <span md-highlight-text="searchTextMat3">{{item3.Nome}}</span>
+                             </md-item-template>
+                             <md-not-found>
+                               Nessuna corrispondenza
+                             </md-not-found>
+                          </md-input-container>
+                      <!--<md-input-container class="containerSelect" style="width:27%;"><label>MATERIA 3</label>
+                        <md-select ng-model="DocenteInEditing.Materia_3" ng-change="DocenteInEditing.CoordMateria_3 = false" class="mdb-select" type="text" name="Materia_3">
+                        <md-optgroup>
+                          <md-option ng-value="-1">-</md-option>  
+                          <md-option ng-repeat="materia in ListaMateriePerDoc" ng-value="materia.Chiave">{{materia.Nome}}</md-option>
+                        </md-optgroup>
+                        </md-select>
+                      </md-input-container>-->
+                      </div>
+                      <br>
+                     
+                      <div layout="row">
+                        <md-input-container style="width:33%;">
+                          <label>PRIMO RECAPITO TELEFONICO</label><input ng-model="DocenteInEditing.NumeroTelefono_1" type="text" name="NumeroTelefono_1">
+                        </md-input-container>            
+                        <md-input-container style="width:33%;">
+                          <label>SECONDO RECAPITO TELEFONICO</label><input ng-model="DocenteInEditing.NumeroTelefono_2" type="text" name="NumeroTelefono_2">
+                        </md-input-container>             
+                        <md-input-container style="width:33%;">
+                          <label>TERZO RECAPITO TELEFONICO</label><input ng-model="DocenteInEditing.NumeroTelefono_3" type="text" name="NumeroTelefono_3">
+                        </md-input-container>
+                      </div>
+
+                      <md-input-container style="width:33%;">
+                        <label>NOTE</label><textarea ng-model="DocenteInEditing.Note" rows="3" cols="3" name="Note"></textarea>
+                      </md-input-container> 
+                    </md-tab>
+                    
+                    <md-tab label="Istituti" ng-show="DocenteInEditing.Materia_1 != -1 || DocenteInEditing.Materia_2 != -1 || DocenteInEditing.Materia_3 != -1">                    
+                      <md-button class="md-accent md-raised" style="font-weight:bold;" ng-click="AggiungiIstituto($event)">
+                        Aggiungi istituto di appartenenza
+                      </md-button>
+                      <md-button class="md-accent md-raised" style="font-weight:bold;" ng-click="DissociaIstituto(IstitutoVisualizzato)">
+                        Dissocia istituto
+                      </md-button>
+                      <md-input-container class="containerSelect" style="width:33%;"><label>ISTITUTO</label>
+                        <md-select ng-model="IstitutoVisualizzato" class="mdb-select" type="text"  name="IstitutoVisualizzato" ng-change="ImpostaDisponibilita(IstitutoVisualizzato)">
+                          <md-option ng-repeat="istitutoVis in DocenteInEditing.ListaIstitutiDoc" ng-value="istitutoVis.CHIAVE" >{{istitutoVis.ISTITUTO}}</md-option> <!--ng-click="ModificaTabInsegnamenti(istitutoVis.Chiave)"-->
                         </md-optgroup>
                         </md-select>
                       </md-input-container>
-                       <md-input-container style="width:20%;">
-                         <label>EMAIL PRINCIPALE</label><input type="text" ng-model="DocenteInEditing.Email" type="text" name="Email">
-                       </md-input-container>
-                       <md-input-container style="width:20%;">
-                        <label>EMAIL SECONDARIA</label><input type="text" ng-model="DocenteInEditing.EmailSecondaria" type="text" name="EmailSecondaria">
-                      </md-input-container>  
-                     </div>
-                     
-                     <div layout="row">
-                     <input type="checkbox" ng-model="DocenteInEditing.CoordMateria_1" title="COORDINATORE MATERIA 1" ng-disabled="DocenteInEditing.Materia_1 == -1" style="margin-left:2px;margin-right:10px;width:20px;">
-                     <!--<md-input-container class="containerSelect" style="width:27%;"><label>MATERIA 1</label>
-                       <md-select ng-model="DocenteInEditing.Materia_1" ng-change="DocenteInEditing.CoordMateria_1 = false" class="mdb-select" type="text" name="Materia_1">
-                       <md-optgroup>
-                         <md-option ng-value="-1">-</md-option>  
-                         <md-option ng-repeat="materia in ListaMateriePerDoc" ng-value="materia.Chiave">{{materia.Nome}}</md-option>
-                       </md-optgroup>
-                       </md-select>
-                     </md-input-container>-->
-                          <md-input-container class="containerSelect" style="width:30%;margin-right: 20px;">
-                            <label>MATERIA 1</label>
-                            <md-autocomplete
-                                        md-search-text-change="searchTextChangeMat1(searchTextMat1)"
-                                        md-input-name="MateriaEdit1"
-                                        md-no-cache="true"
-                                        md-selected-item-change="selectedItemChangeMateria1(item1)"
-                                        md-search-text="searchTextMat1"
-                                        md-items="item1 in queryMateria1(searchTextMat1)"
-                                        md-item-text="item1.Nome"
-                                        md-require-match="true"
-                                        md-clear-button="true">
-                            <md-item-template>
-                              <span md-highlight-text="searchTextMat1">{{item1.Nome}}</span>
-                            </md-item-template>
-                            <md-not-found>
-                              Nessuna corrispondenza
-                            </md-not-found>
-                         </md-input-container>
-                     <input type="checkbox" ng-model="DocenteInEditing.CoordMateria_2" title="COORDINATORE MATERIA 2" ng-disabled="DocenteInEditing.Materia_2 == -1" style="margin-left:2px;margin-right:10px;width:20px;">                                     
-                          <md-input-container class="containerSelect" style="width:30%;margin-right: 20px;">
-                            <label>MATERIA 2</label>
-                            <md-autocomplete
-                                        md-search-text-change="searchTextChangeMat2(searchTextMat2)"
-                                        md-input-name="MateriaEdit2"
-                                        md-no-cache="true"
-                                        md-selected-item-change="selectedItemChangeMateria2(item2)"
-                                        md-search-text="searchTextMat2"
-                                        md-items="item2 in queryMateria2(searchTextMat2)"
-                                        md-item-text="item2.Nome"
-                                        md-require-match="true"
-                                        md-clear-button="true">
-                            <md-item-template>
-                              <span md-highlight-text="searchTextMat2">{{item2.Nome}}</span>
-                            </md-item-template>
-                            <md-not-found>
-                              Nessuna corrispondenza
-                            </md-not-found>
-                         </md-input-container>
-                     <!--<md-input-container class="containerSelect" style="width:27%;"><label>MATERIA 2</label>
-                       <md-select ng-model="DocenteInEditing.Materia_2" ng-change="DocenteInEditing.CoordMateria_2 = false" class="mdb-select" type="text" name="Materia_2">
-                       <md-optgroup>
-                         <md-option ng-value="-1">-</md-option>  
-                         <md-option ng-repeat="materia in ListaMateriePerDoc" ng-value="materia.Chiave">{{materia.Nome}}</md-option>
-                       </md-optgroup>
-                       </md-select>
-                     </md-input-container>-->
-                     <input type="checkbox" ng-model="DocenteInEditing.CoordMateria_3" title="COORDINATORE MATERIA 3" ng-disabled="DocenteInEditing.Materia_3 == -1" style="margin-left:2px;margin-right:10px;width:20px;">                 
-                         <md-input-container class="containerSelect" style="width:30%;margin-right: 20px;">
-                            <label>MATERIA 1</label>
-                            <md-autocomplete
-                                        md-search-text-change="searchTextChangeMat3(searchTextMat3)"
-                                        md-input-name="MateriaEdit3"
-                                        md-no-cache="true"
-                                        md-selected-item-change="selectedItemChangeMateria3(item3)"
-                                        md-search-text="searchTextMat3"
-                                        md-items="item3 in queryMateria3(searchTextMat3)"
-                                        md-item-text="item3.Nome"
-                                        md-require-match="true"
-                                        md-clear-button="true">
-                            <md-item-template>
-                              <span md-highlight-text="searchTextMat3">{{item3.Nome}}</span>
-                            </md-item-template>
-                            <md-not-found>
-                              Nessuna corrispondenza
-                            </md-not-found>
-                         </md-input-container>
-                     <!--<md-input-container class="containerSelect" style="width:27%;"><label>MATERIA 3</label>
-                       <md-select ng-model="DocenteInEditing.Materia_3" ng-change="DocenteInEditing.CoordMateria_3 = false" class="mdb-select" type="text" name="Materia_3">
-                       <md-optgroup>
-                         <md-option ng-value="-1">-</md-option>  
-                         <md-option ng-repeat="materia in ListaMateriePerDoc" ng-value="materia.Chiave">{{materia.Nome}}</md-option>
-                       </md-optgroup>
-                       </md-select>
-                     </md-input-container>-->
-                     </div>
-                     <br>
-                    
-                     <div layout="row">
-                       <md-input-container style="width:33%;">
-                         <label>PRIMO RECAPITO TELEFONICO</label><input ng-model="DocenteInEditing.NumeroTelefono_1" type="text" name="NumeroTelefono_1">
-                       </md-input-container>            
-                       <md-input-container style="width:33%;">
-                         <label>SECONDO RECAPITO TELEFONICO</label><input ng-model="DocenteInEditing.NumeroTelefono_2" type="text" name="NumeroTelefono_2">
-                       </md-input-container>             
-                       <md-input-container style="width:33%;">
-                         <label>TERZO RECAPITO TELEFONICO</label><input ng-model="DocenteInEditing.NumeroTelefono_3" type="text" name="NumeroTelefono_3">
-                       </md-input-container>
-                     </div>
+                      <md-button class="md-accent md-raised" style="font-weight:bold;" ng-click="SetAsIndirizzoDocente(IstitutoVisualizzato)">
+                        IMPOSTA COME INDIRIZZO DOCENTE
+                      </md-button>                     
+                      
+                      <md-tabs style="width:100%;" md-selected="selectedOrariAndDisponibilita" md-border-bottom md-autoselect md-dynamic-height md-swipe-content>                                               
+                        <md-tab label="Materia / Classe">
+                          <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="NuovoOrario($event,IstitutoVisualizzato,DocenteInEditing.Chiave)">INSERISCI NUOVO ORARIO</md-button>                                      
+                          <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="NuovoOrarioMultiple($event,IstitutoVisualizzato,DocenteInEditing.Chiave)">INSERISCI ORARI MULTIPLI</md-button>                                      
+                          <table style="width:100%;text-align:center;" md-row-select="GridOptions2.rowSelection" multiple="{{GridOptions2.multiSelect}}">  
+                            <tr>
+                              <th></th>
+                              <th></th> 
+                              <th>MATERIA</th>
+                              <th>CLASSE</th>
+                            </tr>  
+                            <tr ng-repeat="Orario in GetOrariSelected(IstitutoVisualizzato) | limitTo : GridOptions2.query.limit : (GridOptions2.query.page - 1) * GridOptions2.query.limit" id={{Orario.CHIAVE}}> <!-- | OrarioByIstituto : IstitutoVisualizzato -->
+                              <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA ORARIO" ng-click="EliminaOrario(Orario)"></td> 
+                              <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA ORARIO"ng-click="ModificaOrario(Orario)"></td>        
+                              <td>{{Orario.MateriaNome == -1 ? '-' : Orario.MateriaNome | uppercase}}</td> 
+                              <td>{{Orario.ClasseNome == -1 ? '-' : Orario.ClasseNome | uppercase}}</td>                            
+                            </tr>    
+                          </table>
+                          <md-table-pagination md-limit="GridOptions2.query.limit" 
+                                               md-limit-options="GridOptions2.limitOptions" 
+                                               md-page="GridOptions2.query.page" 
+                                               md-total="{{ListaOrari.length}}" 
+                                               md-page-select="GridOptions2.pageSelect" 
+                                               md-boundary-links="GridOptions2.boundaryLinks" 
+                                               md-on-paginate="logPagination"></md-table-pagination>
+                        </md-tab>
+                        <md-tab label="Disponibilità">
+                         <md-input-container class="containerSelect" style="width:25%;"><label>GIORNO</label>
+                           <md-select ng-model="GiornoTabella" class="mdb-select" type="text" name="Giorno">
+                             <md-optgroup>
+                               <md-option ng-repeat="giorno in ListaGiorni" ng-value="giorno.Numero">{{giorno.Descrizione}}</md-option>
+                             </md-optgroup>
+                           </md-select>
+                          </md-input-container> 
+                          <table style="width:50%;text-align:center;"> <!--</table> md-row-select="GridOptions3.rowSelection" multiple="{{GridOptions3.multiSelect}}">-->
+                            <th style="width:20px;"></th>
+                            <th style="width:10px;">1</th>
+                            <th style="width:10px;">2</th>
+                            <th style="width:10px;">3</th>
+                            <th style="width:10px;">4</th>
+                            <th style="width:10px;">5</th>
+                            <th style="width:10px;">6</th>
+                            <th style="width:10px;">7</th>
+                            <th style="width:10px;">8</th>
+                            <th style="width:10px;">9</th>
+                            <th style="width:10px;">10</th>
+                            <tr ng-repeat="TipoOrario in DisponibilitaInEditing[GiornoTabella]"> <!--| limitTo : GridOptions3.query.limit : (GridOptions3.query.page - 1) * GridOptions3.query.limit" id={{TipoOrario.Chiave}}>-->
+                              <td style="font-weight:bold;width:20px;">{{TipoOrario.Descrizione}}</td>
+                              <td style="width:10px;"><input type="checkbox" ng-model="TipoOrario.Orari[0].Checked" ng-change="ModificaDisponibilita(TipoOrario.Orari[0])"></td>
+                              <td style="width:10px;"><input type="checkbox" ng-model="TipoOrario.Orari[1].Checked" ng-change="ModificaDisponibilita(TipoOrario.Orari[1])"></td>
+                              <td style="width:10px;"><input type="checkbox" ng-model="TipoOrario.Orari[2].Checked" ng-change="ModificaDisponibilita(TipoOrario.Orari[2])"></td>
+                              <td style="width:10px;"><input type="checkbox" ng-model="TipoOrario.Orari[3].Checked" ng-change="ModificaDisponibilita(TipoOrario.Orari[3])"></td>
+                              <td style="width:10px;"><input type="checkbox" ng-model="TipoOrario.Orari[4].Checked" ng-change="ModificaDisponibilita(TipoOrario.Orari[4])"></td>
+                              <td style="width:10px;"><input type="checkbox" ng-model="TipoOrario.Orari[5].Checked" ng-change="ModificaDisponibilita(TipoOrario.Orari[5])"></td>
+                              <td style="width:10px;"><input type="checkbox" ng-model="TipoOrario.Orari[6].Checked" ng-change="ModificaDisponibilita(TipoOrario.Orari[6])"></td>
+                              <td style="width:10px;"><input type="checkbox" ng-model="TipoOrario.Orari[7].Checked" ng-change="ModificaDisponibilita(TipoOrario.Orari[7])"></td>
+                              <td style="width:10px;"><input type="checkbox" ng-model="TipoOrario.Orari[8].Checked" ng-change="ModificaDisponibilita(TipoOrario.Orari[8])"></td>
+                              <td style="width:10px;"><input type="checkbox" ng-model="TipoOrario.Orari[9].Checked" ng-change="ModificaDisponibilita(TipoOrario.Orari[9])"></td>
+                            </tr>
+                          </table>
+                          <!--<md-table-pagination md-limit="GridOptions3.query.limit" 
+                                               md-limit-options="GridOptions3.limitOptions" 
+                                               md-page="GridOptions3.query.page" 
+                                               md-total="{{ListaDisponibilita.length}}" 
+                                               md-page-select="GridOptions3.pageSelect" 
+                                               md-boundary-links="GridOptions3.boundaryLinks" 
+                                               md-on-paginate="logPagination"></md-table-pagination>-->                       
+                        </md-tab>
+                      </md-tabs>
+                    </md-tab>    
+                </md-tabs>
+       </form>               
+   </div> 
 
-                     <md-input-container style="width:33%;">
-                       <label>NOTE</label><textarea ng-model="DocenteInEditing.Note" rows="3" cols="3" name="Note"></textarea>
-                     </md-input-container> 
-                   </md-tab>
-                   
-                   <md-tab label="Istituti" ng-show="DocenteInEditing.Materia_1 != -1 || DocenteInEditing.Materia_2 != -1 || DocenteInEditing.Materia_3 != -1">                    
-                     <md-button class="md-accent md-raised" style="font-weight:bold;" ng-click="AggiungiIstituto($event)">
-                       Aggiungi istituto di appartenenza
-                     </md-button>
-                     <md-button class="md-accent md-raised" style="font-weight:bold;" ng-click="DissociaIstituto(IstitutoVisualizzato)">
-                       Dissocia istituto
-                     </md-button>
-                     <md-input-container class="containerSelect" style="width:33%;"><label>ISTITUTO</label>
-                       <md-select ng-model="IstitutoVisualizzato" class="mdb-select" type="text"  name="IstitutoVisualizzato" ng-change="ImpostaDisponibilita(IstitutoVisualizzato)">
-                         <md-option ng-repeat="istitutoVis in DocenteInEditing.ListaIstitutiDoc" ng-value="istitutoVis.CHIAVE" >{{istitutoVis.ISTITUTO}}</md-option> <!--ng-click="ModificaTabInsegnamenti(istitutoVis.Chiave)"-->
-                       </md-optgroup>
-                       </md-select>
-                     </md-input-container>
-                     <md-button class="md-accent md-raised" style="font-weight:bold;" ng-click="SetAsIndirizzoDocente(IstitutoVisualizzato)">
-                       IMPOSTA COME INDIRIZZO DOCENTE
-                     </md-button>                     
-                     
-                     <md-tabs style="width:100%;" md-selected="selectedOrariAndDisponibilita" md-border-bottom md-autoselect md-dynamic-height md-swipe-content>                                               
-                       <md-tab label="Materia / Classe">
-                         <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="NuovoOrario($event,IstitutoVisualizzato,DocenteInEditing.Chiave)">INSERISCI NUOVO ORARIO</md-button>                                      
-                         <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="NuovoOrarioMultiple($event,IstitutoVisualizzato,DocenteInEditing.Chiave)">INSERISCI ORARI MULTIPLI</md-button>                                      
-                         <table style="width:100%;text-align:center;" md-row-select="GridOptions2.rowSelection" multiple="{{GridOptions2.multiSelect}}">  
-                           <tr>
-                             <th></th>
-                             <th></th> 
-                             <th>MATERIA</th>
-                             <th>CLASSE</th>
-                           </tr>  
-                           <tr ng-repeat="Orario in GetOrariSelected(IstitutoVisualizzato) | limitTo : GridOptions2.query.limit : (GridOptions2.query.page - 1) * GridOptions2.query.limit" id={{Orario.CHIAVE}}> <!-- | OrarioByIstituto : IstitutoVisualizzato -->
-                             <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA ORARIO" ng-click="EliminaOrario(Orario)"></td> 
-                             <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA ORARIO"ng-click="ModificaOrario(Orario)"></td>        
-                             <td>{{Orario.MateriaNome == -1 ? '-' : Orario.MateriaNome | uppercase}}</td> 
-                             <td>{{Orario.ClasseNome == -1 ? '-' : Orario.ClasseNome | uppercase}}</td>                            
-                           </tr>    
-                         </table>
-                         <md-table-pagination md-limit="GridOptions2.query.limit" 
-                                              md-limit-options="GridOptions2.limitOptions" 
-                                              md-page="GridOptions2.query.page" 
-                                              md-total="{{ListaOrari.length}}" 
-                                              md-page-select="GridOptions2.pageSelect" 
-                                              md-boundary-links="GridOptions2.boundaryLinks" 
-                                              md-on-paginate="logPagination"></md-table-pagination>
-                       </md-tab>
-                       <md-tab label="Disponibilità">
-                        <md-input-container class="containerSelect" style="width:25%;"><label>GIORNO</label>
-                          <md-select ng-model="GiornoTabella" class="mdb-select" type="text" name="Giorno">
-                            <md-optgroup>
-                              <md-option ng-repeat="giorno in ListaGiorni" ng-value="giorno.Numero">{{giorno.Descrizione}}</md-option>
-                            </md-optgroup>
-                          </md-select>
-                         </md-input-container> 
-                         <table style="width:50%;text-align:center;"> <!--</table> md-row-select="GridOptions3.rowSelection" multiple="{{GridOptions3.multiSelect}}">-->
-                           <th style="width:20px;"></th>
-                           <th style="width:10px;">1</th>
-                           <th style="width:10px;">2</th>
-                           <th style="width:10px;">3</th>
-                           <th style="width:10px;">4</th>
-                           <th style="width:10px;">5</th>
-                           <th style="width:10px;">6</th>
-                           <th style="width:10px;">7</th>
-                           <th style="width:10px;">8</th>
-                           <th style="width:10px;">9</th>
-                           <th style="width:10px;">10</th>
-                           <tr ng-repeat="TipoOrario in DisponibilitaInEditing[GiornoTabella]"> <!--| limitTo : GridOptions3.query.limit : (GridOptions3.query.page - 1) * GridOptions3.query.limit" id={{TipoOrario.Chiave}}>-->
-                             <td style="font-weight:bold;width:20px;">{{TipoOrario.Descrizione}}</td>
-                             <td style="width:10px;"><input type="checkbox" ng-model="TipoOrario.Orari[0].Checked" ng-change="ModificaDisponibilita(TipoOrario.Orari[0])"></td>
-                             <td style="width:10px;"><input type="checkbox" ng-model="TipoOrario.Orari[1].Checked" ng-change="ModificaDisponibilita(TipoOrario.Orari[1])"></td>
-                             <td style="width:10px;"><input type="checkbox" ng-model="TipoOrario.Orari[2].Checked" ng-change="ModificaDisponibilita(TipoOrario.Orari[2])"></td>
-                             <td style="width:10px;"><input type="checkbox" ng-model="TipoOrario.Orari[3].Checked" ng-change="ModificaDisponibilita(TipoOrario.Orari[3])"></td>
-                             <td style="width:10px;"><input type="checkbox" ng-model="TipoOrario.Orari[4].Checked" ng-change="ModificaDisponibilita(TipoOrario.Orari[4])"></td>
-                             <td style="width:10px;"><input type="checkbox" ng-model="TipoOrario.Orari[5].Checked" ng-change="ModificaDisponibilita(TipoOrario.Orari[5])"></td>
-                             <td style="width:10px;"><input type="checkbox" ng-model="TipoOrario.Orari[6].Checked" ng-change="ModificaDisponibilita(TipoOrario.Orari[6])"></td>
-                             <td style="width:10px;"><input type="checkbox" ng-model="TipoOrario.Orari[7].Checked" ng-change="ModificaDisponibilita(TipoOrario.Orari[7])"></td>
-                             <td style="width:10px;"><input type="checkbox" ng-model="TipoOrario.Orari[8].Checked" ng-change="ModificaDisponibilita(TipoOrario.Orari[8])"></td>
-                             <td style="width:10px;"><input type="checkbox" ng-model="TipoOrario.Orari[9].Checked" ng-change="ModificaDisponibilita(TipoOrario.Orari[9])"></td>
-                           </tr>
-                         </table>
-                         <!--<md-table-pagination md-limit="GridOptions3.query.limit" 
-                                              md-limit-options="GridOptions3.limitOptions" 
-                                              md-page="GridOptions3.query.page" 
-                                              md-total="{{ListaDisponibilita.length}}" 
-                                              md-page-select="GridOptions3.pageSelect" 
-                                              md-boundary-links="GridOptions3.boundaryLinks" 
-                                              md-on-paginate="logPagination"></md-table-pagination>-->                       
-                       </md-tab>
-                     </md-tabs>
-                   </md-tab>    
-               </md-tabs>
-      </form>               
-  </div> 
+   <div ng-show="!EditingOn && MailOn">
+     <form name="MailEditForm" style="width:100%" ng-submit="InviaMail()">
+       <h2>INVIO MAIL</h2>
+       <progress ng-show="InvioInCorso && MailMultipla" style="width:100%;" id="progressBar" value={{ContatoreInvio}} min="0" max={{ListaDocentiMailMultipla.length}}></progress>
+       <div layout="row" style="width:100%;" layout-align="end start">
+         <md-button class="md-raised md-accent" style="font-weight:bold;" type="submit">INVIA MAIL</md-button>
+         <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="OnAnnullaMailClicked()">ANNULLA</md-button>
+       </div>
+       <div layout="column">
+         <!--<p style="font-weight: bold;" ng-if="MailMultipla">N° DESTINATARI : {{NumeroDestinatari}}</p>-->
 
-  <div ng-show="!EditingOn && MailOn">
-    <form name="MailEditForm" style="width:100%" ng-submit="InviaMail()">
-      <h2>INVIO MAIL</h2>
-      <progress ng-show="InvioInCorso && MailMultipla" style="width:100%;" id="progressBar" value={{ContatoreInvio}} min="0" max={{ListaDocentiMailMultipla.length}}></progress>
-      <div layout="row" style="width:100%;" layout-align="end start">
-        <md-button class="md-raised md-accent" style="font-weight:bold;" type="submit">INVIA MAIL</md-button>
-        <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="OnAnnullaMailClicked()">ANNULLA</md-button>
-      </div>
-      <div layout="column">
-        <!--<p style="font-weight: bold;" ng-if="MailMultipla">N° DESTINATARI : {{NumeroDestinatari}}</p>-->
+         <div layout="column" ng-show="MailMultipla">
+           <p style="font-weight:bold;">DESTINATARI MAIL:</p>
+           <ul>
+             <li ng-repeat="Docente in ListaDocentiMailMultipla">{{Docente.RagioneSociale}} - {{Docente.Email}}<img src="img/deleteCross.png" style="width:20px;height:auto;margin-left:10px;" title="RIMUOVI DESTINATARIO" ng-click="RimuoviDestinatario(Docente)"></li>                        
+           </ul>
+         </div>
 
-        <div layout="column" ng-show="MailMultipla">
-          <p style="font-weight:bold;">DESTINATARI MAIL:</p>
-          <ul>
-            <li ng-repeat="Docente in ListaDocentiMailMultipla">{{Docente.RagioneSociale}} - {{Docente.Email}}<img src="img/deleteCross.png" style="width:20px;height:auto;margin-left:10px;" title="RIMUOVI DESTINATARIO" ng-click="RimuoviDestinatario(Docente)"></li>                        
-          </ul>
-        </div>
-
-        <md-input-container ng-show="!MailMultipla">
-          <p style="font-weight: bold;">DESTINATARIO:</p><input type="email" ng-model="MailInEditing.Destinatario" flex=30>
-        </md-input-container>
-        <md-input-container>
-          <p style="font-weight: bold;">OGGETTO:</p><input ng-model="MailInEditing.Oggetto" flex=40>
-        </md-input-container>
-        <md-input-container>
-          <p style="font-weight: bold;">TESTO:</p><textarea ng-model="MailInEditing.Testo" rows="10" cols="10" flex=100></textarea>
-        </md-input-container>
-        <div layout="row">
-          <md-input-container>
-            <div layout="column">
-              <md-button class="md-raised md-accent" style="width:100%;font-weight:bold;" ng-disabled="ListaAllegatiMail.length >= 3" ng-click="CaricaAllegato()">Carica allegato +</md-button>
-              <input id="FileLoadAllegato" name="file" type="file" class="ng-hide" onchange="angular.element(this).scope().AllegatoLoaded(this)">
-              <!--<progress style="width:100%;margin-left:10px;" id="progressBar" value="{{Contatore}}" min="0" max="{{FileLength}}"></progress>-->
-              <!--<md-progress-linear md-mode="determinate" style="margin-left:10px;" value="{{Contatore}}"></md-progress-linear>-->
-            </div>
+         <md-input-container ng-show="!MailMultipla">
+           <p style="font-weight: bold;">DESTINATARIO:</p><input type="email" ng-model="MailInEditing.Destinatario" flex=30>
          </md-input-container>
-         <div layout="column" style="margin-left:50px;" ng-repeat="Allegato in ListaAllegatiMail track by $index">
-           <p style="font-weight: bold;text-align:center;">{{Allegato.Nome}}</p>
-           <div layout="row">
-             <md-button ng-click="VisualizzaAllegato(Allegato.Nome)" title="VISUALIZZA ALLEGATO"><img src="img/attachment.png" style="width:50px;height:auto;"></md-button>
-             <md-button ng-click="EliminaAllegato(Allegato.Nome,$index)" title="ELIMINA ALLEGATO"><img src="img/delete.png" style="width:50px;height:auto;"></md-button>
-           </div>
-         </div>   
-        </div> 
-      </div>
-    </form>
-  </div>
+         <md-input-container>
+           <p style="font-weight: bold;">OGGETTO:</p><input ng-model="MailInEditing.Oggetto" flex=40>
+         </md-input-container>
+         <md-input-container>
+           <p style="font-weight: bold;">TESTO:</p><textarea ng-model="MailInEditing.Testo" rows="10" cols="10" flex=100></textarea>
+         </md-input-container>
+         <div layout="row">
+           <md-input-container>
+             <div layout="column">
+               <md-button class="md-raised md-accent" style="width:100%;font-weight:bold;" ng-disabled="ListaAllegatiMail.length >= 3" ng-click="CaricaAllegato()">Carica allegato +</md-button>
+               <input id="FileLoadAllegato" name="file" type="file" class="ng-hide" onchange="angular.element(this).scope().AllegatoLoaded(this)">
+               <!--<progress style="width:100%;margin-left:10px;" id="progressBar" value="{{Contatore}}" min="0" max="{{FileLength}}"></progress>-->
+               <!--<md-progress-linear md-mode="determinate" style="margin-left:10px;" value="{{Contatore}}"></md-progress-linear>-->
+             </div>
+          </md-input-container>
+          <div layout="column" style="margin-left:50px;" ng-repeat="Allegato in ListaAllegatiMail track by $index">
+            <p style="font-weight: bold;text-align:center;">{{Allegato.Nome}}</p>
+            <div layout="row">
+              <md-button ng-click="VisualizzaAllegato(Allegato.Nome)" title="VISUALIZZA ALLEGATO"><img src="img/attachment.png" style="width:50px;height:auto;"></md-button>
+              <md-button ng-click="EliminaAllegato(Allegato.Nome,$index)" title="ELIMINA ALLEGATO"><img src="img/delete.png" style="width:50px;height:auto;"></md-button>
+            </div>
+          </div>   
+         </div> 
+       </div>
+     </form>
+   </div>
 </div> 

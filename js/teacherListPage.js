@@ -40,12 +40,11 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
     $scope.ListaAnni.push(currentYear);
     currentYear--;
   }
+  $scope.ViewFiltriStatistiche  = SystemInformation.IsAdministrator();
   $scope.AnnoRicercaSpedizioni  = $scope.ListaAnni[0];
   $scope.AnnoFiltro             = -1;
   $scope.CombinazioneFiltro     = -1;
   $scope.ListaCombinazioni      = [];
-
-  $scope.ViewFiltriStatistiche  = true;
   $scope.ListaPromotori         = []; 
   $scope.ListaGruppiIstituti    = [];
   $scope.ListaGruppiEditoriali  = [];
@@ -130,12 +129,10 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
     else $scope.DocenteInEditing.Materia_3  = -1;
   }
 
-
-
   $scope.AbilitaInvioMultiplo = function () 
   {
     var DocentiConMail  = 0;
-    var DocentiFiltrati = $scope.ListaDocenti; //$filter('DocenteByFiltro')($scope.ListaDocenti,$scope.ANomeFiltro,$scope.MateriaFiltro,$scope.CoordMateriaFiltro);
+    var DocentiFiltrati = $filter('DocenteByFiltro')($scope.ListaDocenti,$scope.ANomeFiltro);
 
     for(let i = 0; i < DocentiFiltrati.length; i ++)
         if(DocentiFiltrati[i].Email != 'Non disponibile')
@@ -523,6 +520,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
     if(itemEd != undefined)
       $scope.CasaEditriceFiltro = itemEd.Chiave;
     else $scope.CasaEditriceFiltro = -1;
+    $scope.RefreshListaDocenti();
   }  
 
   $scope.searchTextChangeMat = function(text)
@@ -549,6 +547,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
     }
     else $scope.MateriaFiltro = -1;
     $scope.GridOptions.query.page = 1;
+    $scope.RefreshListaDocenti();
   }
 
   $scope.searchTextChangeMatTit = function(text)
@@ -575,6 +574,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
     }
     else $scope.MateriaFiltroTitolo = -1;
     $scope.GridOptions.query.page = 1;
+    $scope.RefreshListaDocenti();
   }
 
   $scope.searchTextChangeTit = function(searchTextTit)
@@ -601,6 +601,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
       $scope.TitoloFiltro = -1;
       $scope.ListaIstituti = $scope.ListaIstitutiNoFilter;
     }
+    $scope.RefreshListaDocenti();
   }
 
   $scope.searchTextChangeIst = function(text)
@@ -629,6 +630,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
        $scope.CheckOldIstituto = true;
     }
     else $scope.IstitutoFiltrato = -1;
+    $scope.RefreshListaDocenti();
   }
 
   $scope.VisualizzaAdozioni = function (ChiaveIstituto,NomeIstituto) 
@@ -1248,7 +1250,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
     }
 
     var ObjParametri = {
-                          FiltroNome                 : $scope.ANomeFiltro,
+                          //FiltroNome                 : $scope.ANomeFiltro,
                           FiltroMateriaDocente       : $scope.MateriaFiltro,
                           FiltroCoordinatore         : $scope.CoordMateriaFiltro ? 'T' : 'F',
                           
@@ -1382,13 +1384,15 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
   {
      SystemInformation.DataBetweenController.DocMail = Docente.Email;
      $scope.MailOn = true;
+     $scope.EditingOn = false;
      $scope.InizializzaMailPage();
   }
 
   $scope.InvioMultiploMail = function (Nome) 
   {
-     var ListaMailFiltrata = $scope.ListaDocenti; // $filter('DocenteByFiltro')($scope.ListaDocenti, Nome, $scope.MateriaFiltro, $scope.CoordMateriaFiltro);
+     var ListaMailFiltrata = $filter('DocenteByFiltro')($scope.ListaDocenti, Nome);
      SystemInformation.DataBetweenController = { ListaDocMail: [] };
+     $scope.EditingOn = false;
 
      for(let i = 0; i < ListaMailFiltrata.length; i ++)
          if(ListaMailFiltrata[i].Email != 'Non disponibile')
@@ -1401,7 +1405,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
 
   $scope.NuovaSpedizioneMultipla = function (Nome) 
   {
-    var ListaFiltrata = $scope.ListaDocenti; //$filter('DocenteByFiltro')($scope.ListaDocenti, Nome, $scope.MateriaFiltro, $scope.CoordMateriaFiltro);
+    var ListaFiltrata = $filter('DocenteByFiltro')($scope.ListaDocenti, Nome);
     SystemInformation.DataBetweenController = { ListaDocSped: [] };
     SystemInformation.DataBetweenController.Provenienza = 'TeacherPage';
     SystemInformation.DataBetweenController.MateriaFiltro = $scope.MateriaFiltro;
@@ -1476,7 +1480,6 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
 
   $scope.ModificaDocente = function (docente) 
   {
-
     $scope.searchTextMat1 = '';
     $scope.queryMateria1($scope.searchTextMat1);
     $scope.selectedItemChangeMateria1(undefined);
@@ -2706,11 +2709,22 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
 
    $scope.GetTitoliSpedizione = function (Spedizione) 
    {
-     var Result = '';
-     for(let i = 0; i < Spedizione.DettagliTitoli.length; i++) 
-         Result += Spedizione.DettagliTitoli[i].CODICE + ' - ' + Spedizione.DettagliTitoli[i].NOME_TITOLO + ' - ' + Spedizione.DettagliTitoli[i].STATO + ' IN DATA ' + ZFormatDateTime('dd/mm/yyyy', ZDateFromHTMLInput(Spedizione.DettagliTitoli[i].DATA_ULTIMA_MODIFICA)) + '</br>';
+     var style = 'style="font-weight: bold;color:black;"';
 
-     return ($sce.trustAsHtml(Result.substr(0, Result.length)));
+     var Result = '';
+     for(let i = 0;i < Spedizione.DettagliTitoli.length;i ++)
+     {
+         if(Spedizione.DettagliTitoli[i].STATO == 'PRENOTATO')
+            style = 'style="font-weight: bold;color:' + COLOR_STATO_PRENOTATA + ';"';
+         if(Spedizione.DettagliTitoli[i].STATO == 'DA SPEDIRE')
+            style = 'style="font-weight: bold;color:' + COLOR_STATO_DA_SPEDIRE + ';"';
+         if(Spedizione.DettagliTitoli[i].STATO == 'CONSEGNATO')
+            style = 'style="font-weight: bold;color:' + COLOR_STATO_CONSEGNATA + ';"';
+
+         Result += '<span style="font-weight: bold;color:black;">' + Spedizione.DettagliTitoli[i].CODICE + ' - ' + Spedizione.DettagliTitoli[i].NOME_TITOLO + '</span></br><span ' + style + '>' + Spedizione.DettagliTitoli[i].STATO + '</span><span style="font-weight: bold;color:black;"> IN DATA ' + ZFormatDateTime('dd/mm/yyyy', ZDateFromHTMLInput(Spedizione.DettagliTitoli[i].DATA_ULTIMA_MODIFICA)) + '</span><br><br>';
+     }
+     
+     return($sce.trustAsHtml(Result.substr(0,Result.length)));
    }
 
    $scope.ModificaSpedizione = function (ChiaveSpedizione) 
@@ -2941,13 +2955,12 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
 
  SIRIOApp.filter('DocenteByFiltro', function () 
  {
-   return function (ListaDocenti, ANomeFiltro, MateriaFiltro, CoordMateriaFiltro) 
+   return function (ListaDocenti, ANomeFiltro) 
    {
-     if(ANomeFiltro == '' && MateriaFiltro == -1 && CoordMateriaFiltro == false)
+     if(ANomeFiltro == '')
         return (ListaDocenti);
      var ListaFiltrata = [];
      ANomeFiltro = ANomeFiltro.toUpperCase();
-     MateriaFiltro = parseInt(MateriaFiltro);
 
      var DocenteOk = function (Docente) 
      {
@@ -2957,14 +2970,6 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
         //if(Docente.RagioneSociale.toUpperCase().indexOf(ANomeFiltro) < 0) //LASCIALO! VOGLIONO CERCARE SEMPRE INIZIANDO DAL COGNOME!
         if(!Docente.RagioneSociale.startsWith(ANomeFiltro))
             Result = false;
-
-       if(MateriaFiltro != -1)
-          if(Docente.Materia1 != MateriaFiltro && Docente.Materia2 != MateriaFiltro && Docente.Materia3 != MateriaFiltro)
-             Result = false;
-
-       if(CoordMateriaFiltro)
-          if(Docente.CoordMateria_1 == -1 && Docente.CoordMateria_2 == -1 && Docente.CoordMateria_3 == -1)
-             Result = false;
 
        return (Result);
      }
