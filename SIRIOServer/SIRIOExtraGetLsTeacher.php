@@ -162,8 +162,6 @@ use LDAP\Result;
                                       docenti.COORD_MATERIA_3 
                                  FROM docenti 
                                 WHERE docenti.RAGIONE_SOCIALE IS NOT NULL ";
-               if($Parametri->FiltroNome != '')
-                   $SQLBody .= " AND UPPER(docenti.RAGIONE_SOCIALE) LIKE " .  $this->FPrepareParameterValue('%' . strtoupper($Parametri->FiltroNome) . '%','#'); ;
                if($Parametri->FiltroMateriaDocente != '-1')
                    $SQLBody .= " AND (docenti.MATERIA_1 =" . $this->FPrepareParameterValue($Parametri->FiltroMateriaDocente, ':') . 
                                     " OR docenti.MATERIA_2 =" . $this->FPrepareParameterValue($Parametri->FiltroMateriaDocente, ':') . 

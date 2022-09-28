@@ -8,6 +8,11 @@ const PIATTA_BSMART     = 'B';
 
 const COLOR_ADOZIONI_GESTITE = '#DBFF33';
 
+const COLOR_STATO_DA_SPEDIRE = 'rgb(255, 153, 0)';
+const COLOR_STATO_PRENOTATA  = 'rgb(255, 0, 0)';
+const COLOR_STATO_CONSEGNATA = 'rgb(92, 190, 0)';
+
+
 SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',function($http,$state,$rootScope,$mdDialog)
 {
   var Self                   = this;

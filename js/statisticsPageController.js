@@ -392,8 +392,22 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
 
   $scope.ApriPaginaIstituto = function(ChiaveIstituto)
   {
-     var url = $state.href('teacherListPage',{istituto: ChiaveIstituto});
-     window.open(url,'_blank');
+      var AObject = {};
+
+      AObject.Istituto = ChiaveIstituto;
+
+      var url = window.location.href;
+      url = url.substring(0, url.lastIndexOf("/"));
+      url += '/teacherListPage';
+
+     var First = true;
+     for(var i in AObject) 
+     {
+        url += (First ? '?' : '&') + i + (AObject[i] == null ? '' : '=' + AObject[i]);
+        First = false;
+     }
+
+      window.open(url,'_blank');
   }
 
   $scope.ApriPaginaDocentiFiltri = function()

@@ -1147,14 +1147,15 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
      for(let i = 0;i < Spedizione.DettagliTitoli.length;i ++)
      {
          if(Spedizione.DettagliTitoli[i].StatoTitolo == 'PRENOTATO')
-            style = 'style="font-weight: bold;color:rgb(255, 0, 0);"';
+            style = 'style="font-weight: bold;color:' + COLOR_STATO_PRENOTATA + ';"';
          if(Spedizione.DettagliTitoli[i].StatoTitolo == 'DA SPEDIRE')
-            style = 'style="font-weight: bold;color:rgb(255, 153, 0);"';
+            style = 'style="font-weight: bold;color:' + COLOR_STATO_DA_SPEDIRE + ';"';
          if(Spedizione.DettagliTitoli[i].StatoTitolo == 'CONSEGNATO')
-            style = 'style="font-weight: bold;color:rgb(92, 190, 0);"';
+            style = 'style="font-weight: bold;color:' + COLOR_STATO_CONSEGNATA + ';"';
 
+         Result += '<span style="font-weight: bold;color:black;">' + Spedizione.DettagliTitoli[i].CodiceTitolo + ' - ' + Spedizione.DettagliTitoli[i].NomeTitolo + '</span></br><span ' + style + '>' + Spedizione.DettagliTitoli[i].StatoTitolo + '</span><span style="font-weight: bold;color:black;"> IN DATA ' + $scope.ConvertiData(Spedizione.DettagliTitoli[i]) + '</span><br><br>';
 
-         Result += '<span ' + style + '>' + Spedizione.DettagliTitoli[i].CodiceTitolo + ' - ' + Spedizione.DettagliTitoli[i].NomeTitolo + '</br><span style="font-weight:bold;">' + Spedizione.DettagliTitoli[i].StatoTitolo + ' IN DATA ' + $scope.ConvertiData(Spedizione.DettagliTitoli[i]) + '</span></br>';
+         //Result += '<span style="font-weight: bold;color:black;">' + Spedizione.DettagliTitoli[i].CodiceTitolo + ' - ' + Spedizione.DettagliTitoli[i].NomeTitolo + '</br><span style="font-weight:bold;">' + Spedizione.DettagliTitoli[i].StatoTitolo + ' IN DATA ' + $scope.ConvertiData(Spedizione.DettagliTitoli[i]) + '</span></br>';
      }
      
      return($sce.trustAsHtml(Result.substr(0,Result.length)));
