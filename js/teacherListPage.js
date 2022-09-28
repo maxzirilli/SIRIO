@@ -2721,7 +2721,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
          if(Spedizione.DettagliTitoli[i].STATO == 'CONSEGNATO')
             style = 'style="font-weight: bold;color:' + COLOR_STATO_CONSEGNATA + ';"';
 
-         Result += '<span style="font-weight: bold;color:black;">' + Spedizione.DettagliTitoli[i].CODICE + ' - ' + Spedizione.DettagliTitoli[i].NOME_TITOLO + '</span></br><span ' + style + '>' + Spedizione.DettagliTitoli[i].STATO + '</span><span style="font-weight: bold;color:black;"> IN DATA ' + ZFormatDateTime('dd/mm/yyyy', ZDateFromHTMLInput(Spedizione.DettagliTitoli[i].DATA_ULTIMA_MODIFICA)) + '</span><br><br>';
+         Result += '<span style="color:black;">' + Spedizione.DettagliTitoli[i].CODICE + ' - ' + Spedizione.DettagliTitoli[i].NOME_TITOLO + '</span></br><span ' + style + '>' + Spedizione.DettagliTitoli[i].STATO + '</span><span style="font-weight: bold;color:black;"> IN DATA ' + ZFormatDateTime('dd/mm/yyyy', ZDateFromHTMLInput(Spedizione.DettagliTitoli[i].DATA_ULTIMA_MODIFICA)) + '</span><br><br>';
      }
      
      return($sce.trustAsHtml(Result.substr(0,Result.length)));

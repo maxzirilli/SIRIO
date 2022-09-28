@@ -1153,7 +1153,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
          if(Spedizione.DettagliTitoli[i].StatoTitolo == 'CONSEGNATO')
             style = 'style="font-weight: bold;color:' + COLOR_STATO_CONSEGNATA + ';"';
 
-         Result += '<span style="font-weight: bold;color:black;">' + Spedizione.DettagliTitoli[i].CodiceTitolo + ' - ' + Spedizione.DettagliTitoli[i].NomeTitolo + '</span></br><span ' + style + '>' + Spedizione.DettagliTitoli[i].StatoTitolo + '</span><span style="font-weight: bold;color:black;"> IN DATA ' + $scope.ConvertiData(Spedizione.DettagliTitoli[i]) + '</span><br><br>';
+         Result += '<span style="color:black;">' + Spedizione.DettagliTitoli[i].CodiceTitolo + ' - ' + Spedizione.DettagliTitoli[i].NomeTitolo + '</span></br><span ' + style + '>' + Spedizione.DettagliTitoli[i].StatoTitolo + '</span><span style="font-weight: bold;color:black;"> IN DATA ' + $scope.ConvertiData(Spedizione.DettagliTitoli[i]) + '</span><br><br>';
 
          //Result += '<span style="font-weight: bold;color:black;">' + Spedizione.DettagliTitoli[i].CodiceTitolo + ' - ' + Spedizione.DettagliTitoli[i].NomeTitolo + '</br><span style="font-weight:bold;">' + Spedizione.DettagliTitoli[i].StatoTitolo + ' IN DATA ' + $scope.ConvertiData(Spedizione.DettagliTitoli[i]) + '</span></br>';
      }
