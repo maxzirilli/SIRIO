@@ -1222,7 +1222,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
         url += (First ? '?' : '&') + i + (AObject[i] == null ? '' : '=' + AObject[i]);
         First = false;
      }
-    window.history.replaceState(null, 'SIRIO', url)
+    //window.history.replaceState(null, 'SIRIO', url)
 
     if($scope.IstitutoFiltrato != -1) 
     {
