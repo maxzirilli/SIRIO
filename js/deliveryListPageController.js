@@ -17,6 +17,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
   $scope.TitoloFiltroStat    = -1;
   $scope.StatisticaFiltrata  = [];
   $scope.StatisticaVisible   = false;
+  $scope.ListaMateriePerDoc  = [];
   $scope.DataRicercaAl       = new Date();
   let TmpDate                = new Date($scope.DataRicercaAl);
   TmpDate.setDate(TmpDate.getDate() - 7);
@@ -296,8 +297,37 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     $scope.PromotoreSceltoNome     = '';
     $scope.Tipo                    = Tipo;
     $scope.ViewFiltroIstituto      = Tipo == 'C';
+    $scope.ViewFiltroRuoloDocente  = Tipo == 'C';
     $scope.IstitutoFiltroPopup     = -1;
     $scope.searchTextIstitutoPopup = "";
+    $scope.searchTextMat           = "";
+    $scope.MateriaFiltro           = -1
+    $scope.MateriaFiltroNome       = "";
+
+    $scope.searchTextChangeMat = function(text)
+    {
+      if(!text)
+         $scope.selectedItemChangeMateria(undefined)
+    }
+
+    $scope.queryMateria = function (searchTextMat) 
+    {
+      searchTextMat = searchTextMat.toUpperCase();
+      return ($scope.ListaMateriePerDoc.grep(function (Elemento) 
+      {
+        return (Elemento.Nome.toUpperCase().indexOf(searchTextMat) != -1);
+      }));
+    }
+
+    $scope.selectedItemChangeMateria = function (itemMat) 
+    {
+      if(itemMat != undefined) 
+      {
+         $scope.MateriaFiltro     = itemMat.Chiave;
+         $scope.MateriaFiltroNome = itemMat.Nome
+      }
+      else $scope.MateriaFiltro = -1;
+    }
 
     $scope.GetNomePromotore = function()
     {
@@ -338,6 +368,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     {
       $scope.PromotoreScelto     = -1;
       $scope.PromotoreSceltoNome = '';
+      $scope.MateriaFiltro       = -1;
+      $scope.MateriaFiltroNome   = '';
       $scope.IstitutoFiltroPopup = -1;
       for(let i = 0;i < $scope.ListaGruppiPopup.length;i ++)
           $scope.ListaGruppiPopup[i].DaAggiungere = false;          
@@ -356,6 +388,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
          } 
       }
       else $scope.PromotoreScelto = SystemInformation.UserInformation.Chiave;
+
+
 
       ContatoreGruppi = 0; 
       for(let j = 0;j < $scope.ListaGruppiPopup.length;j ++)
@@ -524,7 +558,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     {
       var CumulativoConsegnatiTmp = [];
       var CumulativoConsegnati    = [];
-      var ArrayGruppi            = [];
+      var ArrayGruppi             = [];
 
       for(let i = 0;i < $scope.ListaGruppiToAdd.length;i ++)
           ArrayGruppi.push($scope.ListaGruppiToAdd[i].Chiave);
@@ -547,6 +581,9 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
       
       if($scope.PromotoreScelto != -1 && $scope.PromotoreScelto != undefined)
          ParamConsegnati.PromotoreScelto = $scope.PromotoreScelto;
+
+      if($scope.MateriaFiltro != -1 && $scope.MateriaFiltro != undefined)
+         ParamConsegnati.MateriaDocente = $scope.MateriaFiltro;
       
       SystemInformation.GetSQL('Delivery',ParamConsegnati,function(Results)
       {
@@ -990,6 +1027,25 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
                                     Nome   : ListaDocentiTmp[i].RAGIONE_SOCIALE
                                   }
          $scope.ListaDocenti = ListaDocentiTmp;
+
+         SystemInformation.GetSQL('Subject', {}, function (Results) 
+         {
+           ListaMaterieOpt = SystemInformation.FindResults(Results, 'SubjectInfoList');
+           if(ListaMaterieOpt != undefined) 
+           {
+            for (let i = 0; i < ListaMaterieOpt.length; i++)
+            {
+                 if(ListaMaterieOpt[i].PER_DOCENTI == 'T')
+                 {
+                    $scope.ListaMateriePerDoc.push({
+                                                     Chiave : ListaMaterieOpt[i].CHIAVE,
+                                                     Nome   : ListaMaterieOpt[i].DESCRIZIONE
+                                                   })
+                 }
+            }
+           }
+           else SystemInformation.ApplyOnError('Modello materie docenti non conforme','');    
+         })
        }
        else SystemInformation.ApplyOnError('Modello docenti non conforme','');    
      },'SelectSQLDocSpedAdmin')  

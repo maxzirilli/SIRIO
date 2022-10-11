@@ -24,7 +24,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
   var DatiDitta                 = {};
   var ListaDaSpedireTmp         = [];
   $scope.SpedizioneImmediata    = false;
-  $scope.AbilitaConfermaStampa  = false;
   var ListaSpedizioniToPrint    = [];
 
   ScopeHeaderController.CheckButtons();
@@ -141,13 +140,13 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                      doc.text(30,CoordY + 53,(ListaSpedizioniToPrint[i].PRESSO))        
                 }
                 doc.text(30,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO);
-                doc.text(30,CoordY + 65,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].COMUNE + /*', ' + ListaSpedizioniToPrint[i].NOME_PROVINCIA +*/ ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')');
+                doc.text(30,CoordY + 65,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].COMUNE +  ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')');
             }
             else
             {                     
                 doc.text(30,CoordY + 50,ListaSpedizioniToPrint[i].PRESSO);
                 doc.text(30,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO);
-                doc.text(30,CoordY + 65,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].COMUNE + /*', ' + ListaSpedizioniToPrint[i].NOME_PROVINCIA +*/ ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')');
+                doc.text(30,CoordY + 65,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].COMUNE +  ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')');
             }
             
             doc.setFontType('italic');
@@ -241,7 +240,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                doc.addPage();
       }
       doc.save('EtichettePDF' + DataSpedizione + '.pdf',{}); 
-      $scope.AbilitaConfermaStampa = true;
+      $scope.ConfermaStampa();
      },'SelectPrenotati')
   }
   
@@ -729,13 +728,14 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                             doc.text(50,CoordY + 53,(ListaSpedizioniToPrint[i].PRESSO))        
                         }
                         doc.text(50,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO);
-                        doc.text(50,CoordY + 65,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].COMUNE + /*', ' + ListaSpedizioniToPrint[i].NOME_PROVINCIA +*/ ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')');                   doc.setFontType('italic');
+                        doc.text(50,CoordY + 65,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].COMUNE +  ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')');                   
+                        doc.setFontType('italic');
                     }
                     else
                     {                   
                         doc.text(50,CoordY + 55,ListaSpedizioniToPrint[i].PRESSO);
                         doc.text(50,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO);
-                        doc.text(50,CoordY + 65,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].COMUNE + /*', ' + /*ListaSpedizioniToPrint[i].NOME_PROVINCIA +*/ ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')' );  
+                        doc.text(50,CoordY + 65,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].COMUNE +  ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')' );  
                     }
                     
                     doc.setFontType('italic');
@@ -765,12 +765,12 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                           if(ListaSpedizioniToPrint[i].PRESSO != ListaSpedizioniToPrint[i].NOME_DOCENTE)
                             doc.text(10,CoordY + 55,(ListaSpedizioniToPrint[i].PRESSO))        
                         }                  
-                        doc.text(10,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].CAP + /*', ' +  ListaSpedizioniToPrint[i].NOME_PROVINCIA +*/ ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')')      
+                        doc.text(10,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].CAP + ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')')      
                     }
                     else
                     {
                         doc.text(10,CoordY + 55,'PRESSO : ' + ListaSpedizioniToPrint[i].PRESSO);
-                        doc.text(10,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].CAP + /*', ' +  ListaSpedizioniToPrint[i].NOME_PROVINCIA +*/ ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')')      
+                        doc.text(10,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].CAP + ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')')      
                     }
 
                     CoordY = 80;
@@ -817,13 +817,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                     
               }
             doc.save('EtichettePDF' + DataSpedizione + '.pdf',{}); // USANDO IFRAME NON PERMETTE IL SALVATAGGIO!
-            $scope.AbilitaConfermaStampa = true;
-            /*var string = doc.output('datauristring');
-            var iframe = "<iframe width='100%' height='100%' src='" + string + "'></iframe>"
-            var x = window.open();
-            x.document.open();
-            x.document.write(iframe);
-            x.document.close();*/
+            $scope.ConfermaStampa();
          }
          else StampaTermica(ListaSpedizioniToPrint,ListaChiaviSpedizioni,DataSpedizione);
      }
@@ -1138,13 +1132,13 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                               doc.text(50,CoordY + 53,(ListaSpedizioniToPrint[i].PRESSO))        
                          }
                          doc.text(50,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO);
-                         doc.text(50,CoordY + 65,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].COMUNE + /*', ' + ListaSpedizioniToPrint[i].NOME_PROVINCIA +*/ ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')');
+                         doc.text(50,CoordY + 65,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].COMUNE +  ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')');
                      }
                      else
                      {                     
                          doc.text(50,CoordY + 50,ListaSpedizioniToPrint[i].PRESSO);
                          doc.text(50,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO);
-                         doc.text(50,CoordY + 65,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].COMUNE + /*', ' + ListaSpedizioniToPrint[i].NOME_PROVINCIA +*/ ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')');
+                         doc.text(50,CoordY + 65,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].COMUNE +  ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')');
                      }
                      
                      doc.setFontType('italic');
@@ -1172,12 +1166,12 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                            if(ListaSpedizioniToPrint[i].PRESSO != ListaSpedizioniToPrint[i].NOME_DOCENTE)
                              doc.text(10,CoordY + 55,(ListaSpedizioniToPrint[i].PRESSO))        
                          }  
-                         doc.text(10,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].CAP + /*', ' +  ListaSpedizioniToPrint[i].NOME_PROVINCIA +*/ ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')')      
+                         doc.text(10,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].CAP + ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')')      
                      }
                      else
                      {
                          doc.text(10,CoordY + 55,'PRESSO : ' + ListaSpedizioniToPrint[i].PRESSO);
-                         doc.text(10,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].CAP + /*', ' +  ListaSpedizioniToPrint[i].NOME_PROVINCIA +*/ ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')')      
+                         doc.text(10,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO + ', ' + ListaSpedizioniToPrint[i].COMUNE + ', ' + ListaSpedizioniToPrint[i].CAP +  ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')')      
                      }
                      
                      CoordY = 80;
@@ -1221,17 +1215,10 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
                          CoordY += 5;               
                      }          
                      doc.setFontSize(6);
-                     doc.text(10,290,SystemInformation.VDocDelivery)
-                     $scope.AbilitaConfermaStampa = true;
+                     doc.text(10,290,SystemInformation.VDocDelivery)        
              }
              doc.save('EtichettePDF' + DataSpedizione + '.pdf',{});  // USANDO IFRAME NON PERMETTE IL SALVATAGGIO!
-
-             /*var string = doc.output('datauristring');
-             var iframe = "<iframe width='100%' height='100%' src='" + string + "'></iframe>"
-             var x = window.open();
-             x.document.open();
-             x.document.write(iframe);
-             x.document.close();*/
+             $scope.ConfermaStampa();
             }
             else StampaTermica(ListaSpedizioniToPrint,ListaChiaviSpedizioni,DataSpedizione);
         }
@@ -1267,7 +1254,8 @@ $scope.ConfermaStampa = function ()
         else $state.go("startPage");
       });
   }
-  ZConfirm.GetConfirmBox('AVVISO','Tutte le etichette sono state stampate correttamente?',ConfermaStampaSped,function(){});
+  //ZConfirm.GetConfirmBox('AVVISO','Tutte le etichette sono state stampate correttamente?',ConfermaStampaSped,function(){});
+  ConfermaStampaSped();
 }
 
 }]);

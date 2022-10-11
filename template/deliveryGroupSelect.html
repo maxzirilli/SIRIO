@@ -53,6 +53,7 @@
            </md-input-container>  
          </div>
          <br>
+
          <div ng-show="IsAdministrator() && ViewFiltroIstituto">
            <h4 style="margin-bottom:5px;margin-top: 5px;">SELEZIONE ISTITUTO :</h4>
            <md-input-container class="containerSelect" style="margin-left:5px;width:100%;padding-top:0px;">
@@ -75,6 +76,30 @@
               </md-not-found>
            </md-input-container>
          </div>
+
+        <div ng-show="IsAdministrator() && ViewFiltroRuoloDocente">
+             <h4 style="margin-bottom:5px;margin-top: 5px;">SELEZIONE RUOLO DOCENTE :</h4>
+            <md-input-container class="containerSelect" style="margin-left:5px;width:100%;padding-top:0px;">
+              <label>RUOLO DOCENTE</label>
+              <md-autocomplete 
+                          md-search-text-change="searchTextChangeMat(searchTextMat)"
+                          md-input-name="Materia"
+                          md-no-cache="true"
+                          md-selected-item-change="selectedItemChangeMateria(itemMat)"
+                          md-search-text="searchTextMat"
+                          md-items="itemMat in queryMateria(searchTextMat)"
+                          md-item-text="itemMat.Nome"
+                          md-require-match="true"
+                          md-clear-button="true">
+              <md-item-template>
+                <span md-highlight-text="searchTextMat">{{itemMat.Nome}}</span>
+              </md-item-template>
+              <md-not-found>
+                Nessuna corrispondenza
+              </md-not-found>
+           </md-input-container>
+      </div>
+
       </div>
     </md-dialog-content>
 
