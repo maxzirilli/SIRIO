@@ -2115,7 +2115,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                  if($scope.ListaTitoliSpedizione[i].STATO == 'S')
                    ContatoreDaSpedire ++;
                  if($scope.ListaTitoliSpedizione[i].STATO == 'S' && $scope.ListaTitoliSpedizione[i].CHIAVE != -1)
-                    DaSpedireEsistenti.push($scope.ListaTitoliSpedizione[i].CHIAVE)
+                    DaSpedireEsistenti.push($scope.ListaTitoliSpedizione[i].TITOLO)
              }
              if(ContatoreDaSpedire > 0)
                ChiediEtichetta = true;
