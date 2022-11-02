@@ -736,18 +736,17 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
       }
     }*/
     
-    $scope.EliminaTitolo = function(Titolo)
+    $scope.EliminaTitolo = function(Titolo, index)
     {
       var EliminaTit = function()
       {
-        TitoloCorrispondente = $scope.ListaTitoliSpedizione.findIndex(function(ATitolo){return(ATitolo.TITOLO == Titolo.TITOLO);});     
-        if ($scope.ListaTitoliSpedizione[TitoloCorrispondente].Nuovo)
-            $scope.ListaTitoliSpedizione.splice(TitoloCorrispondente,1)
+        if ($scope.ListaTitoliSpedizione[index].Nuovo)
+            $scope.ListaTitoliSpedizione.splice(index,1)
         else
         {
-          $scope.ListaTitoliEliminati.push($scope.ListaTitoliSpedizione[TitoloCorrispondente]);
+          $scope.ListaTitoliEliminati.push($scope.ListaTitoliSpedizione[index]);
           $scope.ListaTitoliEliminati[$scope.ListaTitoliEliminati.length-1].Eliminato = true;
-          $scope.ListaTitoliSpedizione.splice(TitoloCorrispondente,1);
+          $scope.ListaTitoliSpedizione.splice(index,1);
         }  
       } 
       ZConfirm.GetConfirmBox('AVVISO',"Eliminare il titolo " + Titolo.NOME_TITOLO + ' (ISBN:' + Titolo.ISBN_TITOLO + ')' + " dalla spedizione?",EliminaTit,function(){});      
