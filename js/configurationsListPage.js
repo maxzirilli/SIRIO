@@ -41,6 +41,12 @@ SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformat
  
   $scope.TuttiGruppi               = true;
   $scope.PopupGruppiSelect         = [];
+
+  $scope.MaterieOnlyMiur      = false;
+  $scope.MaterieMedie         = true;
+  $scope.MaterieLiceo         = true;
+  $scope.MaterieProfessionale = true;
+  $scope.MaterieTecnico       = true;
   
   ScopeHeaderController.CheckButtons(); 
   
@@ -246,6 +252,22 @@ $scope.GridOptions_8 = {
                   $scope.ListaMaterie[j].GruppiIstStringa.push(SubjectGroups[i].DESCR_GRUPPO)
                }
            }
+         }
+
+         for(let i = 0; i < $scope.ListaMaterie.length; i ++)
+         {
+             if($scope.ListaMaterie[i].GruppiIstOld.length == 0)
+             {
+                $scope.ListaMaterie[i].GruppiIstOld.push(1);
+                $scope.ListaMaterie[i].GruppiIstOld.push(2);
+                $scope.ListaMaterie[i].GruppiIstOld.push(3);
+                $scope.ListaMaterie[i].GruppiIstOld.push(4);
+
+                $scope.ListaMaterie[i].GruppiIstStringa.push('MEDIE (SS1)')
+                $scope.ListaMaterie[i].GruppiIstStringa.push('LICEO (SS2)')
+                $scope.ListaMaterie[i].GruppiIstStringa.push('TECNICO (SS2)')
+                $scope.ListaMaterie[i].GruppiIstStringa.push('PROFESSIONALE (SS2)')
+             }
          }
       }
       else SystemInformation.ApplyOnError('Modello materie non conforme','');   
@@ -609,8 +631,8 @@ $scope.GridOptions_8 = {
         $scope.MateriaInEditing = {
                                     Chiave       : Materia.Chiave,
                                     Descrizione  : Materia.Descrizione,
-                                    GruppiIstOld : Materia.GruppiIstOld,
-                                    ListaGruppi  : Array.from($scope.ListaGruppiIstituti)
+                                    GruppiIstOld : JSON.parse(JSON.stringify(Materia.GruppiIstOld)),
+                                    ListaGruppi  : JSON.parse(JSON.stringify($scope.ListaGruppiIstituti))//Array.from($scope.ListaGruppiIstituti)
                                   }
 
     if($scope.MateriaInEditing.GruppiIstOld.length != 0)
@@ -1750,3 +1772,45 @@ $scope.GridOptions_8 = {
   $scope.RefreshListaGruppi();
 
 }]);
+
+
+SIRIOApp.filter('CfgMaterieFiltro',function()
+{  
+  return function(ListaMaterie,MaterieOnlyMiur,MaterieMedie,MaterieLiceo,MaterieTecnico,MaterieProfessionale)
+         {  
+                    
+           if(!MaterieOnlyMiur && MaterieMedie && MaterieLiceo && MaterieTecnico && MaterieProfessionale) 
+              return(ListaMaterie);
+           var ListaMaterieTmp = [];
+
+           var MateriaOK = function(materia)
+           {  
+              var Result = true;
+              
+              if(MaterieOnlyMiur && !materia.FromMiur)
+                   Result = false;
+
+              if((!MaterieMedie && materia.GruppiIstOld.includes(1)) || (!MaterieMedie && materia.GruppiIstOld.includes(1)))
+                   Result = false;
+                   
+              if((!MaterieLiceo && materia.GruppiIstOld.includes(2)) || (!MaterieLiceo && materia.GruppiIstOld.includes(2)))
+                   Result = false;
+                   
+              if((!MaterieTecnico && materia.GruppiIstOld.includes(3)) || (!MaterieTecnico && materia.GruppiIstOld.includes(3)))
+                   Result = false;
+      
+              if((!MaterieProfessionale && materia.GruppiIstOld.includes(4)) || (!MaterieProfessionale && materia.GruppiIstOld.includes(4)))
+                   Result = false;
+
+              return(Result);
+           }
+          
+           ListaMaterie.forEach(function(materia)
+           { 
+             if(MateriaOK(materia)) 
+                ListaMaterieTmp.push(materia)                       
+           });
+           
+           return(ListaMaterieTmp);
+         }           
+});

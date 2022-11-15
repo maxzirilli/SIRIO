@@ -175,7 +175,23 @@
       <div>
         <h2 style="float:left;">MATERIE</h2>
         <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaMateria($event)">NUOVA MATERIA</md-button>
+
+      <div style="clear:both;margin-bottom:15px;">
+       <input type="checkbox" ng-model="MaterieOnlyMiur" style="margin-top:15px;">
+       <label style="margin-top:15px;">SOLO MIUR</label> 
+
+       <input type="checkbox" ng-model="MaterieMedie" style="margin-top:15px;margin-left:10px;">
+       <label style="margin-top:15px;">MEDIE (SS1)</label> 
+       <input type="checkbox" ng-model="MaterieLiceo" style="margin-top:15px;margin-left:10px;">
+       <label style="margin-top:15px;">LICEO (SS2)</label> 
+       <input type="checkbox" ng-model="MaterieProfessionale" style="margin-top:15px;margin-left:10px;">
+       <label style="margin-top:15px;">PROFESSIONALE (SS2)</label> 
+       <input type="checkbox" ng-model="MaterieTecnico" style="margin-top:15px;margin-left:10px;">
+       <label style="margin-top:15px;">TECNICO (SS2)</label> 
       </div>
+      </div>
+
+
       <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
         <tr>
           <th></th>
@@ -186,7 +202,7 @@
           <th style="font-weight:bold;">MIUR</th>
           <th style="font-weight:bold;">ISTITUTI</th>
         </tr>  
-        <tr ng-repeat="materia in ListaMaterie | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{materia.Chiave}}>
+        <tr ng-repeat="materia in ListaMaterie | CfgMaterieFiltro : MaterieOnlyMiur : MaterieMedie : MaterieLiceo : MaterieTecnico : MaterieProfessionale | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{materia.Chiave}}>
           <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA MATERIA" ng-click="EliminaMateria(materia)"></td> 
           <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA MATERIA" ng-click="ModificaMateria(materia)"></td> 
           <td ng-if="!(materia.Nascosta)"><img src="img/hide.png" style="width:30px;height:auto;" title="UNISCI E NASCONDI MATERIA" ng-click="UnisciMateria(materia.Chiave,materia.Descrizione)"></td>
