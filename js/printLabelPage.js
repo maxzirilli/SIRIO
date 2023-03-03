@@ -120,33 +120,34 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
             CoordY = 10;
             doc.setFontType('normal');
             doc.addImage(SystemInformation.Pagina43Logo,'JPEG',3,6,68,18);      
-            doc.text(5,CoordY + 22,DatiDitta.Indirizzo);
-            doc.text(5,CoordY + 25,'Tel : ' + DatiDitta.Telefono);
-            doc.text(5,CoordY + 28,'Email : ' + DatiDitta.Email + '       SitoWeb : ' + DatiDitta.SitoWeb);
+            doc.text(5,CoordY + 18,DatiDitta.Indirizzo);
+            doc.text(5,CoordY + 21,'Tel : ' + DatiDitta.Telefono + '       Email : ' + DatiDitta.Email + '       SitoWeb : ' + DatiDitta.SitoWeb);
 
             doc.setFontType('courier');
             doc.setFontSize(12);
             if (ListaSpedizioniToPrint[i].DOCENTE != 'N.D.')
             {
-                doc.text(30,CoordY + 40,ListaSpedizioniToPrint[i].TITOLO_DOCENTE);
+                doc.text(5,CoordY + 35,ListaSpedizioniToPrint[i].TITOLO_DOCENTE);
                 doc.setFontType('bold');
-                doc.text(30,CoordY + 45,ListaSpedizioniToPrint[i].NOME_DOCENTE);
+                doc.setFontSize(25);
+                doc.text(5,CoordY + 47,ListaSpedizioniToPrint[i].NOME_DOCENTE);
+                doc.setFontSize(12);
                 doc.setFontType('normal');
                 if(ListaSpedizioniToPrint[i].NOME_ISTITUTO != 'N.D.')
-                   doc.text(30,CoordY + 53,(ListaSpedizioniToPrint[i].NOME_ISTITUTO))
+                   doc.text(5,CoordY + 58,(ListaSpedizioniToPrint[i].NOME_ISTITUTO))
                 else 
                 {
                   if(ListaSpedizioniToPrint[i].PRESSO != ListaSpedizioniToPrint[i].NOME_DOCENTE)
-                     doc.text(30,CoordY + 53,(ListaSpedizioniToPrint[i].PRESSO))        
+                     doc.text(5,CoordY + 58,(ListaSpedizioniToPrint[i].PRESSO))        
                 }
-                doc.text(30,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO);
-                doc.text(30,CoordY + 65,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].COMUNE +  ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')');
+                doc.text(5,CoordY + 65,ListaSpedizioniToPrint[i].INDIRIZZO);
+                doc.text(5,CoordY + 70,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].COMUNE +  ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')');
             }
             else
             {                     
-                doc.text(30,CoordY + 50,ListaSpedizioniToPrint[i].PRESSO);
-                doc.text(30,CoordY + 60,ListaSpedizioniToPrint[i].INDIRIZZO);
-                doc.text(30,CoordY + 65,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].COMUNE +  ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')');
+                doc.text(5,CoordY + 55,ListaSpedizioniToPrint[i].PRESSO);
+                doc.text(5,CoordY + 65,ListaSpedizioniToPrint[i].INDIRIZZO);
+                doc.text(5,CoordY + 70,ListaSpedizioniToPrint[i].CAP + ', ' + ListaSpedizioniToPrint[i].COMUNE +  ' (' + ListaSpedizioniToPrint[i].TARGA_PROVINCIA + ')');
             }
             
             doc.setFontType('italic');
