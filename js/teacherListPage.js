@@ -600,6 +600,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
     {
       $scope.TitoloFiltro = -1;
       $scope.ListaIstituti = $scope.ListaIstitutiNoFilter;
+      $scope.ViewFiltroConsegnati = false;
     }
     $scope.RefreshListaDocenti();
   }
@@ -1176,6 +1177,21 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
     return ($sce.trustAsHtml(Result.substr(0, Result.length)));
   }
 
+  $scope.ResetFiltriStatistiche = function()
+  {
+     if($scope.ViewFiltroConsegnati)
+     {
+        $scope.ViewFiltriStatistiche  = false;
+        $scope.GruppoIstitutoFiltro   = -1;
+        $scope.PromotoreFiltro        = -1;
+        $scope.GruppoEditorialeFiltro = -1;
+        $scope.CasaEditriceFiltro     = -1
+        $scope.VolumiUniciPrimiFiltro = false;
+        $scope.MateriaFiltro          = -1;
+     }
+     $scope.RefreshListaDocenti();
+  }
+
   $scope.RefreshListaDocenti = function () 
   {
     $scope.RicercaInCorso = true;
@@ -1249,23 +1265,34 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
         else IsGruppoRivaleFiltro = false;
     }
 
-    var ObjParametri = {
-                          //FiltroNome                 : $scope.ANomeFiltro,
-                          FiltroMateriaDocente       : $scope.MateriaFiltro,
-                          FiltroCoordinatore         : $scope.CoordMateriaFiltro ? 'T' : 'F',
-                          
-                          FiltroIstituto             : $scope.IstitutoFiltrato, 
-                          FiltroGruppoIst            : $scope.GruppoIstitutoFiltro,
-                          FiltroPromotore            : $scope.PromotoreFiltro,  
-                          FiltroProvincia            : $scope.AProvinciaFiltro,
+    
+   var ObjParametri = {
+                         FiltroMateriaDocente       : $scope.MateriaFiltro,
+                         FiltroCoordinatore         : $scope.CoordMateriaFiltro ? 'T' : 'F',
+                         FiltroIstituto             : $scope.IstitutoFiltrato, 
+                         FiltroProvincia            : $scope.AProvinciaFiltro,
+                         FiltroTitolo               : $scope.TitoloFiltro,
+                         FiltroCheckOnlyConsegnato  : ($scope.ViewFiltroConsegnati && $scope.TitoloFiltro != -1) ? 'T' : 'F',
 
-                          FiltroTitolo               : $scope.TitoloFiltro,       
-                          FiltroCasaEditrice         : $scope.CasaEditriceFiltro,    
-                          FiltroGruppoEd             : $scope.GruppoEditorialeFiltro, 
-                          FiltroIsGruppoEdRivale     : IsGruppoRivaleFiltro ? 'T' : 'F',
-                          FiltroMateriaTitolo        : $scope.MateriaFiltroTitolo,
-                          FiltroVolUniciPrimi        : $scope.VolumiUniciPrimiFiltro ? "T" : "F",
-                       };
+                         FiltroGruppoIst            :  $scope.GruppoIstitutoFiltro,
+                         FiltroPromotore            :  $scope.PromotoreFiltro,      
+                         FiltroCasaEditrice         :  $scope.CasaEditriceFiltro,    
+                         FiltroGruppoEd             :  $scope.GruppoEditorialeFiltro, 
+                         FiltroIsGruppoEdRivale     :  IsGruppoRivaleFiltro ? 'T' : 'F',
+                         FiltroMateriaTitolo        :  $scope.MateriaFiltroTitolo,
+                         FiltroVolUniciPrimi        :  $scope.VolumiUniciPrimiFiltro ? "T" : "F"
+                      };
+
+   /*if(!$scope.ViewFiltroConsegnati)
+   {
+       ObjParametri.FiltroGruppoIst        = $scope.GruppoIstitutoFiltro,
+       ObjParametri.FiltroPromotore        = $scope.PromotoreFiltro,      
+       ObjParametri.FiltroCasaEditrice     = $scope.CasaEditriceFiltro,    
+       ObjParametri.FiltroGruppoEd         = $scope.GruppoEditorialeFiltro, 
+       ObjParametri.FiltroIsGruppoEdRivale = IsGruppoRivaleFiltro ? 'T' : 'F',
+       ObjParametri.FiltroMateriaTitolo    = $scope.MateriaFiltroTitolo,
+       ObjParametri.FiltroVolUniciPrimi    = $scope.VolumiUniciPrimiFiltro ? "T" : "F"
+   }*/
 
    SystemInformation.ExecuteExternalScript('SIRIOExtraGetLsTeacher', ObjParametri, function(Results) 
    {

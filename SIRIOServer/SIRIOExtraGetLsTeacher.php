@@ -90,7 +90,7 @@ use LDAP\Result;
                return $Result;
             }
 
-            private function GetWhereIstituti($Parametri)
+            private function GetWhereIstituti($Parametri,$CheckOnlyConsegnati)
             {
                $Where = true;
                $Result = '';
@@ -104,19 +104,23 @@ use LDAP\Result;
                  $Result .= ($Where ? " WHERE " : " AND ") . "istituti.PROVINCIA = " . $this->FPrepareParameterValue($Parametri->FiltroProvincia,':');
                  $Where = false;
                }
-               if($Parametri->FiltroPromotore != -1)
+
+               if(!$CheckOnlyConsegnati)
                {
-                 $Result .= ($Where ? " WHERE " : " AND ") . "istituti.PROMOTORE = " . $this->FPrepareParameterValue($Parametri->FiltroPromotore,':');
-                 $Where = false;
-               }
-               if($Parametri->FiltroGruppoIst != -1)
-               {
-                  $Result .= ($Where ? " WHERE " : " AND ") . "istituti.TIPOLOGIA = tipologie_gruppi_istituti.TIPOLOGIA";
-                  $Where = false;
-                  $Result .= " AND tipologie_gruppi_istituti.GRUPPO_IST = istituti_gruppi.CHIAVE";
-                  if($Parametri->FiltroGruppoIst == -2)
-                     $Result .= " AND istituti_gruppi.LICEO = 1";
-                  else $Result .= " AND tipologie_gruppi_istituti.GRUPPO_IST = " . $this->FPrepareParameterValue($Parametri->FiltroGruppoIst,':');
+                  if($Parametri->FiltroPromotore != -1)
+                  {
+                    $Result .= ($Where ? " WHERE " : " AND ") . "istituti.PROMOTORE = " . $this->FPrepareParameterValue($Parametri->FiltroPromotore,':');
+                    $Where = false;
+                  }
+                  if($Parametri->FiltroGruppoIst != -1)
+                  {
+                     $Result .= ($Where ? " WHERE " : " AND ") . "istituti.TIPOLOGIA = tipologie_gruppi_istituti.TIPOLOGIA";
+                     $Where = false;
+                     $Result .= " AND tipologie_gruppi_istituti.GRUPPO_IST = istituti_gruppi.CHIAVE";
+                     if($Parametri->FiltroGruppoIst == -2)
+                        $Result .= " AND istituti_gruppi.LICEO = 1";
+                     else $Result .= " AND tipologie_gruppi_istituti.GRUPPO_IST = " . $this->FPrepareParameterValue($Parametri->FiltroGruppoIst,':');
+                  }
                }
                return $Result;
             }
@@ -125,6 +129,8 @@ use LDAP\Result;
             {
                $Parametri             = JSON_decode($_POST['SIRIOParams']);
                $JSONAnswer->LsDocenti = array();
+
+               $CheckOnlyConsegnati   = $Parametri->FiltroCheckOnlyConsegnato == 'T';
 
                $SQLBody      = "SELECT docenti.CHIAVE,
                                        docenti.NASCOSTO,
@@ -168,30 +174,52 @@ use LDAP\Result;
                                     " OR docenti.MATERIA_3 =" . $this->FPrepareParameterValue($Parametri->FiltroMateriaDocente, ':') .  ")";
                if($Parametri->FiltroCoordinatore == 'T')
                    $SQLBody .= " AND (docenti.COORD_MATERIA_1 IS NOT NULL OR docenti.COORD_MATERIA_2 IS NOT  NULL OR docenti.COORD_MATERIA_3 IS NOT  NULL)";
-               if($Parametri->FiltroIstituto  != -1 ||
-                  $Parametri->FiltroGruppoIst != -1 || 
-                  $Parametri->FiltroProvincia != -1 ||   
-                  $Parametri->FiltroPromotore != -1)
-                  $SQLBody .= " AND docenti.CHIAVE IN (SELECT istituti_x_docenti.DOCENTE 
-                                                         FROM istituti_x_docenti 
-                                                        WHERE ISTITUTO IN (SELECT istituti.CHIAVE 
-                                                                             FROM istituti" . ($Parametri->FiltroGruppoIst != -1 ? ",tipologie_gruppi_istituti,istituti_gruppi " : " ") .
-                                                                             $this->GetWhereIstituti($Parametri) . "))";
-               if($Parametri->FiltroTitolo        != -1 ||
-                  $Parametri->FiltroCasaEditrice  != -1 ||
-                  $Parametri->FiltroGruppoEd      != -1 || 
-                  $Parametri->FiltroMateriaTitolo != -1 || 
-                  $Parametri->FiltroVolUniciPrimi != 'F')
-                  $SQLBody .= " AND docenti.CHIAVE IN (SELECT insegnamenti_docente.DOCENTE
-                                                         FROM insegnamenti_docente
-                                                        WHERE insegnamenti_docente.CLASSE IN (SELECT adozioni_titolo.CLASSE
-                                                                                                FROM adozioni_titolo
-                                                                                               WHERE adozioni_titolo.TITOLO IN (SELECT titoli.CHIAVE
-                                                                                                                                  FROM titoli 
-                                                                                                                                       LEFT OUTER JOIN case_editrici ON (case_editrici.DESCRIZIONE = titoli.EDITORE)
-                                                                                                                                       LEFT OUTER JOIN gruppi_case_ed ON (case_editrici.GRUPPO = gruppi_case_ed.CHIAVE)  " . 
-                                                                                                                                  $this->GetWhereTitoli($Parametri) .")))";
+
+
+               if(!$CheckOnlyConsegnati)
+               {
+                  if($Parametri->FiltroIstituto  != -1 ||
+                     $Parametri->FiltroGruppoIst != -1 || 
+                     $Parametri->FiltroProvincia != -1 ||   
+                     $Parametri->FiltroPromotore != -1)
+                     $SQLBody .= " AND docenti.CHIAVE IN (SELECT istituti_x_docenti.DOCENTE 
+                                                            FROM istituti_x_docenti 
+                                                           WHERE ISTITUTO IN (SELECT istituti.CHIAVE 
+                                                                                FROM istituti" . ($Parametri->FiltroGruppoIst != -1 ? ",tipologie_gruppi_istituti,istituti_gruppi " : " ") .
+                                                                                $this->GetWhereIstituti($Parametri,false) . "))";
+                  if($Parametri->FiltroTitolo        != -1 ||
+                     $Parametri->FiltroCasaEditrice  != -1 ||
+                     $Parametri->FiltroGruppoEd      != -1 || 
+                     $Parametri->FiltroMateriaTitolo != -1 || 
+                     $Parametri->FiltroVolUniciPrimi != 'F')
+                     $SQLBody .= " AND docenti.CHIAVE IN (SELECT insegnamenti_docente.DOCENTE
+                                                            FROM insegnamenti_docente
+                                                           WHERE insegnamenti_docente.CLASSE IN (SELECT adozioni_titolo.CLASSE
+                                                                                                   FROM adozioni_titolo
+                                                                                                  WHERE adozioni_titolo.TITOLO IN (SELECT titoli.CHIAVE
+                                                                                                                                     FROM titoli 
+                                                                                                                                          LEFT OUTER JOIN case_editrici ON (case_editrici.DESCRIZIONE = titoli.EDITORE)
+                                                                                                                                          LEFT OUTER JOIN gruppi_case_ed ON (case_editrici.GRUPPO = gruppi_case_ed.CHIAVE)  " . 
+                                                                                                                                     $this->GetWhereTitoli($Parametri) .")))";
                                                                 
+               }
+               else 
+               {
+                   if($Parametri->FiltroIstituto  != -1 || $Parametri->FiltroProvincia != -1)
+                      $SQLBody .= " AND docenti.CHIAVE IN (SELECT istituti_x_docenti.DOCENTE 
+                                                            FROM istituti_x_docenti 
+                                                           WHERE ISTITUTO IN (SELECT istituti.CHIAVE 
+                                                                                FROM istituti " .
+                                                                                $this->GetWhereIstituti($Parametri,true) . ")) "; 
+                   if($Parametri->FiltroTitolo != -1)
+                      $SQLBody .= " AND docenti.CHIAVE IN (SELECT DOCENTE 
+                                                             FROM spedizioni
+                                                            WHERE CHIAVE IN (SELECT SPEDIZIONE 
+                                                                               FROM dettaglio_spedizioni
+                                                                              WHERE TITOLO = " . $this->FPrepareParameterValue($Parametri->FiltroTitolo,':') .
+                                                                              " AND STATO = 'C'))";
+               }
+
                $SQLBody .= " ORDER BY docenti.RAGIONE_SOCIALE";
 
                if($Query = $PDODBase->query($SQLBody))

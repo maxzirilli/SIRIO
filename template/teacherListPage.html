@@ -51,27 +51,6 @@
            Nessuna corrispondenza
          </md-not-found>
       </md-input-container>
-       
-        <md-input-container class="containerSelect" style="width:30%;margin-right:10px;">
-          <label>TITOLO</label>
-          <md-autocomplete
-                      md-search-text-change="searchTextChangeTit(searchTextTit)"
-                      md-input-name="Titolo"
-                      md-autofocus="true"
-                      md-no-cache="true"
-                      md-selected-item-change = "selectedItemChangeTitolo(itemTit)"
-                      md-search-text="searchTextTit"
-                      md-items="itemTit in queryTitolo(searchTextTit)"
-                      md-item-text="itemTit.Nome"
-                      md-require-match="true"
-                      md-clear-button="true">
-          <md-item-template>
-            <span md-highlight-text="searchTextTit">ISBN : {{itemTit.Codice}} - {{itemTit.Nome}}</span>
-          </md-item-template>
-          <md-not-found>
-            Nessuna corrispondenza
-          </md-not-found>
-        </md-input-container>
         
        <md-input-container class="containerSelect" style="width:30%;">
          <label>RUOLO DOCENTE</label>
@@ -92,9 +71,34 @@
            Nessuna corrispondenza
          </md-not-found>
       </md-input-container>
-     </div>    
+     </div>  
 
-     <input name="filtriStatistiche" type="checkbox" ng-model="ViewFiltriStatistiche" style="margin-top:30px;margin-bottom:30px;"><label for="filtriStatistiche" style="margin-top:30px;margin-left:10px;">VISUALIZZA FILTRI STATISTICHE</label>
+     <div layout="row" style="margin-top:0px;">
+          <md-input-container class="containerSelect" style="width:30%;margin-right:10px;">
+          <label>TITOLO</label>
+          <md-autocomplete
+                      md-search-text-change="searchTextChangeTit(searchTextTit)"
+                      md-input-name="Titolo"
+                      md-autofocus="true"
+                      md-no-cache="true"
+                      md-selected-item-change = "selectedItemChangeTitolo(itemTit)"
+                      md-search-text="searchTextTit"
+                      md-items="itemTit in queryTitolo(searchTextTit)"
+                      md-item-text="itemTit.Nome"
+                      md-require-match="true"
+                      md-clear-button="true">
+          <md-item-template>
+            <span md-highlight-text="searchTextTit">ISBN : {{itemTit.Codice}} - {{itemTit.Nome}}</span>
+          </md-item-template>
+          <md-not-found>
+            Nessuna corrispondenza
+          </md-not-found>
+        </md-input-container>
+
+        <input ng-show="TitoloFiltro != -1" name="filtroConsegnati" type="checkbox" ng-change="ResetFiltriStatistiche()" ng-model="ViewFiltroConsegnati" style="margin-top:30px;margin-bottom:30px;margin-left: 20px;"><label ng-show="TitoloFiltro != -1" for="filtroConsegnati" style="margin-top:30px;margin-left:10px;">CERCA SOLO DOCENTI CON QUESTO TITOLO CONSEGNATO</label>
+     </div>  
+
+     <input name="filtriStatistiche" type="checkbox" ng-model="ViewFiltriStatistiche" ng-change="ViewFiltroConsegnati = false" ng-show="!ViewFiltroConsegnati" style="margin-top:30px;margin-bottom:30px;"><label ng-show="!ViewFiltroConsegnati" for="filtriStatistiche" style="margin-top:30px;margin-left:10px;">VISUALIZZA FILTRI STATISTICHE</label>
 
      <div ng-show="ViewFiltriStatistiche">
        <div layout="row">
