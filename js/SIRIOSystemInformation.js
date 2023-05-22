@@ -209,7 +209,7 @@ SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',
        case HTTP_ERROR_ACCESS_DENIED    : Self.HTTPError = 'Accesso negato. Sospetto attacco DDoS'; break;
        case HTTP_ERROR_SMTP_GENERIC     : Self.HTTPError = 'Errore invio email'; break;
        case HTTP_ERROR_EXTRA_SCRIPT     : Self.HTTPError = 'Errore script customizzato'; break;
-       case ERROR_MAIL_ATTACHMENT       : Self.HTTPError = 'Errore allegati mail'; break; 
+       case HTTP_ERROR_MAIL_ATTACHMENT       : Self.HTTPError = 'Errore allegati mail'; break; 
        default                          : Self.HTTPError = 'Errore sconosciuto'; break;
     }
 
