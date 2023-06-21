@@ -1265,7 +1265,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     if($scope.IsAdministrator())
     {
        BodySheet       = {};
-       BodySheet['A1'] = SystemInformation.GetCellaIntestazione('DESTINATARIO');
+       BodySheet['A1'] = SystemInformation.GetCellaIntestazione('ISTITUTO DEST.');
        BodySheet['B1'] = SystemInformation.GetCellaIntestazione('DOCENTE');
        BodySheet['C1'] = SystemInformation.GetCellaIntestazione('INDIRIZZO');
        BodySheet['D1'] = SystemInformation.GetCellaIntestazione('DATA');
@@ -1314,7 +1314,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
                 
                 if (ChiaveSpedizione != ListaSpedizioniFinale[j].CHIAVE)
                 {
-                    BodySheet['A' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].PRESSO);
+                    BodySheet['A' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].NOME_ISTITUTO == undefined ? ListaSpedizioniFinale[j].PRESSO : ListaSpedizioniFinale[j].NOME_ISTITUTO);
                     BodySheet['B' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].NOME_DOCENTE == undefined ? '' : ListaSpedizioniFinale[j].NOME_DOCENTE);
                     BodySheet['C' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].INDIRIZZO + ', ' + ListaSpedizioniFinale[j].COMUNE + ', ' + ListaSpedizioniFinale[j].CAP + ', ' + ListaSpedizioniFinale[j].NOME_PROVINCIA);
                     BodySheet['D' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ZFormatDateTime('dd/mm/yyyy',ZDateFromHTMLInput(ListaSpedizioniFinale[j].DATA)));
@@ -1420,6 +1420,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
             WBook.SheetNames.push(SheetNameCum);
             WBook.Sheets[SheetName]    = BodySheet;
             WBook.Sheets[SheetNameCum] = BodySheetCum;
+            console.log(WBook)
             
             var wbout = XLSX.write(WBook, {bookType:'xlsx', bookSST:true, type: 'binary'});
             saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}), "Spedizioni.xlsx")                                       
@@ -1430,7 +1431,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     else
     {
        BodySheet       = {};
-       BodySheet['A1'] = SystemInformation.GetCellaIntestazione('DESTINATARIO');
+       BodySheet['A1'] = SystemInformation.GetCellaIntestazione('ISTITUTO DEST.');
        BodySheet['B1'] = SystemInformation.GetCellaIntestazione('DOCENTE');
        BodySheet['C1'] = SystemInformation.GetCellaIntestazione('INDIRIZZO');
        BodySheet['D1'] = SystemInformation.GetCellaIntestazione('DATA');
@@ -1479,7 +1480,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
                 
                 if (ChiaveSpedizione != ListaSpedizioniFinale[j].CHIAVE)
                 {
-                    BodySheet['A' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].PRESSO);
+                    BodySheet['A' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].NOME_ISTITUTO == undefined ? ListaSpedizioniFinale[j].PRESSO : ListaSpedizioniFinale[j].NOME_ISTITUTO) ;
                     BodySheet['B' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].NOME_DOCENTE == undefined ? '' : ListaSpedizioniFinale[j].NOME_DOCENTE);
                     BodySheet['C' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].INDIRIZZO + ', ' + ListaSpedizioniFinale[j].COMUNE + ', ' + ListaSpedizioniFinale[j].CAP + ', ' + ListaSpedizioniFinale[j].NOME_PROVINCIA);
                     BodySheet['D' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ZFormatDateTime('dd/mm/yyyy',ZDateFromHTMLInput(ListaSpedizioniFinale[j].DATA)));
