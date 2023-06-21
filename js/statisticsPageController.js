@@ -493,6 +493,7 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
         var CountClassi_1         = 0;
         var CountClassi_2         = 0;
         var CountClassiGestite    = 0;
+        var ClassiGuadagnate      = 0
         for (let i = 0;i < ListaAdozioniGenerata.length;i ++)
         {
              ListaAdozioniGenerata[i] = { 
@@ -508,19 +509,31 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
                                           ValoreAdozioni : 0.0,
                                           NrClassi       : ListaAdozioniGenerata[i].CLS_A == undefined ? 'N.D.' : parseInt(ListaAdozioniGenerata[i].CLS_A),
                                           NrClassiPrec   : ListaAdozioniGenerata[i].CLS_B == undefined ? 'N.D.' : parseInt(ListaAdozioniGenerata[i].CLS_B),
+                                          CodiceImmagine : 'CerchioRosso'
                                         };
               ListaAdozioniGenerata[i].ValoreAdozioni = (parseFloat(ListaAdozioniGenerata[i].PrezzoTitolo) * $scope.NrAlunni * ListaAdozioniGenerata[i].NrClassi).toFixed(2).toString()
               if((ListaAdozioniGenerata[i].NrClassi > 0) && (ListaAdozioniGenerata[i].NrClassiPrec == 0))
                  CountNuoveAdozioni += ListaAdozioniGenerata[i].NrClassi;
               if(ListaAdozioniGenerata[i].EditoreGestito)  
                  CountClassiGestite += ListaAdozioniGenerata[i].NrClassi;
+
+              if ($scope.ListaDate[0].DataStatistica < $scope.SecondaData)
+                ClassiGuadagnate = ListaAdozioniGenerata[i].NrClassi - ListaAdozioniGenerata[i].NrClassiPrec
+              else
+                ClassiGuadagnate = ListaAdozioniGenerata[i].NrClassiPrec - ListaAdozioniGenerata[i].NrClassi
+              if (ClassiGuadagnate < 0)
+                ListaAdozioniGenerata[i].CodiceImmagine = 'CerchioRosso'
+              if (ClassiGuadagnate == 0)
+                ListaAdozioniGenerata[i].CodiceImmagine = 'CerchioBlu'
+              if (ClassiGuadagnate > 0)
+                ListaAdozioniGenerata[i].CodiceImmagine = 'CerchioVerde'
               CountClassi_1 += ListaAdozioniGenerata[i].NrClassi;
               CountClassi_2 += ListaAdozioniGenerata[i].NrClassiPrec;
         };
 
         $scope.DatiCumulativi.NrRigheTotali    = ListaAdozioniGenerata.length;
         $scope.DatiCumulativi.NrClassiTot_1    = CountClassi_1;
-        $scope.DatiCumulativi.NrClassiTot_2    = CountClassi_2;
+        $scope.DatiCumulativi.NrClassiTot_2    = CountClassi_2;        
         $scope.DatiCumulativi.DifferenzaClassi = CountClassi_1 - CountClassi_2;
         if($scope.DatiCumulativi.DifferenzaClassi > 0)
            $scope.DatiCumulativi.DifferenzaClassi = '+' + $scope.DatiCumulativi.DifferenzaClassi;

@@ -185,6 +185,7 @@
   <div ng-show="ListaStatistica.length > 0 && !CaricamentoInCorso && !RegistrazioneInCorso">
     <table style="width:100%;text-align:center;" md-row-select="GridOptions.rowSelection" multiple="{{GridOptions.multiSelect}}">  
       <tr>
+        <th></th>
         <th>COD.ISTITUTO</th>
         <th>ISTITUTO</th> 
         <th></th>
@@ -197,6 +198,9 @@
         <th ng-show="StatisticaPresente">N° CLASSI 2</th>
       </tr>  
       <tr ng-repeat="Elemento in ListaStatistica | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Utente.Chiave}}>
+        <td ng-if="Elemento.CodiceImmagine == 'CerchioRosso'"><img src="img/CerchioRosso.png"></td>
+        <td ng-if="Elemento.CodiceImmagine != 'CerchioRosso' && Elemento.CodiceImmagine != 'CerchioVerde'"><img src="img/CerchioBlu.png"></td>
+        <td ng-if="Elemento.CodiceImmagine == 'CerchioVerde'"><img src="img/CerchioVerde.png"></td>
         <td>{{Elemento.CodiceIstituto}}</td>
         <td>{{Elemento.NomeIstituto}}</td> 
         <td><img src="img/schoolButton.png" style="width:30px;height:auto;" title="VAI A ISTITUTO" ng-click="ApriPaginaIstituto(Elemento.ChiaveIstituto)"></td> 
