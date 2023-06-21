@@ -184,41 +184,41 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     var DataMese       = Data.getMonth()+1; 
     var DataGiorno     = Data.getDate();
     Data               = DataGiorno.toString() + '-' + DataMese.toString() +  '-' + DataAnno.toString();
-    var OrdText        = "";
+    //var OrdText        = "";
     
-    if(Editore == 'D')
-    {
-       OrdText = "[codice]=999047\n[intest]=PAGINA43 snc\n[note]=\n[email]=info@pagina43.it\n[data]=" + Data + "\n";
+    // Cumulativo prenotati DeAgostini vecchio
+    // if(Editore == 'D')
+    // {
+    //    OrdText = "[codice]=999047\n[intest]=PAGINA43 snc\n[note]=\n[email]=info@pagina43.it\n[data]=" + Data + "\n";
 
-       var ListaTitoli  = [];
-       for(let j = 0;j < CumulativoTitoli.length;j ++)
-       {
-           TitoloGiaInserito = ListaTitoli.findIndex(function(ATitolo){return(ATitolo.Chiave == CumulativoTitoli[j].Chiave)})
-           if(TitoloGiaInserito == -1)
-               ListaTitoli.push(CumulativoTitoli[j])
-           else ListaTitoli[TitoloGiaInserito].Quantita += CumulativoTitoli[j].Quantita
-       }
-       for(let k = 0;k < ListaTitoli.length;k ++)
-       {
-           var InserisciTitolo = function()
-           { 
-             OrdText = OrdText + ListaTitoli[k].Codice + ' ' + Math.abs((parseInt(ListaTitoli[k].QuantitaMag) - parseInt(ListaTitoli[k].Quantita) + parseInt(ListaTitoli[k].QuantitaNovita))).toString() + "\n";        
-           }
+    //    var ListaTitoli  = [];
+    //    for(let j = 0;j < CumulativoTitoli.length;j ++)
+    //    {
+    //        TitoloGiaInserito = ListaTitoli.findIndex(function(ATitolo){return(ATitolo.Chiave == CumulativoTitoli[j].Chiave)})
+    //        if(TitoloGiaInserito == -1)
+    //            ListaTitoli.push(CumulativoTitoli[j])
+    //        else ListaTitoli[TitoloGiaInserito].Quantita += CumulativoTitoli[j].Quantita
+    //    }
+    //    for(let k = 0;k < ListaTitoli.length;k ++)
+    //    {
+    //        var InserisciTitolo = function()
+    //        { 
+    //          OrdText = OrdText + ListaTitoli[k].Codice + ' ' + Math.abs((parseInt(ListaTitoli[k].QuantitaMag) - parseInt(ListaTitoli[k].Quantita) + parseInt(ListaTitoli[k].QuantitaNovita))).toString() + "\n";        
+    //        }
 
-           if((parseInt(ListaTitoli[k].QuantitaMag) - parseInt(ListaTitoli[k].Quantita) + parseInt(ListaTitoli[k].QuantitaNovita)) < 0)
-               InserisciTitolo()
-           else
-           {
-             ListaTitoli.splice(k,1)
-             k--
-           } 
-       }
+    //        if((parseInt(ListaTitoli[k].QuantitaMag) - parseInt(ListaTitoli[k].Quantita) + parseInt(ListaTitoli[k].QuantitaNovita)) < 0)
+    //            InserisciTitolo()
+    //        else
+    //        {
+    //          ListaTitoli.splice(k,1)
+    //          k--
+    //        } 
+    //    }
 
-       var blob = new Blob([OrdText], {type: "text/plain;charset=utf-8"});
-       saveAs(blob, "CumulativoDeAgostini" + Data + ".ord"); 
-    } 
-    if(Editore == 'M')
-    {
+    //    var blob = new Blob([OrdText], {type: "text/plain;charset=utf-8"});
+    //    saveAs(blob, "CumulativoDeAgostini" + Data + ".ord"); 
+    // } 
+    
        var WBook = {
                       SheetNames : [],
                       Sheets     : {}
@@ -262,8 +262,11 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
        WBook.Sheets[SheetName]    = BodySheet;
        
        var wbout = XLSX.write(WBook, {bookType:'xlsx', bookSST:true, type: 'binary'});
+    if(Editore == 'M')
+    {
        saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}),  "CumulativoMondadori" + Data + ".xls")    
     }
+    else saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}),  "CumulativoDeAgostini" + Data + ".xls")
   }
 
   //STAMPA CUMULATIVO PRENOTATI
