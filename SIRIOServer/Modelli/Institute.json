@@ -24,7 +24,7 @@
 			"SQL" : "SELECT istituti.CHIAVE,istituti.CODICE,istituti.NOME,istituti.PROVINCIA FROM istituti WHERE NASCOSTO <> 1 ORDER BY istituti.NOME\n"
 		}
 	],
- 	"SelectSQLOnlyVisiblePrm" : [
+	"SelectSQLOnlyVisiblePrm" : [
 		{
 			"Name" : "InstituteInfoListOnlyVisibile",
 			"SQL" : "SELECT istituti.CHIAVE,istituti.CODICE,istituti.NOME,istituti.PROVINCIA FROM istituti WHERE NASCOSTO <> 1 AND istituti.PROMOTORE=#KeyAccount ORDER BY istituti.NOME\n"
@@ -77,7 +77,7 @@
 		},
 		{
 			"Name" : "InstituteTeacherList",
-			"SQL" : "SELECT istituti_x_docenti.DOCENTE,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE IN (SELECT docenti.MATERIA_1 FROM docenti WHERE CHIAVE = istituti_x_docenti.DOCENTE)) AS NOME_MATERIA_1,(SELECT materie_insegnamento.ORDINAMENTO from materie_insegnamento WHERE CHIAVE IN (SELECT docenti.MATERIA_1 FROM docenti WHERE CHIAVE = istituti_x_docenti.DOCENTE)) AS ORDINAMENTO_MATERIA_1,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE IN (SELECT docenti.MATERIA_2 FROM docenti WHERE CHIAVE = istituti_x_docenti.DOCENTE)) AS NOME_MATERIA_2,(SELECT materie_insegnamento.DESCRIZIONE FROM materie_insegnamento WHERE CHIAVE IN (SELECT docenti.MATERIA_3 FROM docenti WHERE CHIAVE = istituti_x_docenti.DOCENTE)) AS NOME_MATERIA_3, (SELECT docenti.RAGIONE_SOCIALE FROM docenti WHERE CHIAVE = istituti_x_docenti.DOCENTE) AS NOME_DOCENTE FROM istituti_x_docenti WHERE istituti_x_docenti.ISTITUTO=:CHIAVE ORDER BY ORDINAMENTO_MATERIA_1 DESC,NOME_MATERIA_1 ASC, NOME_DOCENTE ASC\n"
+			"SQL" : "SELECT istituti_x_docenti.DOCENTE,\n            (SELECT materie_insegnamento.DESCRIZIONE\n               FROM materie_insegnamento \n              WHERE CHIAVE IN (SELECT docenti.MATERIA_1 \n                                             FROM docenti \n                                           WHERE CHIAVE = istituti_x_docenti.DOCENTE)) AS NOME_MATERIA_1, \n            (SELECT materie_insegnamento.ORDINAMENTO\n               FROM materie_insegnamento\n             WHERE CHIAVE IN (SELECT docenti.MATERIA_1 \n                                            FROM docenti\n                                          WHERE CHIAVE = istituti_x_docenti.DOCENTE)) AS ORDINAMENTO_MATERIA_1,\n            (SELECT materie_insegnamento.DESCRIZIONE\n               FROM materie_insegnamento\n              WHERE CHIAVE IN (SELECT docenti.MATERIA_2 \n                                            FROM docenti \n                                          WHERE CHIAVE = istituti_x_docenti.DOCENTE)) AS NOME_MATERIA_2,\n            (SELECT materie_insegnamento.DESCRIZIONE\n               FROM materie_insegnamento\n             WHERE CHIAVE IN (SELECT docenti.MATERIA_3 \n                                           FROM docenti\n                                         WHERE CHIAVE = istituti_x_docenti.DOCENTE)) AS NOME_MATERIA_3,\n             (SELECT docenti.RAGIONE_SOCIALE\n                FROM docenti\n               WHERE CHIAVE = istituti_x_docenti.DOCENTE) AS NOME_DOCENTE\n   FROM istituti_x_docenti\n WHERE istituti_x_docenti.ISTITUTO=:CHIAVE\n ORDER BY ORDINAMENTO_MATERIA_1 DESC,NOME_MATERIA_1 ASC, NOME_DOCENTE ASC\n"
 		},
 		{
 			"Name" : "InstituteTeacherAvailability",

@@ -1616,8 +1616,8 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
                  $scope.DocenteInEditing.ListaIstitutiDoc[i].Orari[j].Modificato = false;
                  $scope.DocenteInEditing.ListaIstitutiDoc[i].Orari[j].Eliminato = false;
 
-                 MateriaCorrispondente = $scope.ListaMaterieDoc.find(function (AMateria) { return (AMateria.Chiave == $scope.DocenteInEditing.ListaIstitutiDoc[i].Orari[j].MATERIA); });
-                 $scope.DocenteInEditing.ListaIstitutiDoc[i].Orari[j].MateriaNome = MateriaCorrispondente.MateriaNome;
+                 if (MateriaCorrispondente = $scope.ListaMaterieDoc.find(function (AMateria) { return (AMateria.Chiave == $scope.DocenteInEditing.ListaIstitutiDoc[i].Orari[j].MATERIA); }))
+                  $scope.DocenteInEditing.ListaIstitutiDoc[i].Orari[j].MateriaNome = MateriaCorrispondente.MateriaNome;
 
                  $scope.DocenteInEditing.ListaIstitutiDoc[i].Orari[j].ClasseNome = $scope.DocenteInEditing.ListaIstitutiDoc[i].Orari[j].ANNO + $scope.DocenteInEditing.ListaIstitutiDoc[i].Orari[j].SEZIONE + ' - ' + $scope.DocenteInEditing.ListaIstitutiDoc[i].Orari[j].COMBINAZIONE;
              }

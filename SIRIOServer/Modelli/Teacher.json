@@ -45,11 +45,11 @@
 		},
 		{
 			"Name" : "TeacherInstitute",
-			"SQL" : "SELECT istituti.NOME,istituti.CHIAVE,istituti.INDIRIZZO,istituti.CAP,istituti.COMUNE,istituti.PROVINCIA,(SELECT province.NOME FROM province WHERE province.CHIAVE = istituti.PROVINCIA) AS PROVINCIA_NOME,(SELECT province_all.CHIAVE FROM province_all WHERE NOME=(SELECT province.NOME FROM province WHERE CHIAVE = istituti.PROVINCIA)) AS PROVINCIA_LISTA_ALL,istituti.CAP,istituti.NOME AS ISTITUTO FROM istituti_x_docenti,istituti WHERE DOCENTE=:CHIAVE AND istituti.CHIAVE = istituti_x_docenti.ISTITUTO ORDER BY ISTITUTO\n"
+			"SQL" : "SELECT istituti.NOME,istituti.CHIAVE,istituti.INDIRIZZO,istituti.CAP,istituti.COMUNE,istituti.PROVINCIA,\n            (SELECT province.NOME \n               FROM province \n             WHERE province.CHIAVE = istituti.PROVINCIA) AS PROVINCIA_NOME,\n            (SELECT province_all.CHIAVE\n               FROM province_all \n             WHERE NOME=(SELECT province.NOME\n                                       FROM province\n                                     WHERE CHIAVE = istituti.PROVINCIA)) AS PROVINCIA_LISTA_ALL,\n             istituti.CAP,istituti.NOME AS ISTITUTO\n   FROM istituti_x_docenti,istituti \n WHERE DOCENTE=:CHIAVE AND \n            istituti.CHIAVE = istituti_x_docenti.ISTITUTO\n ORDER BY ISTITUTO\n"
 		},
 		{
 			"Name" : "TeacherLesson",
-			"SQL" : "SELECT *,(SELECT ISTITUTO FROM classi WHERE CHIAVE = insegnamenti_docente.CLASSE) AS ISTITUTO,(SELECT classi.SEZIONE FROM classi WHERE classi.CHIAVE = insegnamenti_docente.CLASSE) AS SEZIONE,(SELECT classi.ANNO FROM classi WHERE classi.CHIAVE = insegnamenti_docente.CLASSE) AS ANNO,(SELECT DESCRIZIONE FROM classi_combinazioni WHERE CHIAVE IN (SELECT COMBINAZIONE FROM classi WHERE classi.CHIAVE = insegnamenti_docente.CLASSE)) AS COMBINAZIONE FROM insegnamenti_docente WHERE DOCENTE=:CHIAVE\n"
+			"SQL" : "SELECT *,\n            (SELECT ISTITUTO \n                FROM classi\n              WHERE CHIAVE = insegnamenti_docente.CLASSE) AS ISTITUTO,\n           (SELECT classi.SEZIONE \n                FROM classi \n            WHERE classi.CHIAVE = insegnamenti_docente.CLASSE) AS SEZIONE,\n           (SELECT classi.ANNO \n               FROM classi \n             WHERE classi.CHIAVE = insegnamenti_docente.CLASSE) AS ANNO,\n           (SELECT DESCRIZIONE\n               FROM classi_combinazioni\n              WHERE CHIAVE IN (SELECT COMBINAZIONE \n                                             FROM classi\n                                           WHERE classi.CHIAVE = insegnamenti_docente.CLASSE)) AS COMBINAZIONE\n FROM insegnamenti_docente\nWHERE DOCENTE=:CHIAVE\n"
 		},
 		{
 			"Name" : "TeacherAvailability",
