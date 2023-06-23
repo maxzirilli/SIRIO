@@ -53,9 +53,9 @@
       <tr ng-repeat="casa in ListaCase | limitTo : GridOptions_6.query.limit : (GridOptions_6.query.page - 1) * GridOptions_6.query.limit" id={{casa.Chiave}}>
         <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA CASA EDITRICE GESTITA" ng-click="EliminaCasa(casa)"></td> 
         <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA CASA EDITRICE GESTITA" ng-click="ModificaCasa(casa)"></td>
-        <td><img src="img/groups.png" style="width:30px;height:auto;" title="MODIFICA GRUPPO CASA EDITRICE GESTITA" ng-click="ModificaGruppoCasa(casa)"></td>         
+        <td><img src="img/groups.png" style="width:30px;height:auto;" title="MODIFICA GRUPPO CASA EDITRICE GESTITA" ng-click="ModificaPromotoriCasa(casa)"></td>         
         <td>{{casa.Descrizione}}</td>
-        <td>{{casa.GruppoNome}}<span ng-if="casa.GruppoRivale"> ⚔</span></td>
+        <td><span ng-repeat="promotore in casa.Promotori">{{promotore.PromotoreNome}}<span ng-if="promotore.PromotoreRivale"> ⚔</span><br></span></td>
       </tr>    
     </table>
     <md-table-pagination md-limit="GridOptions_6.query.limit" 
@@ -112,7 +112,7 @@
 
   <div ng-if="ConfigurazioneSelezionata==3">
     <div>
-      <h2 style="float:left;">GRUPPI CASE EDITRICI</h2>
+      <h2 style="float:left;">PROMOTORI CASE EDITRICI</h2>
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovoGruppo()">NUOVO GRUPPO</md-button>
     </div>
     <table style="width:100%;text-align:center;" md-row-select="GridOptions_8.rowSelection" multiple="{{GridOptions_8.multiSelect}}">  

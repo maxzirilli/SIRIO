@@ -68,3 +68,5 @@ WHERE spedizioni.CHIAVE = dettaglio_spedizioni.SPEDIZIONE AND
 ORDER BY spedizioni.CHIAVE DESC,spedizioni.DATA DESC
 
 [22-Jun-2023 11:59:55 Europe/Berlin] SELECT * FROM utenti WHERE USERNAME = 'Claudio' AND ELIMINATO = 0
+[23-Jun-2023 12:54:16 Europe/Berlin] SELECT * FROM promotori
+

@@ -1,27 +1,39 @@
-{ 
-  "SelectSQL"  : [
-                   {
-                     "Name" : "PublisherInfoList",
-                     "SQL"  : "SELECT *,(SELECT DESCRIZIONE FROM gruppi_case_ed WHERE CHIAVE=case_editrici.GRUPPO) AS GRUPPO_NOME,(SELECT RIVALE FROM gruppi_case_ed WHERE CHIAVE=case_editrici.GRUPPO) AS GRUPPO_RIVALE FROM case_editrici ORDER BY DESCRIZIONE"
-                   }
-                 ],
-                
-  "EditSQL"   : [   
-                  {
-                    "Name" : "InsertPublisher",
-                    "SQL"  : "INSERT INTO case_editrici (CHIAVE,DESCRIZIONE) VALUES (:NewKey1,#DESCRIZIONE)"
-                  }, 
-                  {
-                    "Name" : "UpdatePublisher",
-                    "SQL"  : "UPDATE case_editrici SET DESCRIZIONE=#DESCRIZIONE WHERE CHIAVE=:CHIAVE"
-                  },
-                  {
-                    "Name" : "UpdatePublisherGroup",
-                    "SQL"  : "UPDATE case_editrici SET GRUPPO=:GRUPPO WHERE CHIAVE=:CHIAVE"
-                  },
-                  {
-                    "Name" : "DeletePublisher",
-                    "SQL"  : "DELETE FROM case_editrici WHERE CHIAVE=:CHIAVE"
-                  }
-                ]        
+{
+	"RuoliAbilitati" : "",
+	"SelectSQL" : [
+		{
+			"Name" : "PublisherInfoList",
+			"SQL" : "SELECT case_editrici.*\n  FROM case_editrici \nORDER BY DESCRIZIONE\n"
+		},
+		{
+			"Name" : "PromotoriCaseEditrici",
+			"SQL" : "SELECT promotori_x_case_ed.*, gruppi_case_ed.DESCRIZIONE, gruppi_case_ed.RIVALE\n  FROM promotori_x_case_ed\n           JOIN gruppi_case_ed ON (gruppi_case_ed.CHIAVE = promotori_x_case_ed.PROMOTORE)\nORDER BY promotori_x_case_ed.CASA_ED, gruppi_case_ed.DESCRIZIONE\n"
+		}
+	],
+	"EditSQL" : [
+		{
+			"Name" : "InsertPublisher",
+			"SQL" : "INSERT INTO case_editrici (CHIAVE,DESCRIZIONE) VALUES (:NewKey1,#DESCRIZIONE)\n"
+		},
+		{
+			"Name" : "UpdatePublisher",
+			"SQL" : "UPDATE case_editrici SET DESCRIZIONE=#DESCRIZIONE WHERE CHIAVE=:CHIAVE\n"
+		},
+		{
+			"Name" : "UpdatePublisherGroup",
+			"SQL" : "UPDATE case_editrici SET GRUPPO=:GRUPPO WHERE CHIAVE=:CHIAVE\n"
+		},
+		{
+			"Name" : "DeletePublisher",
+			"SQL" : "DELETE FROM case_editrici WHERE CHIAVE=:CHIAVE\n"
+		},
+		{
+			"Name" : "AddPromotoreToCasaEditrice",
+			"SQL" : "INSERT INTO promotori_x_case_ed (CASA_ED, PROMOTORE)\n                                        VALUES (:CasaEditrice, :Promotore)\n"
+		},
+		{
+			"Name" : "RemovePromotoreFromCasaEditrice",
+			"SQL" : "DELETE FROM promotori_x_case_ed\n          WHERE CASA_ED = :CasaEditrice AND\n                     PROMOTORE = :Promotore\n"
+		}
+]
 }
