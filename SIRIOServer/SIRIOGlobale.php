@@ -16,7 +16,6 @@
                                  titoli.CODICE_ISBN AS CODICE_TITOLO,
                                  titoli.PREZZO AS PREZZO_TITOLO,
                                  case_editrici.CHIAVE AS CHIAVE_EDITORE_TITOLO,
-                                 case_editrici.GRUPPO AS GRUPPO,
                                  COUNT(CLASSE) AS NR_CLASSI")
                           .
                           " FROM adozioni_titolo,
