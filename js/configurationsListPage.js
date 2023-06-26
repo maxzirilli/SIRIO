@@ -1,6 +1,6 @@
 SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformation','$state','$rootScope','$mdDialog','ZConfirm','ZPrompt','ZSelect','ZCheckListBox','$sce', function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm,ZPrompt,ZSelect,ZCheckListBox,$sce)
 { 
-  $scope.ListaConfigurazioni        = ['COMBINAZIONI CLASSI','CASE EDITRICI GESTITE','DATI PAGINA 43',"PROMOTORI CASE EDITRICI","LUOGHI DISPONIBILITA' DOCENTI",'MATERIE','PROVINCE GESTITE','TIPOLOGIE ISTITUTI GESTITE','TIPOLOGIE ISTITUTI ESCLUSE'];
+  $scope.ListaConfigurazioni        = ['COMBINAZIONI CLASSI','CASE EDITRICI GESTITE','DATI PAGINA 43',"GRUPPI CASE EDITRICI","LUOGHI DISPONIBILITA' DOCENTI",'MATERIE','PROVINCE GESTITE','TIPOLOGIE ISTITUTI GESTITE','TIPOLOGIE ISTITUTI ESCLUSE'];
   $scope.ConfigurazioneSelezionata  = 0;
   
   $scope.ListaMaterie               = [];
@@ -221,7 +221,7 @@ $scope.GridOptions_8 = {
         }
         OnSuccess(ListaPromotoriCaseEd)
       }
-      else SystemInformation.ApplyOnError('Modello promotori case editrici non conforme','');   
+      else SystemInformation.ApplyOnError('Modello gruppi case editrici non conforme','');   
     },'SelectAll');
   }
 
@@ -497,7 +497,7 @@ $scope.GridOptions_8 = {
                 }
              }
       } 
-      else SystemInformation.ApplyOnError('Modello promotori case editrici non conforme','');   
+      else SystemInformation.ApplyOnError('Modello gruppi case editrici non conforme','');   
     });
   }
   
@@ -1558,7 +1558,7 @@ $scope.GridOptions_8 = {
     ZConfirm.GetConfirmBox('AVVISO','ELIMINARE LA CASA EDITRICE: ' + Casa.Descrizione + ' ?',EliminaCasEd,function(){});          
   }
 
-  //PROMOTORI CASE EDITRICI  
+  //GRUPPI CASE EDITRICI  
  
   $scope.GestisciRivale = function(Gruppo,isRivale)
   {

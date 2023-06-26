@@ -1,12 +1,54 @@
+[26-Jun-2023 16:30:53 Europe/Berlin] SELECT titoli.CHIAVE,
+       titoli.TITOLO,
+       titoli.CODICE_ISBN,
+       titoli.POS_MAGAZZINO,
+       titoli.QUANTITA_MGZN
+  FROM titoli 
+ WHERE EDITORE IN (SELECT DESCRIZIONE FROM case_editrici_amiche WHERE DESCRIZIONE = titoli.EDITORE) 
+ORDER BY TITOLO
 
-[23-Jun-2023 16:31:13 Europe/Berlin] PHP Fatal error:  Allowed memory size of 536870912 bytes exhausted (tried to allocate 249029608 bytes) in D:\GoogleDrive\Lavoro\Progetti\Pagina43\Sirio\Software\SIRIO\SIRIOServer\SIRIOExtraStatistics.php on line 252
-[23-Jun-2023 16:32:20 Europe/Berlin] SELECT * FROM utenti WHERE USERNAME = 'francesco' AND ELIMINATO = 0
-[23-Jun-2023 16:34:48 Europe/Berlin] mango
-[23-Jun-2023 16:35:41 Europe/Berlin] PHP Fatal error:  Allowed memory size of 536870912 bytes exhausted (tried to allocate 249029608 bytes) in D:\GoogleDrive\Lavoro\Progetti\Pagina43\Sirio\Software\SIRIO\SIRIOServer\SIRIOExtraStatistics.php on line 252
-[23-Jun-2023 17:12:39 Europe/Berlin] mango
-[23-Jun-2023 17:14:04 Europe/Berlin] mango
-[23-Jun-2023 17:18:59 Europe/Berlin] mango
-[23-Jun-2023 17:20:31 Europe/Berlin] mango
-[23-Jun-2023 17:20:32 Europe/Berlin] papaya
-[23-Jun-2023 17:52:10 Europe/Berlin] mango
-[23-Jun-2023 17:52:11 Europe/Berlin] papaya
+[26-Jun-2023 16:32:14 Europe/Berlin] SELECT titoli.CHIAVE,
+       titoli.TITOLO,
+       titoli.CODICE_ISBN,
+       titoli.POS_MAGAZZINO,
+       titoli.QUANTITA_MGZN
+  FROM titoli 
+ WHERE EDITORE IN (SELECT DESCRIZIONE FROM case_editrici_amiche WHERE DESCRIZIONE = titoli.EDITORE) 
+ORDER BY TITOLO
+
+[26-Jun-2023 16:32:17 Europe/Berlin] SELECT titoli.CHIAVE,
+       titoli.TITOLO,
+       titoli.CODICE_ISBN,
+       titoli.POS_MAGAZZINO,
+       titoli.QUANTITA_MGZN
+  FROM titoli 
+ WHERE EDITORE IN (SELECT DESCRIZIONE FROM case_editrici_amiche WHERE DESCRIZIONE = titoli.EDITORE) 
+ORDER BY TITOLO
+
+[26-Jun-2023 16:32:43 Europe/Berlin] SELECT titoli.CHIAVE,
+       titoli.TITOLO,
+       titoli.CODICE_ISBN,
+       titoli.POS_MAGAZZINO,
+       titoli.QUANTITA_MGZN
+  FROM titoli 
+ WHERE EDITORE IN (SELECT DESCRIZIONE FROM case_editrici_amiche WHERE DESCRIZIONE = titoli.EDITORE) 
+ORDER BY TITOLO
+
+[26-Jun-2023 16:34:06 Europe/Berlin] SELECT titoli.CHIAVE,
+       titoli.TITOLO,
+       titoli.CODICE_ISBN,
+       titoli.POS_MAGAZZINO,
+       titoli.QUANTITA_MGZN
+  FROM titoli 
+ WHERE EDITORE IN (SELECT DESCRIZIONE FROM case_editrici_amiche WHERE DESCRIZIONE = titoli.EDITORE) 
+ORDER BY TITOLO
+
+[26-Jun-2023 16:34:14 Europe/Berlin] SELECT titoli.CHIAVE,
+       titoli.TITOLO,
+       titoli.CODICE_ISBN,
+       titoli.POS_MAGAZZINO,
+       titoli.QUANTITA_MGZN
+  FROM titoli 
+ WHERE EDITORE IN (SELECT DESCRIZIONE FROM case_editrici_amiche WHERE DESCRIZIONE = titoli.EDITORE) 
+ORDER BY TITOLO
+

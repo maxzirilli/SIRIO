@@ -342,7 +342,7 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
            $scope.ListaGruppiPopup = GruppiInfoList;
            $scope.SelezioneGruppiInventario();
         } 
-        else SystemInformation.ApplyOnError('Modello promotori case editrici non conforme','');   
+        else SystemInformation.ApplyOnError('Modello gruppi case editrici non conforme','');   
       },'SelectSQLHandled');
     }
     

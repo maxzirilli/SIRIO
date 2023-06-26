@@ -7,7 +7,7 @@
 		},
 		{
 			"Name" : "PromotoriCaseEditrici",
-			"SQL" : "SELECT promotori_x_case_ed.*, gruppi_case_ed.DESCRIZIONE, gruppi_case_ed.RIVALE\n  FROM promotori_x_case_ed\n           JOIN gruppi_case_ed ON (gruppi_case_ed.CHIAVE = promotori_x_case_ed.PROMOTORE)\nORDER BY promotori_x_case_ed.CASA_ED, gruppi_case_ed.DESCRIZIONE\n"
+			"SQL" : "SELECT gruppi_x_case_ed.*, gruppi_case_ed.DESCRIZIONE, gruppi_case_ed.RIVALE\n  FROM gruppi_x_case_ed\n           JOIN gruppi_case_ed ON (gruppi_case_ed.CHIAVE = gruppi_x_case_ed.PROMOTORE)\nORDER BY gruppi_x_case_ed.CASA_ED, gruppi_case_ed.DESCRIZIONE\n"
 		}
 	],
 	"EditSQL" : [
@@ -29,11 +29,11 @@
 		},
 		{
 			"Name" : "AddPromotoreToCasaEditrice",
-			"SQL" : "INSERT INTO promotori_x_case_ed (CASA_ED, PROMOTORE)\n                                        VALUES (:CasaEditrice, :Promotore)\n"
+			"SQL" : "INSERT INTO gruppi_x_case_ed (CASA_ED, PROMOTORE)\n                                        VALUES (:CasaEditrice, :Promotore)\n"
 		},
 		{
 			"Name" : "RemovePromotoreFromCasaEditrice",
-			"SQL" : "DELETE FROM promotori_x_case_ed\n          WHERE CASA_ED = :CasaEditrice AND\n                     PROMOTORE = :Promotore\n"
+			"SQL" : "DELETE FROM gruppi_x_case_ed\n          WHERE CASA_ED = :CasaEditrice AND\n                     PROMOTORE = :Promotore\n"
 		}
 ]
 }

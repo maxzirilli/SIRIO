@@ -38,16 +38,14 @@
                              titoli.CODICE_ISBN AS CODICE_TITOLO,
                              titoli.PREZZO AS PREZZO_TITOLO,
                              case_editrici.CHIAVE AS CHIAVE_EDITORE_TITOLO,
-                            --  promotori_x_case_ed.PROMOTORE AS GRUPPO,
-                            --  case_editrici.GRUPPO AS GRUPPO,
                              statistiche.NR_CLASSI
                         FROM statistiche
                              JOIN titoli ON (statistiche.TITOLO = titoli.CHIAVE)
                              LEFT OUTER JOIN case_editrici ON (case_editrici.DESCRIZIONE = titoli.EDITORE)
                              JOIN istituti ON (statistiche.ISTITUTO = istituti.CHIAVE),
-                             tipologie_gruppi_istituti 
+                             tipologie_gruppi_istituti
                              JOIN istituti_gruppi ON (tipologie_gruppi_istituti.GRUPPO_IST = istituti_gruppi.CHIAVE)
-                       WHERE istituti.TIPOLOGIA = tipologie_gruppi_istituti.TIPOLOGIA AND"  . $Where .
+                       WHERE istituti.TIPOLOGIA = tipologie_gruppi_istituti.TIPOLOGIA"  . $Where .
                      " ORDER BY CHIAVE_ISTITUTO,CHIAVE_TITOLO");
                      
             }
@@ -155,26 +153,46 @@
                switch($Parametri->FiltroGruppoEd)
                {
                  case -1 : break;
-                 case -2 : array_push($CondizioniWhere,"case_editrici.CHIAVE IN (SELECT CHIAVE FROM case_editrici_amiche)");
-                           array_push($CondizioniWhere,"istituti.PROVINCIA IN  (SELECT province_x_gruppi_editoriali.PROVINCIA
-                                                                                  FROM province_x_gruppi_editoriali
-                                                                                      JOIN gruppi_case_ed ON (province_x_gruppi_editoriali.GRUPPO = gruppi_case_ed.CHIAVE),
-                                                                                      promotori_x_case_ed
-                                                                                      JOIN case_editrici ON (promotori_X_case_ed.CASA_ED = case_editrici.CHIAVE)
-                                                                                WHERE titoli.EDITORE = case_editrici.DESCRIZIONE AND
-                                                                                      gruppi_case_ed.RIVALE = 'T' AND
-                                                                                    province_x_gruppi_editoriali.GRUPPO = promotori_x_case_ed.PROMOTORE
-                                                                                )");
+                 case -2 : array_push($CondizioniWhere,"istituti.PROVINCIA IN  (SELECT province_x_gruppi_editoriali.PROVINCIA
+                                                                                  FROM gruppi_x_case_ed
+                                                                                      JOIN case_editrici_amiche ON (case_editrici_amiche.CHIAVE = gruppi_x_case_ed.CASA_ED)
+                                                                                      JOIN gruppi_case_ed ON (gruppi_case_ed.CHIAVE = gruppi_x_case_ed.PROMOTORE)
+                                                                                      JOIN province_x_gruppi_editoriali ON (province_x_gruppi_editoriali.GRUPPO = gruppi_x_case_ed.PROMOTORE)
+                                                                                  WHERE gruppi_case_ed.RIVALE = 'F' AND
+                                                                                        titoli.EDITORE = case_editrici_amiche.DESCRIZIONE
+                                                                                  GROUP BY PROVINCIA)");
                            break;
-                 case -3 : array_push($CondizioniWhere,"(case_editrici.DESCRIZIONE IS NULL OR " . 
-                                                       "(case_editrici.CHIAVE IN (SELECT CHIAVE FROM case_editrici_nemiche)))");
+                 //condizione da recuperare nel caso non vada bene quella che ho messo (case_editrici.DESCRIZIONE IS NULL OR (case_editrici.CHIAVE IN (SELECT CHIAVE FROM case_editrici_nemiche)))
+                 case -3 : array_push($CondizioniWhere,"(case_editrici.DESCRIZIONE IS NULL OR
+                                                          istituti.PROVINCIA IN  (SELECT province_x_gruppi_editoriali.PROVINCIA
+                                                                                    FROM gruppi_x_case_ed
+                                                                                        JOIN case_editrici_nemiche ON (case_editrici_nemiche.CHIAVE = gruppi_x_case_ed.CASA_ED)
+                                                                                        JOIN gruppi_case_ed ON (gruppi_case_ed.CHIAVE = gruppi_x_case_ed.PROMOTORE)
+                                                                                        JOIN province_x_gruppi_editoriali ON (province_x_gruppi_editoriali.GRUPPO = gruppi_x_case_ed.PROMOTORE)
+                                                                                    WHERE gruppi_case_ed.RIVALE = 'T' AND
+                                                                                          titoli.EDITORE = case_editrici_nemiche.DESCRIZIONE
+                                                                                    GROUP BY PROVINCIA))");
                            break;
-                 case -4 : array_push($CondizioniWhere,"case_editrici.CHIAVE IN (SELECT CHIAVE FROM case_editrici_nemiche)");
+                 case -4 : array_push($CondizioniWhere,"istituti.PROVINCIA IN  (SELECT province_x_gruppi_editoriali.PROVINCIA
+                                                                                  FROM gruppi_x_case_ed
+                                                                                      JOIN case_editrici_nemiche ON (case_editrici_nemiche.CHIAVE = gruppi_x_case_ed.CASA_ED)
+                                                                                      JOIN gruppi_case_ed ON (gruppi_case_ed.CHIAVE = gruppi_x_case_ed.PROMOTORE)
+                                                                                      JOIN province_x_gruppi_editoriali ON (province_x_gruppi_editoriali.GRUPPO = gruppi_x_case_ed.PROMOTORE)
+                                                                                  WHERE gruppi_case_ed.RIVALE = 'T' AND
+                                                                                        titoli.EDITORE = case_editrici_nemiche.DESCRIZIONE
+                                                                                  GROUP BY PROVINCIA)");
                            break;
                  default : if(!($Parametri->FiltroGruppoRivaleSelected))
-                                array_push($CondizioniWhere,"titoli.EDITORE = case_editrici.DESCRIZIONE AND case_editrici.CHIAVE IN (SELECT CHIAVE FROM case_editrici_amiche) AND promotori_x_case_ed.PROMOTORE =" . $Parametri->FiltroGruppoEd);
-                           else array_push($CondizioniWhere,"titoli.EDITORE = case_editrici.DESCRIZIONE AND case_editrici.CHIAVE IN (SELECT CHIAVE FROM case_editrici_nemiche) AND promotori_x_case_ed.PROMOTORE =" . $Parametri->FiltroGruppoEd);                           
+                                array_push($CondizioniWhere,"titoli.EDITORE IN (SELECT DESCRIZIONE
+                                                                                  FROM case_editrici_amiche
+                                                                                       JOIN gruppi_x_case_ed ON (case_editrici_amiche.CHIAVE = gruppi_x_case_ed.CASA_ED)
+                                                                                 WHERE gruppi_x_case_ed.PROMOTORE = " . $Parametri->FiltroGruppoEd . ")");
+                           else array_push($CondizioniWhere,"titoli.EDITORE IN (SELECT DESCRIZIONE
+                                                                                  FROM case_editrici_nemiche
+                                                                                       JOIN gruppi_x_case_ed ON (case_editrici_nemiche.CHIAVE = gruppi_x_case_ed.CASA_ED)
+                                                                                 WHERE gruppi_x_case_ed.PROMOTORE = " . $Parametri->FiltroGruppoEd . ")");                           
                            array_push($CondizioniWhere,"istituti.PROVINCIA IN (SELECT PROVINCIA FROM province_x_gruppi_editoriali WHERE GRUPPO = " . $Parametri->FiltroGruppoEd . ")");
+                           error_log($Parametri->FiltroGruppoEd);
                            break;
                } 
 
@@ -200,9 +218,7 @@
 
                for($i = 0;$i < Count($CondizioniWhere);$i++)
                {
-                  if ($i > 0)
-                    $AStringa .= "AND";
-                  $AStringa .= " " . $CondizioniWhere[$i] . " ";
+                  $AStringa .= " AND " . $CondizioniWhere[$i] . " ";
                }
                return $AStringa;
             }
@@ -255,10 +271,8 @@
                //SECONDA STATISTICA
                $StringaWhere = $this->GetWhereConditions($Parametri,2,$LsChiaviIstitutiCorrispondenti);
                $SQLBody      = $this->GetSQLFromStatistic($StringaWhere);
-               error_log('mango');
                if($Query = $PDODBase->query($SQLBody))
                {
-                   error_log('papaya');
                    while($Row = $Query->fetch(PDO::FETCH_ASSOC))
                    {
                      $RigaTmp = $this->CreateTmpRow($Row);
