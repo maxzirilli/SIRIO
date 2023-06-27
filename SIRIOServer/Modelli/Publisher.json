@@ -6,8 +6,8 @@
 			"SQL" : "SELECT case_editrici.*\n  FROM case_editrici \nORDER BY DESCRIZIONE\n"
 		},
 		{
-			"Name" : "PromotoriCaseEditrici",
-			"SQL" : "SELECT gruppi_x_case_ed.*, gruppi_case_ed.DESCRIZIONE, gruppi_case_ed.RIVALE\n  FROM gruppi_x_case_ed\n           JOIN gruppi_case_ed ON (gruppi_case_ed.CHIAVE = gruppi_x_case_ed.PROMOTORE)\nORDER BY gruppi_x_case_ed.CASA_ED, gruppi_case_ed.DESCRIZIONE\n"
+			"Name" : "GruppiCaseEditrici",
+			"SQL" : "SELECT gruppi_x_case_ed.*, gruppi_case_ed.DESCRIZIONE, gruppi_case_ed.RIVALE\n  FROM gruppi_x_case_ed\n           JOIN gruppi_case_ed ON (gruppi_case_ed.CHIAVE = gruppi_x_case_ed.GRUPPO)\nORDER BY gruppi_x_case_ed.CASA_ED, gruppi_case_ed.DESCRIZIONE\n"
 		}
 	],
 	"EditSQL" : [
@@ -28,12 +28,12 @@
 			"SQL" : "DELETE FROM case_editrici WHERE CHIAVE=:CHIAVE\n"
 		},
 		{
-			"Name" : "AddPromotoreToCasaEditrice",
-			"SQL" : "INSERT INTO gruppi_x_case_ed (CASA_ED, PROMOTORE)\n                                        VALUES (:CasaEditrice, :Promotore)\n"
+			"Name" : "AddGruppoToCasaEditrice",
+			"SQL" : "INSERT INTO gruppi_x_case_ed (CASA_ED, GRUPPO)\n                                        VALUES (:CasaEditrice, :Promotore)\n"
 		},
 		{
-			"Name" : "RemovePromotoreFromCasaEditrice",
-			"SQL" : "DELETE FROM gruppi_x_case_ed\n          WHERE CASA_ED = :CasaEditrice AND\n                     PROMOTORE = :Promotore\n"
+			"Name" : "RemoveGruppoFromCasaEditrice",
+			"SQL" : "DELETE FROM gruppi_x_case_ed\n          WHERE CASA_ED = :CasaEditrice AND\n                     GRUPPO = :Promotore\n"
 		}
 ]
 }

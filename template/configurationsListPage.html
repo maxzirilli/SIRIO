@@ -53,9 +53,9 @@
       <tr ng-repeat="casa in ListaCase | limitTo : GridOptions_6.query.limit : (GridOptions_6.query.page - 1) * GridOptions_6.query.limit" id={{casa.Chiave}}>
         <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA CASA EDITRICE GESTITA" ng-click="EliminaCasa(casa)"></td> 
         <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA CASA EDITRICE GESTITA" ng-click="ModificaCasa(casa)"></td>
-        <td><img src="img/groups.png" style="width:30px;height:auto;" title="MODIFICA GRUPPO CASA EDITRICE GESTITA" ng-click="ModificaPromotoriCasa(casa)"></td>         
+        <td><img src="img/groups.png" style="width:30px;height:auto;" title="MODIFICA GRUPPO CASA EDITRICE GESTITA" ng-click="ModificaGruppiCasa(casa)"></td>         
         <td>{{casa.Descrizione}}</td>
-        <td><span ng-repeat="promotore in casa.Promotori">{{promotore.PromotoreNome}}<span ng-if="promotore.PromotoreRivale"> ⚔</span><br></span></td>
+        <td><span ng-repeat="gruppo in casa.Gruppi">{{gruppo.GruppoNome}}<span ng-if="gruppo.GruppoRivale"> ⚔</span><br></span></td>
       </tr>    
     </table>
     <md-table-pagination md-limit="GridOptions_6.query.limit" 

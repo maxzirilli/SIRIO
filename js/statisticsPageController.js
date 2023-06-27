@@ -517,10 +517,14 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
               if(ListaAdozioniGenerata[i].EditoreGestito)  
                  CountClassiGestite += ListaAdozioniGenerata[i].NrClassi;
 
-              if ($scope.ListaDate[0].DataStatistica < $scope.SecondaData)
+              if ($scope.SecondaData < $scope.PrimaData)
+              {
                 ClassiGuadagnate = ListaAdozioniGenerata[i].NrClassi - ListaAdozioniGenerata[i].NrClassiPrec
+              }
               else
+              {
                 ClassiGuadagnate = ListaAdozioniGenerata[i].NrClassiPrec - ListaAdozioniGenerata[i].NrClassi
+              }
               if (ClassiGuadagnate < 0)
                 ListaAdozioniGenerata[i].CodiceImmagine = 'CerchioRosso'
               if (ClassiGuadagnate == 0)

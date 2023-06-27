@@ -190,36 +190,36 @@ $scope.GridOptions_8 = {
     return($sce.trustAsHtml(Stringa));
   }
 
-  $scope.GetListaPromotoriPerCasaEd = function(CasaEd,OnSuccess)
+  $scope.GetListaGruppiPerCasaEd = function(CasaEd,OnSuccess)
   {
     SystemInformation.GetSQL('PublisherGroup', {}, function(Results)  
     {
-      let ListaPromotoriCaseEd = SystemInformation.FindResults(Results,'SelectAllPromotori');
-      if(ListaPromotoriCaseEd != undefined)
+      let ListaGruppiCaseEd = SystemInformation.FindResults(Results,'SelectAllGruppi');
+      if(ListaGruppiCaseEd != undefined)
       { 
-        for(let i = 0;i < ListaPromotoriCaseEd.length;i ++)
+        for(let i = 0;i < ListaGruppiCaseEd.length;i ++)
         {
-          ListaPromotoriCaseEd[i] = {
-                                Chiave      : ListaPromotoriCaseEd[i].CHIAVE,
-                                Descrizione : ListaPromotoriCaseEd[i].DESCRIZIONE,
-                                Rivale      : ListaPromotoriCaseEd[i].RIVALE == 'T' ? true : false,
+          ListaGruppiCaseEd[i] = {
+                                Chiave      : ListaGruppiCaseEd[i].CHIAVE,
+                                Descrizione : ListaGruppiCaseEd[i].DESCRIZIONE,
+                                Rivale      : ListaGruppiCaseEd[i].RIVALE == 'T' ? true : false,
                                 Selezionata : false,
                                 Nuova       : false,
                                 Eliminata   : false,
                                 Originale   : false
                               }
         }
-        for (let i = 0; i < CasaEd.Promotori.length; i++)
+        for (let i = 0; i < CasaEd.Gruppi.length; i++)
         {
-          let Promotore = CasaEd.Promotori[i].PromotoreChiave
-          let index = ListaPromotoriCaseEd.findIndex(function(element) {return element.Chiave == Promotore})
+          let Gruppo = CasaEd.Gruppi[i].GruppoChiave
+          let index = ListaGruppiCaseEd.findIndex(function(element) {return element.Chiave == Gruppo})
           if (index != -1)
           {
-            ListaPromotoriCaseEd[i].Selezionata = true
-            ListaPromotoriCaseEd[i].Originale = true
+            ListaGruppiCaseEd[i].Selezionata = true
+            ListaGruppiCaseEd[i].Originale = true
           }
         }
-        OnSuccess(ListaPromotoriCaseEd)
+        OnSuccess(ListaGruppiCaseEd)
       }
       else SystemInformation.ApplyOnError('Modello gruppi case editrici non conforme','');   
     },'SelectAll');
@@ -403,38 +403,38 @@ $scope.GridOptions_8 = {
     SystemInformation.GetSQL('Publisher', {}, function(Results)  
     {
       let CaseInfoList = SystemInformation.FindResults(Results,'PublisherInfoList');
-      let ArrayInfoPromotori = SystemInformation.FindResults(Results, 'PromotoriCaseEditrici')
+      let ArrayInfoGruppi = SystemInformation.FindResults(Results, 'GruppiCaseEditrici')
       if(CaseInfoList != undefined)
       {
-        let PromotoriPerCase = []
+        let GruppiPerCase = []
         let index = -1
-        for (let i = 0; i < ArrayInfoPromotori.length; i++)
+        for (let i = 0; i < ArrayInfoGruppi.length; i++)
         {
-          let Promotore = ArrayInfoPromotori[i]
-          if (index != Promotore.CASA_ED)
+          let Gruppo = ArrayInfoGruppi[i]
+          if (index != Gruppo.CASA_ED)
           {
-            index = Promotore.CASA_ED
-            let ObjCase = {CasaEd : index, Promotori : []}
-            PromotoriPerCase.push(ObjCase)
+            index = Gruppo.CASA_ED
+            let ObjCase = {CasaEd : index, Gruppi : []}
+            GruppiPerCase.push(ObjCase)
           }
-          let ObjPromotori =  {
-                                PromotoreChiave : Promotore.PROMOTORE,
-                                PromotoreNome   : Promotore.DESCRIZIONE,
-                                PromotoreRivale : Promotore.RIVALE == 'T' ? true : false
+          let ObjGruppi =  {
+                                GruppoChiave : Gruppo.GRUPPO,
+                                GruppoNome   : Gruppo.DESCRIZIONE,
+                                GruppoRivale : Gruppo.RIVALE == 'T' ? true : false
                               }
-          PromotoriPerCase[PromotoriPerCase.length - 1].Promotori.push(ObjPromotori)
+          GruppiPerCase[GruppiPerCase.length - 1].Gruppi.push(ObjGruppi)
         }
         for(let i = 0; i < CaseInfoList.length; i++)
         {
           CaseInfoList[i] = {
                               Chiave       : CaseInfoList[i].CHIAVE,
                               Descrizione  : CaseInfoList[i].DESCRIZIONE,
-                              Promotori    : []                              
+                              Gruppi    : []                              
                             }
-          let indice = PromotoriPerCase.findIndex(function(element) {return element.CasaEd == CaseInfoList[i].Chiave})
+          let indice = GruppiPerCase.findIndex(function(element) {return element.CasaEd == CaseInfoList[i].Chiave})
           if (indice != -1)
           {
-            CaseInfoList[i].Promotori = PromotoriPerCase[indice].Promotori
+            CaseInfoList[i].Gruppi = GruppiPerCase[indice].Gruppi
           }
         }
         //  GruppoChiave : CaseInfoList[i].GRUPPO == undefined ? -1 : CaseInfoList[i].GRUPPO,
@@ -1413,35 +1413,35 @@ $scope.GridOptions_8 = {
     ZPrompt.GetPromptBox('MODIFICA INSERIMENTO','MODIFICA CASA EDITRICE: ',Casa.Descrizione,ModificaCsEd,function(){});         
   }
 
-  $scope.ModificaPromotoriCasa = function (CasaEditrice)
+  $scope.ModificaGruppiCasa = function (CasaEditrice)
   {
-    $scope.GetListaPromotoriPerCasaEd(CasaEditrice,function(ArrayPromotori)
+    $scope.GetListaGruppiPerCasaEd(CasaEditrice,function(ArrayGruppi)
     {
-        var ModificaPromotoriCasa = function(Answer)
+        var ModificaGruppiCasa = function(Answer)
         {
-          var PromotoriAssegnati = Answer;
+          var GruppiAssegnati = Answer;
           var $ObjQuery       = { Operazioni : [] };  
 
-          for(let i = 0; i < PromotoriAssegnati.length; i ++)
+          for(let i = 0; i < GruppiAssegnati.length; i ++)
           {
               var Params = {
                               CasaEditrice    : CasaEditrice.Chiave,
-                              Promotore       : PromotoriAssegnati[i].Chiave
+                              Gruppo       : GruppiAssegnati[i].Chiave
                             }
 
-              if(PromotoriAssegnati[i].Selezionata)
+              if(GruppiAssegnati[i].Selezionata)
               {
-                if(!PromotoriAssegnati[i].Originale)
+                if(!GruppiAssegnati[i].Originale)
                     $ObjQuery.Operazioni.push({
-                                            Query     : 'AddPromotoreToCasaEditrice',
+                                            Query     : 'AddGruppoToCasaEditrice',
                                             Parametri : Params
                                           });
               }
               else 
               {
-                if(PromotoriAssegnati[i].Eliminata && PromotoriAssegnati[i].Originale)
+                if(GruppiAssegnati[i].Eliminata && GruppiAssegnati[i].Originale)
                   $ObjQuery.Operazioni.push({
-                                              Query     : 'RemovePromotoreFromCasaEditrice',
+                                              Query     : 'RemoveGruppoFromCasaEditrice',
                                               Parametri : Params
                                             }); 
               }
@@ -1451,7 +1451,7 @@ $scope.GridOptions_8 = {
             $scope.RefreshListaCase();
           }); 
         } 
-        ZCheckListBox.GetCheckListBox('MODIFICA INSERIMENTO','MODIFICA PROMOTORI CORRELATI:  ','PROMOTORE',ArrayPromotori,ModificaPromotoriCasa,$scope.RefreshListaCase());         
+        ZCheckListBox.GetCheckListBox('MODIFICA INSERIMENTO','MODIFICA GRUPPI CORRELATI:  ','GRUPPO',ArrayGruppi,ModificaGruppiCasa,$scope.RefreshListaCase());         
     });
   }
   

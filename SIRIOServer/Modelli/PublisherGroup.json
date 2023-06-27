@@ -52,7 +52,7 @@
 	],
 	"SelectAll" : [
 		{
-			"Name" : "SelectAllPromotori",
+			"Name" : "SelectAllGruppi",
 			"SQL" : "SELECT * FROM gruppi_case_ed\n"
 		}
 ]
