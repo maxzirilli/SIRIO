@@ -101,7 +101,9 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     
     var ChiaveSpedizione = -1;
     for(let i = 0; i < CumulativoTitoli.length; i++)
-    {                 
+    {
+        if (CumulativoTitoli[i].Codice == '9788853009661')
+          console.log('papaya')        
         if (ChiaveSpedizione != CumulativoTitoli[i].Spedizione)
         {
             BodySheet['A' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',CumulativoTitoli[i].Istituto == undefined ? CumulativoTitoli[i].Presso : CumulativoTitoli[i].Istituto);
@@ -144,16 +146,18 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
             ListaCumulativo[TitoloCorrisp].Quantita = ListaCumulativo[TitoloCorrisp].Quantita.toString()
         }                 
     }
+
+    ListaCumulativo.sort(function(a,b){
+                                        if ((a.Nome).toUpperCase() < (b.Nome).toUpperCase()) 
+                                          return -1
+                                        return 1
+                                      })
     
     for(let k = 0;k < ListaCumulativo.length;k ++)
     {
-      if (ListaCumulativo[k].Quantita != 'NaN')
-      {
         BodySheetCum['A' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaCumulativo[k].Codice);
         BodySheetCum['B' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaCumulativo[k].Nome);
-        BodySheetCum['C' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaCumulativo[k].Quantita = ListaCumulativo[k].Quantita.toString());
-      }
-      else ListaCumulativo.splice(k, 1)      
+        BodySheetCum['C' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaCumulativo[k].Quantita = ListaCumulativo[k].Quantita.toString());     
     }
         
     
@@ -573,6 +577,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
 
       if($scope.MateriaFiltro != -1 && $scope.MateriaFiltro != undefined)
          ParamConsegnati.MateriaDocente = $scope.MateriaFiltro;
+
+      console.log(ParamConsegnati)
       
       SystemInformation.GetSQL('Delivery',ParamConsegnati,function(Results)
       {
