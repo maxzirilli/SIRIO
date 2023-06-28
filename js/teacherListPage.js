@@ -641,7 +641,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
    $scope.AnnoFiltro = -1;
    $scope.CombinazioneFiltro = -1;
    $scope.ListaCombinazioni = [];
-   $scope.ListaAnni = [];
+   $scope.ListaAnniClassi = [];
 
    SystemInformation.GetSQL('Institute', { CHIAVE: ChiaveIstituto }, function (Results) 
    {
@@ -668,9 +668,9 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
              if (CombinazioneExist == -1)
                  $scope.ListaCombinazioni.push(IstitutoListaAdozioni[i].COMBINAZIONE_CLASSE);
 
-             var AnnoExist = $scope.ListaAnni.findIndex(function (AAnno) { return (AAnno == IstitutoListaAdozioni[i].ANNO_CLASSE); });
+             var AnnoExist = $scope.ListaAnniClassi.findIndex(function (AAnno) { return (AAnno == IstitutoListaAdozioni[i].ANNO_CLASSE); });
              if (AnnoExist == -1)
-                 $scope.ListaAnni.push(IstitutoListaAdozioni[i].ANNO_CLASSE);
+                 $scope.ListaAnniClassi.push(IstitutoListaAdozioni[i].ANNO_CLASSE);
           }
           if($scope.AdozioniGestite ? (IstitutoListaAdozioni[i].EDITORE_GESTITO == undefined ? false : true) : true)
              $scope.IstitutoListaAdozioni[$scope.IstitutoListaAdozioni.length - 1].ListaTitoliClasse.push({
@@ -685,7 +685,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
            ClassKey = IstitutoListaAdozioni[i].CLASSE;
         }
 
-        $scope.ListaAnni.sort();
+        $scope.ListaAnniClassi.sort();
         $scope.ListaCombinazioni.sort();
         $scope.IstitutoListaAdozioni.sort((adozione_1, adozione_2) => {
         const compareCombinazione = adozione_1.CombinazioneClasse.localeCompare(adozione_2.CombinazioneClasse);
