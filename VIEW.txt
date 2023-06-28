@@ -1,0 +1,13 @@
+ALTER ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `case_editrici_amiche` AS SELECT DISTINCT (case_editrici.CHIAVE), case_editrici.DESCRIZIONE
+  FROM gruppi_x_case_ed
+       JOIN case_editrici ON (gruppi_x_case_ed.CASA_ED = case_editrici.CHIAVE)
+       JOIN gruppi_case_ed ON (gruppi_case_ed.CHIAVE = gruppi_x_case_ed.GRUPPO)
+ WHERE gruppi_case_ed.RIVALE = 'F'
+ ORDER BY DESCRIZIONE  ;
+
+ALTER ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `case_editrici_nemiche` AS SELECT DISTINCT (case_editrici.CHIAVE), case_editrici.DESCRIZIONE
+  FROM gruppi_x_case_ed
+       JOIN case_editrici ON (gruppi_x_case_ed.CASA_ED = case_editrici.CHIAVE)
+       JOIN gruppi_case_ed ON (gruppi_case_ed.CHIAVE = gruppi_x_case_ed.GRUPPO)
+ WHERE gruppi_case_ed.RIVALE = 'T'
+ORDER BY DESCRIZIONE  ;
