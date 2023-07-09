@@ -104,6 +104,16 @@
         </md-optgroup>
         </md-select>
       </md-input-container>
+      <md-input-container class="containerSelect" style="width:20%;margin-right:10px;"><label>ADOZIONI</label>
+        <md-select ng-model="AdozioniFiltro" class="mdb-select" type="text" name="AdozioniFiltro">
+        <md-optgroup>
+          <md-option ng-value="-1">TUTTE</md-option>
+          <md-option ng-value="-2">AUMENTATE</md-option> 
+          <md-option ng-value="-3">INVARIATE</md-option> 
+          <md-option ng-value="-4">DIMINUITE</md-option>
+        </md-optgroup>
+        </md-select>
+      </md-input-container>
     </div>
 
     <div layout="row" ng-show="StatisticaPresente">

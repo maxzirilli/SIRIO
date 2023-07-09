@@ -19,6 +19,7 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
   $scope.IstitutoFiltro         = -1;
   $scope.MateriaFiltro          = -1;
   $scope.GruppoEditorialeFiltro = -1;
+  $scope.AdozioniFiltro         = -1;
   $scope.IsGruppoRivaleFiltro   = false;
   $scope.PrimaData              = -1;
   $scope.SecondaData            = null;
@@ -479,6 +480,7 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
                                FiltroIstituto             : $scope.IstitutoFiltro,      
                                FiltroMateria              : $scope.MateriaFiltro,
                                FiltroGruppoEd             : $scope.GruppoEditorialeFiltro, 
+                               FiltroAdozioni             : $scope.AdozioniFiltro,
                                FiltroGruppoRivaleSelected : $scope.IsGruppoRivaleFiltro,    
                                PrimaStatistica            : $scope.PrimaData,        
                                SecondaStatistica          : $scope.SecondaData,
@@ -488,12 +490,14 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
                             };
       SystemInformation.ExecuteExternalScript('SIRIOExtraStatistics',ParamStatistica,function(Answer) 
       {
-        var ListaAdozioniGenerata = Answer.StatisticaFinale;
-        var CountNuoveAdozioni    = 0;
-        var CountClassi_1         = 0;
-        var CountClassi_2         = 0;
-        var CountClassiGestite    = 0;
-        var ClassiGuadagnate      = 0
+        var ListaAdozioniGenerata   = Answer.StatisticaFinale;
+        var CountNuoveAdozioni      = 0;
+        var CountClassi_1           = 0;
+        var CountClassi_2           = 0;
+        var CountClassiGestite      = 0;
+        var ClassiGuadagnate        = 0
+        var ListaAdozioniModificata = []
+
         for (let i = 0;i < ListaAdozioniGenerata.length;i ++)
         {
              ListaAdozioniGenerata[i] = { 
@@ -511,13 +515,8 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
                                           NrClassiPrec   : ListaAdozioniGenerata[i].CLS_B == undefined ? 'N.D.' : parseInt(ListaAdozioniGenerata[i].CLS_B),
                                           CodiceImmagine : 'CerchioRosso'
                                         };
-              ListaAdozioniGenerata[i].ValoreAdozioni = (parseFloat(ListaAdozioniGenerata[i].PrezzoTitolo) * $scope.NrAlunni * ListaAdozioniGenerata[i].NrClassi).toFixed(2).toString()
-              if((ListaAdozioniGenerata[i].NrClassi > 0) && (ListaAdozioniGenerata[i].NrClassiPrec == 0))
-                 CountNuoveAdozioni += ListaAdozioniGenerata[i].NrClassi;
-              if(ListaAdozioniGenerata[i].EditoreGestito)  
-                 CountClassiGestite += ListaAdozioniGenerata[i].NrClassi;
 
-              if ($scope.SecondaData < $scope.PrimaData)
+              if (($scope.SecondaData < $scope.PrimaData) || $scope.PrimaData == -1)
               {
                 ClassiGuadagnate = ListaAdozioniGenerata[i].NrClassi - ListaAdozioniGenerata[i].NrClassiPrec
               }
@@ -531,11 +530,25 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
                 ListaAdozioniGenerata[i].CodiceImmagine = 'CerchioBlu'
               if (ClassiGuadagnate > 0)
                 ListaAdozioniGenerata[i].CodiceImmagine = 'CerchioVerde'
-              CountClassi_1 += ListaAdozioniGenerata[i].NrClassi;
-              CountClassi_2 += ListaAdozioniGenerata[i].NrClassiPrec;
+
+              let CodiceImmagine = ListaAdozioniGenerata[i].CodiceImmagine
+
+              if (ParamStatistica.FiltroAdozioni == -1 || (ParamStatistica.FiltroAdozioni == -2 && CodiceImmagine == 'CerchioVerde') || 
+                  (ParamStatistica.FiltroAdozioni == -3 && CodiceImmagine == 'CerchioBlu') || (ParamStatistica.FiltroAdozioni == -4 && CodiceImmagine == 'CerchioRosso'))
+              {
+                ListaAdozioniGenerata[i].ValoreAdozioni = (parseFloat(ListaAdozioniGenerata[i].PrezzoTitolo) * $scope.NrAlunni * ListaAdozioniGenerata[i].NrClassi).toFixed(2).toString()
+                if((ListaAdozioniGenerata[i].NrClassi > 0) && (ListaAdozioniGenerata[i].NrClassiPrec == 0))
+                  CountNuoveAdozioni += ListaAdozioniGenerata[i].NrClassi;
+                if(ListaAdozioniGenerata[i].EditoreGestito)  
+                  CountClassiGestite += ListaAdozioniGenerata[i].NrClassi;    
+
+                CountClassi_1 += ListaAdozioniGenerata[i].NrClassi;
+                CountClassi_2 += ListaAdozioniGenerata[i].NrClassiPrec;
+                ListaAdozioniModificata.push(ListaAdozioniGenerata[i])
+              }
         };
 
-        $scope.DatiCumulativi.NrRigheTotali    = ListaAdozioniGenerata.length;
+        $scope.DatiCumulativi.NrRigheTotali    = ListaAdozioniModificata.length;
         $scope.DatiCumulativi.NrClassiTot_1    = CountClassi_1;
         $scope.DatiCumulativi.NrClassiTot_2    = CountClassi_2;        
         $scope.DatiCumulativi.DifferenzaClassi = CountClassi_1 - CountClassi_2;
@@ -544,7 +557,7 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
         $scope.DatiCumulativi.NrNuoveAdozioni  = CountNuoveAdozioni;
         $scope.DatiCumulativi.NrClassiGestite  = CountClassiGestite; 
 
-        $scope.ListaStatistica = ListaAdozioniGenerata;
+        $scope.ListaStatistica = ListaAdozioniModificata;
         $scope.ListaStatistica.sort($scope.OrdinaLista);
 
         $scope.CaricamentoInCorso = false;
@@ -701,7 +714,7 @@ SIRIOApp.controller("statisticsPageController",['$scope','SystemInformation','$s
                 break;
       default : GruppoEdF = $scope.ListaGruppiEditoriali.find(function (Elemento){return Elemento.Chiave == $scope.GruppoEditorialeFiltro}); 
                 GruppoEdF = GruppoEdF == undefined ? "-" : (GruppoEdF.Descrizione + (GruppoEdF.Rivale ? '(RIVALE)' : ''));
-    } 
+    }
 
     BodySheetFiltri['A' + parseInt(2)] = SystemInformation.GetCellaDati('s', IstitutoF);          
     BodySheetFiltri['B' + parseInt(2)] = SystemInformation.GetCellaDati('s', ProvinciaF);

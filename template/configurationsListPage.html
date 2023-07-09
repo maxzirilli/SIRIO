@@ -38,10 +38,17 @@
   </div>
 
   <div ng-if="ConfigurazioneSelezionata==1">
-    <div>
+    <div style="width: 100%;">
       <h2 style="float:left;">CASE EDITRICI GESTITE</h2>
-      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaCasa()">NUOVA CASA EDITRICE GESTITA</md-button>
+      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="NuovaCasa()">NUOVA CASA EDITRICE GESTITA</md-button>      
     </div>
+    <div style="clear: both;"></div>
+    <div style="width:100%">
+      <md-input-container style="width:20%;">
+        <label>CERCA</label>
+        <input type="text" ng-model="FiltroNomeCasa">
+      </md-input-container>
+    </div>    
     <table style="width:100%;text-align:center;" md-row-select="GridOptions_5.rowSelection" multiple="{{GridOptions_5.multiSelect}}">  
       <tr>
         <th></th>
@@ -50,7 +57,7 @@
         <th style="font-weight:bold;">NOME</th>
         <th style="font-weight:bold;">GRUPPO</th>
       </tr>  
-      <tr ng-repeat="casa in ListaCase | limitTo : GridOptions_6.query.limit : (GridOptions_6.query.page - 1) * GridOptions_6.query.limit" id={{casa.Chiave}}>
+      <tr ng-repeat="casa in GetVettoreCaseFiltrato() | limitTo : GridOptions_6.query.limit : (GridOptions_6.query.page - 1) * GridOptions_6.query.limit" id={{casa.Chiave}}>
         <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA CASA EDITRICE GESTITA" ng-click="EliminaCasa(casa)"></td> 
         <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA CASA EDITRICE GESTITA" ng-click="ModificaCasa(casa)"></td>
         <td><img src="img/groups.png" style="width:30px;height:auto;" title="MODIFICA GRUPPO CASA EDITRICE GESTITA" ng-click="ModificaGruppiCasa(casa)"></td>         

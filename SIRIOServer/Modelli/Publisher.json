@@ -29,7 +29,7 @@
 		},
 		{
 			"Name" : "AddGruppoToCasaEditrice",
-			"SQL" : "INSERT INTO gruppi_x_case_ed (CASA_ED, GRUPPO)\n                                        VALUES (:CasaEditrice, :Promotore)\n"
+			"SQL" : "INSERT INTO gruppi_x_case_ed (CASA_ED, GRUPPO)\n                                        VALUES (:CasaEditrice, :Gruppo)\n"
 		},
 		{
 			"Name" : "RemoveGruppoFromCasaEditrice",

@@ -26,6 +26,7 @@ SIRIOApp.controller("configurationsListPageController",['$scope','SystemInformat
   $scope.NuovaCombinazione          = false;
 
   $scope.ListaCase                  = [];
+  $scope.FiltroNomeCasa             = ''
   $scope.CasaInEditing              = {};
   $scope.NuovaCasa                  = false;
 
@@ -188,6 +189,29 @@ $scope.GridOptions_8 = {
            Stringa += materia.GruppiIstStringa[i] + ' </br>';
     }
     return($sce.trustAsHtml(Stringa));
+  }
+
+  $scope.GetVettoreCaseFiltrato = function()
+  {
+    if(this.FiltroNomeCasa == '')
+      return (this.ListaCase);
+    var ListaFiltrata = [];
+    this.FiltroNomeCasa = this.FiltroNomeCasa.toUpperCase();
+    var Self = this
+    var CasaOk = function (Casa) 
+    {
+      var Result = false;
+      if(Casa.Descrizione.startsWith(Self.FiltroNomeCasa))
+          Result = true;
+
+      return (Result);
+    }
+    this.ListaCase.forEach(function (Casa) 
+    {
+      if(CasaOk(Casa))
+        ListaFiltrata.push(Casa)
+    });
+    return(ListaFiltrata);
   }
 
   $scope.GetListaGruppiPerCasaEd = function(CasaEd,OnSuccess)
@@ -1420,13 +1444,13 @@ $scope.GridOptions_8 = {
         var ModificaGruppiCasa = function(Answer)
         {
           var GruppiAssegnati = Answer;
-          var $ObjQuery       = { Operazioni : [] };  
-
+          var $ObjQuery       = { Operazioni : [] };
+          
           for(let i = 0; i < GruppiAssegnati.length; i ++)
           {
               var Params = {
                               CasaEditrice    : CasaEditrice.Chiave,
-                              Gruppo       : GruppiAssegnati[i].Chiave
+                              Gruppo          : GruppiAssegnati[i].Chiave
                             }
 
               if(GruppiAssegnati[i].Selezionata)

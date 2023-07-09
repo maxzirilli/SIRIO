@@ -83,8 +83,14 @@ use LDAP\Result;
                {
                  //$Result .= ($Where ? " WHERE " : " AND ") . "case_editrici.CHIAVE = " . $Parametri->FiltroCasaEditrice;
                  if($Parametri->FiltroIsGruppoEdRivale == 'F')
-                    $Result .= ($Where ? " WHERE " : " AND ") . "case_editrici.CHIAVE IN (SELECT CHIAVE FROM case_editrici_amiche) AND case_editrici.GRUPPO = " . $this->FPrepareParameterValue($Parametri->FiltroGruppoEd,':');
-                 else $Result .= ($Where ? " WHERE " : " AND ") . "case_editrici.CHIAVE IN (SELECT CHIAVE FROM case_editrici_nemiche) AND case_editrici.GRUPPO = " . $this->FPrepareParameterValue($Parametri->FiltroGruppoEd,':'); 
+                    $Result .= ($Where ? " WHERE " : " AND ") . "case_editrici.CHIAVE IN (SELECT CHIAVE
+                                                                                            FROM case_editrici_amiche
+                                                                                              JOIN gruppi_x_case_ed ON(gruppi_x_case_ed.CASA_ED = case_editrici_amiche.CHIAVE)
+                                                                                          WHERE gruppi_x_case_ed.GRUPPO = " . $this->FPrepareParameterValue($Parametri->FiltroGruppoEd,':') . ")";
+                 else $Result .= ($Where ? " WHERE " : " AND ") . "case_editrici.CHIAVE IN (SELECT CHIAVE
+                                                                                              FROM case_editrici_nemiche
+                                                                                                JOIN gruppi_x_case_ed ON(gruppi_x_case_ed.CASA_ED = case_editrici_nemiche.CHIAVE)
+                                                                                             WHERE gruppi_x_case_ed.GRUPPO = " . $this->FPrepareParameterValue($Parametri->FiltroGruppoEd,':') . ")";
                  $Where = false;
                }
                return $Result;
