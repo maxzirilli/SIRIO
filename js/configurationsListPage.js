@@ -232,17 +232,19 @@ $scope.GridOptions_8 = {
                                 Eliminata   : false,
                                 Originale   : false
                               }
-        }
+        }        
         for (let i = 0; i < CasaEd.Gruppi.length; i++)
         {
           let Gruppo = CasaEd.Gruppi[i].GruppoChiave
+          console.log(CasaEd.Gruppi[i])
           let index = ListaGruppiCaseEd.findIndex(function(element) {return element.Chiave == Gruppo})
           if (index != -1)
           {
-            ListaGruppiCaseEd[i].Selezionata = true
-            ListaGruppiCaseEd[i].Originale = true
+            ListaGruppiCaseEd[index].Selezionata = true
+            ListaGruppiCaseEd[index].Originale = true
           }
         }
+        console.log(ListaGruppiCaseEd)
         OnSuccess(ListaGruppiCaseEd)
       }
       else SystemInformation.ApplyOnError('Modello gruppi case editrici non conforme','');   
