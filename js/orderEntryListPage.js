@@ -178,7 +178,7 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
               $ObjQuery.Operazioni.push({ 
                                           Query     : 'InsertOrderEntryTest',
                                           Parametri : { 
-                                                        DataCarico       : new Date(),                                        
+                                                        DataCarico       : ZFormatDateTime('yyyy-mm-dd',new Date()), 
                                                         TitoloCarico     : TitoloCorrisp.Chiave,
                                                         QuantitaCarico   : RecordOrdine[1],
                                                         UbicazioneCarico : TitoloCorrisp.Posizione //RecordOrdine[2]
@@ -560,7 +560,7 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
       for(let j = 0; j < $scope.ListaTitoliToHandle.length;j ++)
       {
           var ParamCarico = {
-                              DataCarico       : $scope.dataOrdineMultiplo,
+                              DataCarico       : ZFormatDateTime('yyyy-mm-dd',$scope.dataOrdineMultiplo),
                               TitoloCarico     : $scope.ListaTitoliToHandle[j].TITOLO,  
                               QuantitaCarico   : $scope.ListaTitoliToHandle[j].QUANTITA,
                               UbicazioneCarico : $scope.ListaTitoliToHandle[j].UBICAZIONE
@@ -618,7 +618,7 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
          ZCustomAlert($mdDialog,'ATTENZIONE','DATI MANCANTI');      
      var $ObjQuery   = { Operazioni : [] };          
      var ParamOrdine = {
-                         DataCarico       : $scope.OrdineInEditing.Data,
+                         DataCarico       : $ZFormatDateTime('yyyy-mm-dd',scope.OrdineInEditing.Data),
                          TitoloCarico     : $scope.OrdineInEditing.Titolo,
                          QuantitaCarico   : $scope.OrdineInEditing.Quantita,
                          UbicazioneCarico : $scope.OrdineInEditing.Ubicazione 
@@ -764,7 +764,7 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
           $ObjQuery.Operazioni.push({ 
                                       Query     : 'InsertOrderEntryTest',
                                       Parametri : { 
-                                                    DataCarico       : $scope.CaricoRapido.DATA,                                        
+                                                    DataCarico       : ZFormatDateTime('yyyy-mm-dd',$scope.CaricoRapido.DATA), 
                                                     TitoloCarico     : $scope.ListaCaricoRapido[i].Titolo,
                                                     QuantitaCarico   : $scope.ListaCaricoRapido[i].Quantita,
                                                     UbicazioneCarico : $scope.ListaCaricoRapido[i].Posizione
