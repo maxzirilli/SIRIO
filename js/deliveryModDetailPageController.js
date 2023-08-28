@@ -1427,7 +1427,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                                                  "COMUNE"         : $scope.ListaDocentiSpedizione[i].ComuneDocente,
                                                  "CAP"            : $scope.ListaDocentiSpedizione[i].CapDocente,
                                                  "PROVINCIA"      : $scope.ListaDocentiSpedizione[i].ProvinciaDocente,
-                                                 "DATA"           : $scope.SpedizioneInEditing.DATA,
+                                                 "DATA"           : ZFormatDateTime('yyyy-mm-dd',$scope.SpedizioneInEditing.DATA),
                                                  "ISTITUTO"       : null
                                                }
                              $ObjQuery.Operazioni.push({
@@ -1496,7 +1496,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                                                      "COMUNE"         : $scope.SpedizioneInEditing.COMUNE,
                                                      "CAP"            : $scope.SpedizioneInEditing.CAP,
                                                      "PROVINCIA"      : $scope.SpedizioneInEditing.PROVINCIA,
-                                                     "DATA"           : $scope.SpedizioneInEditing.DATA,
+                                                     "DATA"           : ZFormatDateTime('yyyy-mm-dd',$scope.SpedizioneInEditing.DATA),
                                                      "ISTITUTO"       : $scope.SpedizioneInEditing.ISTITUTO
                                                    }
                                  $ObjQuery.Operazioni.push({
@@ -1543,7 +1543,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                                                      "COMUNE"         : $scope.SpedizioneInEditing.COMUNE,
                                                      "CAP"            : $scope.SpedizioneInEditing.CAP,
                                                      "PROVINCIA"      : $scope.SpedizioneInEditing.PROVINCIA,
-                                                     "DATA"           : $scope.SpedizioneInEditing.DATA,
+                                                     "DATA"           : ZFormatDateTime('yyyy-mm-dd',$scope.SpedizioneInEditing.DATA),
                                                      "ISTITUTO"       : $scope.SpedizioneInEditing.ISTITUTO                                          
                                                    }
                                  $ObjQuery.Operazioni.push({
@@ -1606,7 +1606,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                                            "COMUNE"         : $scope.SpedizioneInEditing.COMUNE,
                                            "CAP"            : $scope.SpedizioneInEditing.CAP,
                                            "PROVINCIA"      : $scope.SpedizioneInEditing.PROVINCIA,
-                                           "DATA"           : $scope.SpedizioneInEditing.DATA,
+                                           "DATA"           : ZFormatDateTime('yyyy-mm-dd',$scope.SpedizioneInEditing.DATA),
                                            "ISTITUTO"       : ($scope.SpedizioneInEditing.ISTITUTO == -1 || $scope.SpedizioneInEditing.ISTITUTO == '') ? null : $scope.SpedizioneInEditing.ISTITUTO  
                                          }
                                              
@@ -1788,7 +1788,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                                                  "COMUNE"         : $scope.ListaDocentiSpedizione[d].ComuneDocente,
                                                  "CAP"            : $scope.ListaDocentiSpedizione[d].CapDocente,
                                                  "PROVINCIA"      : $scope.ListaDocentiSpedizione[d].ProvinciaDocente,
-                                                 "DATA"           : $scope.SpedizioneInEditing.DATA,
+                                                 "DATA"           : ZFormatDateTime('yyyy-mm-dd',$scope.SpedizioneInEditing.DATA),
                                                  "ISTITUTO"       : null
                                                }
                              $ObjQuery.Operazioni.push({
@@ -1852,7 +1852,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                                                    "COMUNE"         : $scope.SpedizioneInEditing.COMUNE,
                                                    "CAP"            : $scope.SpedizioneInEditing.CAP,
                                                    "PROVINCIA"      : $scope.SpedizioneInEditing.PROVINCIA,
-                                                   "DATA"           : $scope.SpedizioneInEditing.DATA,
+                                                   "DATA"           : ZFormatDateTime('yyyy-mm-dd',$scope.SpedizioneInEditing.DATA),
                                                    "ISTITUTO"       : $scope.SpedizioneInEditing.ISTITUTO
                                                  }
                                $ObjQuery.Operazioni.push({
@@ -1892,7 +1892,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                                                    "COMUNE"         : $scope.SpedizioneInEditing.COMUNE,
                                                    "CAP"            : $scope.SpedizioneInEditing.CAP,
                                                    "PROVINCIA"      : $scope.SpedizioneInEditing.PROVINCIA,
-                                                   "DATA"           : $scope.SpedizioneInEditing.DATA,
+                                                   "DATA"           : ZFormatDateTime('yyyy-mm-dd',$scope.SpedizioneInEditing.DATA),
                                                    "ISTITUTO"       : $scope.SpedizioneInEditing.ISTITUTO                                          
                                                  }
                                $ObjQuery.Operazioni.push({
@@ -1962,7 +1962,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                                            "COMUNE"         : $scope.SpedizioneInEditing.COMUNE,
                                            "CAP"            : $scope.SpedizioneInEditing.CAP,
                                            "PROVINCIA"      : $scope.SpedizioneInEditing.PROVINCIA,
-                                           "DATA"           : $scope.SpedizioneInEditing.DATA,
+                                           "DATA"           : ZFormatDateTime('yyyy-mm-dd',$scope.SpedizioneInEditing.DATA),
                                            "ISTITUTO"       : ($scope.SpedizioneInEditing.ISTITUTO == -1 || $scope.SpedizioneInEditing.ISTITUTO == '') ? null : $scope.SpedizioneInEditing.ISTITUTO  
                                          }
                                              
