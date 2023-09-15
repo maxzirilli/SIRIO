@@ -921,7 +921,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
       var ParamPrenotati = {
                               Dal          : ZHTMLInputFromDate($scope.DataRicercaDalPrnt), 
                               Al           : ZHTMLInputFromDate(TmpDatePrnt),
-                              ChiaveGruppi : $scope.CheckEditore == 'D' ? '286071' : '286072'
+                              ChiaveGruppi : $scope.CheckEditore == 'D' ? CHIAVE_GRUPPO_DE_AGOSTINI : CHIAVE_GRUPPO_MONDADORI
                            };
 
       SystemInformation.GetSQL('Delivery',ParamPrenotati,function(Results)

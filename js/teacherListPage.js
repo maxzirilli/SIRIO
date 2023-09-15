@@ -686,6 +686,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
         }
 
         $scope.ListaAnniClassi.sort();
+        console.log($scope.ListaAnniClassi)
         $scope.ListaCombinazioni.sort();
         $scope.IstitutoListaAdozioni.sort((adozione_1, adozione_2) => {
         const compareCombinazione = adozione_1.CombinazioneClasse.localeCompare(adozione_2.CombinazioneClasse);
