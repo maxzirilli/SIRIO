@@ -618,7 +618,7 @@ SIRIOApp.controller("orderEntryPageController",['$scope','SystemInformation','$s
          ZCustomAlert($mdDialog,'ATTENZIONE','DATI MANCANTI');      
      var $ObjQuery   = { Operazioni : [] };          
      var ParamOrdine = {
-                         DataCarico       : $ZFormatDateTime('yyyy-mm-dd',scope.OrdineInEditing.Data),
+                         DataCarico       : ZFormatDateTime('yyyy-mm-dd',$scope.OrdineInEditing.Data),
                          TitoloCarico     : $scope.OrdineInEditing.Titolo,
                          QuantitaCarico   : $scope.OrdineInEditing.Quantita,
                          UbicazioneCarico : $scope.OrdineInEditing.Ubicazione 
