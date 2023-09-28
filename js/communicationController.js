@@ -86,7 +86,7 @@ SIRIOApp.controller("communicationController",['$scope','SystemInformation','$st
      var $ObjQuery = { Operazioni : [] };          
      var ParamComm = {
                        CHIAVE : $scope.CommInEditing.Chiave,
-                       DATA   : $scope.CommInEditing.Data,
+                       DATA   : ConstPrepareForRecordDate($scope.CommInEditing.Data),
                        TITOLO : $scope.CommInEditing.Titolo,
                        TESTO  : $scope.CommInEditing.Testo,
                        LINK   : $scope.CommInEditing.Link

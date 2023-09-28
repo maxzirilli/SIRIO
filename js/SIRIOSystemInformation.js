@@ -12,6 +12,14 @@ const COLOR_STATO_DA_SPEDIRE = 'rgb(255, 153, 0)';
 const COLOR_STATO_PRENOTATA  = 'rgb(255, 0, 0)';
 const COLOR_STATO_CONSEGNATA = 'rgb(92, 190, 0)';
 
+function ConstPrepareForRecordDate(Value)
+{
+  if(Value == undefined || Value == '' || Value == '0000-00-00')
+    return null;
+  if (Value instanceof Date)
+    Value = TZDateFunct.FormatDateTime('yyyy-mm-dd',Value)
+  return Value;
+}
 
 SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',function($http,$state,$rootScope,$mdDialog)
 {
