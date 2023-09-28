@@ -17,7 +17,7 @@ function ConstPrepareForRecordDate(Value)
   if(Value == undefined || Value == '' || Value == '0000-00-00')
     return null;
   if (Value instanceof Date)
-    Value = TZDateFunct.FormatDateTime('yyyy-mm-dd',Value)
+    Value = ZFormatDateTime('yyyy-mm-dd',Value)
   return Value;
 }
 
