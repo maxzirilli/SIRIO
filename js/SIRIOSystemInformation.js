@@ -21,6 +21,13 @@ function ConstPrepareForRecordDate(Value)
   return Value;
 }
 
+function ConstDisponiAsString(Value)
+{
+  if(Value == undefined || Value == null)
+    return '';
+  return (Value + '').trim();
+}
+
 SIRIOApp.service("SystemInformation",['$http','$state','$rootScope','$mdDialog',function($http,$state,$rootScope,$mdDialog)
 {
   var Self                   = this;

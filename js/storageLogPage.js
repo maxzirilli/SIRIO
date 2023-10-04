@@ -68,9 +68,22 @@ SIRIOApp.controller("storageLogPageController",['$scope','SystemInformation','$s
            $scope.TitoloFiltro = undefined;
            $scope.TitoloFiltrato = null;
            $scope.SearchTextTit = '';
-           var ListaMovimenti = SystemInformation.FindResults(Results,'GetLogInfoMgznBook');
-           if(ListaMovimenti != undefined)
-           {             
+           var ListaMovimenti = []
+           let ArrayInfo = SystemInformation.FindResults(Results,'GetLogInfoMgznBook')
+           if(ArrayInfo != undefined)
+           { 
+             for (let i = 0; i < ArrayInfo.length; i++)
+             {
+               let ObjMovimento = {}
+               ObjMovimento.CODICE      = ConstDisponiAsString(ArrayInfo[i].CODICE)
+               ObjMovimento.DATA        = ConstDisponiAsString(ArrayInfo[i].DATA)
+               ObjMovimento.DESCRIZIONE = ConstDisponiAsString(ArrayInfo[i].DESCRIZIONE)
+               ObjMovimento.NOME_TITOLO = ConstDisponiAsString(ArrayInfo[i].NOME_TITOLO)
+               ObjMovimento.QUANTITA    = ConstDisponiAsString(ArrayInfo[i].QUANTITA)
+               ObjMovimento.TITOLO      = ConstDisponiAsString(ArrayInfo[i].TITOLO)
+               ListaMovimenti.push(ObjMovimento)
+             }
+                       
              if (ListaMovimenti.length == 0)
              {
                  var doc = new jsPDF();
