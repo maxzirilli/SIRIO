@@ -161,3 +161,6 @@ Stack trace:
 #1 D:\GoogleDrive\Lavoro\Progetti\Pagina43\Sirio\Software\Sirio\SIRIOServer\SIRIOConnection.php(13): TAdvQuery->EditSQL()
 #2 {main}
 [04-Oct-2023 09:45:21 Europe/Berlin] SELECT * FROM utenti WHERE USERNAME = 'admin' AND ELIMINATO = 0
+[12-Oct-2023 13:04:15 Europe/Berlin] SELECT * FROM utenti WHERE USERNAME = 'claudio daneri' AND ELIMINATO = 0
+[12-Oct-2023 13:04:15 Europe/Berlin] SELECT * FROM utenti WHERE USERNAME = 'claudio daneri' AND ELIMINATO = 0
+[12-Oct-2023 13:04:15 Europe/Berlin] SELECT * FROM utenti WHERE USERNAME = 'claudio daneri' AND ELIMINATO = 0

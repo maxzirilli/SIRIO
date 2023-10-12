@@ -58,13 +58,15 @@ SIRIOApp.controller("inventoryManagementController",['$scope','SystemInformation
           else
           {
             for(let i = 0; i < ListaTitoliTmp.length; i++)
-            ListaTitoliTmp[i] = {
-                                  CODICE     : ListaTitoliTmp[i].CODICE_ISBN == undefined ? 'N.D.' : ListaTitoliTmp[i].CODICE_ISBN,
-                                  TITOLO     : ListaTitoliTmp[i].TITOLO == undefined ? 'N.D.' : ListaTitoliTmp[i].TITOLO,
-                                  POS_MGZN   : ListaTitoliTmp[i].POS_MAGAZZINO == undefined ? 'N.D.' : ListaTitoliTmp[i].POS_MAGAZZINO,
-                                  Q_MGZN     : ListaTitoliTmp[i].QUANTITA_MGZN  == undefined ? 'N.D.' : ListaTitoliTmp[i].QUANTITA_MGZN,
-                                  Q_MGZN_VOL : ListaTitoliTmp[i].QUANTITA_MGZN_VOL  == undefined ? 'N.D.' : ListaTitoliTmp[i].QUANTITA_MGZN_VOL                         
-                                }
+            {
+              ListaTitoliTmp[i] = {
+                                    CODICE     : ListaTitoliTmp[i].CODICE_ISBN == undefined ? 'N.D.' : ConstDisponiAsString(ListaTitoliTmp[i].CODICE_ISBN),
+                                    TITOLO     : ListaTitoliTmp[i].TITOLO == undefined ? 'N.D.' : ConstDisponiAsString(ListaTitoliTmp[i].TITOLO),
+                                    POS_MGZN   : ListaTitoliTmp[i].POS_MAGAZZINO == undefined ? 'N.D.' : ConstDisponiAsString(ListaTitoliTmp[i].POS_MAGAZZINO),
+                                    Q_MGZN     : ListaTitoliTmp[i].QUANTITA_MGZN  == undefined ? 'N.D.' : ConstDisponiAsString(ListaTitoliTmp[i].QUANTITA_MGZN),
+                                    Q_MGZN_VOL : ListaTitoliTmp[i].QUANTITA_MGZN_VOL  == undefined ? 'N.D.' : ConstDisponiAsString(ListaTitoliTmp[i].QUANTITA_MGZN_VOL)                         
+                                  }
+            }
             ListaTitoli  = ListaTitoliTmp;
 
             var Data           = new Date();
