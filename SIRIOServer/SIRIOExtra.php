@@ -9,99 +9,122 @@
 
       class TExtraScript extends TAdvQuery
       {
-            protected function FExtraScriptServerSide($PDODBase,&$JSONAnswer)
+            private $FTitoli = [];
+            private function FGetQuantitaTitoloDaSpedire($Titolo)
             {
+              for ($i = 0; $i < count($this->FTitoli); $i++)
+              {
+                if ($this->FTitoli[$i]->Titolo == $Titolo)
+                  return $this->FTitoli[$i]->Quantita;                
+              }
+              return 0;
+            }
+
+            private function FGetListaTitoli($PDODBase)
+            {
+              $SQLBody = "SELECT TITOLO, SUM(QUANTITA) AS QUANTITA
+                            FROM dettaglio_spedizioni 
+                           WHERE dettaglio_spedizioni.STATO = 'S'
+                          GROUP BY TITOLO";
+              if ($Query = $PDODBase->query($SQLBody))
+              {
+                while($Row = $Query->fetch(PDO::FETCH_ASSOC))
+                {
+                  $ObjQuery = new stdClass();
+                  $ObjQuery->Titolo = $Row['TITOLO'];                  
+                  $ObjQuery->Quantita = $Row['QUANTITA'];
+                  array_push($this->FTitoli, $ObjQuery);
+                }
+              }
+            }
+
+            protected function FExtraScriptServerSide($PDODBase,&$JSONAnswer)
+            {  
+                  $this->FGetListaTitoli($PDODBase);
                   $JSONAnswer->ListaSpedizioni = array();                  
                   $Parametri = JSON_decode($_POST['SIRIOParams']);
-                  $SQLBody = "SELECT *,".
-                                     "(SELECT docenti.RAGIONE_SOCIALE ".
-                                        "FROM docenti ".
-                                       "WHERE docenti.CHIAVE = spedizioni.DOCENTE) AS NOME_DOCENTE,".
-                                     "(SELECT COUNT(*) ".
-                                        "FROM dettaglio_spedizioni ".
-                                       "WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'S') AS NR_DA_SPEDIRE,".
-                                     "(SELECT COUNT(*)". 
-                                        "FROM dettaglio_spedizioni ". 
-                                       "WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'C') AS NR_CONSEGNATE,".
-                                     "(SELECT COUNT(*)". 
-                                        "FROM dettaglio_spedizioni ". 
-                                       "WHERE dettaglio_spedizioni.SPEDIZIONE = spedizioni.CHIAVE AND dettaglio_spedizioni.STATO = 'P') AS NR_PRENOTATE ". 
-                                "FROM spedizioni ". 
-                               "WHERE DATA >= '".$Parametri->Dal."' AND DATA <='".$Parametri->Al."' ".($Parametri->Admin == 'T' ? " " : (" AND PROMOTORE=" .$_SESSION[SESSION_USERKEY])). " ORDER BY DATA DESC";
+                  $SQLBody = "SELECT spedizioni.*,
+                                     dettaglio_spedizioni.CHIAVE AS CHIAVE_DETTAGLIO,
+                                     dettaglio_spedizioni.TITOLO,
+                                     dettaglio_spedizioni.QUANTITA,
+                                     dettaglio_spedizioni.STATO,
+                                     dettaglio_spedizioni.DATA_ULTIMA_MODIFICA,
+                                     docenti.RAGIONE_SOCIALE AS NOME_DOCENTE,
+                                     titoli.TITOLO AS NOME_TITOLO,
+                                     titoli.CODICE_ISBN AS CODICE_TITOLO,
+                                     titoli.QUANTITA_MGZN AS QUANTITA_MAGAZZINO
+                                     " .
+                                "FROM spedizioni
+                                      JOIN dettaglio_spedizioni ON (spedizioni.CHIAVE = dettaglio_spedizioni.SPEDIZIONE) 
+                                      LEFT OUTER JOIN docenti ON (docenti.CHIAVE = spedizioni.DOCENTE)
+                                      LEFT OUTER JOIN titoli ON (dettaglio_spedizioni.TITOLO = titoli.CHIAVE)" .
+                               " WHERE spedizioni.DATA >= '".$Parametri->Dal."' AND spedizioni.DATA <='".$Parametri->Al."' ".($Parametri->Admin == 'T' ? " " : (" AND spedizioni.PROMOTORE=" .$_SESSION[SESSION_USERKEY])). " ORDER BY spedizioni.CHIAVE, spedizioni.DATA DESC";
 
+                  $LastChiaveSpedizione = -1; 
                   if ($Query = $PDODBase->query($SQLBody))
                   {
                     while($Row = $Query->fetch(PDO::FETCH_ASSOC))
                     {
+                      if ($LastChiaveSpedizione != $Row ['CHIAVE'])
+                      {
+                        $LastChiaveSpedizione = $Row ['CHIAVE'];
                         $Spedizione = new stdClass();
-                        $Spedizione->Chiave = $Row ['CHIAVE'];   
+                        array_push($JSONAnswer->ListaSpedizioni,$Spedizione);
+                        $Spedizione->Chiave = $LastChiaveSpedizione;   
                         $Spedizione->Data = $Row ['DATA']; 
                         $Spedizione->Presso = $Row ['PRESSO'];     
                         $Spedizione->Docente = $Row ['DOCENTE'];     
                         $Spedizione->DocenteNome = $Row ['NOME_DOCENTE'];         
-                        $Spedizione->Provincia = $Row ['PROVINCIA'];     
-                        $Spedizione->NrConsegnate = $Row ['NR_CONSEGNATE'];     
-                        $Spedizione->NrDaSpedire = $Row ['NR_DA_SPEDIRE'];     
-                        $Spedizione->NrPrenotate = $Row ['NR_PRENOTATE'];     
+                        $Spedizione->Provincia = $Row ['PROVINCIA'];
+                        $Spedizione->NrConsegnate = 0;
+                        $Spedizione->NrDaSpedire = 0;
+                        $Spedizione->NrPrenotate = 0;  
                         $Spedizione->Promotore = $Row ['PROMOTORE'];
                         $Spedizione->Istituto = $Row ['ISTITUTO'];        
                         $Spedizione->DettagliTitoli = array();
                         $Spedizione->Spedibile = false;
-
                         if(is_null($Row['PRESSO']))
-                           $Spedizione->Presso = 'N.D.';
+                          $Spedizione->Presso = 'N.D.';
                         if(is_null($Row['DOCENTE']))
-                           $Spedizione->Docente = -1;
+                          $Spedizione->Docente = -1;
                         if(is_null($Row['NOME_DOCENTE']))
-                           $Spedizione->DocenteNome = ' ';
+                          $Spedizione->DocenteNome = ' ';
                         if(is_null($Row['ISTITUTO'])) 
                            $Spedizione->Istituto = -1;
+                      }
 
-                        $SQLBodyDettaglio = '';
-                        $SQLBodyDettaglio = "SELECT *,".
-                                                      "(SELECT TITOLO FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,".
-                                                      "(SELECT CODICE_ISBN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,".
-                                                      "CALCOLA_DISPONIBILITA(dettaglio_spedizioni.TITOLO) AS SPEDIBILE ". 
-                                                "FROM dettaglio_spedizioni ". 
-                                                "WHERE SPEDIZIONE=".$Spedizione->Chiave;
-                        
-                        if ($QueryDettaglio = $PDODBase->query($SQLBodyDettaglio))
-                        {
-                              while($RowDettaglio = $QueryDettaglio->fetch(PDO::FETCH_ASSOC))
-                              {                                 
-                                    if($RowDettaglio['SPEDIBILE'] == 1)
-                                       $Spedizione->Spedibile = true;
-                                    
-                                    $DettaglioSpedizione = new stdClass();
-                                    $DettaglioSpedizione->Chiave = $RowDettaglio['CHIAVE']; 
-                                    $DettaglioSpedizione->Titolo = $RowDettaglio['TITOLO'];
-                                    $DettaglioSpedizione->NomeTitolo = $RowDettaglio['NOME_TITOLO']; 
-                                    $DettaglioSpedizione->CodiceTitolo = $RowDettaglio['CODICE_TITOLO'];
-                                    $DettaglioSpedizione->StatoTitolo = '';
+                      if ($this->FGetQuantitaTitoloDaSpedire($Row['TITOLO']) < $Row['QUANTITA_MAGAZZINO'])
+                        $Spedizione->Spedibile = true;      
+                      $DettaglioSpedizione = new stdClass();
+                      $DettaglioSpedizione->Chiave = $Row['CHIAVE_DETTAGLIO']; 
+                      $DettaglioSpedizione->Titolo = $Row['TITOLO'];
+                      $DettaglioSpedizione->NomeTitolo = $Row['NOME_TITOLO']; 
+                      $DettaglioSpedizione->CodiceTitolo = $Row['CODICE_TITOLO'];
+                      $DettaglioSpedizione->StatoTitolo = '';
 
-                                    $DettaglioSpedizione->Data = $RowDettaglio['DATA_ULTIMA_MODIFICA']; 
+                      $DettaglioSpedizione->Data = $Row['DATA_ULTIMA_MODIFICA']; 
+                      
+                      switch($Row['STATO'])
+                      {
+                        case 'P'  : $DettaglioSpedizione->StatoTitolo = 'PRENOTATO';
+                                    $Spedizione->NrPrenotate++;
+                                    break;
+                        case 'S'  : $DettaglioSpedizione->StatoTitolo = 'DA SPEDIRE';
+                                    $Spedizione->NrDaSpedire++;
+                                    break;
+                        case 'C'  : $DettaglioSpedizione->StatoTitolo = 'CONSEGNATO';
+                                    $Spedizione->NrConsegnate++;
+                                    break;
+                        default   : $DettaglioSpedizione->StatoTitolo = 'N.D';                                                                                          
+                      }
+
+                      if(is_null($Row['NOME_TITOLO']))
+                          $DettaglioSpedizione->NomeTitolo = 'N.D';
+                      if(is_null($Row['CODICE_TITOLO']))
+                          $DettaglioSpedizione->CodiceTitolo = 'N.D';
                                     
-                                    switch($RowDettaglio['STATO'])
-                                    {
-                                          case 'P' : $DettaglioSpedizione->StatoTitolo = 'PRENOTATO';
-                                                      break;
-                                          case 'S' : $DettaglioSpedizione->StatoTitolo = 'DA SPEDIRE';
-                                                      break;
-                                          case 'C' : $DettaglioSpedizione->StatoTitolo = 'CONSEGNATO';
-                                                      break;
-                                          default  : $DettaglioSpedizione->StatoTitolo = 'N.D';                                                                                          
-                                    }
-      
-                                    if(is_null($RowDettaglio['NOME_TITOLO']))
-                                       $DettaglioSpedizione->NomeTitolo = 'N.D';
-                                    if(is_null($RowDettaglio['CODICE_TITOLO']))
-                                       $DettaglioSpedizione->CodiceTitolo = 'N.D';
                                     
-                                    
-                                    array_push($Spedizione->DettagliTitoli,$DettaglioSpedizione);         
-                              } 
-                        }
-                        array_push($JSONAnswer->ListaSpedizioni,$Spedizione);   
+                      array_push($Spedizione->DettagliTitoli,$DettaglioSpedizione);                        
                     }
                   }
            }     

@@ -164,3 +164,79 @@ Stack trace:
 [12-Oct-2023 13:04:15 Europe/Berlin] SELECT * FROM utenti WHERE USERNAME = 'claudio daneri' AND ELIMINATO = 0
 [12-Oct-2023 13:04:15 Europe/Berlin] SELECT * FROM utenti WHERE USERNAME = 'claudio daneri' AND ELIMINATO = 0
 [12-Oct-2023 13:04:15 Europe/Berlin] SELECT * FROM utenti WHERE USERNAME = 'claudio daneri' AND ELIMINATO = 0
+[19-Oct-2023 12:02:52 Europe/Berlin] SELECT spedizioni.*,
+                                     dettaglio_spedizioni.CHIAVE AS CHIAVE_DETTAGLIO,
+                                     dettaglio_spedizioni.TITOLO,
+                                     dettaglio_spedizioni.QUANTITA,
+                                     dettaglio_spedizioni.STATO,
+                                     dettaglio_spedizioni.DATA_ULTIMA_MODIFICA,
+                                     docenti.RAGIONE_SOCIALE AS NOME_DOCENTE,
+                                     titoli.TITOLO AS NOME_TITOLO,
+                                     titoli.CODICE_ISBN AS CODICE_TITOLO,
+                                     CALCOLA_DISPONIBILITA(dettaglio_spedizioni.TITOLO) AS SPEDIBILE
+                                     FROM spedizioni
+                                      JOIN dettaglio_spedizioni ON (spedizioni.CHIAVE = dettaglio_spedizioni.SPEDIZIONE) 
+                                      LEFT OUTER JOIN docenti ON (docenti.CHIAVE = spedizioni.DOCENTE)
+                                      LEFT OUTER JOIN titoli ON (dettaglio_spedizioni.TITOLO = titoli.CHIAVE) WHERE spedizioni.DATA >= '2023-01-01' AND spedizioni.DATA <='2023-10-20'   ORDER BY spedizioni.CHIAVE, spedizioni.DATA DESC
+[19-Oct-2023 12:55:35 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function FGetListaTitoli() in D:\GoogleDrive\Lavoro\Progetti\Pagina43\Sirio\Software\SIRIO\SIRIOServer\SIRIOExtra.php:44
+Stack trace:
+#0 D:\GoogleDrive\Lavoro\Librerie\PHP\ZAdvQuery.php(964): TExtraScript->FExtraScriptServerSide(Object(PDO), Object(stdClass))
+#1 D:\GoogleDrive\Lavoro\Progetti\Pagina43\Sirio\Software\SIRIO\SIRIOServer\SIRIOExtra.php(136): TAdvQuery->ServerSideScript()
+#2 {main}
+  thrown in D:\GoogleDrive\Lavoro\Progetti\Pagina43\Sirio\Software\SIRIO\SIRIOServer\SIRIOExtra.php on line 44
+[19-Oct-2023 12:56:20 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function FGetListaTitoli() in D:\GoogleDrive\Lavoro\Progetti\Pagina43\Sirio\Software\SIRIO\SIRIOServer\SIRIOExtra.php:44
+Stack trace:
+#0 D:\GoogleDrive\Lavoro\Librerie\PHP\ZAdvQuery.php(964): TExtraScript->FExtraScriptServerSide(Object(PDO), Object(stdClass))
+#1 D:\GoogleDrive\Lavoro\Progetti\Pagina43\Sirio\Software\SIRIO\SIRIOServer\SIRIOExtra.php(136): TAdvQuery->ServerSideScript()
+#2 {main}
+  thrown in D:\GoogleDrive\Lavoro\Progetti\Pagina43\Sirio\Software\SIRIO\SIRIOServer\SIRIOExtra.php on line 44
+[19-Oct-2023 12:57:36 Europe/Berlin] PHP Fatal error:  Uncaught TypeError: array_push(): Argument #1 ($array) must be of type array, null given in D:\GoogleDrive\Lavoro\Progetti\Pagina43\Sirio\Software\SIRIO\SIRIOServer\SIRIOExtra.php:37
+Stack trace:
+#0 D:\GoogleDrive\Lavoro\Progetti\Pagina43\Sirio\Software\SIRIO\SIRIOServer\SIRIOExtra.php(37): array_push(NULL, Object(stdClass))
+#1 D:\GoogleDrive\Lavoro\Progetti\Pagina43\Sirio\Software\SIRIO\SIRIOServer\SIRIOExtra.php(44): TExtraScript->FGetListaTitoli(Object(PDO))
+#2 D:\GoogleDrive\Lavoro\Librerie\PHP\ZAdvQuery.php(964): TExtraScript->FExtraScriptServerSide(Object(PDO), Object(stdClass))
+#3 D:\GoogleDrive\Lavoro\Progetti\Pagina43\Sirio\Software\SIRIO\SIRIOServer\SIRIOExtra.php(136): TAdvQuery->ServerSideScript()
+#4 {main}
+  thrown in D:\GoogleDrive\Lavoro\Progetti\Pagina43\Sirio\Software\SIRIO\SIRIOServer\SIRIOExtra.php on line 37
+[19-Oct-2023 12:58:50 Europe/Berlin] SELECT spedizioni.*,
+                                     dettaglio_spedizioni.CHIAVE AS CHIAVE_DETTAGLIO,
+                                     dettaglio_spedizioni.TITOLO,
+                                     dettaglio_spedizioni.QUANTITA,
+                                     dettaglio_spedizioni.STATO,
+                                     dettaglio_spedizioni.DATA_ULTIMA_MODIFICA,
+                                     docenti.RAGIONE_SOCIALE AS NOME_DOCENTE,
+                                     titoli.TITOLO AS NOME_TITOLO,
+                                     titoli.CODICE_ISBN AS CODICE_TITOLO,
+                                     titoli.QUANTITA_MGZN AS QUANTITA_MAGAZZINO
+                                     FROM spedizioni
+                                      JOIN dettaglio_spedizioni ON (spedizioni.CHIAVE = dettaglio_spedizioni.SPEDIZIONE) 
+                                      LEFT OUTER JOIN docenti ON (docenti.CHIAVE = spedizioni.DOCENTE)
+                                      LEFT OUTER JOIN titoli ON (dettaglio_spedizioni.TITOLO = titoli.CHIAVE) WHERE spedizioni.DATA >= '2023-01-01' AND spedizioni.DATA <='2023-10-20'   ORDER BY spedizioni.CHIAVE, spedizioni.DATA DESC
+[19-Oct-2023 12:59:19 Europe/Berlin] SELECT spedizioni.*,
+                                     dettaglio_spedizioni.CHIAVE AS CHIAVE_DETTAGLIO,
+                                     dettaglio_spedizioni.TITOLO,
+                                     dettaglio_spedizioni.QUANTITA,
+                                     dettaglio_spedizioni.STATO,
+                                     dettaglio_spedizioni.DATA_ULTIMA_MODIFICA,
+                                     docenti.RAGIONE_SOCIALE AS NOME_DOCENTE,
+                                     titoli.TITOLO AS NOME_TITOLO,
+                                     titoli.CODICE_ISBN AS CODICE_TITOLO,
+                                     titoli.QUANTITA_MGZN AS QUANTITA_MAGAZZINO
+                                     FROM spedizioni
+                                      JOIN dettaglio_spedizioni ON (spedizioni.CHIAVE = dettaglio_spedizioni.SPEDIZIONE) 
+                                      LEFT OUTER JOIN docenti ON (docenti.CHIAVE = spedizioni.DOCENTE)
+                                      LEFT OUTER JOIN titoli ON (dettaglio_spedizioni.TITOLO = titoli.CHIAVE) WHERE spedizioni.DATA >= '2023-01-01' AND spedizioni.DATA <='2023-10-20'   ORDER BY spedizioni.CHIAVE, spedizioni.DATA DESC
+[19-Oct-2023 13:00:03 Europe/Berlin] SELECT spedizioni.*,
+                                     dettaglio_spedizioni.CHIAVE AS CHIAVE_DETTAGLIO,
+                                     dettaglio_spedizioni.TITOLO,
+                                     dettaglio_spedizioni.QUANTITA,
+                                     dettaglio_spedizioni.STATO,
+                                     dettaglio_spedizioni.DATA_ULTIMA_MODIFICA,
+                                     docenti.RAGIONE_SOCIALE AS NOME_DOCENTE,
+                                     titoli.TITOLO AS NOME_TITOLO,
+                                     titoli.CODICE_ISBN AS CODICE_TITOLO,
+                                     titoli.QUANTITA_MGZN AS QUANTITA_MAGAZZINO
+                                     FROM spedizioni
+                                      JOIN dettaglio_spedizioni ON (spedizioni.CHIAVE = dettaglio_spedizioni.SPEDIZIONE) 
+                                      LEFT OUTER JOIN docenti ON (docenti.CHIAVE = spedizioni.DOCENTE)
+                                      LEFT OUTER JOIN titoli ON (dettaglio_spedizioni.TITOLO = titoli.CHIAVE) WHERE spedizioni.DATA >= '2023-01-01' AND spedizioni.DATA <='2023-10-20'   ORDER BY spedizioni.CHIAVE, spedizioni.DATA DESC

@@ -1175,6 +1175,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
   
   $scope.RefreshListaSpedizioniAll = function ()
   {
+    $scope.PrimaRicercaEffettuata = true;
     $scope.CaricamentoInCorso = true;
     $scope.GridOptions.query.page = 1;
     if($scope.DataRicercaDal == undefined || $scope.DataRicercaAl == undefined)
@@ -1746,7 +1747,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
   }  
   
   $scope.GetListaGruppi();
-  $scope.RefreshListaSpedizioniAll();
+  //$scope.RefreshListaSpedizioniAll();
   
 }]);
 

@@ -3,10 +3,10 @@
 
   <div layout="row" style="margin:0px;">
     <md-input-container style="float:left;margin-left:20px;margin-bottom: 0px;">
-      <label>DAL</label><input ng-model="DataRicercaDal" type="date" name="DataRicercaDal" ng-change="RefreshListaSpedizioniAll()">
+      <label>DAL</label><input ng-model="DataRicercaDal" type="date" name="DataRicercaDal">
     </md-input-container>
     <md-input-container style="float:left;margin-left:20px;margin-bottom: 0px;">  
-      <label>AL</label><input ng-model="DataRicercaAl" type="date" name="DataRicercaAl" ng-change="RefreshListaSpedizioniAll()">
+      <label>AL</label><input ng-model="DataRicercaAl" type="date" name="DataRicercaAl">
     </md-input-container>
     <md-input-container><label style="width:100%;margin-left:20px;float:left;margin-bottom: 0px;">PROVINCIA</label>
       <md-select ng-model="ProvinciaFiltro" ng-change="GridOptions.query.page = 1" placeholder="Provincia di spedizione" class="mdb-select" style="width:100%;margin-left:20px;float:left;" type="text" name="ProvinciaFiltro">
@@ -31,6 +31,8 @@
     <label style="margin-left:5px;margin-right:2px;margin-top:30px;font-weight: bold;color:rgb(255, 0, 0)">PRENOTATA</label> 
     <input type="checkbox" ng-change="GridOptions.query.page = 1"ng-model="ConsegnataFiltro" style="margin-left:20px;">
     <label style="margin-left:5px;margin-right:2px;margin-top:30px;font-weight: bold;color:rgb(92, 190, 0)">CONSEGNATA</label> 
+
+    <md-button class="md-raised md-accent" style="float:right;font-weight:bold;height:20px;margin-top:20px; margin-left:80px; width:20%" ng-click="RefreshListaSpedizioniAll()">CERCA</md-button>
 
   </div>   
   <br>
@@ -141,7 +143,8 @@
   <br>
   <br>
   <div>
-    <p ng-if="GetNumberRows() == 0 && !CaricamentoInCorso" style="font-weight:bold;font-style:italic;text-align:center;">NESSUNA SPEDIZIONE PRESENTE</p>  
+    <p ng-if="GetNumberRows() == 0 && !CaricamentoInCorso && PrimaRicercaEffettuata" style="font-weight:bold;font-style:italic;text-align:center;">NESSUNA SPEDIZIONE PRESENTE</p>
+    <p ng-if="!PrimaRicercaEffettuata" style="font-weight:bold;font-style:italic;text-align:center;">RICERCA NON ANCORA EFFETTUATA</p>
   </div>
   <div layout="column" layout-align="center center" ng-show="CaricamentoInCorso">
     <label style="background-color:orange;display:block;font-size:30px;text-align:center;font-weight:bold;color:white;padding:50px;margin:50px;width:100%;">RICERCA SPEDIZIONI IN CORSO...</label>
