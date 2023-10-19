@@ -1327,7 +1327,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
                     BodySheet['E' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].NOME_PROMOTORE.toUpperCase()); 
                     BodySheet['F' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].CODICE_TITOLO);
                     BodySheet['G' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].NOME_TITOLO);
-                    BodySheet['H' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].QUANTITA);
+                    BodySheet['H' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ConstDisponiAsString(ListaSpedizioniFinale[j].QUANTITA));
                     BodySheet['I' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].STATO);
                     
                     ChiaveSpedizione = ListaSpedizioniFinale[j].CHIAVE;
@@ -1341,7 +1341,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
                     BodySheet['E' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',''); 
                     BodySheet['F' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].CODICE_TITOLO);
                     BodySheet['G' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].NOME_TITOLO);
-                    BodySheet['H' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].QUANTITA);
+                    BodySheet['H' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ConstDisponiAsString(ListaSpedizioniFinale[j].QUANTITA));
                     BodySheet['I' + parseInt(j + 2)] = SystemInformation.GetCellaDati('s',ListaSpedizioniFinale[j].STATO);
                    
                     ChiaveSpedizione = ListaSpedizioniFinale[j].CHIAVE;
@@ -1353,7 +1353,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
                    ListaCumulativo.push({
                                           Codice     : ListaSpedizioniFinale[j].CODICE_TITOLO,
                                           Nome       : ListaSpedizioniFinale[j].NOME_TITOLO,
-                                          Quantita   : ListaSpedizioniFinale[j].QUANTITA,
+                                          Quantita   : ConstDisponiAsString(ListaSpedizioniFinale[j].QUANTITA),
                                           Prenotati  : '0',
                                           DaSpedire  : '0',
                                           Consegnati : '0'
@@ -1392,10 +1392,10 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
             {
               BodySheetCum['A' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaCumulativo[k].Codice);
               BodySheetCum['B' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaCumulativo[k].Nome);
-              BodySheetCum['C' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaCumulativo[k].Quantita);
-              BodySheetCum['D' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaCumulativo[k].Prenotati);
-              BodySheetCum['E' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaCumulativo[k].DaSpedire);
-              BodySheetCum['F' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaCumulativo[k].Consegnati);
+              BodySheetCum['C' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ConstDisponiAsString(ListaCumulativo[k].Quantita));
+              BodySheetCum['D' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ConstDisponiAsString(ListaCumulativo[k].Prenotati));
+              BodySheetCum['E' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ConstDisponiAsString(ListaCumulativo[k].DaSpedire));
+              BodySheetCum['F' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ConstDisponiAsString(ListaCumulativo[k].Consegnati));
             }
                 
             
@@ -1552,10 +1552,10 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
             {
               BodySheetCum['A' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaCumulativo[k].Codice);
               BodySheetCum['B' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaCumulativo[k].Nome);
-              BodySheetCum['C' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaCumulativo[k].Quantita);
-              BodySheetCum['D' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaCumulativo[k].Prenotati);
-              BodySheetCum['E' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaCumulativo[k].DaSpedire);
-              BodySheetCum['F' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ListaCumulativo[k].Consegnati);
+              BodySheetCum['C' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ConstDisponiAsString(ListaCumulativo[k].Quantita));
+              BodySheetCum['D' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ConstDisponiAsString(ListaCumulativo[k].Prenotati));
+              BodySheetCum['E' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ConstDisponiAsString(ListaCumulativo[k].DaSpedire));
+              BodySheetCum['F' + parseInt(k + 2)] = SystemInformation.GetCellaDati('s',ConstDisponiAsString(ListaCumulativo[k].Consegnati));
             }
             
             
