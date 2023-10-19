@@ -96,11 +96,11 @@
     </md-input-container>
   </div>
   <br>
-  <div layout="column">
+  <div layout="column" ng-if="!CaricamentoInCorso && PrimaRicercaEffettuata">
     <div layout="row" layout-align="end end">
       <md-button class="md-raised md-accent" ng-if="IsAdministrator()" style="float:right;font-weight:bold;" ng-click="SelezioneGruppiXls($event,'C')">XLS CUMULATIVO CONSEGNATI</md-button>
       <md-button class="md-raised md-accent" ng-if="IsAdministrator()" style="float:right;font-weight:bold;" ng-click="ApriStatisticaPromotori($event)">XLS STATISTICA PROMOTORI</md-button>
-      <md-button class="md-raised md-accent" ng-if="IsAdministrator()" style="float:right;font-weight:bold;" ng-click="ApriCumulativoPrenotatiOrd($event)">ORD DEAGOSTINI / XLS MONDADORI CUMULATIVI PRENOTATI </md-button>
+      <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="ApriCumulativoPrenotatiOrd($event)">ORD DEAGOSTINI / XLS MONDADORI CUMULATIVI PRENOTATI </md-button>
     </div>
     <div layout="row" layout-align="end end">
       <md-button class="md-raised md-accent" style="float:right;font-weight:bold;" ng-click="SelezioneGruppiXls($event,'P')">XLS CUMULATIVO PRENOTATI</md-button>

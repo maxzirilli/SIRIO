@@ -217,12 +217,17 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
             ListaTitoli.push(CumulativoTitoli[j])
         else ListaTitoli[TitoloGiaInserito].Quantita += CumulativoTitoli[j].Quantita
     }
-    for(let k = 0;k < ListaTitoli.length;k ++)
+    
+    let Operazione = ''
+    if(Editore == 'M')
     {
+      for(let k = 0;k < ListaTitoli.length;k ++)
+      {
         var InserisciTitolo = function()
         { 
           BodySheet['A' + parseInt(k + 1)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Codice);
           BodySheet['B' + parseInt(k + 1)] = SystemInformation.GetCellaDati('s',Math.abs((parseInt(ListaTitoli[k].QuantitaMag) - parseInt(ListaTitoli[k].Quantita) + parseInt(ListaTitoli[k].QuantitaNovita))).toString());
+          BodySheet['C' + parseInt(k + 1)] = SystemInformation.GetCellaDati('s','WP')
         }
 
         if((parseInt(ListaTitoli[k].QuantitaMag) - parseInt(ListaTitoli[k].Quantita) + parseInt(ListaTitoli[k].QuantitaNovita)) < 0)
@@ -232,16 +237,49 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
           ListaTitoli.splice(k,1)
           k--
         } 
+      }
+      BodySheet['!ref'] = 'A1:C1' + parseInt(ListaTitoli.length + 1);
+      
+      BodySheet["!cols"] = [             
+                            {wpx: 130},
+                            {wpx: 50},
+                            {wpx: 50}
+                          ];
+      Operazione = 'InsertDataUltimaEsportazioneMondadori'
     }
-    BodySheet['!ref'] = 'A1:B1' + parseInt(ListaTitoli.length + 1);
-    
-    BodySheet["!cols"] = [             
-                          {wpx: 130},
-                          {wpx: 50}
-                        ];
+    else
+    {
+      for(let k = 0;k < ListaTitoli.length;k ++)
+      {
+        var InserisciTitolo = function()
+        { 
+          BodySheet['A' + parseInt(k + 1)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Codice);
+          BodySheet['B' + parseInt(k + 1)] = SystemInformation.GetCellaDati('s',Math.abs((parseInt(ListaTitoli[k].QuantitaMag) - parseInt(ListaTitoli[k].Quantita) + parseInt(ListaTitoli[k].QuantitaNovita))).toString());
+          BodySheet['C' + parseInt(k + 1)] = SystemInformation.GetCellaDati('s','')
+          BodySheet['D' + parseInt(k + 1)] = SystemInformation.GetCellaDati('s','WP')
+        }
+
+        if((parseInt(ListaTitoli[k].QuantitaMag) - parseInt(ListaTitoli[k].Quantita) + parseInt(ListaTitoli[k].QuantitaNovita)) < 0)
+          InserisciTitolo()
+        else
+        {
+          ListaTitoli.splice(k,1)
+          k--
+        } 
+      }
+      BodySheet['!ref'] = 'A1:D1' + parseInt(ListaTitoli.length + 1);
+      
+      BodySheet["!cols"] = [             
+                            {wpx: 130},
+                            {wpx: 50},
+                            {wpx: 50},
+                            {wpx: 50}
+                          ];
+      Operazione = 'InsertDataUltimaEsportazioneDeAgostini'
+    }
     
     WBook.SheetNames.push(SheetName);
-    WBook.Sheets[SheetName]    = BodySheet;
+    WBook.Sheets[SheetName] = BodySheet;
     
     var wbout = XLSX.write(WBook, {bookType:'xlsx', bookSST:true, type: 'binary'});
     
@@ -1185,7 +1223,13 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
   
     SystemInformation.ExecuteExternalScript('SIRIOExtra',{ Dal : ZHTMLInputFromDate($scope.DataRicercaDal), Al : ZHTMLInputFromDate(TmpDate), Admin : ($scope.IsAdministrator() ? 'T' : 'F')},function(Answer) 
     {
-      $scope.ListaSpedizioni = Answer.ListaSpedizioni; 
+      $scope.ListaSpedizioni = Answer.ListaSpedizioni;
+      $scope.ListaSpedizioni.sort(function(a,b)
+                                  {
+                                    if (a.DATA > b.DATA)
+                                      return 1
+                                    return -1
+                                  })
       $scope.CaricamentoInCorso = false;
     }); 
   }

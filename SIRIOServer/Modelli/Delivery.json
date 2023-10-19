@@ -204,6 +204,14 @@
 		{
 			"Name" : "DeleteDeliveryAllBooked",
 			"SQL" : "CALL DELETE_ALL_PRENOTATI(:CHIAVE)\n"
+		},
+		{
+			"Name" : "InsertDataUltimaEsportazioneMondadori",
+			"SQL" : "UPDATE ultime_esportazioni (MONDADORI)\n                             VALUES (#DATA)\n"
+		},
+		{
+			"Name" : "InsertDataUltimaEsportazioneDeAgostini",
+			"SQL" : "UPDATE ultime_esportazioni (DEAGOSTINI)\n                             VALUES (#DATA)\n"
 		}
 ]
 }
