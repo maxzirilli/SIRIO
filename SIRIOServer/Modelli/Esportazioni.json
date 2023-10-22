@@ -1,0 +1,19 @@
+{
+	"RuoliAbilitati" : "",
+	"SelectSQL" : [
+		{
+			"Name" : "GetDate",
+			"SQL" : "SELECT *\n  FROM ultime_esportazioni\n"
+		}
+	],
+	"EditSQL" : [
+		{
+			"Name" : "InsertDataUltimaEsportazioneDeAgostini",
+			"SQL" : "UPDATE ultime_esportazioni SET DEAGOSTINI = #Data\n"
+		},
+		{
+			"Name" : "InsertDataUltimaEsportazioneMondadori",
+			"SQL" : "UPDATE ultime_esportazioni SET MONDADORI= #Data\n"
+		}
+]
+}

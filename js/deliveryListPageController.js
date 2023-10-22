@@ -102,8 +102,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     var ChiaveSpedizione = -1;
     for(let i = 0; i < CumulativoTitoli.length; i++)
     {
-        if (CumulativoTitoli[i].Codice == '9788853009661')
-          console.log('papaya')        
         if (ChiaveSpedizione != CumulativoTitoli[i].Spedizione)
         {
             BodySheet['A' + parseInt(i + 2)] = SystemInformation.GetCellaDati('s',CumulativoTitoli[i].Istituto == undefined ? CumulativoTitoli[i].Presso : CumulativoTitoli[i].Istituto);
@@ -282,10 +280,16 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     WBook.Sheets[SheetName] = BodySheet;
     
     var wbout = XLSX.write(WBook, {bookType:'xlsx', bookSST:true, type: 'binary'});
+    let ObjQuery = {Operazioni: []}
+    ObjQuery.Operazioni.push({Query : Operazione, Parametri : {Data: $scope.DataRicercaAlPrnt}})
+
+    SystemInformation.PostSQL('Esportazioni',ObjQuery,function()
+                                                  {
+                                                    if(Editore == 'M')
+                                                      saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}),  "CumulativoMondadori" + Data + ".xls")    
+                                                    else saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}),  "CumulativoDeAgostini" + Data + ".xls")
+                                                  });
     
-    if(Editore == 'M')
-       saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}),  "CumulativoMondadori" + Data + ".xls")    
-    else saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}),  "CumulativoDeAgostini" + Data + ".xls")
   }
 
   //STAMPA CUMULATIVO PRENOTATI
@@ -926,10 +930,35 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
   function DialogControllerOrdPrenotati($scope,$mdDialog)
   {
     $scope.CheckEditore         = 'D';
-    $scope.DataRicercaAlPrnt    = new Date();
-    let TmpDatePrnt             = new Date($scope.DataRicercaAlPrnt);
-    TmpDatePrnt.setDate(TmpDatePrnt.getDate() - 30);
-    $scope.DataRicercaDalPrnt   = new Date(TmpDatePrnt);
+    SystemInformation.GetSQL('Esportazioni',{}, function(Results)
+    { 
+      let DateEsportazioni = SystemInformation.FindResults(Results,'GetDate');      
+      if (DateEsportazioni != undefined) 
+      {
+        $scope.Esportazioni = DateEsportazioni[0]
+        $scope.DataRicercaAlPrnt    = new Date();
+        $scope.CambiaValore()
+      }                
+      else SystemInformation.ApplyOnError('Errore nella data di esportazione','');          
+    });    
+
+    $scope.CambiaValore = function()
+    {
+      if ($scope.Esportazioni != undefined)
+      {
+        if ($scope.CheckEditore == 'D')
+        {
+          $scope.DataRicercaDalPrnt   = new Date($scope.Esportazioni.DEAGOSTINI);
+        }
+        else
+        {
+          $scope.DataRicercaDalPrnt   = new Date($scope.Esportazioni.MONDADORI);
+        }
+        $scope.DataRicercaDalPrnt.setDate($scope.DataRicercaDalPrnt.getDate() + 1)
+      }
+    };
+
+    $scope.$watch('CheckEditore', $scope.CambiaValore)
 
     $scope.hide = function() 
     {

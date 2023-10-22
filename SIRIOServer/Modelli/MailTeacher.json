@@ -1,0 +1,5 @@
+{
+  "Oggetto"  : "#Oggetto",
+  "Body"     : "#Testo",
+  "QuerySQL" : "SELECT #Destinatario AS Destinatari,EMAIL_ARCHIVIO AS CCN,(SELECT CONCAT('PAGINA43 - ',(SELECT RAGIONE_SOCIALE FROM utenti WHERE CHIAVE = #KeyAccount))) AS NOME_MITTENTE,(SELECT EMAIL from utenti WHERE CHIAVE = #KeyAccount) AS EMAIL_MITTENTE FROM configurazione_ditta"
+}
