@@ -937,6 +937,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
       {
         $scope.Esportazioni = DateEsportazioni[0]
         $scope.DataRicercaAlPrnt    = new Date();
+        $scope.DataRicercaAlPrnt.setDate($scope.DataRicercaAlPrnt.getDate() - 1)
         $scope.CambiaValore()
       }                
       else SystemInformation.ApplyOnError('Errore nella data di esportazione','');          
@@ -967,7 +968,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
 
     $scope.AnnullaPopupOrdPrenotati = function() 
     {
-      $scope.DataRicercaAlPrnt    = new Date();
+      $scope.DataRicercaAlPrnt   = new Date();      
       let TmpDatePrnt             = new Date($scope.DataRicercaAlPrnt);
       TmpDatePrnt.setDate(TmpDatePrnt.getDate() - 30);
       $scope.DataRicercaDalPrnt   = new Date(TmpDatePrnt);
