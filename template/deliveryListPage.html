@@ -75,7 +75,9 @@
          NESSUNA CORRISPONDENZA
        </md-not-found>
     </md-input-container>
-    <md-input-container class="containerSelect" style="width:40%;margin-right:10px;">
+  </div>
+  <div layout="row" layout-align="start start" style="margin-top:0px;padding-top:0px;">
+    <md-input-container class="containerSelect" style="margin-left:5px;width:30%;margin-right:10px;">
       <label>TITOLO</label>
       <md-autocomplete
                   md-input-name="Titolo"
@@ -94,6 +96,8 @@
         Nessuna corrispondenza
       </md-not-found>
     </md-input-container>
+    <img ng-if="TitoloFiltro != -1" src="img/deleteBooked.png" style="width:30px;height:auto;margin-top: 26px;margin-right: 10px;" title="ELIMINA PRENOTATAZIONI TITOLO SELEZIONATO" ng-click="EliminaPrenotatiTitolo(TitoloFiltro)" class="ng-scope" role="button">
+    <img ng-if="TitoloFiltro != -1" src="img/sendBooked.png" style="width:30px;height:auto;margin-top: 26px;" title="INVIA PRENOTAZIONI TITOLO SELEZIONATO" ng-click="" class="ng-scope" role="button">
   </div>
   <br>
   <div layout="column" ng-if="!CaricamentoInCorso && PrimaRicercaEffettuata">
@@ -122,7 +126,7 @@
     </tr>
     <tr ng-repeat="Spedizione in ListaSpedizioni | SpedizioneByFiltro : ProvinciaFiltro : PrenotataFiltro : DaSpedireFiltro : ConsegnataFiltro : $parent.PromotoreFiltro : IstitutoFiltro : DocenteFiltro : TitoloFiltro | limitTo : GridOptions.query.limit : (GridOptions.query.page - 1) * GridOptions.query.limit" id={{Spedizione.Chiave}}>
       <td><img src="img/delete.png" style="width:30px;height:auto;" title="ELIMINA SPEDIZIONE" ng-click="EliminaSpedizione(Spedizione)"></td> 
-      <td><img ng-if="GetIfPrenotati(Spedizione)" src="img/deleteBooked.png" style="width:30px;height:auto;" title="ELIMINA PRENOTATI" ng-click="EliminaPrenotati(Spedizione)"></td> 
+      <td><img ng-if="GetIfPrenotati(Spedizione)" src="img/deleteBooked.png" style="width:30px;height:auto;" title="ELIMINA PRENOTATI" ng-click="EliminaPrenotatiSpedizione(Spedizione)"></td> 
       <td><img src="img/edit.png" style="width:30px;height:auto;" title="MODIFICA SPEDIZIONE" ng-click="ModificaSpedizione(Spedizione.Chiave,Spedizione.Docente)"></td>
       <td ng-if="Spedizione.Spedibile && Spedizione.NrPrenotate > 0"><img src="img/toSend.png" style="width:30px;height:auto;" title="SPEDIRE TITOLI DISPONIBILI" ng-click="PassaADaSpedireDisponibili(Spedizione.Chiave)"></td>
       <td ng-if="!(Spedizione.Spedibile) && Spedizione.NrPrenotate > 0" title="NESSUN TITOLO TRA I PRENOTATI E' DISPONIBILE"><img src="img/notToSend.png" style="width:30px;height:auto;" class="off"></td>      

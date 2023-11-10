@@ -1708,7 +1708,33 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     ZConfirm.GetConfirmBox('AVVISO',"Eliminare la spedizione del " +  $scope.ConvertiData(Spedizione) + " presso " + Spedizione.Presso + " ?",EliminaSped,function(){});  
   }
 
-  $scope.EliminaPrenotati = function (Spedizione)
+  $scope.EliminaPrenotatiTitolo = function(__ChiaveTitolo)
+  {
+    var EliminaSped = function()
+    {
+      var $ObjQuery       = { Operazioni : [] };
+      var ParamSpedizione = { ChiaveTitolo : __ChiaveTitolo };
+      
+      $ObjQuery.Operazioni.push({
+                                  Query     : 'DeleteDeliverBookedXTitle',
+                                  Parametri : ParamSpedizione
+                                });  
+
+      $ObjQuery.Operazioni.push({
+                                  Query     : 'ClearEmptySpedizioni',
+                                  Parametri : ParamSpedizione
+                                });  
+      
+      SystemInformation.PostSQL('Delivery',$ObjQuery,function(Answer)
+      {
+        $scope.RefreshListaSpedizioniAll();
+        $ObjQuery.Operazioni = [];
+      });
+    }
+    ZConfirm.GetConfirmBox('AVVISO',"Eliminare tutte le prenotatazioni del titolo selezionato?\nN.B: Se la spedizione contiene solo titoli prenotati verrà cancellata!",EliminaSped,function(){});  
+  }
+  
+  $scope.EliminaPrenotatiSpedizione = function (Spedizione)
   {
     var EliminaSped = function()
     {

@@ -804,7 +804,6 @@ SIRIOApp.filter('OrdineByFiltro',function()
            if(TitoloFiltro == -1) 
               return(ListaOrdini);
            var ListaFiltrata = [];
-           TitoloFiltro = TitoloFiltro.toUpperCase();
           
            var OrdineOk = function(Ordine)
            {  
