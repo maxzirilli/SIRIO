@@ -97,7 +97,7 @@
       </md-not-found>
     </md-input-container>
     <img ng-if="TitoloFiltro != -1" src="img/deleteBooked.png" style="width:30px;height:auto;margin-top: 26px;margin-right: 10px;" title="ELIMINA PRENOTATAZIONI TITOLO SELEZIONATO" ng-click="EliminaPrenotatiTitolo(TitoloFiltro)" class="ng-scope" role="button">
-    <img ng-if="TitoloFiltro != -1" src="img/sendBooked.png" style="width:30px;height:auto;margin-top: 26px;" title="INVIA PRENOTAZIONI TITOLO SELEZIONATO" ng-click="" class="ng-scope" role="button">
+    <img ng-if="TitoloFiltro != -1" src="img/sendBooked.png" style="width:30px;height:auto;margin-top: 26px;" title="INVIA PRENOTAZIONI TITOLO SELEZIONATO" ng-click="InviaDisponibili(TitoloFiltro)" class="ng-scope" role="button">
   </div>
   <br>
   <div layout="column" ng-if="!CaricamentoInCorso && PrimaRicercaEffettuata">

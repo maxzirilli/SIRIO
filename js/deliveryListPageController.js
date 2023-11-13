@@ -1708,6 +1708,77 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     ZConfirm.GetConfirmBox('AVVISO',"Eliminare la spedizione del " +  $scope.ConvertiData(Spedizione) + " presso " + Spedizione.Presso + " ?",EliminaSped,function(){});  
   }
 
+  $scope.InviaDisponibili = function(__ChiaveTitolo)
+  {
+    var Invia = function()
+    {
+      SystemInformation.GetSQL('Delivery',{ChiaveTitolo : __ChiaveTitolo},function(Results)
+      {
+        var Disponibilita = SystemInformation.FindResults(Results,'GetDisponibilitaTitolo');
+        var LsPrenotazioni = SystemInformation.FindResults(Results,'GetPrenotazioniTitolo');
+        if(Disponibilita != undefined && LsPrenotazioni != undefined)
+        {
+          if(LsPrenotazioni.length != 0)
+          {
+             Disponibilita = Disponibilita[0].DISPONIBILITA
+             if(Disponibilita != 0)
+             {
+                var QuantitaTotale = 0
+                var CountDisponibilita = Disponibilita
+                LsPrenotazioni.forEach((Prenotazione) => { QuantitaTotale += Prenotazione.QUANTITA })
+                var $ObjQuery       = { Operazioni : [] };
+                for(var i = 0; i < LsPrenotazioni.length;i++)
+                {
+                  let Prenotazione = LsPrenotazioni[i]
+                  if(Prenotazione.QUANTITA <= CountDisponibilita)  
+                  {
+                    $ObjQuery.Operazioni.push({
+                                                Query     : 'ChangeDeliveryToSend',
+                                                Parametri : { CHIAVE : Prenotazione.CHIAVE_DETTAGLIO }
+                                              }) 
+                    CountDisponibilita -= Prenotazione.QUANTITA
+                  }
+                  else
+                  {
+                    $ObjQuery.Operazioni.push({
+                                                Query     : 'ChangeDeliveryToSendAndQuantity',
+                                                Parametri : { 
+                                                              CHIAVE   : Prenotazione.CHIAVE_DETTAGLIO,
+                                                              QUANTITA : CountDisponibilita 
+                                                            }
+                                              }) 
+                    $ObjQuery.Operazioni.push({
+                                                Query     : 'InsertDeliveryBook',
+                                                Parametri : { 
+                                                              SPEDIZIONE  : Prenotazione.CHIAVE_SPEDIZIONE,
+                                                              TITOLO      : __ChiaveTitolo,
+                                                              QUANTITA    : Prenotazione.QUANTITA - CountDisponibilita,
+                                                              STATO       : 'P'
+                                                             }
+                                              }) 
+                    CountDisponibilita = 0;
+                  }
+                  if(CountDisponibilita == 0) break;
+                }
+                SystemInformation.PostSQL('Delivery',$ObjQuery,function(Answer)
+                {
+                  if(Disponibilita >= QuantitaTotale)
+                     ZCustomAlert($mdDialog,'AVVISO','Tutte le prenotazioni sono state spedite')
+                  else ZCustomAlert($mdDialog,'AVVISO','Rimangono ' + (QuantitaTotale - Disponibilita) + ' prenotazioni da inviare')   
+                  $scope.RefreshListaSpedizioniAll();
+                  $ObjQuery.Operazioni = [];
+                });
+             }
+             else ZCustomAlert($mdDialog,'AVVISO','Non sono disponibili titoli in magazzino')
+          }  
+          else ZCustomAlert($mdDialog,'AVVISO','Nessuna prenotazione per il titolo selezionato')
+        }
+        else SystemInformation.ApplyOnError('Modello dettaglio spedizione non conforme','');
+      },'SQLXMultiSpedizioneTitolo');
+    }
+    ZConfirm.GetConfirmBox('AVVISO',"Spedire tutte le prenotazioni disponibili del libro selezionato?",Invia,function(){});  
+  } 
+
   $scope.EliminaPrenotatiTitolo = function(__ChiaveTitolo)
   {
     var EliminaSped = function()

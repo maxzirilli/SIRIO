@@ -60,6 +60,10 @@
 		{
 			"Name" : "ClearEmptySpedizioni",
 			"SQL" : "SELECT *\n  FROM spedizioni \nWHERE NOT (spedizioni.CHIAVE IN (SELECT dettaglio_spedizioni.SPEDIZIONE \n                                                      FROM dettaglio_spedizioni\n                                                 GROUP BY dettaglio_spedizioni.SPEDIZIONE));\n"
+		},
+		{
+			"Name" : "ChangeDeliveryToSendAndQuantity",
+			"SQL" : "UPDATE dettaglio_spedizioni SET STATO='S',QUANTITA = :QUANTITA WHERE CHIAVE=:CHIAVE\n"
 		}
 	],
 	"SelectKeyToSend" : [
@@ -159,7 +163,7 @@
 	"SQLDettaglioTitoliDisponibiliAdmin" : [
 		{
 			"Name" : "DettaglioDisponibiliAdmin",
-			"SQL" : "SELECT spedizioni.CHIAVE,spedizioni.PRESSO,spedizioni.PROVINCIA,spedizioni.DOCENTE,(SELECT docenti.RAGIONE_SOCIALE \nFROM docenti WHERE CHIAVE=spedizioni.DOCENTE) AS NOME_DOCENTE,spedizioni.PROMOTORE,spedizioni.ISTITUTO,(SELECT NOME \nFROM istituti WHERE CHIAVE=spedizioni.ISTITUTO) AS NOME_ISTITUTO,spedizioni.DATA,dettaglio_spedizioni.CHIAVE AS \nCHIAVE_DETTAGLIO,dettaglio_spedizioni.SPEDIZIONE,dettaglio_spedizioni.TITOLO,dettaglio_spedizioni.QUANTITA,\ndettaglio_spedizioni.STATO,dettaglio_spedizioni.DATA_ULTIMA_MODIFICA,(SELECT titoli.TITOLO FROM titoli WHERE CHIAVE \n=dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT titoli.CODICE_ISBN FROM titoli WHERE CHIAVE = \ndettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,CALCOLA_DISPONIBILITA_ALL(dettaglio_spedizioni.TITOLO) AS \nQUANTITA_DISP FROM spedizioni,dettaglio_spedizioni {W~FiltroMain~(spedizioni.CHIAVE = \ndettaglio_spedizioni.SPEDIZIONE AND dettaglio_spedizioni.STATO = 'P' AND spedizioni.DATA >= #Dal AND \nspedizioni.DATA <= #Al AND CALCOLA_DISPONIBILITA_ALL(dettaglio_spedizioni.TITOLO) > 0)~FiltroI~\n(dettaglio_spedizioni.SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE ISTITUTO=:FiltroI))~FiltroP~\n(dettaglio_spedizioni.SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE PROVINCIA=:FiltroP))~FiltroD~\n(dettaglio_spedizioni.SPEDIZIONE IN(SELECT CHIAVE FROM spedizioni WHERE DOCENTE=:FiltroD))~FiltroPr~\n(dettaglio_spedizioni.SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE PROMOTORE=:FiltroPr))~FiltroT~\n(dettaglio_spedizioni.TITOLO IN ?FiltroT)} ORDER BY spedizioni.CHIAVE,spedizioni.DATA DESC\n"
+			"SQL" : "SELECT spedizioni.CHIAVE,\n            spedizioni.PRESSO,\n            spedizioni.PROVINCIA,\n            spedizioni.DOCENTE,\n            docenti.RAGIONE_SOCIALE AS NOME_DOCENTE,\n            spedizioni.PROMOTORE,\n            spedizioni.ISTITUTO,\n            istituti.NOME AS NOME_ISTITUTO,\n            spedizioni.DATA,\n            dettaglio_spedizioni.CHIAVE AS CHIAVE_DETTAGLIO,\n            dettaglio_spedizioni.SPEDIZIONE,\n            dettaglio_spedizioni.TITOLO,\n            dettaglio_spedizioni.QUANTITA,\n            dettaglio_spedizioni.STATO,\n            dettaglio_spedizioni.DATA_ULTIMA_MODIFICA,\n            titoli.TITOLO AS NOME_TITOLO,\n            titoli.CODICE_ISBN AS CODICE_TITOLO,\n            CALCOLA_DISPONIBILITA_ALL(dettaglio_spedizioni.TITOLO) AS QUANTITA_DISP\n   FROM spedizioni \n            LEFT OUTER JOIN docenti ON (docenti.CHIAVE = spedizioni.DOCENTE)\n            LEFT OUTER JOIN istituti ON (istituti.CHIAVE = spedizioni.ISTITUTO)\n            JOIN dettaglio_spedizioni ON (spedizioni.CHIAVE = dettaglio_spedizioni.SPEDIZIONE)\n            LEFT OUTER JOIN titoli ON (titoli.CHIAVE = dettaglio_spedizioni.TITOLO) \n    {W~FiltroMain~(dettaglio_spedizioni.STATO = 'P' AND\n                            spedizioni.DATA >= #Dal AND\n                            spedizioni.DATA <= #Al AND\n                            CALCOLA_DISPONIBILITA_ALL(dettaglio_spedizioni.TITOLO) > 0)\n         ~FiltroI~(dettaglio_spedizioni.SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE ISTITUTO=:FiltroI))\n         ~FiltroP~(dettaglio_spedizioni.SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE PROVINCIA=:FiltroP))\n         ~FiltroD~(dettaglio_spedizioni.SPEDIZIONE IN(SELECT CHIAVE FROM spedizioni WHERE DOCENTE=:FiltroD))\n         ~FiltroPr~(dettaglio_spedizioni.SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE PROMOTORE=:FiltroPr))\n         ~FiltroT~(dettaglio_spedizioni.TITOLO IN ?FiltroT)} ORDER BY spedizioni.CHIAVE,spedizioni.DATA DESC\n"
 		}
 	],
 	"SQLDettaglioTitoliDisponibiliPromotore" : [
@@ -220,6 +224,16 @@
 		{
 			"Name" : "DeliveryListLastTwentyPrmDettaglio",
 			"SQL" : "SELECT *,(SELECT TITOLO FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS NOME_TITOLO,(SELECT CODICE_ISBN FROM titoli WHERE CHIAVE = dettaglio_spedizioni.TITOLO) AS CODICE_TITOLO,CALCOLA_DISPONIBILITA(dettaglio_spedizioni.TITOLO) AS SPEDIBILE FROM dettaglio_spedizioni WHERE SPEDIZIONE=:CHIAVE\n"
+		}
+	],
+	"SQLXMultiSpedizioneTitolo" : [
+		{
+			"Name" : "GetDisponibilitaTitolo",
+			"SQL" : "SELECT CALCOLA_DISPONIBILITA_ALL(:ChiaveTitolo) AS DISPONIBILITA\n"
+		},
+		{
+			"Name" : "GetPrenotazioniTitolo",
+			"SQL" : "SELECT dettaglio_spedizioni.CHIAVE AS CHIAVE_DETTAGLIO,\n            dettaglio_spedizioni.QUANTITA AS QUANTITA,\n            spedizioni.DATA AS DATA_SPEDIZIONE,\n            spedizioni.CHIAVE AS CHIAVE_SPEDIZIONE\n  FROM spedizioni JOIN dettaglio_spedizioni ON (spedizioni.CHIAVE = dettaglio_spedizioni.SPEDIZIONE)\n WHERE dettaglio_spedizioni.STATO = 'P'\n   AND dettaglio_spedizioni.TITOLO = :ChiaveTitolo\nORDER BY spedizioni.DATA\n"
 		}
 ]
 }

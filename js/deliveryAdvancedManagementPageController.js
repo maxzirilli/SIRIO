@@ -211,48 +211,42 @@ $scope.GridOptions_2 = {
     var ListaNonSpedibili         = [];
     $scope.VisualizzaNonSpedibili = false;
     $scope.ListaNonSpedibili      = '';
-    if($scope.ListaSpedizioni.length == 0)
-    {
-       $scope.CumulativoPossibile = false
-       return
-    }
-    else
+    $scope.CumulativoPossibile = $scope.ListaSpedizioni.length != 0
+    if($scope.CumulativoPossibile)
     {
        var ContatoreCheck = 0;
        for(let k = 0;k < $scope.ListaSpedizioni.length;k ++)       
            if($scope.ListaSpedizioni[k].Tipo == 1 && $scope.ListaSpedizioni[k].Selezionato)
               ContatoreCheck++;              
-       if(ContatoreCheck == 0)
+       $scope.CumulativoPossibile = ContatoreCheck != 0;
+       if($scope.CumulativoPossibile)
        {
-          $scope.CumulativoPossibile = false
-          return
-       }          
-
-       for(let j = 0;j < $scope.ListaTitoliFiltro.length;j ++)
-       {
-           $scope.ListaTitoliFiltro[j].SommaPrenotati = 0;
-           $scope.ListaTitoliFiltro[j].Quantita       = parseInt($scope.ListaTitoliFiltro[j].Quantita);
-           for(let i = 0;i < $scope.ListaSpedizioni.length;i ++)
+           for(let j = 0;j < $scope.ListaTitoliFiltro.length;j ++)
            {
-             $scope.ListaSpedizioni[i].Quantita = parseInt($scope.ListaSpedizioni[i].Quantita);
-             if($scope.ListaSpedizioni[i].Tipo == 1 && ($scope.ListaSpedizioni[i].Titolo == $scope.ListaTitoliFiltro[j].Chiave) && $scope.ListaSpedizioni[i].Selezionato)
-                $scope.ListaTitoliFiltro[j].SommaPrenotati += $scope.ListaSpedizioni[i].Quantita
+               $scope.ListaTitoliFiltro[j].SommaPrenotati = 0;
+               $scope.ListaTitoliFiltro[j].Quantita       = parseInt($scope.ListaTitoliFiltro[j].Quantita);
+               for(let i = 0;i < $scope.ListaSpedizioni.length;i ++)
+               {
+                 $scope.ListaSpedizioni[i].Quantita = parseInt($scope.ListaSpedizioni[i].Quantita);
+                 if($scope.ListaSpedizioni[i].Tipo == 1 && ($scope.ListaSpedizioni[i].Titolo == $scope.ListaTitoliFiltro[j].Chiave) && $scope.ListaSpedizioni[i].Selezionato)
+                    $scope.ListaTitoliFiltro[j].SommaPrenotati += $scope.ListaSpedizioni[i].Quantita
+               }
+               if($scope.ListaTitoliFiltro[j].SommaPrenotati > $scope.ListaTitoliFiltro[j].Quantita)
+               {
+                  $scope.CumulativoPossibile = false;
+                  ListaNonSpedibili.push($scope.ListaTitoliFiltro[j].Nome);
+               }
+               else $scope.CumulativoPossibile = true;
            }
-           if($scope.ListaTitoliFiltro[j].SommaPrenotati > $scope.ListaTitoliFiltro[j].Quantita)
+           if(ListaNonSpedibili.length > 0)
            {
-              $scope.CumulativoPossibile = false;
-              ListaNonSpedibili.push($scope.ListaTitoliFiltro[j].Nome);
-           }
-           else $scope.CumulativoPossibile = true;
-       }
-       if(ListaNonSpedibili.length > 0)
-       {
-          for(let l = 0;l < ListaNonSpedibili.length;l ++)
-          {
-             $scope.ListaNonSpedibili += ListaNonSpedibili[l] + ' , ';
-          }
-          $scope.ListaNonSpedibili      = $scope.ListaNonSpedibili.substring(0,$scope.ListaNonSpedibili.length - 3);
-          $scope.VisualizzaNonSpedibili = true;         
+              for(let l = 0;l < ListaNonSpedibili.length;l ++)
+              {
+                 $scope.ListaNonSpedibili += ListaNonSpedibili[l] + ' , ';
+              }
+              $scope.ListaNonSpedibili      = $scope.ListaNonSpedibili.substring(0,$scope.ListaNonSpedibili.length - 3);
+              $scope.VisualizzaNonSpedibili = true;         
+           }          
        }          
     }
   }
