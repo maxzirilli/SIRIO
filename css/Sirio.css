@@ -43,7 +43,7 @@ table,th,td
 
 table tr:nth-child(odd) 
 {  
-  background-color : fae9cf;  
+  background-color : #fae9cf;  
 }  
 
 table tr:nth-child(even) 
@@ -78,4 +78,9 @@ table tr:nth-child(even)
 .invert 
 { 
   filter : invert(100%); 
+}
+
+.Barrato {
+  text-decoration: line-through;
+  color : red;
 }

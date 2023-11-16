@@ -22,7 +22,8 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
   $scope.CheckAll             = false;
   $scope.UncheckAll           = false;
   $scope.ListaSpedizioni      = [];
-  $scope.VisualizzaNonSpedibili = false;     
+  $scope.VisualizzaNonSpedibili = false     
+  $scope.BloccoSpedizioniRecenti = true
  
   ScopeHeaderController.CheckButtons();
   
@@ -311,14 +312,25 @@ $scope.GridOptions_2 = {
       ParamSpedizione.FiltroT = ChiaviTitoli.toString();
     }
      
-    if($scope.IsAdministrator())
+    var CompilaListaSpedizioni = function(ListaSpedizioniTmp,LsDisponibilita)
     {
-      SystemInformation.GetSQL('Delivery',ParamSpedizione,function(Results)
-      {
-        var ListaSpedizioniTmp = [];
-        ListaSpedizioniTmp     = SystemInformation.FindResults(Results,'DettaglioDisponibiliAdmin');
-        if (ListaSpedizioniTmp != undefined) 
-        {
+       console.log(LsDisponibilita) 
+       if (ListaSpedizioniTmp != undefined) 
+       {
+          for(let i = 0; i < ListaSpedizioniTmp.length; i++)
+             for(let j = 0; j < LsDisponibilita.length; j++)
+                if(ListaSpedizioniTmp[i].CHIAVE_DETTAGLIO == LsDisponibilita[j].Chiave)
+                {
+                   ListaSpedizioniTmp[i].Disponibile = LsDisponibilita[j].Disponibile
+                   ListaSpedizioniTmp[i].Disponibilita = LsDisponibilita[j].Disponibilita;
+                   break;
+                }
+
+          ListaSpedizioniTmp = ListaSpedizioniTmp.filter(function(SingolaSpedizione) 
+          {
+             return SingolaSpedizione.Disponibilita != 0 && SingolaSpedizione.Disponibilita != undefined;
+          })
+
           var LastSpedizione = -1;
           $scope.ListaSpedizioni = [];
           for(let i = 0; i < ListaSpedizioniTmp.length; i++)
@@ -331,7 +343,7 @@ $scope.GridOptions_2 = {
                                              Tipo             : 0, 
                                              Data             : ListaSpedizioniTmp[i].DATA,
                                              Presso           : ListaSpedizioniTmp[i].PRESSO == null ? 'N.D.' : ListaSpedizioniTmp[i].PRESSO,
-                                             Docente          : ListaSpedizioniTmp[i].DOCENTE == null ? -1 : ListaSpedizioniTmp[i].DOCENTE,
+                                             Docente          : (ListaSpedizioniTmp[i].DOCENTE == null || ListaSpedizioniTmp[i].DOCENTE == undefined) ? -1 : ListaSpedizioniTmp[i].DOCENTE,
                                              DocenteNome      : ListaSpedizioniTmp[i].NOME_DOCENTE == null ? 'N.D.' : ListaSpedizioniTmp[i].NOME_DOCENTE,
                                              Provincia        : ListaSpedizioniTmp[i].PROVINCIA,
                                              Promotore        : ListaSpedizioniTmp[i].PROMOTORE,
@@ -348,7 +360,10 @@ $scope.GridOptions_2 = {
                                            Quantita        : ListaSpedizioniTmp[i].QUANTITA == null ? 'N.D.' : ListaSpedizioniTmp[i].QUANTITA,
                                            QuantitaMgzn    : ListaSpedizioniTmp[i].QUANTITA_DISP,
                                            Selezionato     : false,
-                                           Data            : ListaSpedizioniTmp[i].DATA_ULTIMA_MODIFICA
+                                           Data            : ListaSpedizioniTmp[i].DATA_ULTIMA_MODIFICA,
+                                           Disponibile     : $scope.BloccoSpedizioniRecenti ? ListaSpedizioniTmp[i].Disponibile : true,
+                                           Disponibilita   : ListaSpedizioniTmp[i].Disponibilita
+
                                         });
             if(!$scope.RicercaPerTitolo)
             {
@@ -369,68 +384,16 @@ $scope.GridOptions_2 = {
           }  
         }
         else SystemInformation.ApplyOnError('Modello spedizione non conforme','')     
-      },'SQLDettaglioTitoliDisponibiliAdmin')     
     }
-    else
-    {
-      SystemInformation.GetSQL('Delivery',ParamSpedizione,function(Results)
-      {
-        var ListaSpedizioniTmp = [];
-        ListaSpedizioniTmp     = SystemInformation.FindResults(Results,'DettaglioDisponibiliPromotore');
-        if (ListaSpedizioniTmp != undefined) 
-        {
-          var LastSpedizione = -1;
-          $scope.ListaSpedizioni = [];
-          for(let i = 0; i < ListaSpedizioniTmp.length; i++)
-          {
-            if(LastSpedizione != ListaSpedizioniTmp[i].CHIAVE)
-            {
-               LastSpedizione = ListaSpedizioniTmp[i].CHIAVE;
-               $scope.ListaSpedizioni.push({ 
-                                             ChiaveSpedizione : ListaSpedizioniTmp[i].CHIAVE,
-                                             Tipo             : 0, 
-                                             Data             : ListaSpedizioniTmp[i].DATA,
-                                             Presso           : ListaSpedizioniTmp[i].PRESSO == null ? 'N.D.' : ListaSpedizioniTmp[i].PRESSO,
-                                             DocenteNome      : ListaSpedizioniTmp[i].NOME_DOCENTE == null ? 'N.D.' : ListaSpedizioniTmp[i].NOME_DOCENTE,
-                                             Provincia        : ListaSpedizioniTmp[i].PROVINCIA,
-                                             Promotore        : ListaSpedizioniTmp[i].PROMOTORE,
-                                             Istituto         : ListaSpedizioniTmp[i].ISTITUTO,
-                                             NomeIstituto     : ListaSpedizioniTmp[i].NOME_ISTITUTO == null ? '' : ListaSpedizioniTmp[i].NOME_ISTITUTO
 
-                                           })
-            }
-            $scope.ListaSpedizioni.push({ 
-                                           ChiaveDettaglio : ListaSpedizioniTmp[i].CHIAVE_DETTAGLIO,
-                                           Tipo            : 1, 
-                                           Codice          : ListaSpedizioniTmp[i].CODICE_TITOLO == null ? 'N.D.' : ListaSpedizioniTmp[i].CODICE_TITOLO,
-                                           TitoloNome      : ListaSpedizioniTmp[i].NOME_TITOLO == null ? 'N.D.' : ListaSpedizioniTmp[i].NOME_TITOLO,
-                                           Titolo          : ListaSpedizioniTmp[i].TITOLO,
-                                           Quantita        : ListaSpedizioniTmp[i].QUANTITA == null ? 'N.D.' : ListaSpedizioniTmp[i].QUANTITA,
-                                           QuantitaMgzn    : ListaSpedizioniTmp[i].QUANTITA_DISP,
-                                           Selezionato     : false,
-                                           Data            : ListaSpedizioniTmp[i].DATA_ULTIMA_MODIFICA
-                                        });
-            if(!$scope.RicercaPerTitolo)
-            {
-                var TitoloTrovato = $scope.ListaTitoliFiltro.find(function(ATitolo){return(ATitolo.Chiave == ListaSpedizioniTmp[i].TITOLO);})
-              
-                if(TitoloTrovato == undefined)
-                {
-                  $scope.ListaTitoliFiltro.push({
-                                                Chiave         : ListaSpedizioniTmp[i].TITOLO,
-                                                Nome           : ListaSpedizioniTmp[i].NOME_TITOLO,
-                                                Codice         : ListaSpedizioniTmp[i].CODICE_TITOLO,
-                                                Quantita       : ListaSpedizioniTmp[i].QUANTITA_DISP,
-                                                SommaPrenotati : 0,
-                                                DaAggiungere   : true 
-                                              })
-                }
-            }
-          }  
-        }
-        else SystemInformation.ApplyOnError('Modello spedizione non conforme','') 
-      },'SQLDettaglioTitoliDisponibiliPromotore') 
-    }
+    SystemInformation.GetSQL('Delivery',ParamSpedizione,function(Results)
+    {
+      SystemInformation.ExecuteExternalScript('SIRIOExtraGetPrenotazioniDisponibili',{},function(Answer) 
+      {
+        CompilaListaSpedizioni(SystemInformation.FindResults(Results,$scope.IsAdministrator() ? 'DettaglioDisponibiliAdmin' : 'DettaglioDisponibiliPromotore'),
+                               Answer.LsPrenotazioni);
+      })
+    },$scope.IsAdministrator ? 'SQLDettaglioTitoliDisponibiliAdmin' : 'SQLDettaglioTitoliDisponibiliPromotore')     
   }
   
   $scope.SelezionaTutto = function()

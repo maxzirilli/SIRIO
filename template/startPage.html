@@ -137,6 +137,30 @@
               <p style="font-weight:bold;padding:0px;">STATISTICHE</p>
               <br>
             </div>    
+            <div ng-if="IsAdministrator()" style="margin-left:5px;margin-right:5px;" flex=15>
+              <md-button ng-click="EliminaPrenotazioniObsolete()"><img src="img/EliminaPrenotazioni.png" style="width:60px;height:auto;"></md-button>
+              <br>
+              <p style="font-weight:bold;padding:0px;">ELIMINAZIONE VECCHIE PRENOTAZIONI</p>
+              <br>
+            </div>    
+            <div ng-if="!IsAdministrator()" style="margin-left:5px;margin-right:5px;" flex=15>
+               &nbsp;
+            </div>
+            <div style="margin-left:5px;margin-right:5px;" flex=15>
+               &nbsp;
+            </div>
+            <div style="margin-left:5px;margin-right:5px;" flex=15>
+               &nbsp;
+            </div>
+            <div style="margin-left:5px;margin-right:5px;" flex=15>
+               &nbsp;
+            </div>
+            <div style="margin-left:5px;margin-right:5px;" flex=15>
+               &nbsp;
+            </div>
+            <div style="margin-left:5px;margin-right:5px;" flex=15>
+               &nbsp;
+            </div>
           </div>
         </md-card-content>
       </md-card>

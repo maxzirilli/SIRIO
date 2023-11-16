@@ -1,0 +1,28 @@
+<md-dialog>
+  <form ng-cloak name="PopupCumulativoPrenotatiForm">
+    <md-toolbar>
+      <div class="md-toolbar-tools" style="background-color: red;">
+        <h2 style="font-weight:bold;color:white;">ELIMINAZIONE PRENOTAZIONE OBSOLETE</h2>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content >
+      <div class="md-dialog-content">
+        <div layout="row">        
+          <md-input-container style="float:left;">
+            <input ng-model="CancellaFinoAl" type="date" name="CancellaFinoAl" ng-change="OnChangeData()">
+          </md-input-container>
+        </div>   
+       </div>
+       <div style="text-align:center;">
+        <md-button ng-click="EliminaPrenotazioni()" title="ELIMINA PRENOTAZIONI OBSOLETE"><img src="img/EliminaPrenotazioniCestino.png" style="width:100px;height:auto;"></md-button>
+      </div> 
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <md-button class="md-raised md-accent" style="font-weight:bold;" ng-click="Hide()">
+       CHIUDI
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

@@ -253,7 +253,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
         { 
           BodySheet['A' + parseInt(k + 1)] = SystemInformation.GetCellaDati('s',ListaTitoli[k].Codice);
           BodySheet['B' + parseInt(k + 1)] = SystemInformation.GetCellaDati('s',Math.abs((parseInt(ListaTitoli[k].QuantitaMag) - parseInt(ListaTitoli[k].Quantita) + parseInt(ListaTitoli[k].QuantitaNovita))).toString());
-          BodySheet['C' + parseInt(k + 1)] = SystemInformation.GetCellaDati('s','')
+          BodySheet['C' + parseInt(k + 1)] = SystemInformation.GetCellaDati('s','0')
           BodySheet['D' + parseInt(k + 1)] = SystemInformation.GetCellaDati('s','WP')
         }
 
@@ -281,7 +281,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     
     var wbout = XLSX.write(WBook, {bookType:'xlsx', bookSST:true, type: 'binary'});
     let ObjQuery = {Operazioni: []}
-    ObjQuery.Operazioni.push({Query : Operazione, Parametri : {Data: $scope.DataRicercaAlPrnt}})
+    ObjQuery.Operazioni.push({Query : Operazione, Parametri : {Data: ConstPrepareForRecordDate($scope.DataRicercaAlPrnt)}})
 
     SystemInformation.PostSQL('Esportazioni',ObjQuery,function()
                                                   {
@@ -991,6 +991,9 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
                               Al           : ZHTMLInputFromDate(TmpDatePrnt),
                               ChiaveGruppi : $scope.CheckEditore == 'D' ? CHIAVE_GRUPPO_DE_AGOSTINI : CHIAVE_GRUPPO_MONDADORI
                            };
+
+      if(!$scope.IsAdministrator())
+         ParamPrenotati.PromotoreScelto = SystemInformation.UserInformation.Chiave;
 
       SystemInformation.GetSQL('Delivery',ParamPrenotati,function(Results)
       {

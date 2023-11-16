@@ -60,6 +60,63 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http,$mdDial
   {
     $state.go("statisticsPage");
   }
+
+
+  var DialogInputForDeleteBooking = function ($scope,$mdDialog)
+  {
+    $scope.CancellaFinoAl = new Date()
+    $scope.CancellaFinoAl.setMonth($scope.CancellaFinoAl.getMonth() - 12);
+    $scope.Hide = function() 
+    {
+      $mdDialog.hide();
+    };
+
+    $scope.OnChangeData = function()
+    {
+      alert(CancellaFinoAl);
+    }
+
+    $scope.EliminaPrenotazioni = function()
+    {
+      if($scope.CancellaFinoAl != undefined)
+        if(confirm('OPERAZIONE NON REVERSIBILE: SICURO DI VOLER CONTINUARE?'))
+        {
+           var $ObjQuery = { Operazioni : [] };
+           $ObjQuery.Operazioni.push({
+                                       Query     : 'DeleteObsoleteBookings',
+                                       Parametri : { FinoAl : ConstPrepareForRecordDate($scope.CancellaFinoAl) }
+                                     });
+
+           $ObjQuery.Operazioni.push({
+                                       Query     : 'ClearEmptySpedizioni',
+                                       Parametri : {  }
+                                     });
+
+           SystemInformation.PostSQL('Delivery',$ObjQuery,function(Answer)
+           {
+             $scope.Hide()
+           });  
+        }
+    }
+  }
+  
+  $scope.EliminaPrenotazioniObsolete = function()
+  {
+      $mdDialog.show({ 
+                       controller          : DialogInputForDeleteBooking,
+                       templateUrl         : "template/inputDateForDeleteBookings.html",
+                       scope               : $scope,
+                       preserveScope       : true,
+                       clickOutsideToClose : true
+                     })
+      .then(function(answer) 
+      {
+      }, 
+      function() 
+      {
+      });
+    
+  }
     
   $scope.GridOptions = {
                           rowSelection    : false,
