@@ -25,6 +25,12 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
   $scope.VisualizzaNonSpedibili = false     
   $scope.BloccoSpedizioniRecenti = true
  
+  $scope.OnChangeStatoBlocco = function()
+  {
+    $scope.BloccoSpedizioniRecenti = !$scope.BloccoSpedizioniRecenti
+    $scope.RefreshListaSpedizioniAll();
+  }
+
   ScopeHeaderController.CheckButtons();
   
   $scope.IsAdministrator = SystemInformation.IsAdministrator;
@@ -219,8 +225,7 @@ $scope.GridOptions_2 = {
        for(let k = 0;k < $scope.ListaSpedizioni.length;k ++)       
            if($scope.ListaSpedizioni[k].Tipo == 1 && $scope.ListaSpedizioni[k].Selezionato)
               ContatoreCheck++;              
-       $scope.CumulativoPossibile = ContatoreCheck != 0;
-       if($scope.CumulativoPossibile)
+       if(ContatoreCheck != 0)
        {
            for(let j = 0;j < $scope.ListaTitoliFiltro.length;j ++)
            {
@@ -242,12 +247,11 @@ $scope.GridOptions_2 = {
            if(ListaNonSpedibili.length > 0)
            {
               for(let l = 0;l < ListaNonSpedibili.length;l ++)
-              {
-                 $scope.ListaNonSpedibili += ListaNonSpedibili[l] + ' , ';
-              }
-              $scope.ListaNonSpedibili      = $scope.ListaNonSpedibili.substring(0,$scope.ListaNonSpedibili.length - 3);
+                 $scope.ListaNonSpedibili += (l + 1) + '. - ' + ListaNonSpedibili[l] + "\n";
+              $scope.ListaNonSpedibili      = $scope.ListaNonSpedibili.substring(0,$scope.ListaNonSpedibili.length - 1);
               $scope.VisualizzaNonSpedibili = true;         
            }          
+           console.log($scope.ListaNonSpedibili)
        }          
     }
   }
@@ -314,7 +318,7 @@ $scope.GridOptions_2 = {
      
     var CompilaListaSpedizioni = function(ListaSpedizioniTmp,LsDisponibilita)
     {
-       console.log(LsDisponibilita) 
+       $scope.ListaSpedizioni = [];
        if (ListaSpedizioniTmp != undefined) 
        {
           for(let i = 0; i < ListaSpedizioniTmp.length; i++)
@@ -332,7 +336,6 @@ $scope.GridOptions_2 = {
           })
 
           var LastSpedizione = -1;
-          $scope.ListaSpedizioni = [];
           for(let i = 0; i < ListaSpedizioniTmp.length; i++)
           {
             if(LastSpedizione != ListaSpedizioniTmp[i].CHIAVE)
@@ -365,23 +368,8 @@ $scope.GridOptions_2 = {
                                            Disponibilita   : ListaSpedizioniTmp[i].Disponibilita
 
                                         });
-            if(!$scope.RicercaPerTitolo)
-            {
-                var TitoloTrovato = $scope.ListaTitoliFiltro.find(function(ATitolo){return(ATitolo.Chiave == ListaSpedizioniTmp[i].TITOLO);})
-              
-                if(TitoloTrovato == undefined)
-                {
-                  $scope.ListaTitoliFiltro.push({
-                                                Chiave         : ListaSpedizioniTmp[i].TITOLO,
-                                                Nome           : ListaSpedizioniTmp[i].NOME_TITOLO,
-                                                Codice         : ListaSpedizioniTmp[i].CODICE_TITOLO,
-                                                Quantita       : ListaSpedizioniTmp[i].QUANTITA_DISP,
-                                                SommaPrenotati : 0,
-                                                DaAggiungere   : true 
-                                              })
-                }
-            }
           }  
+          console.log($scope.ListaSpedizioni)
         }
         else SystemInformation.ApplyOnError('Modello spedizione non conforme','')     
     }
@@ -392,8 +380,22 @@ $scope.GridOptions_2 = {
       {
         CompilaListaSpedizioni(SystemInformation.FindResults(Results,$scope.IsAdministrator() ? 'DettaglioDisponibiliAdmin' : 'DettaglioDisponibiliPromotore'),
                                Answer.LsPrenotazioni);
+        if(!$scope.RicercaPerTitolo)
+        {
+            Answer.LsTitoli.forEach(function(ATitolo)
+            {
+              $scope.ListaTitoliFiltro.push({
+                                            Chiave         : ATitolo.Chiave,
+                                            Nome           : ATitolo.Nome,
+                                            Codice         : ATitolo.Codice,
+                                            Quantita       : ATitolo.Disponibilita,
+                                            SommaPrenotati : 0,
+                                            DaAggiungere   : true 
+                                          })
+            })
+        }
       })
-    },$scope.IsAdministrator ? 'SQLDettaglioTitoliDisponibiliAdmin' : 'SQLDettaglioTitoliDisponibiliPromotore')     
+    },$scope.IsAdministrator() ? 'SQLDettaglioTitoliDisponibiliAdmin' : 'SQLDettaglioTitoliDisponibiliPromotore')     
   }
   
   $scope.SelezionaTutto = function()

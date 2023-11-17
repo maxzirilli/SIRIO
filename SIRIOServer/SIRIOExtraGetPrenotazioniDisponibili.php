@@ -133,7 +133,7 @@ use LDAP\Result;
                   // }
                }
 
-               $JSONAnswer->Titoli = $this->FListaTitoli;
+               $JSONAnswer->LsTitoli = $this->FListaTitoli;
             }     
       }
 

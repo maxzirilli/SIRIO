@@ -25,7 +25,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
   var AnnoCorrente = new Date().getFullYear();
   $scope.DataRicercaDal = new Date(AnnoCorrente, 0, 1)
 
- 
   ScopeHeaderController.CheckButtons(); 
 
   $scope.GetListaGruppi = function()

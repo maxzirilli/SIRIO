@@ -69,13 +69,8 @@
       <div style="margin-top:0px;padding-top:0px;">
         <md-button class="md-raised md-accent" style="font-weight:bold;float:left;" ng-click="AggiungiTitoloRicerca()">AGGIUNGI TITOLO PER LA RICERCA</md-button>
         <md-button class="md-raised md-accent" style="font-weight:bold;float:left;" ng-click="InviaCumulativo()" ng-disabled="VisualizzaNonSpedibili || !CumulativoPossibile" >SPEDISCI TUTTI I TITOLI SELEZIONATI</md-button>
-        <div ng-if="IsAdministrator()" style="float:left;padding-top: 20px;font-weight: bold;">
-          <label>MECCANISMO BLOCCO SPEDIZIONI PIU' RECENTI</label>
-        </div>
-        <div style="float:left;padding-top: 15px;" ng-if="IsAdministrator()" >
-          <input style="width:20px;height:20px;" type="checkbox" ng-change="RefreshListaSpedizioniAll()" ng-model="BloccoSpedizioniRecenti" style="margin-left:20px;margin-top:20px">
-        </div>
-        
+        <md-button ng-if="IsAdministrator()" class="md-raised md-accent" style="font-weight:bold;float:left;" ng-click="OnChangeStatoBlocco()" >{{BloccoSpedizioniRecenti ? 'DISABILITA BLOCCO PRENOTAZIONI RECENTI' : 'ABILITA BLOCCO PRENOTAZIONI RECENTI'}}</md-button>
+       
         <md-button ng-click="SelezionaTutto()" style="float:right;"><img src="img/checkAll.png" style="width:30px;height:auto;margin-right:5px;" title="SELEZIONA TUTTO"></md-button>
         <md-button ng-click="DeselezionaTutto()"style="float:right;"><img src="img/unCheckAll.png" style="width:30px;height:auto;margin-right:5px;" title="DESELEZIONA TUTTO"></md-button>   
       </div>
@@ -90,7 +85,7 @@
   <br>
   <div style="text-align:left;" ng-if="VisualizzaNonSpedibili">
    <label style="background-color:red;color:white;font-weight:bold;padding:2px;">IMPOSSIBILE SEGNARE COME DA SPEDIRE TUTTE LE SPEDIZIONI SELEZIONATE CON I SEGUENTI TITOLI:
-   </br><label style="background-color:red;color:white;font-weight:bold;padding:2px;">{{ListaNonSpedibili}}
+   </br><label style="background-color:red;color:white;font-weight:bold;padding:2px;white-space: pre;">{{ListaNonSpedibili}}</label>
   </div>
   <p ng-if="ListaSpedizioni.length == 0" style="font-weight:bold;font-style:italic;text-align:center;">NESSUNA SPEDIZIONE PRESENTE</p>  
   <div ng-if="ListaSpedizioni.length != 0">
