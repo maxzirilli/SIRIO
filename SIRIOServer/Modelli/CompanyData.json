@@ -1,14 +1,15 @@
-{  
-  "SelectSQL"       : [
-                        {
-                          "Name" : "GetCompanyData",
-                          "SQL"  : "SELECT * FROM configurazione_ditta"
-                        }
-                      ],  
-  "EditSQL"         : [
-                        {
-                          "Name" : "UpdateCompanyData",
-                          "SQL"  : "UPDATE configurazione_ditta SET INDIRIZZO=#INDIRIZZO,TELEFONO=#TELEFONO,EMAIL=#EMAIL,EMAIL_ARCHIVIO=#EMAIL_ARCHIVIO,SITO_WEB=#SITO_WEB,URL_CALENDARIO=#URL_CALENDARIO,CALENDARIO_VISIBILE=#CALENDARIO_VISIBILE,NR_ALUNNI=#NR_ALUNNI"
-                        }  
-                      ]
+{
+	"RuoliAbilitati" : "",
+	"EditSQL" : [
+		{
+			"Name" : "UpdateCompanyData",
+			"SQL" : "UPDATE configurazione_ditta \n      SET INDIRIZZO=#INDIRIZZO,\n             TELEFONO=#TELEFONO,\n             EMAIL=#EMAIL,\n             EMAIL_ARCHIVIO=#EMAIL_ARCHIVIO,\n             SITO_WEB=#SITO_WEB,\n             URL_CALENDARIO=#URL_CALENDARIO,\n             CALENDARIO_VISIBILE=#CALENDARIO_VISIBILE,\n             NR_ALUNNI=#NR_ALUNNI,\n             CODICE_ISTITUTO_X_SCARICOSAGGI=#CODICE_ISTITUTO_X_SCARICOSAGGI,\n             CODICE_DOCENTE_X_SCARICOSAGGI=#CODICE_DOCENTE_X_SCARICOSAGGI\n"
+		}
+	],
+	"SelectSQL" : [
+		{
+			"Name" : "GetCompanyData",
+			"SQL" : "SELECT * FROM configurazione_ditta\n"
+		}
+]
 }

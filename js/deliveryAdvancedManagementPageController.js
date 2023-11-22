@@ -29,15 +29,13 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter)
   {
     $scope.BloccoSpedizioniRecenti = !$scope.BloccoSpedizioniRecenti
     $scope.RefreshListaSpedizioniAll();
+    $scope.CheckCumulativo();
   }
 
   ScopeHeaderController.CheckButtons();
   
   $scope.IsAdministrator = SystemInformation.IsAdministrator;
 
-  //if ($scope.IsAdministrator()) //PER PROBLEMA CRASH TROPPE QUERY
-     // $scope.DataRicercaDal = new Date(TmpDate);
-  
   $scope.IsAdministrator(); 
   
   $scope.GridOptions = {
@@ -403,7 +401,7 @@ $scope.GridOptions_2 = {
     if($scope.ListaSpedizioni.length > 0)
     {
        for(let i = 0;i < $scope.ListaSpedizioni.length;i ++)
-           if($scope.ListaSpedizioni[i].Tipo == 1)
+           if($scope.ListaSpedizioni[i].Tipo == 1 && $scope.ListaSpedizioni[i].Disponibile)
               $scope.ListaSpedizioni[i].Selezionato = true;    
     }
     $scope.CheckCumulativo();

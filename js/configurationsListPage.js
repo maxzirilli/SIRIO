@@ -543,6 +543,8 @@ $scope.GridOptions_8 = {
         $scope.DatiDitta.URL_CALENDARIO      = DatiDittaSql[0].URL_CALENDARIO;
         $scope.DatiDitta.CALENDARIO_VISIBILE = DatiDittaSql[0].CALENDARIO_VISIBILE == 'T' ? true : false;
         $scope.DatiDitta.NR_ALUNNI           = parseInt(DatiDittaSql[0].NR_ALUNNI);
+        $scope.DatiDitta.CODICE_ISTITUTO_X_SCARICOSAGGI = DatiDittaSql[0].CODICE_ISTITUTO_X_SCARICOSAGGI
+        $scope.DatiDitta.CODICE_DOCENTE_X_SCARICOSAGGI = DatiDittaSql[0].CODICE_DOCENTE_X_SCARICOSAGGI
       }
       else SystemInformation.ApplyOnError('Modello dati ditta non conforme','');
     });
@@ -1868,14 +1870,16 @@ $scope.GridOptions_8 = {
     $ObjQuery.Operazioni.push({
                                 Query : 'UpdateCompanyData',
                                 Parametri : {
-                                              "INDIRIZZO"           : $scope.DatiDitta.INDIRIZZO.xSQL(),
-                                              "TELEFONO"            : $scope.DatiDitta.TELEFONO.xSQL(),
-                                              "EMAIL"               : $scope.DatiDitta.EMAIL.xSQL(),
-                                              "EMAIL_ARCHIVIO"      : $scope.DatiDitta.EMAIL_ARCHIVIO.xSQL(),
-                                              "SITO_WEB"            : $scope.DatiDitta.SITO_WEB.xSQL(),
-                                              "URL_CALENDARIO"      : $scope.DatiDitta.URL_CALENDARIO.trim().xSQL(),
-                                              "CALENDARIO_VISIBILE" : $scope.DatiDitta.CALENDARIO_VISIBILE ? 'T' : 'F',
-                                              "NR_ALUNNI"           : parseInt($scope.DatiDitta.NR_ALUNNI)
+                                              "INDIRIZZO"                      : $scope.DatiDitta.INDIRIZZO.xSQL(),
+                                              "TELEFONO"                       : $scope.DatiDitta.TELEFONO.xSQL(),
+                                              "EMAIL"                          : $scope.DatiDitta.EMAIL.xSQL(),
+                                              "EMAIL_ARCHIVIO"                 : $scope.DatiDitta.EMAIL_ARCHIVIO.xSQL(),
+                                              "SITO_WEB"                       : $scope.DatiDitta.SITO_WEB.xSQL(),
+                                              "URL_CALENDARIO"                 : $scope.DatiDitta.URL_CALENDARIO.trim().xSQL(),
+                                              "CALENDARIO_VISIBILE"            : $scope.DatiDitta.CALENDARIO_VISIBILE ? 'T' : 'F',
+                                              "NR_ALUNNI"                      : parseInt($scope.DatiDitta.NR_ALUNNI),
+                                              "CODICE_ISTITUTO_X_SCARICOSAGGI" : $scope.DatiDitta.CODICE_ISTITUTO_X_SCARICOSAGGI,
+                                              "CODICE_DOCENTE_X_SCARICOSAGGI"  : $scope.DatiDitta.CODICE_DOCENTE_X_SCARICOSAGGI
                                             }
                                 
                               });

@@ -50,10 +50,10 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,$mdDi
     DatiDittaSql     = SystemInformation.FindResults(Results,'GetCompanyData');
     if (DatiDittaSql != undefined)
     {
-      DatiDitta.Indirizzo = DatiDittaSql[0].INDIRIZZO == undefined ? '' : DatiDittaSql[0].INDIRIZZO;
-      DatiDitta.Telefono  = DatiDittaSql[0].TELEFONO == undefined ? '' : DatiDittaSql[0].TELEFONO;
-      DatiDitta.Email     = DatiDittaSql[0].EMAIL == undefined ? '' : DatiDittaSql[0].EMAIL;
-      DatiDitta.SitoWeb   = DatiDittaSql[0].SITO_WEB == undefined ? '' : DatiDittaSql[0].SITO_WEB;
+      DatiDitta.Indirizzo                = DatiDittaSql[0].INDIRIZZO == undefined ? '' : DatiDittaSql[0].INDIRIZZO;
+      DatiDitta.Telefono                 = DatiDittaSql[0].TELEFONO == undefined ? '' : DatiDittaSql[0].TELEFONO;
+      DatiDitta.Email                    = DatiDittaSql[0].EMAIL == undefined ? '' : DatiDittaSql[0].EMAIL;
+      DatiDitta.SitoWeb                  = DatiDittaSql[0].SITO_WEB == undefined ? '' : DatiDittaSql[0].SITO_WEB;
     }
     else SystemInformation.ApplyOnError('Modello dati ditta non conforme','');
   }); 

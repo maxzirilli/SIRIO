@@ -24,8 +24,9 @@
         </div>  
        </div>
        <div style="text-align:center;">
-        <md-button ng-if="CheckEditore == 'D'" ng-click="CreaFilePrenotati()" title="GENERA ORD PRENOTATI"><img src="img/printOrd.png" style="width:100px;height:auto;"></md-button>
-        <md-button ng-if="CheckEditore == 'M'" ng-click="CreaFilePrenotati()" title="GENERA XLS PRENOTATI"><img src="img/printXLS.png" style="width:100px;height:auto;"></md-button>
+       {{$scope.CfgDialogControllerOrdPrenotati}}
+        <md-button ng-if="CheckEditore == 'D'" ng-click="GeneraFiles()" title="GENERA ORD PRENOTATI"><img src="img/{{GetImageOrdinativi()}}" style="width:100px;height:auto;"></md-button>
+        <md-button ng-if="CheckEditore == 'M'" ng-click="GeneraFiles()" title="GENERA XLS PRENOTATI"><img src="img/printXLS.png" style="width:100px;height:auto;"></md-button>
       </div> 
     </md-dialog-content>
 
