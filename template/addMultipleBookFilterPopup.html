@@ -33,6 +33,7 @@
             <th>TITOLO</th>
             <th>GIACENZA</th>
             <th>DISPONIBILE</th>
+            <th>DISP. NON PRENOTATO</th>
           </tr>
           <tr ng-repeat="Titolo in ListaTitoliPopup | StatisticaByFiltro : ProvinciaFiltro  | TitoliMultipliPopupByFiltro : NomeFiltro : CodiceFiltro : AutoreFiltro | limitTo : GridOptions_3.query.limit : (GridOptions_3.query.page - 1) * GridOptions_3.query.limit" id={{Titolo.Chiave}}>
             <td><input type="checkbox" ng-model="Titolo.DaAggiungere"></td>
@@ -42,6 +43,7 @@
             <td>{{Titolo.Nome}}</td>
             <td>{{Titolo.Quantita}}</td>
             <td>{{Titolo.QuantitaDisp}}</td>
+            <td>{{Titolo.QuantitaDispConPrenotazione}}</td>
           </tr>
           </table>
           <md-table-pagination md-limit="GridOptions_3.query.limit" 

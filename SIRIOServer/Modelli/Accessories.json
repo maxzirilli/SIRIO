@@ -1,5 +1,17 @@
 {
 	"RuoliAbilitati" : "",
+	"EditSQL" : [
+		{
+			"Name" : "UpdateDataImpMailchimp",
+			"SQL" : "UPDATE configurazioni SET ULTIMA_IMPORTAZIONE_MAIL = NOW() - INTERVAL 1 DAY\n"
+		}
+	],
+	"SelectDataImpSQL" : [
+		{
+			"Name" : "LastUpdateMailChimp",
+			"SQL" : "SELECT ULTIMA_IMPORTAZIONE_MAIL FROM configurazioni\n"
+		}
+	],
 	"SelectSQL" : [
 		{
 			"Name" : "ProvinceList",
@@ -22,34 +34,22 @@
 			"SQL" : "SELECT istituti.CODICE FROM istituti WHERE NASCOSTO <> 1\n"
 		}
 	],
-	"SelectDataImpSQL" : [
-		{
-			"Name" : "LastUpdateMailChimp",
-			"SQL" : "SELECT ULTIMA_IMPORTAZIONE_MAIL FROM configurazioni\n"
-		}
-	],
-	"SelectTitoliSQL" : [
-		{
-			"Name" : "BookList",
-			"SQL" : "SELECT titoli.CHIAVE,\n       titoli.CODICE_ISBN,\n       titoli.TITOLO,\n       titoli.AUTORI,\n       titoli.QUANTITA_MGZN,\n       titoli.QUANTITA_MGZN_VOL,\n       CALCOLA_DISPONIBILITA_ALL(titoli.CHIAVE) AS QUANTITA_DISP,\n       titoli.POS_MAGAZZINO\n  FROM titoli \n WHERE EDITORE IN (SELECT DESCRIZIONE FROM case_editrici_amiche WHERE DESCRIZIONE=titoli.EDITORE) \nORDER BY TITOLO ASC\n"
-		}
-	],
 	"SelectTitoliInventarioSQL" : [
 		{
 			"Name" : "BookListInventory",
 			"SQL" : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,titoli.QUANTITA_MGZN,titoli.QUANTITA_MGZN_VOL,titoli.POS_MAGAZZINO FROM titoli WHERE QUANTITA_MGZN <> 0 OR QUANTITA_MGZN_VOL <> 0 AND EDITORE IN (SELECT DESCRIZIONE FROM case_editrici_amiche WHERE DESCRIZIONE=titoli.EDITORE) ORDER BY TITOLO ASC\n"
 		}
 	],
+	"SelectTitoliSQL" : [
+		{
+			"Name" : "BookList",
+			"SQL" : "SELECT titoli.CHIAVE,\n       titoli.CODICE_ISBN,\n       titoli.TITOLO,\n       titoli.AUTORI,\n       titoli.QUANTITA_MGZN,\n       titoli.QUANTITA_MGZN_VOL,\n       titoli.POS_MAGAZZINO,\n       dettaglio_spedizioni.STATO AS STATO_DETTAGLIO,\n       SUM(dettaglio_spedizioni.QUANTITA) AS STATO_QUANTITA\n  FROM titoli LEFT OUTER JOIN dettaglio_spedizioni ON (dettaglio_spedizioni.TITOLO = titoli.CHIAVE AND\n                                                       (dettaglio_spedizioni.STATO = 'S' OR\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t  dettaglio_spedizioni.STATO = 'P')) \n WHERE titoli.EDITORE IN (SELECT case_editrici_amiche.DESCRIZIONE FROM case_editrici_amiche WHERE case_editrici_amiche.DESCRIZIONE=titoli.EDITORE) \n GROUP BY titoli.CHIAVE,dettaglio_spedizioni.STATO\nORDER BY titoli.TITOLO,titoli.CHIAVE ASC\n"
+		}
+	],
 	"SelectTitoliSQLAdv" : [
 		{
 			"Name" : "BookListAdv",
 			"SQL" : "SELECT titoli.CHIAVE,titoli.CODICE_ISBN,titoli.TITOLO,CALCOLA_DISPONIBILITA_ALL(titoli.CHIAVE) AS QUANTITA_MGZN FROM titoli WHERE EDITORE IN (SELECT DESCRIZIONE FROM case_editrici_amiche WHERE DESCRIZIONE=titoli.EDITORE) ORDER BY TITOLO ASC\n"
-		}
-	],
-	"EditSQL" : [
-		{
-			"Name" : "UpdateDataImpMailchimp",
-			"SQL" : "UPDATE configurazioni SET ULTIMA_IMPORTAZIONE_MAIL = NOW() - INTERVAL 1 DAY\n"
 		}
 ]
 }

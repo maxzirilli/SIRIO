@@ -84,20 +84,44 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
         TitoliInfoLista = SystemInformation.FindResults(Results,'BookList');
         if(TitoliInfoLista != undefined)
         { 
+           var LastTitolo = -1
+           $scope.ListaTitoli = []
+           var CurrentTitolo = null
            for(let i = 0; i < TitoliInfoLista.length; i++)
-               TitoliInfoLista[i] = { 
-                                      Chiave       : TitoliInfoLista[i].CHIAVE,
-                                      Nome         : TitoliInfoLista[i].TITOLO == null ? 'N.D' : TitoliInfoLista[i].TITOLO,
-                                      Quantita     : parseInt(TitoliInfoLista[i].QUANTITA_MGZN),
-                                      QuantitaVol  : parseInt(TitoliInfoLista[i].QUANTITA_MGZN_VOL),
-                                      QuantitaDisp : parseInt(TitoliInfoLista[i].QUANTITA_DISP),
-                                      Codice       : TitoliInfoLista[i].CODICE_ISBN == null ? 'N.D.' : TitoliInfoLista[i].CODICE_ISBN,
-                                      Autore       : TitoliInfoLista[i].AUTORI == null ? '' : TitoliInfoLista[i].AUTORI,
-                                      DaAggiungere : false
+           {
+               if(LastTitolo != TitoliInfoLista[i].CHIAVE)
+               {
+                   let QuantitaMagazzino = TitoliInfoLista[i].QUANTITA_MGZN == undefined ? 0 : parseInt(TitoliInfoLista[i].QUANTITA_MGZN)
+                   CurrentTitolo = { 
+                                      Chiave                      : TitoliInfoLista[i].CHIAVE,
+                                      Nome                        : TitoliInfoLista[i].TITOLO == null ? 'N.D' : TitoliInfoLista[i].TITOLO,
+                                      Quantita                    : QuantitaMagazzino,
+                                      QuantitaVol                 : TitoliInfoLista[i].QUANTITA_MGZN_VOL == undefined ? 0 : parseInt(TitoliInfoLista[i].QUANTITA_MGZN_VOL),
+                                      QuantitaPrenotata           : 0,
+                                      QuantitaSpedita             : 0,
+                                      QuantitaDisp                : QuantitaMagazzino,
+                                      QuantitaDispConPrenotazione : QuantitaMagazzino,
+                                      Codice                      : TitoliInfoLista[i].CODICE_ISBN == null ? 'N.D.' : TitoliInfoLista[i].CODICE_ISBN,
+                                      Autore                      : TitoliInfoLista[i].AUTORI == null ? '' : TitoliInfoLista[i].AUTORI,
+                                      DaAggiungere                : false
                                     }
-           $scope.ListaTitoli      = TitoliInfoLista;
-           $scope.ListaTitoliPopup = TitoliInfoLista;
-           $scope.ListaTitoliCsv   = TitoliInfoLista;
+                   $scope.ListaTitoli.push(CurrentTitolo)
+                   LastTitolo = TitoliInfoLista[i].CHIAVE                 
+               }
+               if(TitoliInfoLista[i].STATO_DETTAGLIO == 'S')
+               {
+                 CurrentTitolo.QuantitaDisp                = Math.max(0,CurrentTitolo.QuantitaDisp - TitoliInfoLista[i].STATO_QUANTITA)
+                 CurrentTitolo.QuantitaDispConPrenotazione = Math.max(0,CurrentTitolo.QuantitaDispConPrenotazione - TitoliInfoLista[i].STATO_QUANTITA)
+               }
+               if(TitoliInfoLista[i].STATO_DETTAGLIO == 'P')
+                 CurrentTitolo.QuantitaDispConPrenotazione = Math.max(0,CurrentTitolo.QuantitaDispConPrenotazione - TitoliInfoLista[i].STATO_QUANTITA)
+           }
+           // $scope.ListaTitoli = $scope.ListaTitoli.filter(function(Elemento)
+           // {
+           //   return Elemento.QuantitaDisp != Elemento.QuantitaDispConPrenotazione
+           // }) x debug filtra i titoli con prenotazione
+           $scope.ListaTitoliPopup = $scope.ListaTitoli;
+           $scope.ListaTitoliCsv   = $scope.ListaTitoli;
            GestioneParametri();
         }
         else SystemInformation.ApplyOnError('Modello titoli non conforme','');   
@@ -638,104 +662,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
       }
     } 
    
-    /*$scope.AggiungiTitoloSpedizione = function (ev)
-    {    
-      $mdDialog.show({ 
-                       controller          : DialogControllerTitoloSpedizione,
-                       templateUrl         : "template/bookDeliveryPopup.html",
-                       targetEvent         : ev,
-                       scope               : $scope,
-                       preserveScope       : true,
-                       clickOutsideToClose : true
-                     })
-      .then(function(answer) 
-      {}, 
-      function() 
-      {});
-    }
- 
-    function DialogControllerTitoloSpedizione($scope,$mdDialog)  
-    {
-      $scope.Titolo        = {};
-      $scope.Multipla      = false;
-      
-      $scope.Titolo = {
-                         "CHIAVE"        : -1,
-                         "TITOLO"        : -1,
-                         "NOME_TITOLO"   : '',
-                         "ISBN_TITOLO"   : '',
-                         "QUANTITA"      : 1,
-                         "STATO"         : 'P',
-                         "QUANTITA_MGZN" : null,
-                         "QUANTITA_DISP" : 0,
-                         "Nuovo"         : true,
-                         "Modificato"    : false,
-                         "Eliminato"     : false,
-                         "DATA"          : new Date().toISOString().split('T')[0]                                
-                      } 
-                      
-      if($scope.SpedizioneMultipla)
-      {
-         $scope.Multipla = true;
-         if($scope.IstitutoSelezionato != '')
-            $scope.NumeroDocenti = $scope.ListaDocentiSpedizionePerMultipla.length
-         else $scope.NumeroDocenti = $scope.ListaDocentiSpedizione.length;
-      }
-         
-      $scope.queryTitolo = function(searchTextTit)
-      {
-         searchTextTit = searchTextTit.toUpperCase();
-         return($scope.ListaTitoli.grep(function(Elemento) 
-         { 
-           return(Elemento.Nome.toUpperCase().indexOf(searchTextTit) != -1 || Elemento.Codice.indexOf(searchTextTit) != -1);
-         }));
-      }
-      
-      $scope.selectedItemChangeTitolo = function(itemTit)
-      {
-        if(itemTit != undefined)
-        {
-           $scope.Titolo.TITOLO            = itemTit.Chiave;
-           $scope.Titolo.NOME_TITOLO       = itemTit.Nome;
-           $scope.Titolo.ISBN_TITOLO       = itemTit.Codice;
-           $scope.Titolo.QUANTITA_MGZN     = itemTit.Quantita;
-           $scope.Titolo.QUANTITA_MGZN_VOL = itemTit.QuantitaVol;
-           $scope.Titolo.QUANTITA_DISP     = itemTit.QuantitaDisp;
-        }
-      }
 
-      $scope.hide = function() 
-      {
-        $scope.TitoloPopup = undefined;
-        $scope.searchTextTit = '';
-        $mdDialog.hide();
-      };
-
-      $scope.AnnullaPopupTitolo = function() 
-      {
-        $scope.TitoloPopup = undefined;
-        $scope.searchTextTit = '';
-        $mdDialog.cancel();
-      };
-
-      $scope.ConfermaPopupTitolo = function()
-      { 
-        if($scope.Titolo.TITOLO == -1 || $scope.Titolo.QUANTITA == 0 || $scope.Titolo.STATO == null)
-        {
-          ZCustomAlert($mdDialog,'ATTENZIONE','DATI TITOLO MANCANTI!');
-          return
-        }
-        else
-        {                         
-          $scope.ListaTitoliSpedizione.push($scope.Titolo);
-          $scope.TitoloPopup = undefined;
-          $scope.searchTextTit = '';
-          $mdDialog.hide();
-          $scope.CheckTitoliAlreadyGestitiDocente();
-        }             
-      }
-    }*/
-    
     $scope.EliminaTitolo = function(Titolo, index)
     {
       var EliminaTit = function()
@@ -1100,7 +1027,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,ZConfirm)
                                           "STATO"             : null,
                                           "QUANTITA_MGZN"     : $scope.ListaTitoliToHandle[i].Quantita,
                                           "QUANTITA_MGZN_VOL" : $scope.ListaTitoliToHandle[i].QuantitaVol,
-                                          "QUANTITA_DISP"     : $scope.ListaTitoliToHandle[i].QuantitaDisp,
+                                          "QUANTITA_DISP"     : $scope.ListaTitoliToHandle[i].QuantitaDispConPrenotazione,
                                           "Nuovo"             : true,
                                           "Modificato"        : false,
                                           "Eliminato"         : false,
