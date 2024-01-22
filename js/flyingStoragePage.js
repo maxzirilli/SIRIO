@@ -376,7 +376,7 @@ $scope.GridOptions_2 = {
       $ObjQuery = {Operazioni : []};
       ParamMovimento = {
                          "CHIAVE" : $scope.MovimentoInEditing.CHIAVE,
-                         "DATA"   : $scope.MovimentoInEditing.DATA    
+                         "DATA"   : ConstPrepareForRecordDate($scope.MovimentoInEditing.DATA)
                        }
                             
       var NuovoMovimento = ($scope.MovimentoInEditing.CHIAVE == -1);
