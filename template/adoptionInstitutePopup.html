@@ -7,9 +7,22 @@
    </md-toolbar>
 
    <md-dialog-content>
-         <input type="checkbox" ng-model="AdozioniGestite" ng-change="VisualizzaAdozioni(thisIstituto,thisIstitutoNome)" style="margin-left:25px;margin-right:2px;margin-top:30px;width:2%;">
-         <label style="margin-left:5px;margin-right:2px;margin-top:27px;">ADOZIONI GESTITE</label>  
-         <img ng-if="IstitutoListaAdozioni.length > 0" src="img/printPDF.png" style="width:70px;height:auto;float:right;margin-top:20px;margin-right: 20px;" title="STAMPA ADOZIONI" ng-click="CreaPdfListaAdozioni()"></img>    
+    <div layout="row" layout-align="space-between center" style="margin-top: 20px;">
+      <div layout="row" style="margin-left: 10px;">
+        <input type="checkbox" ng-model="AdozioniGestite" ng-change="VisualizzaAdozioni(thisIstituto,thisIstitutoNome)" style="width:25px;">
+        <label>ADOZIONI GESTITE</label>
+      </div>
+      <div layout="row">
+        <md-button ng-if="IstitutoListaAdozioni.length > 0" layout="row" layout-align="center center" class="md-raised md-accent" style="margin-right: 15px; font-weight:bold; cursor: pointer;" ng-click="CreaPdfListaAdozioni(false)">
+          <label>STAMPA PER CLASSE</label>
+          <img src="img/printPDF.png" style="width:30px;height:auto; margin-left: 5px;"></img>
+        </md-button>
+        <md-button ng-if="IstitutoListaAdozioni.length > 0" layout="row" layout-align="center center" class="md-raised md-accent" style="margin-right: 15px; font-weight:bold; cursor: pointer" ng-click="CreaPdfListaAdozioni(true)">
+          <label>STAMPA PER LIVELLO</label>
+          <img src="img/printPDF.png" style="width:30px;height:auto; margin-left: 5px;"></img>
+        </md-button>
+      </div>
+    </div>
  
      <div class="md-dialog-content" style="width:800px;">  
          <p style="font-weight:bold;text-align:center;" ng-if="IstitutoListaAdozioni.length == 0">NESSUNA ADOZIONE REGISTRATA</p>

@@ -693,7 +693,6 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
         }
 
         $scope.ListaAnniClassi.sort();
-        console.log($scope.ListaAnniClassi)
         $scope.ListaCombinazioni.sort();
         $scope.IstitutoListaAdozioni.sort((adozione_1, adozione_2) => {
         const compareCombinazione = adozione_1.CombinazioneClasse.localeCompare(adozione_2.CombinazioneClasse);
@@ -725,7 +724,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
        $mdDialog.hide();
      }
 
-     $scope.CreaPdfListaAdozioni = function()
+     $scope.CreaPdfListaAdozioni = function(Livello = false)
      {
         var TroncaTitolo = function(str, n)
         {
@@ -755,41 +754,103 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
         CoordY += 5;
  
         doc.setFontSize(8);
-        for(let i = 0; i < ListaAdozFiltrata.length; i ++)
+        console.log(ListaAdozFiltrata)
+        if (!Livello)
         {
-           CoordY += 10;
+          for(let i = 0; i < ListaAdozFiltrata.length; i ++)
+          {
+            CoordY += 10;
 
-           if(CoordY >= 275) 
-           {
-              doc.addPage();
-              CoordY = 10;
+            if(CoordY >= 275) 
+            {
+                doc.addPage();
+                CoordY = 10;
+                doc.setFontSize(8);
+                doc.setFontType('normal');
+                doc.text(CoordX, 295, SystemInformation.VDocInstituteAdoption);
+            }
+            doc.setFontSize(10);
+            doc.setFontType('bold');
+            doc.text(CoordX, CoordY, ListaAdozFiltrata[i].NomeClasse + ' - ' + ListaAdozFiltrata[i].CombinazioneClasse);
+            doc.text(CoordX, CoordY + 5,'MATERIA / TITOLO / CODICE / EDITORE / PREZZO / GESTITO');
+            CoordY += 15;
+            doc.setFontSize(8);
+            doc.setFontType('normal');
+            for(let j = 0; j < ListaAdozFiltrata[i].ListaTitoliClasse.length; j ++)
+            {
+                if(CoordY >= 275) 
+                {
+                    doc.addPage();
+                    CoordY = 10;
+                    doc.setFontSize(8);
+                    doc.setFontType('normal');
+                    doc.text(CoordX, 295, SystemInformation.VDocInstituteAdoption);
+                    CoordY += 10;
+                }
+
+                doc.text(CoordX, CoordY, ListaAdozFiltrata[i].ListaTitoliClasse[j].Materia + ' / ' + TroncaTitolo(ListaAdozFiltrata[i].ListaTitoliClasse[j].Titolo,80) + ' / ');
+                doc.text(CoordX, CoordY + 5, ListaAdozFiltrata[i].ListaTitoliClasse[j].Codice + ' / ' + ListaAdozFiltrata[i].ListaTitoliClasse[j].Editore + ' / ' + ListaAdozFiltrata[i].ListaTitoliClasse[j].Prezzo + ' / ' + (ListaAdozFiltrata[i].ListaTitoliClasse[j].IsGestito ? 'SI' : 'NO'));
+                CoordY += 12;
+            }
+          }
+        }
+        else
+        {
+          let VettorePerAnno = []
+          VettorePerAnno.push({Anno: 1, Adozioni: []})          
+          VettorePerAnno.push({Anno: 2, Adozioni: []})
+          VettorePerAnno.push({Anno: 3, Adozioni: []})
+          VettorePerAnno.push({Anno: 4, Adozioni: []})
+          VettorePerAnno.push({Anno: 5, Adozioni: []})
+          for (let i = 0; i < ListaAdozFiltrata.length; i++)
+          {
+            let Anno = ListaAdozFiltrata[i].AnnoClasse
+            let ObjAdozione = VettorePerAnno[Anno - 1]
+            for (let j = 0; j < ListaAdozFiltrata[i].ListaTitoliClasse.length; j++)
+            {
+              let Titolo = ListaAdozFiltrata[i].ListaTitoliClasse[j]
+              if (!ObjAdozione.Adozioni.find((element) => {return element.Codice == Titolo.Codice}))
+                ObjAdozione.Adozioni.push(Titolo)
+            }
+          }
+          for (let i = 0; i < VettorePerAnno.length; i++)
+          {
+            if (VettorePerAnno[i].Adozioni.length > 0)
+            {
+              CoordY += 10;
+              if(CoordY >= 275) 
+              {
+                doc.addPage();
+                CoordY = 10;
+                doc.setFontSize(8);
+                doc.setFontType('normal');
+                doc.text(CoordX, 295, SystemInformation.VDocInstituteAdoption);
+              }
+              doc.setFontSize(10);
+              doc.setFontType('bold');
+              doc.text(CoordX, CoordY, 'ANNO ' + VettorePerAnno[i].Anno);
+              doc.text(CoordX, CoordY + 5,'MATERIA / TITOLO / CODICE / EDITORE / PREZZO / GESTITO');
+              CoordY += 15;
               doc.setFontSize(8);
               doc.setFontType('normal');
-              doc.text(CoordX, 295, SystemInformation.VDocInstituteAdoption);
-           }
-           doc.setFontSize(10);
-           doc.setFontType('bold');
-           doc.text(CoordX, CoordY, ListaAdozFiltrata[i].NomeClasse + ' - ' + ListaAdozFiltrata[i].CombinazioneClasse);
-           doc.text(CoordX, CoordY + 5,'MATERIA / TITOLO / CODICE / EDITORE / PREZZO / GESTITO');
-           CoordY += 15;
-           doc.setFontSize(8);
-           doc.setFontType('normal');
-           for(let j = 0; j < ListaAdozFiltrata[i].ListaTitoliClasse.length; j ++)
-           {
-               if(CoordY >= 275) 
-               {
+              for(let j = 0; j < VettorePerAnno[i].Adozioni.length; j ++)
+              {
+                if(CoordY >= 275) 
+                {
                   doc.addPage();
                   CoordY = 10;
                   doc.setFontSize(8);
                   doc.setFontType('normal');
                   doc.text(CoordX, 295, SystemInformation.VDocInstituteAdoption);
                   CoordY += 10;
-               }
+                }
 
-               doc.text(CoordX, CoordY, ListaAdozFiltrata[i].ListaTitoliClasse[j].Materia + ' / ' + TroncaTitolo(ListaAdozFiltrata[i].ListaTitoliClasse[j].Titolo,80) + ' / ');
-               doc.text(CoordX, CoordY + 5, ListaAdozFiltrata[i].ListaTitoliClasse[j].Codice + ' / ' + ListaAdozFiltrata[i].ListaTitoliClasse[j].Editore + ' / ' + ListaAdozFiltrata[i].ListaTitoliClasse[j].Prezzo + ' / ' + (ListaAdozFiltrata[i].ListaTitoliClasse[j].IsGestito ? 'SI' : 'NO'));
-               CoordY += 12;
-           }
+                doc.text(CoordX, CoordY, VettorePerAnno[i].Adozioni[j].Materia + ' / ' + TroncaTitolo(VettorePerAnno[i].Adozioni[j].Titolo,80) + ' / ');
+                doc.text(CoordX, CoordY + 5,VettorePerAnno[i].Adozioni[j].Codice + ' / ' + VettorePerAnno[i].Adozioni[j].Editore + ' / ' + VettorePerAnno[i].Adozioni[j].Prezzo + ' / ' + (VettorePerAnno[i].Adozioni[j].IsGestito ? 'SI' : 'NO'));
+                CoordY += 12;
+              }
+            }
+          }     
         }
         
         doc.save('ADOZIONI ' + $scope.thisIstitutoNome + ' ' + DataDocumento + '.pdf', {});
@@ -1275,7 +1336,6 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
         else IsGruppoRivaleFiltro = false;
     }
 
-   console.log($scope.SoloAssegnati)
    var ObjParametri = {
                          FiltroMateriaDocente       : $scope.MateriaFiltro,
                          FiltroCoordinatore         : $scope.CoordMateriaFiltro ? 'T' : 'F',
@@ -1293,7 +1353,6 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
                          FiltroMateriaTitolo        : $scope.MateriaFiltroTitolo,
                          FiltroVolUniciPrimi        : $scope.VolumiUniciPrimiFiltro ? "T" : "F"
                       };
-                      console.log(ObjParametri)
 
    /*if(!$scope.ViewFiltroConsegnati)
    {
