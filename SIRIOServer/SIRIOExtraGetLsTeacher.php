@@ -79,6 +79,11 @@ use LDAP\Result;
                  $Result .= ($Where ? " WHERE " : " AND ") . "case_editrici.CHIAVE IN (SELECT CHIAVE FROM case_editrici_nemiche)";
                  $Where = false;
                }
+              //  if ($Parametri->FiltroIstitutiAssegnati == 'T')
+              //  {
+              //    $Result .= ($Where ? " WHERE " : " AND ") . "case_editrici.CHIAVE IN (SELECT CHIAVE FROM case_editrici_nemiche)";
+              //    $Where = false;
+              //  }
                if($Parametri->FiltroGruppoEd > 0)
                {
                  //$Result .= ($Where ? " WHERE " : " AND ") . "case_editrici.CHIAVE = " . $Parametri->FiltroCasaEditrice;
@@ -98,43 +103,50 @@ use LDAP\Result;
 
             private function GetWhereIstituti($Parametri,$CheckOnlyConsegnati)
             {
-               $Where = true;
-               $Result = '';
-               if($Parametri->FiltroIstituto != -1)
-               {
-                 $Result .= ($Where ? " WHERE " : " AND ") . "istituti.CHIAVE = " . $this->FPrepareParameterValue($Parametri->FiltroIstituto,':');
-                 $Where = false;
-               }
-               if($Parametri->FiltroProvincia != -1)
-               {
-                 $Result .= ($Where ? " WHERE " : " AND ") . "istituti.PROVINCIA = " . $this->FPrepareParameterValue($Parametri->FiltroProvincia,':');
-                 $Where = false;
-               }
+              $Where = true;
+              $Result = '';
+              if($Parametri->FiltroIstituto != -1)
+              {
+                $Result .= ($Where ? " WHERE " : " AND ") . "istituti.CHIAVE = " . $this->FPrepareParameterValue($Parametri->FiltroIstituto,':');
+                $Where = false;
+              }
+              if($Parametri->FiltroProvincia != -1)
+              {
+                $Result .= ($Where ? " WHERE " : " AND ") . "istituti.PROVINCIA = " . $this->FPrepareParameterValue($Parametri->FiltroProvincia,':');
+                $Where = false;
+              }
+              if ($Parametri->FiltroIstitutiAssegnati == 'T')
+              {
+                $Result .= ($Where ? " WHERE " : " AND ") . "istituti.PROMOTORE = " . $_SESSION[SESSION_USERKEY];
+                $Where = false;                
+              }
 
-               if(!$CheckOnlyConsegnati)
-               {
-                  if($Parametri->FiltroPromotore != -1)
-                  {
-                    $Result .= ($Where ? " WHERE " : " AND ") . "istituti.PROMOTORE = " . $this->FPrepareParameterValue($Parametri->FiltroPromotore,':');
-                    $Where = false;
-                  }
-                  if($Parametri->FiltroGruppoIst != -1)
-                  {
-                     $Result .= ($Where ? " WHERE " : " AND ") . "istituti.TIPOLOGIA = tipologie_gruppi_istituti.TIPOLOGIA";
-                     $Where = false;
-                     $Result .= " AND tipologie_gruppi_istituti.GRUPPO_IST = istituti_gruppi.CHIAVE";
-                     if($Parametri->FiltroGruppoIst == -2)
-                        $Result .= " AND istituti_gruppi.LICEO = 1";
-                     else $Result .= " AND tipologie_gruppi_istituti.GRUPPO_IST = " . $this->FPrepareParameterValue($Parametri->FiltroGruppoIst,':');
-                  }
-               }
-               return $Result;
+              if(!$CheckOnlyConsegnati)
+              {
+                if($Parametri->FiltroPromotore != -1)
+                {
+                  $Result .= ($Where ? " WHERE " : " AND ") . "istituti.PROMOTORE = " . $this->FPrepareParameterValue($Parametri->FiltroPromotore,':');
+                  $Where = false;
+                }
+                if($Parametri->FiltroGruppoIst != -1)
+                {
+                  $Result .= ($Where ? " WHERE " : " AND ") . "istituti.TIPOLOGIA = tipologie_gruppi_istituti.TIPOLOGIA";
+                  $Where = false;
+                  $Result .= " AND tipologie_gruppi_istituti.GRUPPO_IST = istituti_gruppi.CHIAVE";
+                  if($Parametri->FiltroGruppoIst == -2)
+                    $Result .= " AND istituti_gruppi.LICEO = 1";
+                  else $Result .= " AND tipologie_gruppi_istituti.GRUPPO_IST = " . $this->FPrepareParameterValue($Parametri->FiltroGruppoIst,':');
+                }
+              }
+              return $Result;
             }
 
             protected function FExtraScriptServerSide($PDODBase,&$JSONAnswer)
             {
                $Parametri             = JSON_decode($_POST['SIRIOParams']);
                $JSONAnswer->LsDocenti = array();
+               error_log('maracuja');
+               error_log($Parametri->FiltroIstitutiAssegnati);
 
                $CheckOnlyConsegnati   = $Parametri->FiltroCheckOnlyConsegnato == 'T';
 
@@ -187,7 +199,8 @@ use LDAP\Result;
                   if($Parametri->FiltroIstituto  != -1 ||
                      $Parametri->FiltroGruppoIst != -1 || 
                      $Parametri->FiltroProvincia != -1 ||   
-                     $Parametri->FiltroPromotore != -1)
+                     $Parametri->FiltroPromotore != -1 ||
+                     $Parametri->FiltroIstitutiAssegnati == 'T')
                      $SQLBody .= " AND docenti.CHIAVE IN (SELECT istituti_x_docenti.DOCENTE 
                                                             FROM istituti_x_docenti 
                                                            WHERE ISTITUTO IN (SELECT istituti.CHIAVE 
@@ -211,7 +224,7 @@ use LDAP\Result;
                }
                else 
                {
-                   if($Parametri->FiltroIstituto  != -1 || $Parametri->FiltroProvincia != -1)
+                   if($Parametri->FiltroIstituto  != -1 || $Parametri->FiltroProvincia != -1 || $Parametri->FiltroIstitutiAssegnati == 'T')
                       $SQLBody .= " AND docenti.CHIAVE IN (SELECT istituti_x_docenti.DOCENTE 
                                                             FROM istituti_x_docenti 
                                                            WHERE ISTITUTO IN (SELECT istituti.CHIAVE 

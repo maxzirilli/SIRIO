@@ -26,6 +26,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
   $scope.CodiceFiltro           = '';
   $scope.RicercaInCorso         = false;
   $scope.CoordMateriaFiltro     = false;
+  $scope.SoloAssegnati          = false
   $scope.OldPagina              = 0;
   $scope.AdozioniGestite        = true;
   $scope.ListaGiorni            = [{ Numero: 0, Descrizione: 'LUNEDI' }, { Numero: 1, Descrizione: 'MARTEDI' }, { Numero: 2, Descrizione: 'MERCOLEDI' }, { Numero: 3, Descrizione: 'GIOVEDI' },
@@ -286,15 +287,17 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
                for(let i = 0; i < IstitutiInfoLista.length; i++) 
                {
                   ListaIstitutiAssegnati.push({
-                                                Chiave: IstitutiInfoLista[i].CHIAVE,
-                                                Codice: IstitutiInfoLista[i].CODICE,
-                                                Istituto: IstitutiInfoLista[i].NOME
+                                                Chiave    : IstitutiInfoLista[i].CHIAVE,
+                                                Codice    : IstitutiInfoLista[i].CODICE,
+                                                Promotore : IstitutiInfoLista[i].PRM_CHIAVE,
+                                                Istituto  : IstitutiInfoLista[i].NOME
                                               });
 
                   IstitutiInfoLista[i] = {
-                                           Chiave: IstitutiInfoLista[i].CHIAVE,
-                                           Codice: IstitutiInfoLista[i].CODICE,
-                                           Istituto: IstitutiInfoLista[i].NOME
+                                           Chiave    : IstitutiInfoLista[i].CHIAVE,
+                                           Codice    : IstitutiInfoLista[i].CODICE,
+                                           Promotore : IstitutiInfoLista[i].PRM_CHIAVE,
+                                           Istituto  : IstitutiInfoLista[i].NOME
                                          }
                }
                $scope.ListaIstituti = ListaIstitutiAssegnati;
@@ -307,9 +310,10 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
                 {
                    for(let i = 0; i < IstitutiInfoListaP.length; i++)
                        IstitutiInfoListaP[i] = {
-                                                 Chiave: IstitutiInfoListaP[i].CHIAVE,
-                                                 Codice: IstitutiInfoListaP[i].CODICE,
-                                                 Istituto: IstitutiInfoListaP[i].NOME
+                                                 Chiave    : IstitutiInfoListaP[i].CHIAVE,
+                                                 Codice    : IstitutiInfoListaP[i].CODICE,
+                                                 Istituto  : IstitutiInfoListaP[i].NOME,
+                                                 Promotore : IstitutiInfoListaP[i].PROMOTORE
                                                }
                    $scope.ListaIstitutiPopup = IstitutiInfoListaP;
 
@@ -616,7 +620,10 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
      searchTextIstituto = searchTextIstituto.toUpperCase();
      return ($scope.ListaIstituti.grep(function (Elemento) 
      {
-        return (Elemento.Istituto.toUpperCase().indexOf(searchTextIstituto) != -1 || Elemento.Codice.indexOf(searchTextIstituto) != -1);
+        let IndexFound = Elemento.Promotore == SystemInformation.UserInformation.Chiave
+        return ((Elemento.Istituto.toUpperCase().indexOf(searchTextIstituto) != -1 ||
+                 Elemento.Codice.indexOf(searchTextIstituto) != -1) &&
+                 ($scope.SoloAssegnati ? IndexFound : true));
      }));
   }
 
@@ -1228,6 +1235,8 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
 
     if($scope.VolumiUniciPrimiFiltro)
        AObject.VolumiUniciPrimi = 'SI';
+    if($scope.FiltroIstitutiAssegnati)
+      AObject.SoloAssegnati = 'SI'
 
     var url = window.location.href;
     url = url.substring(0, url.lastIndexOf("/"));
@@ -1266,7 +1275,7 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
         else IsGruppoRivaleFiltro = false;
     }
 
-    
+   console.log($scope.SoloAssegnati)
    var ObjParametri = {
                          FiltroMateriaDocente       : $scope.MateriaFiltro,
                          FiltroCoordinatore         : $scope.CoordMateriaFiltro ? 'T' : 'F',
@@ -1274,15 +1283,17 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
                          FiltroProvincia            : $scope.AProvinciaFiltro,
                          FiltroTitolo               : $scope.TitoloFiltro,
                          FiltroCheckOnlyConsegnato  : ($scope.ViewFiltroConsegnati && $scope.TitoloFiltro != -1) ? 'T' : 'F',
+                         FiltroIstitutiAssegnati    : $scope.SoloAssegnati ? 'T' : 'F',
 
-                         FiltroGruppoIst            :  $scope.GruppoIstitutoFiltro,
-                         FiltroPromotore            :  $scope.PromotoreFiltro,      
-                         FiltroCasaEditrice         :  $scope.CasaEditriceFiltro,    
-                         FiltroGruppoEd             :  $scope.GruppoEditorialeFiltro, 
-                         FiltroIsGruppoEdRivale     :  IsGruppoRivaleFiltro ? 'T' : 'F',
-                         FiltroMateriaTitolo        :  $scope.MateriaFiltroTitolo,
-                         FiltroVolUniciPrimi        :  $scope.VolumiUniciPrimiFiltro ? "T" : "F"
+                         FiltroGruppoIst            : $scope.GruppoIstitutoFiltro,
+                         FiltroPromotore            : $scope.PromotoreFiltro,      
+                         FiltroCasaEditrice         : $scope.CasaEditriceFiltro,    
+                         FiltroGruppoEd             : $scope.GruppoEditorialeFiltro, 
+                         FiltroIsGruppoEdRivale     : IsGruppoRivaleFiltro ? 'T' : 'F',
+                         FiltroMateriaTitolo        : $scope.MateriaFiltroTitolo,
+                         FiltroVolUniciPrimi        : $scope.VolumiUniciPrimiFiltro ? "T" : "F"
                       };
+                      console.log(ObjParametri)
 
    /*if(!$scope.ViewFiltroConsegnati)
    {

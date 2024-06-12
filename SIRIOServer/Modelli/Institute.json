@@ -21,7 +21,7 @@
 	"SelectSQLOnlyVisible" : [
 		{
 			"Name" : "InstituteInfoListOnlyVisibile",
-			"SQL" : "SELECT istituti.CHIAVE,istituti.CODICE,istituti.NOME,istituti.PROVINCIA FROM istituti WHERE NASCOSTO <> 1 ORDER BY istituti.NOME\n"
+			"SQL" : "SELECT istituti.CHIAVE,istituti.CODICE,istituti.NOME,istituti.PROVINCIA, istituti.PROMOTORE FROM istituti WHERE NASCOSTO <> 1 ORDER BY istituti.NOME\n"
 		}
 	],
 	"SelectSQLOnlyVisiblePrm" : [
