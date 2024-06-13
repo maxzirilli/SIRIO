@@ -61,6 +61,47 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$http,$mdDial
     $state.go("statisticsPage");
   }
 
+  $scope.EliminaVecchieAdozioni = function()
+  {
+    $mdDialog.show({ 
+      controller          : DialogInputForDeleteAdozioni,
+      templateUrl         : "template/InputForDeleteAdozioni.html",
+      scope               : $scope,
+      preserveScope       : true,
+      clickOutsideToClose : true
+    })
+    .then(function(answer) 
+    {
+    }, 
+    function() 
+    {
+    });
+  }
+
+  var DialogInputForDeleteAdozioni = function ($scope,$mdDialog)
+  {
+    $scope.Hide = function() 
+    {
+      $mdDialog.hide();
+    };
+
+    $scope.EliminaAdozioni = function()
+    {
+      if(confirm('OPERAZIONE NON REVERSIBILE: SICURO DI VOLER CONTINUARE?'))
+      {
+          var $ObjQuery = { Operazioni : [] };
+          $ObjQuery.Operazioni.push({
+                                      Query     : 'DeleteVecchiePrenotazioni',
+                                      Parametri : {}
+                                    });
+
+          SystemInformation.PostSQL('Delivery',$ObjQuery,function()
+          {
+            $scope.Hide()
+          });  
+      }
+  }
+  }
 
   var DialogInputForDeleteBooking = function ($scope,$mdDialog)
   {

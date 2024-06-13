@@ -175,41 +175,46 @@
         </md-card-title>
         <md-card-content>
           <div layout="row">
-            <div style="margin-left:5px;margin-right:5px;" flex=20>        
+            <div style="margin-left:5px;margin-right:5px;" flex=16.7>        
               <md-button ng-click="ApriCsvIstitutiUpload()"><img src="img/download.png" style="width:60px;height:auto;"></md-button>
               <br>
               <p style="font-weight:bold;padding:0px;">CSV ISTITUTI</p>
               <br>
               <p style="font-style:italic;margin:0px;">Importazione istituti da sito ministero dell'istruzione</p>
             </div>
-            <div style="margin-left:5px;margin-right:5px;" flex=20>
+            <div style="margin-left:5px;margin-right:5px;" flex=16.7>
               <md-button ng-click="ApriCsvTitoliUpload()"><img src="img/download.png" style="width:60px;height:auto;"></md-button>
               <br>
               <p style="font-weight:bold;padding:0px;">CSV TITOLI</p>
               <br>
               <p style="font-style:italic;margin:0px;">Importazione titoli e adozioni da sito ministero dell'istruzione</p>
             </div>
-            <div style="margin-left:5px;margin-right:5px;" flex=20>
+            <div style="margin-left:5px;margin-right:5px;" flex=16.7>
               <md-button ng-click="ApriCsvDocentiUpload()"><img src="img/download.png" style="width:60px;height:auto;"></md-button>
               <br>
               <p style="font-weight:bold;padding:0px;">CSV DOCENTI</p>
               <br>
               <p style="font-style:italic;margin:0px;">Importazione docenti da database applicazione LYBRO</p>
             </div>
-            <div style="margin-left:5px;margin-right:5px;" flex=20>
+            <div style="margin-left:5px;margin-right:5px;" flex=16.7>
               <md-button ng-click="ApriCsvCataloghiDeAgostiniUpload()"><img src="img/download.png" style="width:60px;height:auto;"></md-button>
               <br>
               <p style="font-weight:bold;padding:0px;">CSV TITOLI GENERICO</p>
               <br>
               <p style="font-style:italic;margin:0px;">Importazione titoli generica</p>
             </div>
-            <div style="margin-left:5px;margin-right:5px;" flex=20>
+            <div style="margin-left:5px;margin-right:5px;" flex=16.7>
               <md-button ng-click="ApriMailChimpUpload()"><img src="img/download.png" style="width:60px;height:auto;"></md-button>
               <br>
               <p style="font-weight:bold;padding:0px;">EMAIL DOCENTI</p>
               <br>
               <p style="font-style:italic;margin:0px;">Aggiornamento mail docenti da MailChimp</p>
-            </div>             
+            </div>              
+            <div ng-if="IsAdministrator()" style="margin-left:5px;margin-right:5px;" flex=16.7>
+              <md-button ng-click="EliminaVecchieAdozioni()"><img src="img/EliminaPrenotazioni.png" style="width:60px;height:auto;"></md-button>
+              <br>
+              <p style="font-weight:bold;padding:0px;">ELIMINAZIONE VECCHIE ADOZIONI</p>
+            </div>              
           </div>          
         </md-card-content>
       </md-card>  

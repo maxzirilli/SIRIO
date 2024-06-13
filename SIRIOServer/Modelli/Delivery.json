@@ -68,6 +68,10 @@
 		{
 			"Name" : "DeleteObsoleteBookings",
 			"SQL" : "DELETE FROM dettaglio_spedizioni \n WHERE SPEDIZIONE IN (SELECT CHIAVE FROM spedizioni WHERE DATA <= #FinoAl)\n   AND STATO = 'P'\n"
+		},
+		{
+			"Name" : "DeleteVecchiePrenotazioni",
+			"SQL" : "CALL EMPTY_ADOZIONI_ALL()\n"
 		}
 	],
 	"SelectKeyToSend" : [
