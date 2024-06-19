@@ -2151,30 +2151,30 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
      $scope.RefreshListaDocenti();
      $scope.GridOptions.query.page = $scope.OldPagina;
 
-     SystemInformation.GetSQL('Institute', {}, function (Results) 
-     {
-       var ListaIstitutiAssegnati = [];
-       IstitutiInfoLista = SystemInformation.FindResults(Results, 'InstituteInfoList');
-       if(IstitutiInfoLista != undefined) 
-       {
-         for(let i = 0; i < IstitutiInfoLista.length; i++) 
-         {
-            if (IstitutiInfoLista[i].NR_DOCENTI > 0)
-             ListaIstitutiAssegnati.push({
-              Chiave: IstitutiInfoLista[i].CHIAVE,
-              Istituto: IstitutiInfoLista[i].NOME
-             });
+    //  SystemInformation.GetSQL('Institute', {}, function (Results) 
+    //  {
+    //    var ListaIstitutiAssegnati = [];
+    //    IstitutiInfoLista = SystemInformation.FindResults(Results, 'InstituteInfoList');
+    //    if(IstitutiInfoLista != undefined) 
+    //    {
+    //      for(let i = 0; i < IstitutiInfoLista.length; i++) 
+    //      {
+    //         if (IstitutiInfoLista[i].NR_DOCENTI > 0)
+    //          ListaIstitutiAssegnati.push({
+    //           Chiave: IstitutiInfoLista[i].CHIAVE,
+    //           Istituto: IstitutiInfoLista[i].NOME
+    //          });
 
-            IstitutiInfoLista[i] = {
-                                    Chiave: IstitutiInfoLista[i].CHIAVE,
-                                    Istituto: IstitutiInfoLista[i].NOME
-                                   }
-         }
-        $scope.ListaIstituti = ListaIstitutiAssegnati;
-        $scope.ListaIstitutiNoFilter = Array.from(ListaIstitutiAssegnati);
-       }
-       else SystemInformation.ApplyOnError('Modello istituti non conforme', '');
-     });
+    //         IstitutiInfoLista[i] = {
+    //                                 Chiave: IstitutiInfoLista[i].CHIAVE,
+    //                                 Istituto: IstitutiInfoLista[i].NOME
+    //                                }
+    //      }
+    //     $scope.ListaIstituti = ListaIstitutiAssegnati;
+    //     $scope.ListaIstitutiNoFilter = Array.from(ListaIstitutiAssegnati);
+    //    }
+    //    else SystemInformation.ApplyOnError('Modello istituti non conforme', '');
+    //  });
    });
   }
 
