@@ -754,7 +754,6 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
         CoordY += 5;
  
         doc.setFontSize(8);
-        console.log(ListaAdozFiltrata)
         if (!Livello)
         {
           for(let i = 0; i < ListaAdozFiltrata.length; i ++)
@@ -2545,6 +2544,34 @@ SIRIOApp.controller("teacherListPageController", ['$scope', 'SystemInformation',
       $mdDialog.hide();
     }
   }
+
+  $scope.ResetDocente = function () 
+  {
+    let EliminaOrari = function()
+    {
+      for (let i = 0; i < $scope.DocenteInEditing.ListaIstitutiDoc.length; i++)
+      {
+        for (let j = 0; j < $scope.DocenteInEditing.ListaIstitutiDoc[i].Orari.length; j++)
+        {
+          $scope.DocenteInEditing.ListaOrariEliminati.push($scope.DocenteInEditing.ListaIstitutiDoc[i].Orari[j]);
+          $scope.DocenteInEditing.ListaOrariEliminati[$scope.DocenteInEditing.ListaOrariEliminati.length - 1].Eliminato = true;
+        }
+        $scope.DocenteInEditing.ListaIstitutiDoc[i].Orari = [];
+      }
+      for (let i = 0; i < $scope.DisponibilitaInEditing.length; i++)
+      {
+        for (let j = 0; j < $scope.DisponibilitaInEditing[i].length; j++)
+        {
+          for (let k = 0; k < $scope.DisponibilitaInEditing[i][j].Orari.length; k++)
+          {          
+            $scope.DisponibilitaInEditing[i][j].Orari[k].Checked = false
+            $scope.ModificaDisponibilita($scope.DisponibilitaInEditing[i][j].Orari[k])  
+          }        
+        }
+      }
+    }
+    ZConfirm.GetConfirmBox('CONFERMA ELIMINAZIONE', 'Eliminare le classi assegnate al docente?', EliminaOrari, function () { });
+  };
 
   $scope.ModificaOrario = function (Orario) 
   {

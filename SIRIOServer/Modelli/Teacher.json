@@ -127,7 +127,7 @@
 		},
 		{
 			"Name" : "DeleteLessonAll",
-			"SQL" : "DELETE FROM insegnamenti_docente WHERE DOCENTE=:CHIAVE\n"
+			"SQL" : ""
 		},
 		{
 			"Name" : "DeleteLessonAfterDeleteInstitute",
@@ -164,6 +164,10 @@
 		{
 			"Name" : "ShowTeacher",
 			"SQL" : "UPDATE docenti SET NASCOSTO = 'F' WHERE CHIAVE=:DOCENTE\n"
+		},
+		{
+			"Name" : "ResetTeacher",
+			"SQL" : "DELETE FROM insegnamenti_docente WHERE DOCENTE=:CHIAVE\n"
 		}
 	],
 	"SearchTitolo" : [

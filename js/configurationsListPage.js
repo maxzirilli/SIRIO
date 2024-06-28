@@ -236,7 +236,6 @@ $scope.GridOptions_8 = {
         for (let i = 0; i < CasaEd.Gruppi.length; i++)
         {
           let Gruppo = CasaEd.Gruppi[i].GruppoChiave
-          console.log(CasaEd.Gruppi[i])
           let index = ListaGruppiCaseEd.findIndex(function(element) {return element.Chiave == Gruppo})
           if (index != -1)
           {
@@ -244,7 +243,6 @@ $scope.GridOptions_8 = {
             ListaGruppiCaseEd[index].Originale = true
           }
         }
-        console.log(ListaGruppiCaseEd)
         OnSuccess(ListaGruppiCaseEd)
       }
       else SystemInformation.ApplyOnError('Modello gruppi case editrici non conforme','');   

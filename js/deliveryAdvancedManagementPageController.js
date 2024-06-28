@@ -249,7 +249,6 @@ $scope.GridOptions_2 = {
               $scope.ListaNonSpedibili      = $scope.ListaNonSpedibili.substring(0,$scope.ListaNonSpedibili.length - 1);
               $scope.VisualizzaNonSpedibili = true;         
            }          
-           console.log($scope.ListaNonSpedibili)
        }          
     }
   }
@@ -367,7 +366,6 @@ $scope.GridOptions_2 = {
 
                                         });
           }  
-          console.log($scope.ListaSpedizioni)
         }
         else SystemInformation.ApplyOnError('Modello spedizione non conforme','')     
     }

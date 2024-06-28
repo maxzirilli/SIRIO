@@ -588,7 +588,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
       if($scope.DataRicercaDalPrnt == undefined || $scope.DataRicercaAlPrnt == undefined)
          return;
       let TmpDatePrnt = new Date($scope.DataRicercaAlPrnt);
-      TmpDatePrnt.setDate($scope.DataRicercaAlPrnt.getDate() + 1);
+      TmpDatePrnt.setDate($scope.DataRicercaAlPrnt.getDate());
       
       var ParamPrenotati = {
                               Dal : ZHTMLInputFromDate($scope.DataRicercaDalPrnt), 
@@ -696,12 +696,14 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
       if($scope.DataRicercaDalCnsg == undefined || $scope.DataRicercaAlCnsg == undefined)
          return;
       let TmpDateCnsg = new Date($scope.DataRicercaAlCnsg);
-      TmpDateCnsg.setDate($scope.DataRicercaAlCnsg.getDate() + 1);
+      TmpDateCnsg.setDate($scope.DataRicercaAlCnsg.getDate());
       
       var ParamConsegnati = {
                               Dal : ZHTMLInputFromDate($scope.DataRicercaDalCnsg), 
                               Al  : ZHTMLInputFromDate(TmpDateCnsg)
                             };
+
+      console.log(ParamConsegnati)
 
       if($scope.IstitutoFiltroPopup != undefined && $scope.IstitutoFiltroPopup != -1)
          ParamConsegnati.ChiaveIstituto = $scope.IstitutoFiltroPopup;
@@ -715,7 +717,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
       if($scope.MateriaFiltro != -1 && $scope.MateriaFiltro != undefined)
          ParamConsegnati.MateriaDocente = $scope.MateriaFiltro;
 
-      console.log(ParamConsegnati)
       
       SystemInformation.GetSQL('Delivery',ParamConsegnati,function(Results)
       {
@@ -858,7 +859,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
       if($scope.DataRicercaDalPromotori == undefined || $scope.DataRicercaAlPromotori == undefined)
          return;
       let TmpDatePrmt = new Date($scope.DataRicercaAlPromotori);
-      TmpDatePrmt.setDate($scope.DataRicercaAlPromotori.getDate() + 1);
+      TmpDatePrmt.setDate($scope.DataRicercaAlPromotori.getDate());
       
       var ParamStatistica = {
                                Dal : ZHTMLInputFromDate($scope.DataRicercaDalPromotori), 
@@ -1096,7 +1097,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
       if($scope.DataRicercaDalPrnt == undefined || $scope.DataRicercaAlPrnt == undefined)
          return;
       let TmpDatePrnt = new Date($scope.DataRicercaAlPrnt);
-      TmpDatePrnt.setDate($scope.DataRicercaAlPrnt.getDate() + 1);
+      TmpDatePrnt.setDate($scope.DataRicercaAlPrnt.getDate());
       
       var ParamPrenotati = {
                               Dal          : ZHTMLInputFromDate($scope.DataRicercaDalPrnt), 
@@ -1145,7 +1146,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
       if($scope.DataRicercaDalPrnt == undefined || $scope.DataRicercaAlPrnt == undefined)
          return;
       let TmpDatePrnt = new Date($scope.DataRicercaAlPrnt);
-      TmpDatePrnt.setDate($scope.DataRicercaAlPrnt.getDate() + 1);
+      TmpDatePrnt.setDate($scope.DataRicercaAlPrnt.getDate());
       
       var ParamPrenotati = {
                               Dal          : ZHTMLInputFromDate($scope.DataRicercaDalPrnt), 
@@ -1413,7 +1414,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     if($scope.DataRicercaDal == undefined || $scope.DataRicercaAl == undefined)
        return;
     let TmpDate = new Date($scope.DataRicercaAl);
-    TmpDate.setDate($scope.DataRicercaAl.getDate() + 1);
+    TmpDate.setDate($scope.DataRicercaAl.getDate());
   
     SystemInformation.ExecuteExternalScript('SIRIOExtra',{ Dal : ZHTMLInputFromDate($scope.DataRicercaDal), Al : ZHTMLInputFromDate(TmpDate), Admin : ($scope.IsAdministrator() ? 'T' : 'F')},function(Answer) 
     {
@@ -1502,7 +1503,7 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
     if($scope.DataRicercaDal == undefined || $scope.DataRicercaAl == undefined)
        return;
     let TmpDate = new Date($scope.DataRicercaAl);
-    TmpDate.setDate($scope.DataRicercaAl.getDate() + 1);
+    TmpDate.setDate($scope.DataRicercaAl.getDate());
     
     var WBook = {
 	                  SheetNames : [],
@@ -1683,7 +1684,6 @@ function($scope,SystemInformation,$state,$rootScope,$mdDialog,$sce,$filter,ZConf
             WBook.SheetNames.push(SheetNameCum);
             WBook.Sheets[SheetName]    = BodySheet;
             WBook.Sheets[SheetNameCum] = BodySheetCum;
-            console.log(WBook)
             
             var wbout = XLSX.write(WBook, {bookType:'xlsx', bookSST:true, type: 'binary'});
             saveAs(new Blob([SystemInformation.s2ab(wbout)],{type:"application/octet-stream"}), "Spedizioni.xlsx")                                       
